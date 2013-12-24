@@ -15,4 +15,5 @@ main = hakyllWith conf $ do
 conf :: Configuration
 conf = defaultConfiguration {
   providerDirectory = "content"
+  , deployCommand   = "./src/deploy.sh"
   }
