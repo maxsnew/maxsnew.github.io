@@ -1,2 +1,0 @@
-maxsnew.github.io
-=================
