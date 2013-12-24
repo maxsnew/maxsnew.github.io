@@ -2,7 +2,7 @@
 import Hakyll
 
 main :: IO ()
-main = hakyll $ do
+main = hakyllWith conf $ do
   match "index.md" $ do
     route $ setExtension "html"
     compile $ pandocCompiler
@@ -10,3 +10,9 @@ main = hakyll $ do
       >>= relativizeUrls
 
   match "templates/*" $ compile templateCompiler
+
+-- Configuration
+conf :: Configuration
+conf = defaultConfiguration {
+  providerDirectory = "content"
+  }
