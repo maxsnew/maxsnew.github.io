@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Max New - Projects</title>
+    <title>Max New - Libraries</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.css" />
     <script src="bootstrap.min.js" type="text/javascript"></script>
@@ -30,14 +30,14 @@
         <h1 id="racket"><a href="http://racket-lang.org">Racket</a></h1>
 <hr />
 <h2 id="redex"><a href="http://redex.racket-lang.org/">Redex</a></h2>
-<p>For my master's research I work with <a href="http://www.eecs.northwestern.edu/~robby/">Robby Findler</a> on automated test generation for the Redex formal semantics-engineering dsl. It's rolling out with the next release of Racket.</p>
+<p>For my master's research I work with <a href="http://www.eecs.northwestern.edu/~robby/">Robby Findler</a> on automated test-case generation for the Redex formal semantics-engineering dsl. My generators are isomorphisms from natural numbers to terms in a redex grammar. The generators are defined automatically when you define a language in Redex and have a more predictable distribution of terms than random generators. A major update is rolling out with the next release of Racket that includes support for all decidable Redex grammars. Next we're looking at improving performance and generating well-typed terms.</p>
 <h1 id="elm"><a href="http://elm-lang.org">Elm</a></h1>
 <hr />
 <p>Elm is a fairly young language, and I'm working on testing its limits to help guide future development.</p>
 <h2 id="lazy"><a href="http://github.com/maxsnew/Lazy">Lazy</a></h2>
-<p>I develop and maintain a library for Lazy evaluation and lazy data structures in the Elm programming language. Elm is a pure strict language and doesn't have built-in support for call-by-need semantics.</p>
+<p>I develop and maintain a library for Lazy evaluation and lazy data structures in the Elm programming language. Elm is a pure strict language and doesn't have built-in support for call-by-need semantics so there are performance limitations. If Elm gets some sort of native-extension mechanism then state can be used to reduce recomputation.</p>
 <h2 id="generic"><a href="http://github.com/maxsnew/Generic">Generic</a></h2>
-<p>This is a library for experimenting with a value-level implementation of ad-hoc polymorphism (aka overloading). Elm's row types are powerful enough to express something resembling subtyping, but not powerful enough to express things that require higher-kinded polymorphism (such as Monads). This library is meant to push the limit of what's possible in Elm and help guide the development of new language features.</p>
+<p>This is a library for experimenting with a value-level implementation of ad-hoc polymorphism (aka overloading) akin to Haskell's type classes. Elm's row types are powerful enough to express this in a first order way with something resembling subtyping (e.g., every Monoid is a Semigroup), but not powerful enough to express things that require higher-kinded polymorphism (such as Monads). This library is meant to push the limit of what's possible in Elm and help guide the development of new language features.</p>
       </body>
       
     </div>
