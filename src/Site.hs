@@ -3,11 +3,19 @@ import Hakyll
 
 main :: IO ()
 main = hakyllWith conf $ do
-  match "index.md" $ do
+  match "*.md" $ do
     route $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/default.html" defaultContext
       >>= relativizeUrls
+
+  match "js/*.js" $ do
+    route   idRoute
+    compile copyFileCompiler
+
+  match "css/*.css" $ do
+    route   idRoute
+    compile compressCssCompiler
 
   match "templates/*" $ compile templateCompiler
 
