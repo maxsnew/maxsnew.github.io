@@ -1,13 +1,20 @@
 {-# LANGUAGE OverloadedStrings #-}
 import Hakyll
+import Hakyll.Web.Elm
 
 main :: IO ()
 main = hakyllWith conf $ do
   match "*.md" $ do
-    route $ setExtension "html"
+    route   $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/default.html" defaultContext
       >>= relativizeUrls
+
+  match "*.elm" $ do
+    route   $ setExtension "html"
+    compile $ elmStandaloneCompiler
+      >>= loadAndApplyTemplate "templates/default.html" defaultContext
+      -- >>= relativizeUrls
 
   match "js/*.js" $ do
     route   idRoute
