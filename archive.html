@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Max New - archive</title>
+    <script src="/js/elm-runtime.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/css/default.css" />
+  </head>
+  <body>
+    <div id="header">
+      <!-- <div id="logo"> -->
+      <!--   <a href="/">My Hakyll Blog</a> -->
+      <!-- </div> -->
+      <div id="navigation">
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/projects.html">Projects</a>
+        <a href="/archive.html">Archive</a>
+      </div>
+    </div>
+
+    <div id="content">
+      <div id="Main"></div><script type="text/javascript">Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Text = Elm.Text.make(_elm),
+   $Time = Elm.Time.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var text = $Text.markdown("<div style=\"height:0;width:0;\">&nbsp;</div><p>No posts yet, but here&#39;s a silly demo:</p>\n<div style=\"height:0;width:0;\">&nbsp;</div>",
+   "36:8");
+   var size = function ($) {
+      return function (n) {
+         return n * 500;
+      }($Basics.sin(function (n) {
+         return n / 500;
+      }($Basics.toFloat($))));
+   };
+   var bimap = F3(function (f,
+   g,
+   _v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: f(_v0._0)
+                   ,_1: g(_v0._1)};}
+         _E.Case($moduleName,
+         "on line 20, column 21 to 29");
+      }();
+   });
+   var mkShape = F6(function (_v4,
+   _v5,
+   sides,
+   size,
+   angle,
+   col) {
+      return function () {
+         switch (_v5.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v4.ctor)
+                 {case "_Tuple2":
+                    return function () {
+                         var toDeg = function (n) {
+                            return $Basics.degrees($Basics.toFloat(A2($Basics._op["%"],
+                            n,
+                            360)));
+                         };
+                         var $ = {ctor: "_Tuple2"
+                                 ,_0: $Basics.toFloat(_v4._0) - $Basics.toFloat(_v5._0) / 2
+                                 ,_1: $Basics.toFloat(_v5._1) / 2 - $Basics.toFloat(_v4._1)},
+                         dx = $._0,
+                         dy = $._1;
+                         return $Graphics$Collage.move({ctor: "_Tuple2"
+                                                       ,_0: dx
+                                                       ,_1: dy})($Graphics$Collage.rotate(toDeg(angle))($Graphics$Collage.filled(A3($Color.hsl,
+                         toDeg(col),
+                         $Basics.degrees($Basics.toFloat(45)),
+                         $Basics.degrees($Basics.toFloat(45))))(A2($Graphics$Collage.ngon,
+                         sides,
+                         size))));
+                      }();}
+                 _E.Case($moduleName,
+                 "between lines 12 and 17");
+              }();}
+         _E.Case($moduleName,
+         "between lines 12 and 17");
+      }();
+   });
+   var silly = F4(function (_v12,
+   _v13,
+   perSec,
+   perHalfSec) {
+      return function () {
+         switch (_v13.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v12.ctor)
+                 {case "_Tuple2":
+                    return A3($Graphics$Collage.collage,
+                      _v13._0,
+                      _v13._1,
+                      _L.fromArray([A6(mkShape,
+                      {ctor: "_Tuple2"
+                      ,_0: _v12._0
+                      ,_1: _v12._1},
+                      {ctor: "_Tuple2"
+                      ,_0: _v13._0
+                      ,_1: _v13._1},
+                      F2(function (x,y) {
+                         return x + y;
+                      })(3)(A2($Basics.flip,
+                      F2(function (x,y) {
+                         return A2($Basics._op["%"],
+                         x,
+                         y);
+                      }),
+                      12)($Basics.floor(perSec))),
+                      size(_v12._1),
+                      _v12._0,
+                      $Basics.floor(perHalfSec))]));}
+                 _E.Case($moduleName,
+                 "between lines 27 and 34");
+              }();}
+         _E.Case($moduleName,
+         "between lines 27 and 34");
+      }();
+   });
+   var main = A2($Signal._op["<~"],
+   $Graphics$Element.above(text),
+   A2($Signal._op["~"],
+   A2($Signal._op["~"],
+   A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   silly,
+   $Mouse.position),
+   $Window.dimensions),
+   $Time.every(1 * $Time.second)),
+   $Time.every(0.5 * $Time.second)));
+   _elm.Main.values = {_op: _op
+                      ,mkShape: mkShape
+                      ,bimap: bimap
+                      ,size: size
+                      ,silly: silly
+                      ,text: text
+                      ,main: main};
+   return _elm.Main.values;
+};
+var div = document.getElementById('Main', div);
+Elm.embed(Elm.Main, div);
+</script>
+    </div>
+    <div id="footer">
+      Site proudly generated by
+      <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+    </div>
+  </body>
+</html>
