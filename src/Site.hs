@@ -2,25 +2,15 @@
 module Main where
 
 import Hakyll
-import Hakyll.Web.Elm
-import System.Directory
 
 main :: IO ()
 main = do
-  createDirectoryIfMissing False "content/js"
-  copyFile elmRuntime "content/js/elm-runtime.js"
   hakyllWith conf $ do
     match "*.md" $ do
       route   $ setExtension "html"
       compile $ pandocCompiler
         >>= loadAndApplyTemplate "templates/default.html" defaultContext
         >>= relativizeUrls
-  
-    match "*.elm" $ do
-      route   $ setExtension "html"
-      compile $ elmStandaloneCompiler
-        >>= loadAndApplyTemplate "templates/default.html" defaultContext
-        -- >>= relativizeUrls
   
     match "js/*.js" $ do
       route   idRoute
