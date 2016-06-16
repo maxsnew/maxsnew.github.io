@@ -19,6 +19,10 @@ main = do
     match "css/*.css" $ do
       route   idRoute
       compile compressCssCompiler
+
+    match "*.pdf" $ do
+      route   idRoute
+      compile copyFileCompiler
   
     match "templates/*" $ compile templateCompiler
   
