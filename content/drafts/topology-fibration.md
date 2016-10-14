@@ -15,10 +15,26 @@ uncategorical your point-set topology book is, with a focus on
 manipulating bases and sub-bases and on and on.
 
 However if we instead view topology with a focus on the fibration Top
---> Set, then the product topology construction is an example of a
-very generally useful construction of product spaces.
+--> Set, then the construction of the product topology is part of a
+more general pattern.
 
 ## Top --> Set fibration
+
+One elementary fact you may learn about Point-Set Topologies is that
+if you fix the underlying set, you get an ordering of all possible
+topologies on the set.
+
+At the top we have the least informative or coarsets topology, the
+indiscrete topology, and at the bottom we have the most informative or
+finest topology, the discrete topology.
+This is the "fineness" ordering.
+
+The most important aspect of this ordering is that it has all "meets"
+or "greatest lower bounds".
+
+For finite meets this means we have the top topology, coarser than
+everything and for two topologies X, Y on a set A, we can construct
+the "coarsest topology finer than X and Y".
 
 ...
 
