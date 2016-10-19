@@ -23,6 +23,11 @@ main = do
   
     match "templates/*" $ compile templateCompiler
 
+    match "hubway.html" $ do
+      route idRoute
+      compile $ getResourceBody >>=
+        loadAndApplyTemplate "templates/default.html" defaultContext
+
     -- create ["blog.html"] $ do
     --   route idRoute
     --   compile $ do
