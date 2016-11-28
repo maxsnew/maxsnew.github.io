@@ -2,6 +2,7 @@
 module Main where
 
 import Hakyll
+import Control.Monad
 
 main :: IO ()
 main = do
@@ -17,9 +18,8 @@ main = do
       route   idRoute
       compile compressCssCompiler
 
-    match "*.pdf" $ do
-      route   idRoute
-      compile copyFileCompiler
+    forM_ ["docs/*", "img/*"] $ \p -> 
+      match p rawOut
   
     match "templates/*" $ compile templateCompiler
 
@@ -55,3 +55,8 @@ mdpost = do
   compile $ pandocCompiler
     >>= loadAndApplyTemplate "templates/default.html" defaultContext
     >>= relativizeUrls
+
+rawOut :: Rules ()
+rawOut = do
+  route   idRoute
+  compile copyFileCompiler
