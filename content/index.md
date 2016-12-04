@@ -1,8 +1,8 @@
 ---
-title: Max New
+title: Max S. New
 ---
 
-# Max New
+# Max S. New
 
 ![][max-pic]
 
