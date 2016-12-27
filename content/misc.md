@@ -20,7 +20,22 @@
 > world. Disclosing new worlds is as
 > worthwhile a mathematical enterprise
 > as proving old conjectures.
+
 Gian-carlo Rota, *Indiscrete Thoughts* p. 48, 1997
 (Originally seen [here][species])
 
+> We have had to fight against the myth of the mainstream which says,
+> for example, that there are cycles during which at one time
+> everybody is working on general concepts, and at another time
+> anybody of consequence is doing only particular examples, whereas in
+> fact serious mathematicians have always been doing both.
+> One should not get drunk on the idea that everything is
+> general. Category theorists should get back to the original goal:
+> applying general results to particularities and to making
+> connections between different areas of mathematics.
+
+F. William Lawvere, *An Interview with F. William Lawvere*, Bulletin
+of the International Center for Mathematics, June 2008, ([link][lawvere-interview])
+
 [species]: http://mathoverflow.net/questions/22462/what-are-some-examples-of-interesting-uses-of-the-theory-of-combinatorial-specie
+[lawvere-interview]: http://www.mat.uc.pt/~picado/lawvere/interview.pdf
