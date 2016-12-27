@@ -1,4 +1,6 @@
-* Grothendieck Construction and Abstract Interpretation
+* Current Research, Blog posts later
+** Grothendieck Construction and Abstract Interpretation
 * Constructive Galois Connections (de)-generalization
+  - http://prl.ccs.neu.edu/blog/2016/11/16/understanding-constructive-galois-connections/
 * Product Topology and Fibrations
- 
+* Elm Architecture is Big Bang
