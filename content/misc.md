@@ -1,5 +1,10 @@
 # (Pretentious) Quotes I like
 
+> A value is, a computation does.
+
+Paul Blain Levy, "Call-By-Push-Value: A Functional/Imperative
+Synthesis"
+
 > "What can you prove with exterior
 > algebra that you cannot prove without
 > it?" Whenever you hear this question
@@ -39,3 +44,4 @@ of the International Center for Mathematics, June 2008, ([link][lawvere-intervie
 
 [species]: http://mathoverflow.net/questions/22462/what-are-some-examples-of-interesting-uses-of-the-theory-of-combinatorial-specie
 [lawvere-interview]: http://www.mat.uc.pt/~picado/lawvere/interview.pdf
+
