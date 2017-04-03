@@ -20,7 +20,10 @@ stations_i_care_about : Dict ID Name
 stations_i_care_about = Dict.fromList [ ("5", "Northeastern North Parking Lot")
                                       , ("160", "Wentworth")
                                       , ("66", "Griggs Street")
-                                      , ("103", "JFK at Harvard Street") ]
+                                      , ("103", "JFK at Harvard Street")
+                                      , ("41", "Packard's Corner")
+                                      , ("8", "Brighton & Cambridge")
+                                      , ("12", "Ruggles")]
 
 main =
   App.program { init = init, view = view, update = update , subscriptions = \_ -> Sub.none }
@@ -93,14 +96,19 @@ header = Html.thead [] [Html.tr [] [
                             , Html.th [] [(Html.text "Vacancies")]
                             ]]
 
-filter_stations : List (StationStatus ID) -> List (StationStatus Name)
-filter_stations ss =
+relevant_stations : List (StationStatus ID) -> List (StationStatus Name)
+relevant_stations ss =
     let do_i_care stat =
             case Dict.get stat.station_id stations_i_care_about of
                 Nothing   -> Nothing
                 Just name -> Just { stat | station_id = name }
     in List.filterMap do_i_care ss
 
+mk_tab stations =
+    let rows = Html.tbody [] <| List.map (Html.tr [] << view_station) stations
+    in Html.table [] [header, rows]
+                  
+        
 view : State -> Html Msg
 view model =
   Html.div []
@@ -109,7 +117,7 @@ view model =
          Loading  -> Html.text "Fetching Data..."
          Fail err -> Html.text (toString err)
          Stations stations ->
-         let relevant_stations = filter_stations stations
-             rows = List.map (Html.tr [] << view_station) relevant_stations
-         in Html.table [] [header , Html.tbody [] rows]
+         let (home_stations, work_stations) = relevant_stations stations
+             tables = List.map mk_tab [home_stations, work_stations]
+         in div [] [home_tab, work_tab]
     ]
