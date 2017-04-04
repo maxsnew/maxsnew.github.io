@@ -16,14 +16,17 @@ type alias ID   = String
 type alias Name = String
 -- https://gbfs.thehubway.com/gbfs/en/station_information.json
 -- could do this more automatically
-stations_i_care_about : Dict ID Name
-stations_i_care_about = Dict.fromList [ ("5", "Northeastern North Parking Lot")
-                                      , ("160", "Wentworth")
-                                      , ("66", "Griggs Street")
-                                      , ("103", "JFK at Harvard Street")
-                                      , ("41", "Packard's Corner")
-                                      , ("8", "Brighton & Cambridge")
-                                      , ("12", "Ruggles")]
+work_stations : Dict ID Name
+work_stations = Dict.fromList [ ("5", "Northeastern North Parking Lot")
+                              , ("160", "Wentworth")
+                              , ("12", "Ruggles")]
+
+home_stations : Dict ID Name
+home_stations = Dict.fromList [ ("66", "Griggs Street")
+                              , ("103", "JFK at Harvard Street")
+                              , ("41", "Packard's Corner")
+                              , ("8", "Brighton & Cambridge")
+                              ]
 
 main =
   App.program { init = init, view = view, update = update , subscriptions = \_ -> Sub.none }
@@ -96,8 +99,8 @@ header = Html.thead [] [Html.tr [] [
                             , Html.th [] [(Html.text "Vacancies")]
                             ]]
 
-relevant_stations : List (StationStatus ID) -> List (StationStatus Name)
-relevant_stations ss =
+relevant_stations : List (StationStatus ID) -> Dict ID Name -> List (StationStatus Name)
+relevant_stations ss stations_i_care_about =
     let do_i_care stat =
             case Dict.get stat.station_id stations_i_care_about of
                 Nothing   -> Nothing
@@ -117,7 +120,8 @@ view model =
          Loading  -> Html.text "Fetching Data..."
          Fail err -> Html.text (toString err)
          Stations stations ->
-         let (home_stations, work_stations) = relevant_stations stations
-             tables = List.map mk_tab [home_stations, work_stations]
-         in div [] [home_tab, work_tab]
+         let tables =
+           [home_stations, work_stations] |>
+             List.map (relevant_stations stations >> mk_tab)
+         in Html.div [] tables
     ]

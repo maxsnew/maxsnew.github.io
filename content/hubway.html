@@ -8319,6 +8319,21 @@ var _evancz$elm_http$Http$post = F3(
 			decoder,
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
+var _user$project$Main$relevant_stations = F2(
+	function (ss, stations_i_care_about) {
+		var do_i_care = function (stat) {
+			var _p0 = A2(_elm_lang$core$Dict$get, stat.station_id, stations_i_care_about);
+			if (_p0.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return _elm_lang$core$Maybe$Just(
+					_elm_lang$core$Native_Utils.update(
+						stat,
+						{station_id: _p0._0}));
+			}
+		};
+		return A2(_elm_lang$core$List$filterMap, do_i_care, ss);
+	});
 var _user$project$Main$header = A2(
 	_elm_lang$html$Html$thead,
 	_elm_lang$core$Native_List.fromArray(
@@ -8360,7 +8375,7 @@ var _user$project$Main$header = A2(
 var _user$project$Main$view_station = function (station) {
 	return A2(
 		_elm_lang$core$List$map,
-		function (_p0) {
+		function (_p1) {
 			return A2(
 				_elm_lang$html$Html$td,
 				_elm_lang$core$Native_List.fromArray(
@@ -8368,7 +8383,7 @@ var _user$project$Main$view_station = function (station) {
 				function (x) {
 					return _elm_lang$core$Native_List.fromArray(
 						[x]);
-				}(_p0));
+				}(_p1));
 		},
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -8378,6 +8393,28 @@ var _user$project$Main$view_station = function (station) {
 				_elm_lang$html$Html$text(
 				_elm_lang$core$Basics$toString(station.num_docks_available))
 			]));
+};
+var _user$project$Main$mk_tab = function (stations) {
+	var rows = A2(
+		_elm_lang$html$Html$tbody,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		A2(
+			_elm_lang$core$List$map,
+			function (_p2) {
+				return A2(
+					_elm_lang$html$Html$tr,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_user$project$Main$view_station(_p2));
+			},
+			stations));
+	return A2(
+		_elm_lang$html$Html$table,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[_user$project$Main$header, rows]));
 };
 var _user$project$Main$mk_station_status = F3(
 	function (id, bikes, docks) {
@@ -8399,31 +8436,21 @@ var _user$project$Main$fetch = A3(
 	_elm_lang$core$Result$Err,
 	_elm_lang$core$Result$Ok,
 	A2(_evancz$elm_http$Http$get, _user$project$Main$model_decoder, 'https://gbfs.thehubway.com/gbfs/en/station_status.json'));
-var _user$project$Main$stations_i_care_about = _elm_lang$core$Dict$fromList(
+var _user$project$Main$home_stations = _elm_lang$core$Dict$fromList(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: '66', _1: 'Griggs Street'},
+			{ctor: '_Tuple2', _0: '103', _1: 'JFK at Harvard Street'},
+			{ctor: '_Tuple2', _0: '41', _1: 'Packard\'s Corner'},
+			{ctor: '_Tuple2', _0: '8', _1: 'Brighton & Cambridge'}
+		]));
+var _user$project$Main$work_stations = _elm_lang$core$Dict$fromList(
 	_elm_lang$core$Native_List.fromArray(
 		[
 			{ctor: '_Tuple2', _0: '5', _1: 'Northeastern North Parking Lot'},
 			{ctor: '_Tuple2', _0: '160', _1: 'Wentworth'},
-			{ctor: '_Tuple2', _0: '66', _1: 'Griggs Street'},
-			{ctor: '_Tuple2', _0: '103', _1: 'JFK at Harvard Street'},
-			{ctor: '_Tuple2', _0: '41', _1: 'Packard\'s Corner'},
-			{ctor: '_Tuple2', _0: '8', _1: 'Brighton & Cambridge'},
 			{ctor: '_Tuple2', _0: '12', _1: 'Ruggles'}
 		]));
-var _user$project$Main$filter_stations = function (ss) {
-	var do_i_care = function (stat) {
-		var _p1 = A2(_elm_lang$core$Dict$get, stat.station_id, _user$project$Main$stations_i_care_about);
-		if (_p1.ctor === 'Nothing') {
-			return _elm_lang$core$Maybe$Nothing;
-		} else {
-			return _elm_lang$core$Maybe$Just(
-				_elm_lang$core$Native_Utils.update(
-					stat,
-					{station_id: _p1._0}));
-		}
-	};
-	return A2(_elm_lang$core$List$filterMap, do_i_care, ss);
-};
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8432,38 +8459,27 @@ var _user$project$Main$view = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				function () {
-				var _p2 = model;
-				switch (_p2.ctor) {
+				var _p3 = model;
+				switch (_p3.ctor) {
 					case 'Loading':
 						return _elm_lang$html$Html$text('Fetching Data...');
 					case 'Fail':
 						return _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(_p2._0));
+							_elm_lang$core$Basics$toString(_p3._0));
 					default:
-						var relevant_stations = _user$project$Main$filter_stations(_p2._0);
-						var rows = A2(
+						var tables = A2(
 							_elm_lang$core$List$map,
-							function (_p3) {
-								return A2(
-									_elm_lang$html$Html$tr,
-									_elm_lang$core$Native_List.fromArray(
-										[]),
-									_user$project$Main$view_station(_p3));
+							function (_p4) {
+								return _user$project$Main$mk_tab(
+									A2(_user$project$Main$relevant_stations, _p3._0, _p4));
 							},
-							relevant_stations);
+							_elm_lang$core$Native_List.fromArray(
+								[_user$project$Main$home_stations, _user$project$Main$work_stations]));
 						return A2(
-							_elm_lang$html$Html$table,
+							_elm_lang$html$Html$div,
 							_elm_lang$core$Native_List.fromArray(
 								[]),
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_user$project$Main$header,
-									A2(
-									_elm_lang$html$Html$tbody,
-									_elm_lang$core$Native_List.fromArray(
-										[]),
-									rows)
-								]));
+							tables);
 				}
 			}()
 			]));
@@ -8480,17 +8496,17 @@ var _user$project$Main$Fail = function (a) {
 };
 var _user$project$Main$update = F2(
 	function (new_info, st) {
-		var _p4 = new_info;
-		if (_p4.ctor === 'Err') {
+		var _p5 = new_info;
+		if (_p5.ctor === 'Err') {
 			return {
 				ctor: '_Tuple2',
-				_0: _user$project$Main$Fail(_p4._0),
+				_0: _user$project$Main$Fail(_p5._0),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
 			return {
 				ctor: '_Tuple2',
-				_0: _user$project$Main$Stations(_p4._0),
+				_0: _user$project$Main$Stations(_p5._0),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		}
@@ -8503,7 +8519,7 @@ var _user$project$Main$main = {
 			init: _user$project$Main$init,
 			view: _user$project$Main$view,
 			update: _user$project$Main$update,
-			subscriptions: function (_p5) {
+			subscriptions: function (_p6) {
 				return _elm_lang$core$Platform_Sub$none;
 			}
 		})
