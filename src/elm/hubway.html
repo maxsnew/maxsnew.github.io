@@ -1,23 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>hubway</title>
-    <link rel="stylesheet" type="text/css" href="/css/default.css" />
-  </head>
-  <body>
-    <div id="header">
-      <div id="logo">
-        <a href="/">Max S. New</a>
-      </div>
-      <div id="navigation">
-        <a href="/publications.html">Publications</a>
-        <a href="http://prl.ccs.neu.edu/blog/tags/by-Max-New.html">Blog</a>
-        <a href="/misc.html">Misc</a>
-      </div>
-    </div>
-    <div id="content">
-      <!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html><head><meta charset="UTF-8"><title>Main</title><style>html,head,body { padding:0; margin:0; }
 body { font-family: calibri, helvetica, arial, sans-serif; }</style><script type="text/javascript">
 (function() {
@@ -8668,6 +8649,21 @@ var _elm_lang$http$Http$StringPart = F2(
 		return {ctor: 'StringPart', _0: a, _1: b};
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+var _user$project$Main$relevant_stations = F2(
+	function (ss, stations_i_care_about) {
+		var do_i_care = function (stat) {
+			var _p0 = A2(_elm_lang$core$Dict$get, stat.station_id, stations_i_care_about);
+			if (_p0.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return _elm_lang$core$Maybe$Just(
+					_elm_lang$core$Native_Utils.update(
+						stat,
+						{station_id: _p0._0}));
+			}
+		};
+		return A2(_elm_lang$core$List$filterMap, do_i_care, ss);
+	});
 var _user$project$Main$header = A2(
 	_elm_lang$html$Html$thead,
 	{ctor: '[]'},
@@ -8715,7 +8711,7 @@ var _user$project$Main$header = A2(
 var _user$project$Main$view_station = function (station) {
 	return A2(
 		_elm_lang$core$List$map,
-		function (_p0) {
+		function (_p1) {
 			return A2(
 				_elm_lang$html$Html$td,
 				{ctor: '[]'},
@@ -8725,11 +8721,11 @@ var _user$project$Main$view_station = function (station) {
 						_0: x,
 						_1: {ctor: '[]'}
 					};
-				}(_p0));
+				}(_p1));
 		},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text(station.name),
+			_0: _elm_lang$html$Html$text(station.station_id),
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html$text(
@@ -8749,11 +8745,11 @@ var _user$project$Main$mk_tab = function (stations) {
 		{ctor: '[]'},
 		A2(
 			_elm_lang$core$List$map,
-			function (_p1) {
+			function (_p2) {
 				return A2(
 					_elm_lang$html$Html$tr,
 					{ctor: '[]'},
-					_user$project$Main$view_station(_p1));
+					_user$project$Main$view_station(_p2));
 			},
 			stations));
 	return A2(
@@ -8769,115 +8765,6 @@ var _user$project$Main$mk_tab = function (stations) {
 			}
 		});
 };
-var _user$project$Main$view_near_place = F2(
-	function (p, hw) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$h2,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							A2(_elm_lang$core$Basics_ops['++'], 'Places near ', p.name)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Main$mk_tab(hw),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _user$project$Main$cutoff = 1.7e-4;
-var _user$project$Main$proximity = F2(
-	function (p1, p2) {
-		return Math.pow(p1.latitude - p2.latitude, 2) + Math.pow(p1.longitude - p2.longitude, 2);
-	});
-var _user$project$Main$nearby = F2(
-	function (h, p) {
-		var proxToP = function (stat) {
-			return A2(_user$project$Main$proximity, p.coord, stat.coord);
-		};
-		var sorted = A2(_elm_lang$core$List$sortBy, proxToP, h);
-		var closes = A2(
-			_elm_lang$core$List$filter,
-			function (s) {
-				return _elm_lang$core$Native_Utils.cmp(
-					proxToP(s),
-					_user$project$Main$cutoff) < 1;
-			},
-			sorted);
-		return {ctor: '_Tuple2', _0: p, _1: closes};
-	});
-var _user$project$Main$mergeStationData = F2(
-	function (inf, stat) {
-		return {id: inf.id, name: inf.name, coord: inf.coord, num_bikes_available: stat.num_bikes_available, num_docks_available: stat.num_docks_available};
-	});
-var _user$project$Main$mergeHubwayData = F2(
-	function (infos, statuses) {
-		var infoDict = A3(
-			_elm_lang$core$List$foldl,
-			F2(
-				function (info, d) {
-					return A3(_elm_lang$core$Dict$insert, info.id, info, d);
-				}),
-			_elm_lang$core$Dict$empty,
-			infos);
-		var hwDict = A3(
-			_elm_lang$core$List$foldl,
-			F2(
-				function (stat, l) {
-					var _p2 = A2(_elm_lang$core$Dict$get, stat.station_id, infoDict);
-					if (_p2.ctor === 'Just') {
-						return {
-							ctor: '::',
-							_0: A2(_user$project$Main$mergeStationData, _p2._0, stat),
-							_1: l
-						};
-					} else {
-						return l;
-					}
-				}),
-			{ctor: '[]'},
-			statuses);
-		return hwDict;
-	});
-var _user$project$Main$getTask = F2(
-	function (s, dec) {
-		return _elm_lang$http$Http$toTask(
-			A2(_elm_lang$http$Http$get, s, dec));
-	});
-var _user$project$Main$mk_station_info = F4(
-	function (id, name, $long, lat) {
-		return {
-			id: id,
-			name: name,
-			coord: {longitude: $long, latitude: lat}
-		};
-	});
-var _user$project$Main$station_info = A5(
-	_elm_lang$core$Json_Decode$map4,
-	_user$project$Main$mk_station_info,
-	A2(_elm_lang$core$Json_Decode$field, 'station_id', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'lon', _elm_lang$core$Json_Decode$float),
-	A2(_elm_lang$core$Json_Decode$field, 'lat', _elm_lang$core$Json_Decode$float));
-var _user$project$Main$info_decoder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'data',
-		_1: {
-			ctor: '::',
-			_0: 'stations',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$list(_user$project$Main$station_info));
 var _user$project$Main$mk_station_status = F3(
 	function (id, bikes, docks) {
 		return {station_id: id, num_bikes_available: bikes, num_docks_available: docks};
@@ -8888,7 +8775,7 @@ var _user$project$Main$station_status = A4(
 	A2(_elm_lang$core$Json_Decode$field, 'station_id', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'num_bikes_available', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'num_docks_available', _elm_lang$core$Json_Decode$int));
-var _user$project$Main$status_decoder = A2(
+var _user$project$Main$model_decoder = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
 		ctor: '::',
@@ -8900,40 +8787,42 @@ var _user$project$Main$status_decoder = A2(
 		}
 	},
 	_elm_lang$core$Json_Decode$list(_user$project$Main$station_status));
-var _user$project$Main$work = {
-	name: 'work',
-	coord: {latitude: 42.33863, longitude: -71.092228}
-};
-var _user$project$Main$home = {
-	name: 'home',
-	coord: {latitude: 42.34852014581272, longitude: -71.13394662737846}
-};
-var _user$project$Main$info_url = 'https://gbfs.thehubway.com/gbfs/en/station_information.json';
-var _user$project$Main$status_url = 'https://gbfs.thehubway.com/gbfs/en/station_status.json';
 var _user$project$Main$fetch = A2(
-	_elm_lang$core$Task$attempt,
+	_elm_lang$http$Http$send,
 	_elm_lang$core$Basics$identity,
-	A2(
-		_elm_lang$core$Task$andThen,
-		function (statuses) {
-			return A2(
-				_elm_lang$core$Task$andThen,
-				function (infos) {
-					return _elm_lang$core$Task$succeed(
-						{ctor: '_Tuple2', _0: infos, _1: statuses});
-				},
-				A2(_user$project$Main$getTask, _user$project$Main$info_url, _user$project$Main$info_decoder));
-		},
-		A2(_user$project$Main$getTask, _user$project$Main$status_url, _user$project$Main$status_decoder)));
-var _user$project$Main$debug = false;
-var _user$project$Main$debugInfo = function (x) {
-	return _user$project$Main$debug ? {
+	A2(_elm_lang$http$Http$get, 'https://gbfs.thehubway.com/gbfs/en/station_status.json', _user$project$Main$model_decoder));
+var _user$project$Main$home_stations = _elm_lang$core$Dict$fromList(
+	{
 		ctor: '::',
-		_0: _elm_lang$html$Html$text(
-			_elm_lang$core$Basics$toString(x)),
-		_1: {ctor: '[]'}
-	} : {ctor: '[]'};
-};
+		_0: {ctor: '_Tuple2', _0: '66', _1: 'Griggs Street'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: '103', _1: 'JFK at Harvard Street'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '41', _1: 'Packard\'s Corner'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: '8', _1: 'Brighton & Cambridge'},
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
+var _user$project$Main$work_stations = _elm_lang$core$Dict$fromList(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: '5', _1: 'Northeastern North Parking Lot'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: '160', _1: 'Wentworth'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: '12', _1: 'Ruggles'},
+				_1: {ctor: '[]'}
+			}
+		}
+	});
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8949,78 +8838,53 @@ var _user$project$Main$view = function (model) {
 						return _elm_lang$html$Html$text(
 							_elm_lang$core$Basics$toString(_p3._0));
 					default:
-						var _p6 = _p3._0;
+						var tables = A2(
+							_elm_lang$core$List$map,
+							function (_p4) {
+								return _user$project$Main$mk_tab(
+									A2(_user$project$Main$relevant_stations, _p3._0, _p4));
+							},
+							{
+								ctor: '::',
+								_0: _user$project$Main$home_stations,
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$work_stations,
+									_1: {ctor: '[]'}
+								}
+							});
 						return A2(
 							_elm_lang$html$Html$div,
 							{ctor: '[]'},
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								A2(
-									_elm_lang$core$List$map,
-									function (_p4) {
-										var _p5 = _p4;
-										return A2(_user$project$Main$view_near_place, _p5._0, _p5._1);
-									},
-									_p6),
-								_user$project$Main$debugInfo(_p6)));
+							tables);
 				}
 			}(),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$Coordinates = F2(
-	function (a, b) {
-		return {longitude: a, latitude: b};
-	});
-var _user$project$Main$Place = F2(
-	function (a, b) {
-		return {name: a, coord: b};
-	});
-var _user$project$Main$StationInfo = F3(
-	function (a, b, c) {
-		return {id: a, name: b, coord: c};
-	});
 var _user$project$Main$StationStatus = F3(
 	function (a, b, c) {
 		return {station_id: a, num_bikes_available: b, num_docks_available: c};
 	});
-var _user$project$Main$StationData = F5(
-	function (a, b, c, d, e) {
-		return {id: a, name: b, coord: c, num_bikes_available: d, num_docks_available: e};
-	});
-var _user$project$Main$Loaded = function (a) {
-	return {ctor: 'Loaded', _0: a};
+var _user$project$Main$Stations = function (a) {
+	return {ctor: 'Stations', _0: a};
 };
 var _user$project$Main$Fail = function (a) {
 	return {ctor: 'Fail', _0: a};
 };
 var _user$project$Main$update = F2(
 	function (new_info, st) {
-		var _p7 = new_info;
-		if (_p7.ctor === 'Err') {
+		var _p5 = new_info;
+		if (_p5.ctor === 'Err') {
 			return {
 				ctor: '_Tuple2',
-				_0: _user$project$Main$Fail(_p7._0),
+				_0: _user$project$Main$Fail(_p5._0),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
-			var places = {
-				ctor: '::',
-				_0: _user$project$Main$home,
-				_1: {
-					ctor: '::',
-					_0: _user$project$Main$work,
-					_1: {ctor: '[]'}
-				}
-			};
-			var hwData = A2(_user$project$Main$mergeHubwayData, _p7._0._0, _p7._0._1);
-			var nearbys = A2(
-				_elm_lang$core$List$map,
-				_user$project$Main$nearby(hwData),
-				places);
 			return {
 				ctor: '_Tuple2',
-				_0: _user$project$Main$Loaded(nearbys),
+				_0: _user$project$Main$Stations(_p5._0),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		}
@@ -9032,7 +8896,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 		init: _user$project$Main$init,
 		view: _user$project$Main$view,
 		update: _user$project$Main$update,
-		subscriptions: function (_p8) {
+		subscriptions: function (_p6) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
@@ -9072,6 +8936,3 @@ for (var publicModule in Elm)
 
 }).call(this);
 </script></head><body><script type="text/javascript">Elm.Main.fullscreen()</script></body></html>
-    </div>
-  </body>
-</html>
