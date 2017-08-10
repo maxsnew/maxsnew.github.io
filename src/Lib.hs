@@ -5,6 +5,8 @@ module Lib
 
 import Hakyll
 import Control.Monad
+import Data.Maybe (fromJust)
+import System.Process (callProcess)
 
 site :: IO ()
 site = do
@@ -25,6 +27,14 @@ site = do
   
     match "templates/*" $ compile templateCompiler
 
+    -- match "../src/elm/Main.elm" $ do
+    --   route $ constRoute "hubway.html"
+    --   compile $ do
+    --     rt <- fromJust <$> (getRoute =<< getUnderlying)
+    --     unsafeCompiler $ () <$ (callProcess "elm" ["make", rt, "--output", "hubway-tmp.html"])
+
+    --     return _
+  
     match "hubway.html" $ do
       route idRoute
       compile $ getResourceBody >>=
@@ -62,3 +72,5 @@ rawOut :: Rules ()
 rawOut = do
   route   idRoute
   compile copyFileCompiler
+
+-- elm :: 
