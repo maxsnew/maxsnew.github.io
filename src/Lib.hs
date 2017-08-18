@@ -35,7 +35,7 @@ site = do
 
     --     return _
   
-    match "hubway.html" $ do
+    match "*.html" $ do
       route idRoute
       compile $ getResourceBody >>=
         loadAndApplyTemplate "templates/default.html" defaultContext
