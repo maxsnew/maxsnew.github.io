@@ -2,6 +2,8 @@ module App (State, Query(..), ui, statusUrl) where
 
 import Prelude
 import Control.Monad.Aff (Aff)
+import Data.Argonaut.Parser as Arg
+import Data.Either
 import Data.Maybe (Maybe(..))
 import DOM (DOM)
 import DOM.Event.Event (Event, preventDefault)
@@ -11,14 +13,16 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Network.HTTP.Affjax as AX
 
+import GBFS as GBFS
+
 type State =
-  { hubwayData :: Maybe String
+  { hubwayData :: Either String (GBFS.GbfsData (Array GBFS.StationStatus))
   }
 
 data Query a
-    = MakeRequest String a
+    = Refresh a
 
-type UI eff = H.Component HH.HTML -- ^ what we're rendering too
+type UI eff = H.Component HH.HTML -- ^ what we're rendering to
                           Query   -- ^ Messages
                           String  -- ^ Initial Data
                           Void    -- ^ idk
@@ -35,30 +39,29 @@ ui =
   where
 
   initialState :: String -> State
-  initialState s = { hubwayData: Nothing }
+  initialState s = { hubwayData: Left "loading..." }
 
-  mkButton s = 
-            HH.button
-                  [ HP.title s
-                  , HE.onClick $ HE.input_ (MakeRequest s)
-                  ]
-                  [ HH.text s
-                  ]     
   render :: State -> H.ComponentHTML Query
   render st =
       case st.hubwayData of
-        Nothing ->
-            HH.body [ HE.onLoad $ HE.input_ (MakeRequest statusUrl)]
-                    [ HH.text "Loading..." ]
-        Just hw ->
-            HH.p_ [ HH.text hw ]
+        Left e ->
+            HH.text e
+        Right hw ->
+            HH.p_ [ HH.text $ show (map (_.station_id) hw.data') ]
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
   eval = case _ of
-    MakeRequest s next -> do
-      response <- H.liftAff $ AX.get s
-      H.modify (_ { hubwayData = Just response.response })
+    Refresh next -> do
+      response <- H.liftAff $ AX.get statusUrl
+      H.modify (_ { hubwayData = parseResponse (response.response) })
       pure next
+
+  parseResponse s = do
+    js <- Arg.jsonParser s
+    GBFS.parseStationStatuses js
 
 statusUrl :: String
 statusUrl = "https://gbfs.thehubway.com/gbfs/en/station_status.json"
+
+infoUrl :: String
+infoUrl = "https://gbfs.thehubway.com/gbfs/en/station_information.json"

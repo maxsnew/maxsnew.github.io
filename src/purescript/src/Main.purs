@@ -14,4 +14,4 @@ main :: Eff (HA.HalogenEffects (dom :: DOM, ajax :: AX.AJAX)) Unit
 main = HA.runHalogenAff do
   body <- HA.awaitBody
   io <- runUI App.ui "" body
-  io.query $ H.action $ App.MakeRequest App.statusUrl
+  io.query $ H.action $ App.Refresh
