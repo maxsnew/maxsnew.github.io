@@ -1,5 +1,6 @@
 module GBFS where
 
+import Prelude
 import Control.Applicative
 import Control.Monad
 import Data.Either
@@ -13,8 +14,11 @@ import Data.StrMap as SM
 
 import Data.Argonaut.Core (Json)
 import Data.Argonaut.Core as Arg
+import Data.Generic
 -- | API for General Bikeshare Feed Specification (GBFS)
 -- | TODO: make these extensible records
+
+type Err a = Either String a
 
 type StationId = String
 
@@ -25,6 +29,12 @@ type GbfsData d = { last_updated :: Number
 
 -- mapGbfsData :: forall a b. (a -> b) -> GbfsData a -> GbfsData b
 -- mapGbfsData f d = 
+
+newtype NTStationStatus = NTStationStatus StationStatus
+
+derive instance genericNTStationStatus :: Generic NTStationStatus
+instance showNTStationStatus :: Show NTStationStatus where
+  show = gShow
 
 type StationStatus = { station_id :: StationId
                      , num_bikes_available :: Number
@@ -37,6 +47,11 @@ type StationStatus = { station_id :: StationId
                      , last_reported :: Number
                      }
 
+newtype NTStationInformation = NTStationInformation StationInformation
+
+derive instance genericNTStationInformation :: Generic NTStationInformation
+instance showNTStationInformation :: Show NTStationInformation where
+  show = gShow
 type StationInformation = { station_id :: StationId
                           , name :: String
                           , short_name :: String
@@ -63,17 +78,45 @@ lookupExpect fld = lookupField ("Expected object to contain " <> fld <> " field"
 lookupField :: forall e a. e -> String -> SM.StrMap a -> Either e a
 lookupField err fld smap = maybe (Left err) Right $ SM.lookup fld smap
 
-
-parseStationStatuses :: Arg.Json -> Either String (GbfsData (Array StationStatus))
-parseStationStatuses js = do
+parseStationData :: forall a. (Arg.Json -> Err a) -> Arg.Json -> Err (GbfsData a)
+parseStationData parseData js = do
   gbfs <- parseGbfs js
   let d = gbfs.data'
   rawStations <- Arg.foldJsonObject expectedObject (lookupExpect "stations") d
-  statuses <- Arg.foldJsonArray expectedArray (traverse parseStationStatus) rawStations
-  pure $ gbfs { data' = statuses }
+  d <- parseData rawStations
+  pure $ gbfs { data' = d }
   where
-    expectedArray = Left "Expected Array of StationStatuses"
-    expectedObject = Left "Expected Object with staitons field of StationStatuses"
+    expectedObject = Left "Expected Object with stations field"
+  
+
+parseStationStatuses :: Arg.Json -> Either String (GbfsData (Array StationStatus))
+parseStationStatuses =
+  parseStationData (Arg.foldJsonArray
+                      (expectedArrayOf "StationStatuses")
+                      (traverse parseStationStatus))
+
+expectedArrayOf s = Left $ "Expected Array of " <> s
+
+parseStationInfos :: Arg.Json -> Err (GbfsData (Array StationInformation))
+parseStationInfos =
+  parseStationData (Arg.foldJsonArray (expectedArrayOf "StationInfos") (traverse parseStationInfo))
+
+parseStationInfo :: Arg.Json -> Err StationInformation
+parseStationInfo =
+  Arg.foldJsonObject
+    (Left "Expected StationInfo")
+    (\smap ->
+      { station_id: _
+      , name: _
+      , short_name: _
+      , lat: _
+      , lon: _
+      } <$> (parseStationID =<< lookupExpect "station_id" smap)
+        <*> (parseStr =<< lookupExpect "name" smap)
+        <*> (parseStr =<< lookupExpect "short_name" smap)
+        <*> (parseNumber =<< lookupExpect "lat" smap)
+        <*> (parseNumber =<< lookupExpect "lon" smap)
+    )
 
 parseStationStatus :: Arg.Json -> Either String StationStatus
 parseStationStatus =
@@ -89,7 +132,7 @@ parseStationStatus =
       , is_installed: _
       , is_returning: _
       , last_reported: _
-      } <$> (parseStr =<< lookupExpect "station_id" smap)
+      } <$> (parseStationID =<< lookupExpect "station_id" smap)
         <*> (parseNumber =<< lookupExpect "num_bikes_available" smap)
         -- <*> (parseNumber =<< lookupExpect "num_bikes_disable" smap)
         <*> (parseNumber =<< lookupExpect "num_docks_available" smap)
@@ -99,6 +142,8 @@ parseStationStatus =
         <*> (parseBool =<< lookupExpect "is_returning" smap)
         <*> (parseNumber =<< lookupExpect "last_reported" smap)
       )
+
+parseStationID = parseStr
 
 parseStr :: Arg.Json -> Either String String
 parseStr = Arg.foldJsonString (expected "string") pure
