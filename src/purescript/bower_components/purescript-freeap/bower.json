@@ -1,0 +1,23 @@
+{
+  "name": "purescript-freeap",
+  "license": "MIT",
+  "ignore": [
+    "*",
+    "!src/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ethul/purescript-freeap.git"
+  },
+  "dependencies": {
+    "purescript-exists": "^3.0.0",
+    "purescript-const": "^3.0.0"
+  },
+  "devDependencies": {
+    "purescript-either": "^3.0.0",
+    "purescript-integers": "^3.0.0",
+    "purescript-generics": "^4.0.0",
+    "purescript-console": "^3.0.0",
+    "purescript-exceptions": "^3.0.0"
+  }
+}
