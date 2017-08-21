@@ -1,24 +1,25 @@
 module App (State, Query(..), ui, statusUrl) where
 
-import Prelude
+import Prelude (type (~>), Void, bind, const, discard, map, negate, pure, show,
+                ($), (+), (-), (<$>), (<*>), (<<<), (<>))
 import Control.Monad.Aff (Aff)
-import Data.Argonaut as Arg
-import Data.Argonaut.Parser as Arg
+import Data.Argonaut.Core as Arg
+import Data.Argonaut.Parser (jsonParser)
 import Data.Array as Array
-import Data.Either
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Data.Monoid
+import Data.Monoid (mempty)
 import Data.StrMap as SM
-import Data.Tuple
-import Data.Traversable
+import Data.Tuple (Tuple(..))
+import Data.Traversable (foldMap)
 import DOM (DOM)
-import DOM.Event.Event (Event, preventDefault)
+import Math (pow)
+
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties as HP
+-- import Halogen.HTML.Events as HE
+-- import Halogen.HTML.Properties as HP
 import Network.HTTP.Affjax as AX
-import Math (pow)
 
 import GBFS as GBFS
 
@@ -27,6 +28,7 @@ type State = Maybe
   , stationInfos :: Either String (Array GBFS.StationInformation)
   }
 
+type ResolvedStation = {info :: GBFS.StationInformation, status :: GBFS.StationStatus }
 type Coordinates r = { lat :: Number, lon :: Number | r }
 type Place = Coordinates (name :: String)
 
@@ -77,14 +79,16 @@ ui =
     pure $ parseResponse (resp.response)
     where
     parseResponse s = do
-      js <- Arg.jsonParser s
+      js <- jsonParser s
       (_.data') <$> parser js
 
 proximity :: forall r r'. Coordinates r -> Coordinates r' -> Number
 proximity p1 p2 = pow (p1.lat - p2.lat) 2.0 + pow (p1.lon - p2.lon) 2.0
 
+header :: forall p i. HH.HTML p i
 header = HH.thead_ $ [ HH.tr_ $ map (HH.th_ <<< pure <<< HH.text) [ "Station", "Bikes", "Vacancies" ]]
 
+renderNearPlace :: forall p i. Array ResolvedStation -> Place -> HH.HTML p i
 renderNearPlace hwData place =
   HH.div_ [ HH.h2_ [HH.text $ "Places near " <> place.name ]
           , HH.table_ [ header, renderData nearbyData ]
@@ -92,9 +96,11 @@ renderNearPlace hwData place =
   where
     nearbyData = Array.take 6 $ Array.sortWith (\dat -> proximity place dat.info) hwData
 
+renderData :: forall p i. Array ResolvedStation -> HH.HTML p i
 renderData dat =
   HH.tbody_ $ map renderStation dat
 
+renderStation :: forall p i. ResolvedStation -> HH.HTML p i
 renderStation s = HH.tr_ $ map (HH.td_ <<< pure <<< HH.text)
                   [ s.info.name
                   , show s.status.num_bikes_available
@@ -102,7 +108,8 @@ renderStation s = HH.tr_ $ map (HH.td_ <<< pure <<< HH.text)
                   ]
 
 
-mergeHWData :: {info :: Array GBFS.StationInformation, status :: Array GBFS.StationStatus} -> Array {info :: GBFS.StationInformation, status :: GBFS.StationStatus }
+mergeHWData :: {info :: Array GBFS.StationInformation, status :: Array GBFS.StationStatus}
+               -> Array ResolvedStation
 mergeHWData is = foldMap findStatus statuses
   where
     infos = is.info
@@ -110,7 +117,7 @@ mergeHWData is = foldMap findStatus statuses
     idMap :: SM.StrMap GBFS.StationInformation
     idMap = SM.unions $ map (\s -> SM.singleton s.station_id s) infos
 
-    findStatus :: GBFS.StationStatus -> Array {info :: GBFS.StationInformation, status :: GBFS.StationStatus }
+    findStatus :: GBFS.StationStatus -> Array ResolvedStation
     findStatus status = case SM.lookup status.station_id idMap of
       Nothing -> mempty
       Just info  -> pure {info: info, status: status}

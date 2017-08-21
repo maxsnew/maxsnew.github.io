@@ -3,7 +3,7 @@
 To build new purescript code
 ```sh
 cd src/purescript
-bower build
+bower install
 pulp build --to ../../content/js/hubway.js
 ```
 
