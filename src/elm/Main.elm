@@ -279,7 +279,7 @@ nearby h p =
 
 
 cutoff =
-    0.00017
+    0.000175
 
 
 
@@ -304,20 +304,6 @@ header =
             , Html.th [] [ (Html.text "Vacancies") ]
             ]
         ]
-
-
-
--- relevant_stations : List (StationStatus ID) -> Dict ID Name -> List (StationStatus Name)
--- relevant_stations ss stations_i_care_about =
---     let
---         do_i_care stat =
---             case Dict.get stat.station_id stations_i_care_about of
---                 Nothing ->
---                     Nothing
---                 Just name ->
---                     Just { stat | station_id = name }
---     in
---         List.filterMap do_i_care ss
 
 
 mk_tab : List StationData -> Html a
@@ -352,12 +338,6 @@ view model =
                     ((List.map (\( x, y ) -> view_near_place x y) nearbys)
                         ++ debugInfo nearbys
                     )
-
-        -- let
-        --     tables =
-        --         [ home_stations, work_stations ]
-        --             |> List.map (relevant_stations stations >> mk_tab)
-        -- in
         ]
 
 
