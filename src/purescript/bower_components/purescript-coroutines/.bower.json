@@ -1,0 +1,33 @@
+{
+  "name": "purescript-coroutines",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/paf31/purescript-coroutines.git"
+  },
+  "dependencies": {
+    "purescript-freet": "^3.0.0",
+    "purescript-profunctor": "^3.0.0",
+    "purescript-parallel": "^3.0.0"
+  },
+  "devDependencies": {
+    "purescript-aff": "^3.0.0"
+  },
+  "homepage": "https://github.com/paf31/purescript-coroutines",
+  "version": "4.0.0",
+  "_release": "4.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.0.0",
+    "commit": "9d8a7d63dd8db617cd4e31770b433d672a07366f"
+  },
+  "_source": "https://github.com/paf31/purescript-coroutines.git",
+  "_target": "^4.0.0",
+  "_originalSource": "purescript-coroutines"
+}

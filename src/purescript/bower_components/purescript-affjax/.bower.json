@@ -1,0 +1,53 @@
+{
+  "name": "purescript-affjax",
+  "homepage": "https://github.com/slamdata/purescript-affjax",
+  "description": "An asynchronous AJAX library built using Aff.",
+  "keywords": [
+    "purescript",
+    "ajax"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slamdata/purescript-affjax.git"
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "test",
+    "tmp",
+    "bower.json",
+    "gulpfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "purescript-aff": "^3.0.0",
+    "purescript-argonaut-core": "^3.0.0",
+    "purescript-arraybuffer-types": "^1.0.0",
+    "purescript-dom": "^4.0.0",
+    "purescript-foreign": "^4.0.0",
+    "purescript-form-urlencoded": "^3.0.0",
+    "purescript-http-methods": "^3.0.0",
+    "purescript-integers": "^3.0.0",
+    "purescript-math": "^2.0.0",
+    "purescript-media-types": "^3.0.0",
+    "purescript-nullable": "^3.0.0",
+    "purescript-refs": "^3.0.0",
+    "purescript-unsafe-coerce": "^3.0.0"
+  },
+  "devDependencies": {
+    "purescript-console": "^3.0.0"
+  },
+  "version": "4.0.0",
+  "_release": "4.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.0.0",
+    "commit": "37ae6c98a9adad9b0930cb07038c2792a732749e"
+  },
+  "_source": "https://github.com/slamdata/purescript-affjax.git",
+  "_target": "^4.0.0",
+  "_originalSource": "purescript-affjax"
+}

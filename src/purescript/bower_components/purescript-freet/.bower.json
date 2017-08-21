@@ -1,0 +1,36 @@
+{
+  "name": "purescript-freet",
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "test",
+    "bower.json",
+    "package.json"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/paf31/purescript-freet.git"
+  },
+  "dependencies": {
+    "purescript-console": "^3.0.0",
+    "purescript-control": "^3.0.0",
+    "purescript-tailrec": "^3.0.0",
+    "purescript-transformers": "^3.0.0",
+    "purescript-exists": "^3.0.0",
+    "purescript-eff": "^3.0.0"
+  },
+  "homepage": "https://github.com/paf31/purescript-freet",
+  "version": "3.0.0",
+  "_release": "3.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.0",
+    "commit": "ae79da15ae3a8ceb836477a8e7b2035f05bb6cbe"
+  },
+  "_source": "https://github.com/paf31/purescript-freet.git",
+  "_target": "^3.0.0",
+  "_originalSource": "purescript-freet"
+}

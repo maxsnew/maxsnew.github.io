@@ -1,0 +1,32 @@
+{
+  "name": "purescript-dom-indexed",
+  "homepage": "https://github.com/slamdata/purescript-dom-indexed",
+  "description": "Typed DOM attributes and properties",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slamdata/purescript-dom-indexed.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output",
+    "package.json"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.0.0",
+    "purescript-media-types": "^3.0.0",
+    "purescript-dom": "^4.0.0"
+  },
+  "version": "3.0.0",
+  "_release": "3.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.0",
+    "commit": "b499a4e7d5093cc9f37d8e82700ce92b1f190953"
+  },
+  "_source": "https://github.com/slamdata/purescript-dom-indexed.git",
+  "_target": "^3.0.0",
+  "_originalSource": "purescript-dom-indexed"
+}

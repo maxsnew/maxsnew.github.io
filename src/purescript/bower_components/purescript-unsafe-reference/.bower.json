@@ -1,0 +1,33 @@
+{
+  "name": "purescript-unsafe-reference",
+  "homepage": "https://github.com/purescript-contrib/purescript-unsafe-reference",
+  "description": "Unsafe referential equality.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/purescript-contrib/purescript-unsafe-reference"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "output",
+    "package.json",
+    "bower.json"
+  ],
+  "devDependencies": {
+    "purescript-console": "^3.0.0",
+    "purescript-exceptions": "^3.0.0"
+  },
+  "version": "2.0.0",
+  "_release": "2.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.0",
+    "commit": "30680221894f5c019deab21e9d2b34d469110b73"
+  },
+  "_source": "https://github.com/purescript-contrib/purescript-unsafe-reference.git",
+  "_target": "^2.0.0",
+  "_originalSource": "purescript-unsafe-reference"
+}
