@@ -94,11 +94,6 @@ renderNearPlace hwData place =
 
 renderData dat =
   HH.tbody_ $ map renderStation dat
-  -- HH.tr_ $ map (HH.td_ <<< pure <<< H.text)
-  --          [ dat.info.name
-  --          , show dat.status.num_bikes_available
-  --          , show dat.status.num_docks_available
-  --          ]
 
 renderStation s = HH.tr_ $ map (HH.td_ <<< pure <<< HH.text)
                   [ s.info.name
