@@ -7,3 +7,6 @@
      4) [ ] "show more" feature on each individual table
         1) [ ] Add a show more button
         2) [ ] Add an undo feature
+  3. [ ] Styling
+     1. [ ] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
+           
