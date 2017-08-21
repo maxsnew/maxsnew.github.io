@@ -65,8 +65,8 @@ ui =
             Left err -> HH.text ("Error: " <> err)
             Right (Tuple statuses infos) ->
               let hwData = mergeHWData { info: infos, status: statuses }
-              in HH.div_ [ HH.slot HOME STab.stationTable { place: home, stations: hwData } absurd
-                         , HH.slot WORK STab.stationTable { place: work, stations: hwData } absurd
+              in HH.div_ [ HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 8 }) absurd
+                         , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
                          ]
 
   eval :: Query ~> H.ParentDSL State Query STab.Query Slot Void (Aff (dom :: DOM, ajax :: AX.AJAX | eff))

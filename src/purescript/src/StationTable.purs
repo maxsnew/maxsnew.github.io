@@ -1,6 +1,6 @@
-module StationTable (TableData, Query(..), stationTable) where
+module StationTable (TableData, Query(..), stationTable, mkTableData) where
 
-import Prelude (type (~>), Void, const, map, pure, show, ($), (+), (-), (<$), (<<<), (<>))
+import Prelude (type (~>), Void, const, map, pure, show, ($), (+), (-), (<$), (<<<), (<>), discard)
 
 import Control.Monad.Aff (Aff)
 import Data.Array as Array
@@ -8,7 +8,8 @@ import Data.Maybe (Maybe(..))
 import DOM (DOM)
 import Halogen as H
 import Halogen.HTML as HH
--- import Halogen.HTML.Events as HE
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
 import Math (pow)
 
 import Common
@@ -16,9 +17,16 @@ import Common
 type State = TableData
 type TableData = { place :: Place
                  , stations :: Array ResolvedStation
+                 , limit :: Int
+                 , initLimit :: Int
                  }
 
 data Query a = NewData TableData a
+             | IncLimit a
+             | ResetLimit a
+
+mkTableData :: { place :: Place, stations :: Array ResolvedStation, initLimit :: Int } -> TableData
+mkTableData s = { place: s.place, stations: s.stations, initLimit: s.initLimit, limit: s.initLimit }
 
 type UI eff = H.Component HH.HTML
                           Query
@@ -40,15 +48,31 @@ stationTable =
   render st =
     HH.div_ [ HH.h2_ [HH.text $ "Places near " <> st.place.name ]
             , HH.table_ [ header, renderStations nearbyStations ]
+            , HH.button [ HP.title "press for more"
+                        , HE.onClick $ HE.input_ IncLimit
+                        ]
+                        [ HH.text "press for more"]
+            , HH.button [ HP.title "reset"
+                        , HE.onClick $ HE.input_ ResetLimit
+                        ]
+                        [ HH.text "reset"]
             ]
     where
-    nearbyStations = Array.take 6 $ Array.sortWith proximityToPlace st.stations
+    nearbyStations = Array.take st.limit $ Array.sortWith proximityToPlace st.stations
     proximityToPlace dat = proximity st.place dat.info
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (dom :: DOM | eff))
   eval = case _ of
     NewData dat next ->
       next <$ H.put dat
+
+    IncLimit next -> do
+      H.modify $ \st -> { place: st.place, stations: st.stations, limit: st.limit + 5, initLimit: st.initLimit }
+      pure next
+
+    ResetLimit next -> do
+      H.modify $ \st -> { place: st.place, stations: st.stations, limit: st.initLimit, initLimit: st.initLimit }
+      pure next
 
 renderStations :: forall p i. Array ResolvedStation -> HH.HTML p i
 renderStations dat =
