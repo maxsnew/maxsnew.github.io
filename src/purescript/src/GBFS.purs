@@ -3,7 +3,8 @@ module GBFS where
 import Prelude (class Show, bind, pure, ($), (/=), (<$>), (<*>), (<<<), (<>), (=<<))
 import Data.Either (Either(..))
 import Data.Generic (class Generic, gShow)
-import Data.Maybe (maybe)
+import Data.Int as Int
+import Data.Maybe (Maybe(..), maybe)
 import Data.Traversable (traverse)
 import Data.StrMap as SM
 
@@ -31,9 +32,9 @@ instance showNTStationStatus :: Show NTStationStatus where
   show = gShow
 
 type StationStatus = { station_id :: StationId
-                     , num_bikes_available :: Number -- Int
+                     , num_bikes_available :: Int
                      -- , num_bikes_disabled :: Maybe Int
-                     , num_docks_available :: Number -- Int
+                     , num_docks_available :: Int
                      -- , num_docks_disabled :: Maybe Int
                      , is_renting :: Boolean
                      , is_installed :: Boolean
@@ -128,9 +129,9 @@ parseStationStatus =
       , is_returning: _
       , last_reported: _
       } <$> (parseStationId =<< lookupExpect "station_id" smap)
-        <*> (parseNumber =<< lookupExpect "num_bikes_available" smap)
+        <*> (parseInt =<< lookupExpect "num_bikes_available" smap)
         -- <*> (parseNumber =<< lookupExpect "num_bikes_disable" smap)
-        <*> (parseNumber =<< lookupExpect "num_docks_available" smap)
+        <*> (parseInt =<< lookupExpect "num_docks_available" smap)
         -- <*> (parseNumber =<< lookupExpect "num_bikes_disabled" smap)
         <*> (parseBool =<< lookupExpect "is_renting" smap)
         <*> (parseBool =<< lookupExpect "is_installed" smap)
@@ -144,9 +145,16 @@ parseStationId = parseStr
 parseStr :: Arg.Json -> Err String
 parseStr = Arg.foldJsonString (expected "string") pure
 
--- Unsafe: should check if it's really an int
 parseNumber :: Arg.Json -> Err Number
 parseNumber = Arg.foldJsonNumber (expected "number") pure
+
+parseInt :: Arg.Json -> Err Int
+parseInt js = do
+  num <- parseNumber js
+  case Int.fromNumber num of
+    Nothing -> expected "Int, got Number"
+    Just i -> Right i
+  
 
 parseBool :: Arg.Json -> Err Boolean
 parseBool = Arg.foldJsonNumber (expected "boolean") (pure <<< numToBool)

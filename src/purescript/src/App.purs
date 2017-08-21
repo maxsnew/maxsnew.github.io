@@ -28,6 +28,7 @@ type State = Maybe
   , stationInfos :: Either String (Array GBFS.StationInformation)
   }
 
+-- invariant: info.station_id == status.station_id
 type ResolvedStation = {info :: GBFS.StationInformation, status :: GBFS.StationStatus }
 type Coordinates r = { lat :: Number, lon :: Number | r }
 type Place = Coordinates (name :: String)
