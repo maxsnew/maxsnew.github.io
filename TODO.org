@@ -1,7 +1,10 @@
 * Hubway
   1. [ ] Integrate the build with Hakyll
   2. [-] Features
-     1) [X] Add a refresh button
+     1) [-] Add a refresh button
+        1) [X] Add a button
+        2) [ ] Add a "last updated" timestamp
+        3) [ ] Highlight things that have changed
      2) [ ] Refresh automatically every 30 seconds
      3) [ ] Add a "bikes near me" feature
      4) [X] "show more" feature on each individual table
