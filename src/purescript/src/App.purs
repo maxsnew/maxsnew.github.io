@@ -15,8 +15,8 @@ import DOM (DOM)
 
 import Halogen as H
 import Halogen.HTML as HH
--- import Halogen.HTML.Events as HE
--- import Halogen.HTML.Properties as HP
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
 import Network.HTTP.Affjax as AX
 
 import GBFS as GBFS
@@ -62,10 +62,11 @@ ui =
         Nothing -> HH.text "Loading..."
         Just hw ->
           case Tuple <$> hw.stationStatuses <*> hw.stationInfos of
-            Left err -> HH.text ("Error: " <> err)
+            Left err -> HH.div_ [ HH.text ("Error: " <> err), refreshButton ]
             Right (Tuple statuses infos) ->
               let hwData = mergeHWData { info: infos, status: statuses }
-              in HH.div_ [ HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 8 }) absurd
+              in HH.div_ [ refreshButton
+                         , HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 8 }) absurd
                          , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
                          ]
 
@@ -85,6 +86,11 @@ ui =
     parseResponse s = do
       js <- jsonParser s
       (_.data') <$> parser js
+
+refreshButton = HH.button [ HP.title "refresh"
+                          , HE.onClick $ HE.input_ Refresh
+                          ]
+                          [ HH.text "refresh"]
 
 mergeHWData :: {info :: Array GBFS.StationInformation, status :: Array GBFS.StationStatus}
                -> Array ResolvedStation

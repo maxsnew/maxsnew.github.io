@@ -1,12 +1,12 @@
 * Hubway
   1. [ ] Integrate the build with Hakyll
-  2. [ ] Features
-     1) [ ] Add a refresh button
+  2. [-] Features
+     1) [X] Add a refresh button
      2) [ ] Refresh automatically every 30 seconds
      3) [ ] Add a "bikes near me" feature
-     4) [ ] "show more" feature on each individual table
-        1) [ ] Add a show more button
-        2) [ ] Add an undo feature
+     4) [X] "show more" feature on each individual table
+        1) [X] Add a show more button
+        2) [X] Add an undo feature
   3. [ ] Styling
      1. [ ] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
            
