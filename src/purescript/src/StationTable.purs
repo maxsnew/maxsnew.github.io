@@ -21,7 +21,7 @@ type TableData = { place :: Place
                  , initLimit :: Int
                  }
 
-data Query a = NewData TableData a
+data Query a = NewData (Array ResolvedStation) a
              | IncLimit a
              | ResetLimit a
 
@@ -63,15 +63,16 @@ stationTable =
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (dom :: DOM | eff))
   eval = case _ of
-    NewData dat next ->
-      next <$ H.put dat
+    NewData newStations next -> do
+      H.modify $ \st -> st { stations = newStations }
+      pure next
 
     IncLimit next -> do
-      H.modify $ \st -> { place: st.place, stations: st.stations, limit: st.limit + 5, initLimit: st.initLimit }
+      H.modify $ \st -> st {limit = st.limit + 5 }
       pure next
 
     ResetLimit next -> do
-      H.modify $ \st -> { place: st.place, stations: st.stations, limit: st.initLimit, initLimit: st.initLimit }
+      H.modify $ \st -> st { limit = st.initLimit }
       pure next
 
 renderStations :: forall p i. Array ResolvedStation -> HH.HTML p i

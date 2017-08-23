@@ -66,7 +66,7 @@ ui =
             Right (Tuple statuses infos) ->
               let hwData = mergeHWData { info: infos, status: statuses }
               in HH.div_ [ refreshButton
-                         , HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 8 }) absurd
+                         , HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 7 }) absurd
                          , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
                          ]
 
@@ -76,7 +76,11 @@ ui =
       infos <- H.liftAff $ getParse GBFS.parseStationInfos infoUrl
       statuses <- H.liftAff $ getParse GBFS.parseStationStatuses statusUrl
       H.put (Just { stationStatuses: statuses, stationInfos: infos })
-      pure next
+      case mkHWData infos statuses of
+        Nothing -> pure next
+        Just hwData -> do 
+          _ <- H.queryAll $ H.action $ STab.NewData hwData
+          pure next
 
   getParse :: forall a e. (Arg.Json -> Either String (GBFS.GbfsData a)) -> String -> Aff (ajax :: AX.AJAX | e) (Either String a)
   getParse parser url = do
@@ -106,3 +110,7 @@ mergeHWData is = foldMap findStatus statuses
       Nothing -> mempty
       Just info  -> pure {info: info, status: status}
 
+mkHWData :: Either String (Array GBFS.StationInformation) -> Either String (Array GBFS.StationStatus)
+            -> Maybe (Array ResolvedStation)
+mkHWData (Right info) (Right status) = Just $ mergeHWData { info, status }
+mkHWData _ _ = Nothing
