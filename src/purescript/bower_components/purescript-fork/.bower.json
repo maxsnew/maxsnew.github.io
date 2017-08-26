@@ -1,0 +1,30 @@
+{
+  "name": "purescript-fork",
+  "homepage": "https://github.com/slamdata/purescript-fork",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slamdata/purescript-fork.git"
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "bower.json",
+    "package.json"
+  ],
+  "dependencies": {
+    "purescript-aff": "^3.0.0"
+  },
+  "version": "2.0.0",
+  "_release": "2.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.0",
+    "commit": "4c0214f01aad9ecf00e3aab8656b916f68d32110"
+  },
+  "_source": "https://github.com/slamdata/purescript-fork.git",
+  "_target": "^2.0.0",
+  "_originalSource": "purescript-fork"
+}
