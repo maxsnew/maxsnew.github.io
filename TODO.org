@@ -3,7 +3,7 @@
   2. [-] Features
      1) [-] Add a refresh button
         1) [X] Add a button
-        2) [ ] Get rid of stupid duplication in initialization and update in App.purs
+        2) [X] Get rid of stupid duplication in initialization and update in App.purs
         3) [ ] Add a "last updated" timestamp
         4) [ ] Highlight things that have changed
      2) [ ] Refresh automatically every 30 seconds
@@ -11,6 +11,6 @@
      4) [X] "show more" feature on each individual table
         1) [X] Add a show more button
         2) [X] Add an undo feature
-  3. [ ] Styling
-     1. [ ] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
+  3. [X] Styling
+     1. [X] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
            

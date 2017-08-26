@@ -28,10 +28,10 @@ data Slot = HOME | WORK
 derive instance eqButtonSlot :: Eq Slot
 derive instance ordButtonSlot :: Ord Slot
 
-type State = Maybe
-  { stationStatuses :: Either String (Array GBFS.StationStatus)
-  , stationInfos :: Either String (Array GBFS.StationInformation)
-  }
+data State 
+  = Loading
+  | Error String
+  | HWData (Array ResolvedStation)
 
 -- invariant: info.station_id == status.station_id
 data Query a
@@ -54,31 +54,28 @@ ui =
   where
 
   initialState :: State
-  initialState = Nothing
+  initialState = Loading
 
-  render :: State -> H.ParentHTML Query STab.Query Slot (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
+  -- render :: State -> H.ParentHTML Query STab.Query Slot (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
   render st =
       case st of
-        Nothing -> HH.text "Loading..."
-        Just hw ->
-          case Tuple <$> hw.stationStatuses <*> hw.stationInfos of
-            Left err -> HH.div_ [ HH.text ("Error: " <> err), refreshButton ]
-            Right (Tuple statuses infos) ->
-              let hwData = mergeHWData { info: infos, status: statuses }
-              in HH.div_ [ refreshButton
-                         , HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 7 }) absurd
-                         , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
-                         ]
+        Loading -> HH.text "Loading..."
+        Error err -> HH.div_ [ HH.text ("Error: " <> err), refreshButton ]
+        HWData hwData ->
+          HH.div_ [ refreshButton
+                  , HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 7 }) absurd
+                  , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
+                  ]
 
   eval :: Query ~> H.ParentDSL State Query STab.Query Slot Void (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
   eval = case _ of
     Refresh next -> do
       infos <- H.liftAff $ getParse GBFS.parseStationInfos infoUrl
       statuses <- H.liftAff $ getParse GBFS.parseStationStatuses statusUrl
-      H.put (Just { stationStatuses: statuses, stationInfos: infos })
       case mkHWData infos statuses of
         Nothing -> pure next
         Just hwData -> do 
+          H.put (HWData hwData)
           _ <- H.queryAll $ H.action $ STab.NewData hwData
           pure next
 

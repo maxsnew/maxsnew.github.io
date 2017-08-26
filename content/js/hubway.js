@@ -8498,7 +8498,6 @@ var PS = {};
   "use strict";
   var Common = PS["Common"];
   var Control_Applicative = PS["Control.Applicative"];
-  var Control_Apply = PS["Control.Apply"];
   var Control_Bind = PS["Control.Bind"];
   var Control_Monad_Aff = PS["Control.Monad.Aff"];
   var Control_Monad_Aff_Class = PS["Control.Monad.Aff.Class"];
@@ -8534,6 +8533,31 @@ var PS = {};
   var Network_HTTP_Affjax_Response = PS["Network.HTTP.Affjax.Response"];
   var Prelude = PS["Prelude"];
   var StationTable = PS["StationTable"];        
+  var Loading = (function () {
+      function Loading() {
+
+      };
+      Loading.value = new Loading();
+      return Loading;
+  })();
+  var $$Error = (function () {
+      function $$Error(value0) {
+          this.value0 = value0;
+      };
+      $$Error.create = function (value0) {
+          return new $$Error(value0);
+      };
+      return $$Error;
+  })();
+  var HWData = (function () {
+      function HWData(value0) {
+          this.value0 = value0;
+      };
+      HWData.create = function (value0) {
+          return new HWData(value0);
+      };
+      return HWData;
+  })();
   var HOME = (function () {
       function HOME() {
 
@@ -8573,7 +8597,7 @@ var PS = {};
                   status: status
               });
           };
-          throw new Error("Failed pattern match at App line 109, column 25 - line 111, column 54: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at App line 106, column 25 - line 108, column 54: " + [ v.constructor.name ]);
       };
       return Data_Foldable.foldMap(Data_Foldable.foldableArray)(Data_Monoid.monoidArray)(findStatus)(is.status);
   };
@@ -8620,32 +8644,24 @@ var PS = {};
   });
   var ui = (function () {
       var render = function (st) {
-          if (st instanceof Data_Maybe.Nothing) {
+          if (st instanceof Loading) {
               return Halogen_HTML_Core.text("Loading...");
           };
-          if (st instanceof Data_Maybe.Just) {
-              var v = Control_Apply.apply(Data_Either.applyEither)(Data_Functor.map(Data_Either.functorEither)(Data_Tuple.Tuple.create)(st.value0.stationStatuses))(st.value0.stationInfos);
-              if (v instanceof Data_Either.Left) {
-                  return Halogen_HTML_Elements.div_([ Halogen_HTML_Core.text("Error: " + v.value0), refreshButton ]);
-              };
-              if (v instanceof Data_Either.Right) {
-                  var hwData = mergeHWData({
-                      info: v.value0.value1, 
-                      status: v.value0.value0
-                  });
-                  return Halogen_HTML_Elements.div_([ refreshButton, Halogen_HTML.slot(HOME.value)(StationTable.stationTable)(StationTable.mkTableData({
-                      place: Common.home, 
-                      stations: hwData, 
-                      initLimit: 7
-                  }))(Data_Void.absurd), Halogen_HTML.slot(WORK.value)(StationTable.stationTable)(StationTable.mkTableData({
-                      place: Common.work, 
-                      stations: hwData, 
-                      initLimit: 6
-                  }))(Data_Void.absurd) ]);
-              };
-              throw new Error("Failed pattern match at App line 64, column 11 - line 71, column 27: " + [ v.constructor.name ]);
+          if (st instanceof $$Error) {
+              return Halogen_HTML_Elements.div_([ Halogen_HTML_Core.text("Error: " + st.value0), refreshButton ]);
           };
-          throw new Error("Failed pattern match at App line 61, column 7 - line 71, column 27: " + [ st.constructor.name ]);
+          if (st instanceof HWData) {
+              return Halogen_HTML_Elements.div_([ refreshButton, Halogen_HTML.slot(HOME.value)(StationTable.stationTable)(StationTable.mkTableData({
+                  place: Common.home, 
+                  stations: st.value0, 
+                  initLimit: 7
+              }))(Data_Void.absurd), Halogen_HTML.slot(WORK.value)(StationTable.stationTable)(StationTable.mkTableData({
+                  place: Common.work, 
+                  stations: st.value0, 
+                  initLimit: 6
+              }))(Data_Void.absurd) ]);
+          };
+          throw new Error("Failed pattern match at App line 61, column 7 - line 68, column 20: " + [ st.constructor.name ]);
       };
       var getParse = function (parser) {
           return function (url) {
@@ -8664,26 +8680,23 @@ var PS = {};
       var $$eval = function (v) {
           return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(getParse(GBFS.parseStationInfos)(Common.infoUrl)))(function (v1) {
               return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(getParse(GBFS.parseStationStatuses)(Common.statusUrl)))(function (v2) {
-                  return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.put(Halogen_Query_HalogenM.monadStateHalogenM)(new Data_Maybe.Just({
-                      stationStatuses: v2, 
-                      stationInfos: v1
-                  })))(function () {
-                      var v3 = mkHWData(v1)(v2);
-                      if (v3 instanceof Data_Maybe.Nothing) {
-                          return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
-                      };
-                      if (v3 instanceof Data_Maybe.Just) {
+                  var v3 = mkHWData(v1)(v2);
+                  if (v3 instanceof Data_Maybe.Nothing) {
+                      return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
+                  };
+                  if (v3 instanceof Data_Maybe.Just) {
+                      return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.put(Halogen_Query_HalogenM.monadStateHalogenM)(new HWData(v3.value0)))(function () {
                           return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query.queryAll(ordButtonSlot)(Halogen_Query.action(StationTable.NewData.create(v3.value0))))(function (v4) {
                               return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
                           });
-                      };
-                      throw new Error("Failed pattern match at App line 79, column 7 - line 83, column 20: " + [ v3.constructor.name ]);
-                  });
+                      });
+                  };
+                  throw new Error("Failed pattern match at App line 75, column 7 - line 80, column 20: " + [ v3.constructor.name ]);
               });
           });
       };
       return Halogen_Component.parentComponent(ordButtonSlot)({
-          initialState: Data_Function["const"](Data_Maybe.Nothing.value), 
+          initialState: Data_Function["const"](Loading.value), 
           render: render, 
           "eval": $$eval, 
           receiver: Data_Function["const"](Data_Maybe.Nothing.value)
