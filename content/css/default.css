@@ -76,3 +76,44 @@ div#header #navigation a {
 /*     font-size: 14px; */
 /*     font-style: italic; */
 /* } */
+
+table {
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid #999;
+  padding: 0.5rem;
+}
+
+td {
+  text-align: left;
+}
+button {
+      color: #fff;
+  background-color: #16E826;
+  text-shadow: -1px 1px #417cb8;
+  border: none;
+
+  display: inline-block;
+  /* margin: 0 10px 0 0; */
+  /* padding: 15px 45px; */
+  font-size: 32px;
+  font-family: "Bitter",serif;
+  line-height: 1.8;
+  appearance: none;
+  box-shadow: none;
+  border-radius: 20px;
+}
+button:hover {
+  background-color: #44a93d;
+  text-shadow: -1px 1px #27496d;
+}
+button:active {
+  background-color: #248A2B;
+  text-shadow: -1px 1px #193047;
+}
+
+button:focus {
+  outline: none
+}
