@@ -1,8 +1,8 @@
 module App (State, Query(..), Effs, ui) where
 
-import Prelude -- (class Eq, class Ord, type (~>), Void, absurd, bind, const, discard, map,
-               --  pure, ($), (<$>), (<*>), (<>))
-import Control.Comonad
+import Prelude (class Eq, class Ord, type (~>), Unit, Void, absurd, bind, const, discard,
+               map, pure, show, ($), (<$>), (<>))
+import Control.Comonad (extract)
 import Control.Monad.Aff (Aff)
 import Control.Monad.Eff.Now as Now
 import Control.Monad.Eff.Now (NOW)
@@ -12,7 +12,6 @@ import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Monoid (mempty)
 import Data.StrMap as SM
-import Data.Tuple (Tuple(..))
 import Data.Time (Time)
 import Data.Traversable (foldMap)
 import DOM (DOM)
@@ -41,12 +40,12 @@ data State
 data Query a
     = Refresh a
 
-type Effs = (now :: NOW, dom :: DOM, ajax :: AX.AJAX)
+type Effs eff = (now :: NOW, dom :: DOM, ajax :: AX.AJAX | eff )
 type UI eff = H.Component HH.HTML -- ^ what we're rendering to
                           Query   -- ^ Messages
                           String  -- ^ Initial Data
                           Void    -- ^ Outgoing Messages
-                          (Aff (now :: NOW, dom :: DOM, ajax :: AX.AJAX | eff))
+                          (Aff (Effs eff))
 
 ui :: forall eff. UI eff
 ui =
@@ -61,7 +60,7 @@ ui =
   initialState :: State
   initialState = Loading
 
-  -- render :: State -> H.ParentHTML Query STab.Query Slot (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
+  render :: State -> H.ParentHTML Query STab.Query Slot (Aff (Effs eff))
   render st =
       case st of
         Loading -> HH.text "Loading..."
@@ -73,7 +72,7 @@ ui =
                   , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
                   ]
 
-  eval :: Query ~> H.ParentDSL State Query STab.Query Slot Void (Aff (now :: NOW, dom :: DOM, ajax :: AX.AJAX | eff))
+  eval :: Query ~> H.ParentDSL State Query STab.Query Slot Void (Aff (Effs eff))
   eval = case _ of
     Refresh next -> do
       infos    <- H.liftAff $ getParse GBFS.parseStationInfos infoUrl
@@ -86,15 +85,19 @@ ui =
           _ <- H.queryAll $ H.action $ STab.NewData hwData
           pure next
 
-  getParse :: forall a e. (Arg.Json -> Either String (GBFS.GbfsData a)) -> String -> Aff (ajax :: AX.AJAX | e) (Either String a)
-  getParse parser url = do
-    resp <- AX.get url
-    pure $ parseResponse (resp.response)
-    where
-    parseResponse s = do
-      js <- jsonParser s
-      (_.data') <$> parser js
+getParse :: forall a e.
+            (Arg.Json -> Either String (GBFS.GbfsData a))
+         -> String
+         -> Aff (ajax :: AX.AJAX | e) (Either String a)
+getParse parser url = do
+  resp <- AX.get url
+  pure $ parseResponse (resp.response)
+  where
+  parseResponse s = do
+    js <- jsonParser s
+    (_.data') <$> parser js
 
+refreshButton :: forall t. HH.HTML t (Query Unit)
 refreshButton = HH.button [ HP.title "refresh"
                           , HE.onClick $ HE.input_ Refresh
                           ]
