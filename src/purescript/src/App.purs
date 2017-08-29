@@ -1,8 +1,11 @@
-module App (State, Query(..), ui) where
+module App (State, Query(..), Effs, ui) where
 
-import Prelude (class Eq, class Ord, type (~>), Void, absurd, bind, const, discard, map,
-                pure, ($), (<$>), (<*>), (<>))
+import Prelude -- (class Eq, class Ord, type (~>), Void, absurd, bind, const, discard, map,
+               --  pure, ($), (<$>), (<*>), (<>))
+import Control.Comonad
 import Control.Monad.Aff (Aff)
+import Control.Monad.Eff.Now as Now
+import Control.Monad.Eff.Now (NOW)
 import Data.Argonaut.Core as Arg
 import Data.Argonaut.Parser (jsonParser)
 import Data.Either (Either(..))
@@ -10,6 +13,7 @@ import Data.Maybe (Maybe(..))
 import Data.Monoid (mempty)
 import Data.StrMap as SM
 import Data.Tuple (Tuple(..))
+import Data.Time (Time)
 import Data.Traversable (foldMap)
 import DOM (DOM)
 
@@ -31,17 +35,18 @@ derive instance ordButtonSlot :: Ord Slot
 data State 
   = Loading
   | Error String
-  | HWData (Array ResolvedStation)
+  | HWData (Array ResolvedStation) Time
 
 -- invariant: info.station_id == status.station_id
 data Query a
     = Refresh a
 
+type Effs = (now :: NOW, dom :: DOM, ajax :: AX.AJAX)
 type UI eff = H.Component HH.HTML -- ^ what we're rendering to
                           Query   -- ^ Messages
                           String  -- ^ Initial Data
                           Void    -- ^ Outgoing Messages
-                          (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
+                          (Aff (now :: NOW, dom :: DOM, ajax :: AX.AJAX | eff))
 
 ui :: forall eff. UI eff
 ui =
@@ -61,21 +66,23 @@ ui =
       case st of
         Loading -> HH.text "Loading..."
         Error err -> HH.div_ [ HH.text ("Error: " <> err), refreshButton ]
-        HWData hwData ->
+        HWData hwData time ->
           HH.div_ [ refreshButton
+                  , HH.text $ "Last updated: " <> show time
                   , HH.slot HOME STab.stationTable (STab.mkTableData { place: home, stations: hwData, initLimit: 7 }) absurd
                   , HH.slot WORK STab.stationTable (STab.mkTableData { place: work, stations: hwData, initLimit: 6 }) absurd
                   ]
 
-  eval :: Query ~> H.ParentDSL State Query STab.Query Slot Void (Aff (dom :: DOM, ajax :: AX.AJAX | eff))
+  eval :: Query ~> H.ParentDSL State Query STab.Query Slot Void (Aff (now :: NOW, dom :: DOM, ajax :: AX.AJAX | eff))
   eval = case _ of
     Refresh next -> do
-      infos <- H.liftAff $ getParse GBFS.parseStationInfos infoUrl
+      infos    <- H.liftAff $ getParse GBFS.parseStationInfos infoUrl
       statuses <- H.liftAff $ getParse GBFS.parseStationStatuses statusUrl
       case mkHWData infos statuses of
         Nothing -> pure next
-        Just hwData -> do 
-          H.put (HWData hwData)
+        Just hwData -> do
+          time <- H.liftEff $ Now.nowTime
+          H.put (HWData hwData (extract time))
           _ <- H.queryAll $ H.action $ STab.NewData hwData
           pure next
 

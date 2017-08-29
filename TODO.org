@@ -4,13 +4,15 @@
      1) [-] Add a refresh button
         1) [X] Add a button
         2) [X] Get rid of stupid duplication in initialization and update in App.purs
-        3) [ ] Add a "last updated" timestamp
-        4) [ ] Highlight things that have changed
+        3) [X] Add a "last updated" timestamp
+        4) [ ] Highlight things that have changed?
      2) [ ] Refresh automatically every 30 seconds
-     3) [ ] Add a "bikes near me" feature
-     4) [X] "show more" feature on each individual table
+     3) [ ] Don't lose old data on a network error
+     4) [ ] Add a "bikes near me" feature
+     5) [X] "show more" feature on each individual table
         1) [X] Add a show more button
         2) [X] Add an undo feature
-  3. [X] Styling
+  3. [-] Styling
      1. [X] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
+     2. [ ] Make last updated prettier
            
