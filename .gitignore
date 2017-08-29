@@ -11,3 +11,4 @@ _cache/
 _site
 .stack-work/
 src/elm/elm-stuff
+bower_components
