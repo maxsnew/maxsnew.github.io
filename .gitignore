@@ -10,5 +10,5 @@ cabal.sandbox.config
 _cache/
 _site
 .stack-work/
-src/elm/elm-stuff
 bower_components
+src
