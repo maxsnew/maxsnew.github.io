@@ -4,6 +4,11 @@ title: Publications
 
 # Papers
 
+* **Fair enumeration combinators**  
+	**Max S. New**, Burke Fetscher, Robert Bruce Findler, Jay McCarthy  
+	Journal of Functional Programming, Volume 27, 2017
+	[Official link](https://www.cambridge.org/core/journals/journal-of-functional-programming/article/fair-enumeration-combinators/CCEC7CBA286B2F792B073586EFCD6F3A)
+
 * **Fully Abstract Compilation via Universal Embedding**  
 	**Max S. New**, William J. Bowman, Amal Ahmed  
 	ICFP 2016: Proceedings of the 21st ACM SIGPLAN International Conference on Functional Programming  
@@ -15,7 +20,7 @@ title: Publications
 	[Official link](http://dl.acm.org/citation.cfm?id=2951930)
 
 * **A Coq Library For Internal Verification of
-Running-Times**
+Running-Times**  
 	Jay McCarthy, Burke Fetscher, **Max New**, Daniel Feltey, Robert Bruce Findler  
 	FLOPS 2016: Proceedings of the 13th International Symposium on Functional and Logic Programming  
 	[Repository](https://github.com/rfindler/395-2013)
