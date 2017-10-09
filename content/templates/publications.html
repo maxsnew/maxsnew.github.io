@@ -1,0 +1,24 @@
+<h1 id="papers">Papers</h1>
+<ul>
+  $for(publications)$
+  <li><p>
+      <strong>$title$</strong><br />
+      $authors$<br />
+      $venue$<br />
+      $if(official)$
+        <a href="$official$">Official link</a>
+      $endif$
+      $if(preprint)$
+	<a href="$preprint$">Preprint</a>
+      $endif$
+  </p></li>
+  $endfor$
+</ul>
+
+<h1 id="abstracts">Abstracts</h1>
+<ul>
+<li><strong>Gradual Type Precision as Retraction</strong><br />
+Max S. New<br />
+POPL 2017 Student Research Competition<br />
+<a href="./docs/precision-as-retraction.pdf">Extended Abstract</a></li>
+</ul>

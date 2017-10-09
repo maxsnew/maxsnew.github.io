@@ -4,8 +4,18 @@ module Lib
     ) where
 
 import Hakyll
+
 import Control.Monad
+import Control.Monad.Error
+import Data.Aeson.Types (typeMismatch)
+import qualified Data.ByteString.Lazy as LBS
 import Data.Maybe (fromJust)
+import Data.Monoid
+import Data.Traversable
+import Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Yaml as Yaml
+import Data.Yaml ((.:), (.:?), FromJSON)
 import System.Process (callProcess)
 
 site :: IO ()
@@ -27,33 +37,17 @@ site = do
   
     match "templates/*" $ compile templateCompiler
 
-    -- match "../src/elm/Main.elm" $ do
-    --   route $ constRoute "hubway.html"
-    --   compile $ do
-    --     rt <- fromJust <$> (getRoute =<< getUnderlying)
-    --     unsafeCompiler $ () <$ (callProcess "elm" ["make", rt, "--output", "hubway-tmp.html"])
-
-    --     return _
-  
     match "*.html" $ do
       route idRoute
       compile $ getResourceBody >>=
         loadAndApplyTemplate "templates/default.html" defaultContext
 
-    -- create ["blog.html"] $ do
-    --   route idRoute
-    --   compile $ do
-    --     posts <- loadAll "blog/*"
-
-    --     let blogData =
-    --           listField "posts" defaultContext (return posts) `mappend`
-    --           constField "title" "Blog Archive"               `mappend`
-    --           defaultContext
-
-    --     makeItem ""
-    --       >>= loadAndApplyTemplate "templates/blog.html" blogData
-    --       >>= loadAndApplyTemplate "templates/default.html" blogData
-    --       >>= relativizeUrls
+    match "publications.yaml" $ do
+      route $ setExtension "html"
+      compile $ yamlCompiler
+                >>= loadAndApplyTemplate "templates/publications.html" pubsContext
+                >>= loadAndApplyTemplate "templates/default.html" defaultContext
+        
 -- Configuration
 conf :: Configuration
 conf = defaultConfiguration {
@@ -73,4 +67,47 @@ rawOut = do
   route   idRoute
   compile copyFileCompiler
 
--- elm :: 
+yamlCompiler :: (FromJSON a) => Compiler (Item a)
+yamlCompiler = do
+  path <- getResourceFilePath
+  rawItem <- getResourceLBS
+  for rawItem $ \raw ->
+    case Yaml.decodeEither . LBS.toStrict $ raw of
+      Left err     -> throwError ["Failed to parse " <> path <> " : " <> show err]
+      Right parsed -> return parsed
+
+-- | Publications
+data Publication = Publication { pTitle :: Text
+                               , pAuthors :: Text
+                               , pVenue :: Text
+                               , pOfficialLink :: Maybe Text
+                               , pPreprintLink :: Maybe Text
+                               }
+
+instance FromJSON Publication where
+  parseJSON (Yaml.Object v) = 
+    Publication      <$>
+    v .: "title"     <*>
+    v .: "authors"   <*>
+    v .: "venue"     <*>
+    v .:? "official" <*>
+    v .:? "preprint"
+  parseJSON invalid = typeMismatch "Publication" invalid
+
+pField :: String -> (a -> Text) -> Context a
+pField s m = field s (return . T.unpack . m . itemBody)
+
+mField :: String -> (a -> Maybe Text) -> Context a
+mField s m = field s (fromMay . m . itemBody)
+  where fromMay Nothing  = fail ""
+        fromMay (Just t) = return . T.unpack $ t
+
+pubContext :: Context Publication
+pubContext =  pField "title" pTitle
+           <> pField "authors" pAuthors
+           <> pField "venue" pVenue
+           <> mField "official" pOfficialLink
+           <> mField "preprint" pPreprintLink
+
+pubsContext :: Context [Publication]
+pubsContext = listFieldWith "publications" pubContext (return . sequenceA)

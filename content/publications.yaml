@@ -1,0 +1,25 @@
+- title: Fair enumeration combinators
+  authors: Max S. New, Burke Fetscher, Robert Bruce Findler, Jay McCarthy
+  venue: Journal of Functional Programming, Volume 27, 2017
+  official: https://www.cambridge.org/core/journals/journal-of-functional-programming/article/fair-enumeration-combinators/CCEC7CBA286B2F792B073586EFCD6F3A
+
+- title: Fully Abstract Compilation via Universal Embedding
+  authors: Max S. New, William J. Bowman, Amal Ahmed
+  venue: "ICFP 2016: Proceedings of the 21st ACM SIGPLAN International Conference on Functional Programming"
+  official: http://dl.acm.org/citation.cfm?id=2951941
+  preprint: docs/fabcc-paper.pdf
+
+- title: "Oh Lord, Please Don't Let Contracts be Misunderstood (Functional Pearl)"
+  authors: Christos Dimoulas, Max S. New, Robert Bruce Findler, Matthias Felleisen
+  venue: "ICFP 2016: Proceedings of the 21st ACM SIGPLAN International Conference on Functional Programming"
+  official: http://dl.acm.org/citation.cfm?id=2951930
+
+- title: A Coq Library For Internal Verification of Running-Times
+  authors: Jay McCarthy, Burke Fetscher, Max New, Daniel Feltey, Robert Bruce Findler
+  venue: "FLOPS 2016: Proceedings of the 13th International Symposium on Functional and Logic Programming"
+  # [Repository](https://github.com/rfindler/395-2013)
+
+- title: Is Sound Gradual Typing Dead?
+  authors: Asumu Takikawa, Daniel Feltey, Ben Greenman, Max S. New, Jan Vitek, Matthias Felleisen
+  venue: "POPL '16: Proceedings of the 43rd Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages"
+  official: http://dl.acm.org/citation.cfm?id=2837630
