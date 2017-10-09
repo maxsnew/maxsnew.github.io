@@ -1,6 +1,6 @@
 <h1 id="papers">Papers</h1>
 <ul>
-  $for(publications)$
+  $for(papers)$
   <li><p>
       <strong>$title$</strong><br />
       $authors$<br />
@@ -11,11 +11,16 @@
   </p></li>
   $endfor$
 </ul>
-
-<h1 id="abstracts">Abstracts</h1>
+<h1 id="papers">Abstracts</h1>
 <ul>
-<li><strong>Gradual Type Precision as Retraction</strong><br />
-Max S. New<br />
-POPL 2017 Student Research Competition<br />
-<a href="./docs/precision-as-retraction.pdf">Extended Abstract</a></li>
+  $for(abstracts)$
+  <li><p>
+      <strong>$title$</strong><br />
+      $authors$<br />
+      $venue$<br />
+      $for(links)$
+	<a href="$url$">$text$</a>
+      $endfor$
+  </p></li>
+  $endfor$
 </ul>

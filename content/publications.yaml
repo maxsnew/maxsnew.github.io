@@ -29,3 +29,9 @@
   links:
     Official Link: "http://dl.acm.org/citation.cfm?id=2837630"
 
+- title: Gradual Type Precision as Retraction
+  authors: Max S. New
+  venue: POPL 2017 Student Research Competition
+  links:
+    Extended Abstract: "docs/precision-as-retraction.pdf"
+  abstract: True

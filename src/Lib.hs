@@ -83,6 +83,7 @@ data Publication = Publication { pTitle :: Text
                                , pAuthors :: Text
                                , pVenue :: Text
                                , pLinks :: Map Text Text
+                               , pAbstract :: Bool
                                }
 instance FromJSON Publication where
   parseJSON (Yaml.Object v) = 
@@ -90,7 +91,9 @@ instance FromJSON Publication where
     v .: "title"     <*>
     v .: "authors"   <*>
     v .: "venue"     <*>
-    (fromMaybe mempty <$> v .:? "links")
+    (withDefault mempty $ v .:? "links") <*>
+    (withDefault False  $ v .:? "abstract")
+    where withDefault d = fmap (fromMaybe d)
   parseJSON invalid = typeMismatch "Publication" invalid
 
 pField :: String -> (a -> Text) -> Context a
@@ -112,4 +115,6 @@ pubContext =  pField "title" pTitle
            <> listFieldWith "links" linkContext (return . sequenceA . fmap (Map.toList . pLinks))
 
 pubsContext :: Context [Publication]
-pubsContext = listFieldWith "publications" pubContext (return . sequenceA)
+pubsContext =
+  listFieldWith "papers" pubContext (return . sequenceA . fmap (filter (not . pAbstract)))
+  <> listFieldWith "abstracts" pubContext (return . sequenceA . fmap (filter pAbstract))

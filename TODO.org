@@ -17,7 +17,8 @@
      2. [ ] Make last updated prettier
            
 * Publications
-  1. [-] YAMLize
+  1. [X] YAMLize
      1. [X] YAMLize pubs
-     2. [ ] YAMLize abstracts
+     2. [X] YAMLize abstracts
   2. [X] allow arbitrary links
+  3. [ ] DRY up the template
