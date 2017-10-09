@@ -9,6 +9,7 @@ import Control.Monad
 import Control.Monad.Error
 import Data.Aeson.Types (typeMismatch)
 import qualified Data.ByteString.Lazy as LBS
+import qualified Data.List as List
 import Data.Maybe (fromMaybe)
 import Data.Map (Map)
 import qualified Data.Map as Map
@@ -47,7 +48,7 @@ site = do
     match "publications.yaml" $ do
       route $ setExtension "html"
       compile $ yamlCompiler
-                >>= loadAndApplyTemplate "templates/publications.html" pubsContext
+                >>= loadAndApplyTemplate "templates/publications.html" groupedPubsContext
                 >>= loadAndApplyTemplate "templates/default.html" defaultContext
         
 -- Configuration
@@ -114,7 +115,14 @@ pubContext =  pField "title" pTitle
            <> pField "venue" pVenue
            <> listFieldWith "links" linkContext (return . sequenceA . fmap (Map.toList . pLinks))
 
-pubsContext :: Context [Publication]
+pubsContext :: Context (Text, [Publication])
 pubsContext =
-  listFieldWith "papers" pubContext (return . sequenceA . fmap (filter (not . pAbstract)))
-  <> listFieldWith "abstracts" pubContext (return . sequenceA . fmap (filter pAbstract))
+  pField "group-name" fst
+  <> listFieldWith "papers" pubContext (return . traverse snd)
+
+groupedPubsContext :: Context [Publication]
+groupedPubsContext = listFieldWith "groups" pubsContext foo
+  where foo :: Item [Publication] -> Compiler [Item (Text, [Publication])]
+        foo ipubs = return . for ipubs $ \pubs ->
+          let (absPubs, paperPubs) = List.partition pAbstract pubs
+          in [ ("Peer-Reviewed Papers", paperPubs), ("Abstracts", absPubs) ]

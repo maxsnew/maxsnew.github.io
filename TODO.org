@@ -21,4 +21,4 @@
      1. [X] YAMLize pubs
      2. [X] YAMLize abstracts
   2. [X] allow arbitrary links
-  3. [ ] DRY up the template
+  3. [X] DRY up the template

@@ -1,4 +1,5 @@
-<h1 id="papers">Papers</h1>
+$for(groups)$
+<h1 id="papers">$group-name$</h1>
 <ul>
   $for(papers)$
   <li><p>
@@ -11,16 +12,4 @@
   </p></li>
   $endfor$
 </ul>
-<h1 id="papers">Abstracts</h1>
-<ul>
-  $for(abstracts)$
-  <li><p>
-      <strong>$title$</strong><br />
-      $authors$<br />
-      $venue$<br />
-      $for(links)$
-	<a href="$url$">$text$</a>
-      $endfor$
-  </p></li>
-  $endfor$
-</ul>
+$endfor$
