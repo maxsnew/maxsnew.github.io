@@ -5,12 +5,9 @@
       <strong>$title$</strong><br />
       $authors$<br />
       $venue$<br />
-      $if(official)$
-        <a href="$official$">Official link</a>
-      $endif$
-      $if(preprint)$
-	<a href="$preprint$">Preprint</a>
-      $endif$
+      $for(links)$
+	<a href="$url$">$text$</a>
+      $endfor$
   </p></li>
   $endfor$
 </ul>

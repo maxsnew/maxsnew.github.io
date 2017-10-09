@@ -16,3 +16,8 @@
      1. [X] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
      2. [ ] Make last updated prettier
            
+* Publications
+  1. [-] YAMLize
+     1. [X] YAMLize pubs
+     2. [ ] YAMLize abstracts
+  2. [X] allow arbitrary links

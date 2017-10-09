@@ -9,7 +9,9 @@ import Control.Monad
 import Control.Monad.Error
 import Data.Aeson.Types (typeMismatch)
 import qualified Data.ByteString.Lazy as LBS
-import Data.Maybe (fromJust)
+import Data.Maybe (fromMaybe)
+import Data.Map (Map)
+import qualified Data.Map as Map
 import Data.Monoid
 import Data.Traversable
 import Data.Text (Text)
@@ -80,18 +82,15 @@ yamlCompiler = do
 data Publication = Publication { pTitle :: Text
                                , pAuthors :: Text
                                , pVenue :: Text
-                               , pOfficialLink :: Maybe Text
-                               , pPreprintLink :: Maybe Text
+                               , pLinks :: Map Text Text
                                }
-
 instance FromJSON Publication where
   parseJSON (Yaml.Object v) = 
     Publication      <$>
     v .: "title"     <*>
     v .: "authors"   <*>
     v .: "venue"     <*>
-    v .:? "official" <*>
-    v .:? "preprint"
+    (fromMaybe mempty <$> v .:? "links")
   parseJSON invalid = typeMismatch "Publication" invalid
 
 pField :: String -> (a -> Text) -> Context a
@@ -102,12 +101,15 @@ mField s m = field s (fromMay . m . itemBody)
   where fromMay Nothing  = fail ""
         fromMay (Just t) = return . T.unpack $ t
 
+linkContext :: Context (Text, Text)
+linkContext =  pField "url" snd
+            <> pField "text" fst
+
 pubContext :: Context Publication
 pubContext =  pField "title" pTitle
            <> pField "authors" pAuthors
            <> pField "venue" pVenue
-           <> mField "official" pOfficialLink
-           <> mField "preprint" pPreprintLink
+           <> listFieldWith "links" linkContext (return . sequenceA . fmap (Map.toList . pLinks))
 
 pubsContext :: Context [Publication]
 pubsContext = listFieldWith "publications" pubContext (return . sequenceA)
