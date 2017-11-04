@@ -21,6 +21,7 @@ library
                        bytestring,
                        containers,
                        hakyll,
+                       filepath,
                        mtl,
                        process,
                        text,

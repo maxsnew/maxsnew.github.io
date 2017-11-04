@@ -19,13 +19,17 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
 import Data.Yaml ((.:), (.:?), FromJSON)
-import System.Process (callProcess)
+import System.FilePath
+import System.Process
 
 site :: IO ()
 site = do
   hakyllWith conf $ do
     match "*.md" mdpost
-    match "blog/*.md" mdpost
+
+    match "ps/src/Main.purs" $ do
+      route   $ constRoute "js/hubway.js"
+      compile $ psCompiler
 
     match "js/*.js" $ do
       route   idRoute
@@ -79,6 +83,23 @@ yamlCompiler = do
       Left err     -> throwError ["Failed to parse " <> path <> " : " <> show err]
       Right parsed -> return parsed
 
+-- | Purescript
+
+psCompiler :: Compiler (Item String)
+psCompiler = do
+  psFile <- getResourceFilePath
+  let psBaseDir = takeDirectory . takeDirectory $ psFile
+  js <- unsafeCompiler $ do
+    _ <- flip readCreateProcess "" . shell . List.intercalate " && " $
+      [ "cd " <> psBaseDir
+      , "bower install"
+      , "pulp build --to " <> tmpFile
+      ]
+    readFile $ psBaseDir </> tmpFile
+  makeItem js
+  where
+    tmpFile = "tmp.js"
+
 -- | Publications
 data Publication = Publication { pTitle :: Text
                                , pAuthors :: Text
@@ -121,8 +142,7 @@ pubsContext =
   <> listFieldWith "papers" pubContext (return . traverse snd)
 
 groupedPubsContext :: Context [Publication]
-groupedPubsContext = listFieldWith "groups" pubsContext foo
-  where foo :: Item [Publication] -> Compiler [Item (Text, [Publication])]
-        foo ipubs = return . for ipubs $ \pubs ->
-          let (absPubs, paperPubs) = List.partition pAbstract pubs
-          in [ ("Peer-Reviewed Papers", paperPubs), ("Abstracts", absPubs) ]
+groupedPubsContext = listFieldWith "groups" pubsContext (return . traverse separate)
+  where -- foo :: Item [Publication] -> Compiler [Item (Text, [Publication])]
+        separate pubs = let (absPubs, paperPubs) = List.partition pAbstract pubs
+                        in [ ("Peer-Reviewed Papers", paperPubs), ("Abstracts", absPubs) ]

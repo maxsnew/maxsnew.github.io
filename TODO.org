@@ -1,5 +1,7 @@
 * Hubway
-  1. [ ] Integrate the build with Hakyll
+  1. [-] Integrate the build with Hakyll
+     1. [X] Just make it work so I don't have to build manually
+     2. [ ] Do proper error detection
   2. [-] Features
      1) [-] Add a refresh button
         1) [X] Add a button
@@ -9,14 +11,16 @@
      2) [ ] Refresh automatically every 30 seconds
      3) [ ] Don't lose old data on a network error
      4) [ ] Add a "bikes near me" feature
-     5) [X] "show more" feature on each individual table
+     5) [-] "show more" feature on each individual table
         1) [X] Add a show more button
         2) [X] Add an undo feature
+	3) [ ] Only show reset when it does something
+	4) [ ] Better name than "press for more"
   3. [-] Styling
      1. [X] https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_boxes/Styling_tables
      2. [ ] Make last updated prettier
            
-* Publications
+* DONE Publications
   1. [X] YAMLize
      1. [X] YAMLize pubs
      2. [X] YAMLize abstracts
