@@ -1,6 +1,6 @@
 module StationTable (TableData, Query(..), stationTable, mkTableData) where
 
-import Prelude (type (~>), Void, const, map, pure, show, ($), (+), (-), (<$), (<<<), (<>), discard)
+import Prelude -- (type (~>), Void, const, map, pure, show, ($), (+), (-), (<$), (<<<), (<>), discard)
 
 import Control.Monad.Aff (Aff)
 import Data.Array as Array
@@ -46,17 +46,20 @@ stationTable =
 
   render :: State -> H.ComponentHTML Query
   render st =
-    HH.div_ [ HH.h2_ [HH.text $ "Places near " <> st.place.name ]
-            , HH.table_ [ header, renderStations nearbyStations ]
-            , HH.button [ HP.title "press for more"
-                        , HE.onClick $ HE.input_ IncLimit
-                        ]
-                        [ HH.text "press for more"]
-            , HH.button [ HP.title "reset"
-                        , HE.onClick $ HE.input_ ResetLimit
-                        ]
-                        [ HH.text "reset"]
-            ]
+    HH.div_ $ [ HH.h2_ [HH.text $ "Places near " <> st.place.name ]
+              , HH.table_ [ header, renderStations nearbyStations ]
+              , HH.button [ HP.title "more stations"
+                          , HE.onClick $ HE.input_ IncLimit
+                          ]
+                          [ HH.text "more stations"]
+              ]
+              <>
+              if st.limit /= st.initLimit
+              then [ HH.button [ HP.title "hide"
+                               , HE.onClick $ HE.input_ ResetLimit
+                               ]
+                               [ HH.text "hide"] ]
+              else []
     where
     nearbyStations = Array.take st.limit $ Array.sortWith proximityToPlace st.stations
     proximityToPlace dat = proximity st.place dat.info
