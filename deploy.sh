@@ -1,6 +1,7 @@
 #!/bin/bash
 
-stack exec maxsnew-exe clean \
+stack build \
+    && stack exec maxsnew-exe clean \
     && stack exec maxsnew-exe build \
     && git checkout master \
     && cp -a _site/. . \
