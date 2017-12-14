@@ -12,3 +12,4 @@ _site
 .stack-work/
 bower_components
 src
+content/
