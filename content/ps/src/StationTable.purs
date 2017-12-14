@@ -61,7 +61,7 @@ stationTable =
                                [ HH.text "hide"] ]
               else []
     where
-    nearbyStations = Array.take st.limit $ Array.sortWith proximityToPlace st.stations
+    nearbyStations = Array.take st.limit <<< Array.sortWith proximityToPlace <<< Array.filter (\x -> x.status.is_installed) $ st.stations
     proximityToPlace dat = proximity st.place dat.info
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (dom :: DOM | eff))
