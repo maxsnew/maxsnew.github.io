@@ -1,5 +1,10 @@
 # maxsnew
 
+To build from scratch
+```sh
+npm install -g bower pulp purescript
+```
+
 To build new purescript code
 ```sh
 cd src/purescript
