@@ -10,6 +10,7 @@
   links:
     Official Link: "http://dl.acm.org/citation.cfm?id=2951941"
     Preprint: "docs/fabcc-paper.pdf"
+    Extended Technical Report: "docs/fabcc-tech-report.pdf"
 
 - title: "Oh Lord, Please Don't Let Contracts be Misunderstood (Functional Pearl)"
   authors: Christos Dimoulas, Max S. New, Robert Bruce Findler, Matthias Felleisen

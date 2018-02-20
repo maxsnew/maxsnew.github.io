@@ -12,3 +12,5 @@ _cache/
 _site
 .stack-work
 /content/ps/tmp.js
+node_modules
+/package-lock.json
