@@ -36,3 +36,9 @@
   links:
     Extended Abstract: "docs/precision-as-retraction.pdf"
   abstract: True
+
+- title: Call-by-value Gradual Type Theory
+  authors: Max S. New, Daniel R. Licata
+  links:
+    Arxiv: "https://arxiv.org/abs/1802.00061"
+  preprint: True

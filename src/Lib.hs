@@ -103,18 +103,20 @@ psCompiler = do
 -- | Publications
 data Publication = Publication { pTitle :: Text
                                , pAuthors :: Text
-                               , pVenue :: Text
+                               , pVenue :: Maybe Text
                                , pLinks :: Map Text Text
                                , pAbstract :: Bool
+                               , pPreprint :: Bool
                                }
 instance FromJSON Publication where
   parseJSON (Yaml.Object v) = 
     Publication      <$>
     v .: "title"     <*>
     v .: "authors"   <*>
-    v .: "venue"     <*>
+    v .:? "venue"    <*>
     (withDefault mempty $ v .:? "links") <*>
-    (withDefault False  $ v .:? "abstract")
+    (withDefault False  $ v .:? "abstract") <*>
+    (withDefault False  $ v .:? "preprint")
     where withDefault d = fmap (fromMaybe d)
   parseJSON invalid = typeMismatch "Publication" invalid
 
@@ -123,7 +125,7 @@ pField s m = field s (return . T.unpack . m . itemBody)
 
 mField :: String -> (a -> Maybe Text) -> Context a
 mField s m = field s (fromMay . m . itemBody)
-  where fromMay Nothing  = fail ""
+  where fromMay Nothing  = fail ("missing field " ++ s)
         fromMay (Just t) = return . T.unpack $ t
 
 linkContext :: Context (Text, Text)
@@ -133,7 +135,7 @@ linkContext =  pField "url" snd
 pubContext :: Context Publication
 pubContext =  pField "title" pTitle
            <> pField "authors" pAuthors
-           <> pField "venue" pVenue
+           <> mField "venue" pVenue
            <> listFieldWith "links" linkContext (return . sequenceA . fmap (Map.toList . pLinks))
 
 pubsContext :: Context (Text, [Publication])
@@ -144,5 +146,6 @@ pubsContext =
 groupedPubsContext :: Context [Publication]
 groupedPubsContext = listFieldWith "groups" pubsContext (return . traverse separate)
   where -- foo :: Item [Publication] -> Compiler [Item (Text, [Publication])]
-        separate pubs = let (absPubs, paperPubs) = List.partition pAbstract pubs
-                        in [ ("Peer-Reviewed Papers", paperPubs), ("Abstracts", absPubs) ]
+        separate pubs = let (absPubs, notAbsPubs) = List.partition pAbstract pubs
+                            (prePubs, paperPubs)  = List.partition pPreprint notAbsPubs
+                        in [ ("Peer-Reviewed Papers", paperPubs), ("Drafts", prePubs), ("Abstracts", absPubs) ]

@@ -5,7 +5,9 @@ $for(groups)$
   <li><p>
       <strong>$title$</strong><br />
       $authors$<br />
-      $venue$<br />
+      $if(venue)$
+          $venue$<br />
+      $endif$
       $for(links)$
 	<a href="$url$">$text$</a>
       $endfor$
