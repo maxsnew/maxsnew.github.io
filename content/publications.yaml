@@ -1,7 +1,13 @@
+- title: Gradual Type Theory
+  authors: Max S. New, Daniel R. Licata, Amal Ahmed
+  venue: POPL 2019
+  links:
+    Extended Version: https://arxiv.org/abs/1811.02440
 - title: Graduality from Embedding-Projection Pairs
   authors: Max S. New, Amal Ahmed
   venue: ICFP 2018
   links:
+    Official Link: https://dl.acm.org/citation.cfm?id=3236768
     Extended Version: https://arxiv.org/abs/1807.02786
 - title: Call-by-name Gradual Type Theory
   authors: Max S. New, Daniel R. Licata
