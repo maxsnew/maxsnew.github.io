@@ -25,11 +25,7 @@ import System.Process
 site :: IO ()
 site = do
   hakyllWith conf $ do
-    match "*.md" mdpost
-
-    match "ps/src/Main.purs" $ do
-      route   $ constRoute "js/hubway.js"
-      compile $ psCompiler
+    match "*.md" $ mdpost defaultTemplate
 
     match "js/*.js" $ do
       route   idRoute
@@ -44,6 +40,12 @@ site = do
   
     match "templates/*" $ compile templateCompiler
 
+    match "wedding/*.md" $ mdpost weddingTemplate
+    -- match "wedding/*.html" $ do
+    --   route idRoute
+    --   compile $ getResourceBody >>=
+    --     loadAndApplyTemplate "templates/wedding.html" defaultContext
+
     match "*.html" $ do
       route idRoute
       compile $ getResourceBody >>=
@@ -52,8 +54,18 @@ site = do
     match "publications.yaml" $ do
       route $ setExtension "html"
       compile $ yamlCompiler
-                >>= loadAndApplyTemplate "templates/publications.html" groupedPubsContext
-                >>= loadAndApplyTemplate "templates/default.html" defaultContext
+                >>= loadAndApplyTemplate pubsTemplate groupedPubsContext
+                >>= loadAndApplyTemplate defaultTemplate defaultContext
+
+    match "ps/src/Main.purs" $ do
+      route   $ constRoute "js/hubway.js"
+      compile $ psCompiler
+
+
+
+defaultTemplate = "templates/default.html"
+weddingTemplate = "templates/wedding.html"
+pubsTemplate = "templates/publications.html"
         
 -- Configuration
 conf :: Configuration
@@ -62,11 +74,11 @@ conf = defaultConfiguration {
   , deployCommand   = "./src/deploy.sh"
   }
 
-mdpost :: Rules ()
-mdpost = do
+mdpost :: Identifier -> Rules ()
+mdpost templ = do
   route   $ setExtension "html"
   compile $ pandocCompiler
-    >>= loadAndApplyTemplate "templates/default.html" defaultContext
+    >>= loadAndApplyTemplate templ defaultContext
     >>= relativizeUrls
 
 rawOut :: Rules ()
