@@ -10,6 +10,7 @@
   links:
     Official Link: https://dl.acm.org/citation.cfm?id=3236768
     Extended Version: https://arxiv.org/abs/1807.02786
+    Conference Talk: "https://www.youtube.com/watch?v=0GmILGJ1yvA"
 - title: Call-by-name Gradual Type Theory
   authors: Max S. New, Daniel R. Licata
   venue: FSCD 2018
@@ -29,6 +30,7 @@
     Official Link: "http://dl.acm.org/citation.cfm?id=2951941"
     Preprint: "docs/fabcc-paper.pdf"
     Extended Technical Report: "docs/fabcc-tech-report.pdf"
+    Conference talk: "https://www.youtube.com/watch?v=Hylji4ezQHE"
 
 - title: "Oh Lord, Please Don't Let Contracts be Misunderstood (Functional Pearl)"
   authors: Christos Dimoulas, Max S. New, Robert Bruce Findler, Matthias Felleisen
