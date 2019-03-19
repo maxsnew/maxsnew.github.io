@@ -160,4 +160,5 @@ groupedPubsContext = listFieldWith "groups" pubsContext (return . traverse separ
   where -- foo :: Item [Publication] -> Compiler [Item (Text, [Publication])]
         separate pubs = let (absPubs, notAbsPubs) = List.partition pAbstract pubs
                             (prePubs, paperPubs)  = List.partition pPreprint notAbsPubs
-                        in [ ("Peer-Reviewed Papers", paperPubs), ("Drafts", prePubs), ("Abstracts", absPubs) ]
+                        in filter (not . null . snd)
+                             [ ("Peer-Reviewed Papers", paperPubs), ("Drafts", prePubs), ("Abstracts", absPubs) ]
