@@ -1,6 +1,6 @@
 module StationTable (TableData, Query(..), stationTable, mkTableData) where
 
-import Prelude -- (type (~>), Void, const, map, pure, show, ($), (+), (-), (<$), (<<<), (<>), discard)
+import Prelude (type (~>), Void, const, map, pure, show, ($), (+), (-), (<<<), (<>), (/=), discard)
 
 import Control.Monad.Aff (Aff)
 import Data.Array as Array
@@ -12,13 +12,16 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Math (pow)
 
-import Common
+import Common (Coordinates, Place, ResolvedStation)
+
+-- | This module provides a table of hubway stations near a particular
+-- | place.
 
 type State = TableData
-type TableData = { place :: Place
-                 , stations :: Array ResolvedStation
-                 , limit :: Int
-                 , initLimit :: Int
+type TableData = { place :: Place -- the place for which we want nearby stations
+                 , stations :: Array ResolvedStation -- all stations info
+                 , limit :: Int     -- how many to show
+                 , initLimit :: Int -- how many to show initially, and after reset
                  }
 
 data Query a = NewData (Array ResolvedStation) a
