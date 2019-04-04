@@ -9372,7 +9372,7 @@ var PS = {};
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
               });
           };
-          throw new Error("Failed pattern match at StationTable line 68, column 10 - line 79, column 16: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at StationTable line 71, column 10 - line 82, column 16: " + [ v.constructor.name ]);
       };
       return Halogen_Component.component(Halogen_HTML_Core.bifunctorHTML)({
           initialState: function (x) {
