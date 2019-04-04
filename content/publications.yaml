@@ -1,3 +1,10 @@
+- title: How to evaluate the performance of gradual type systems
+  authors: Ben Greenman, Asumu Takikawa, Max S. New, Daniel Feltey,
+           Robert Bruce Findler, Jan Vitek, Matthias Felleisen
+  venue: Journal of Functional Programming, Volume 29, 2019
+  links:
+    Preprint: http://janvitek.org/pubs/jfp18.pdf
+    Official Link: https://www.cambridge.org/core/journals/journal-of-functional-programming/article/how-to-evaluate-the-performance-of-gradual-type-systems/DC765724C52A3A462F16C7FB3AD18697/share/a77b5d3395e8eb40f0312080e5bdc1c654632650
 - title: Gradual Type Theory
   authors: Max S. New, Daniel R. Licata, Amal Ahmed
   venue: POPL 2019
@@ -8,7 +15,7 @@
   authors: Max S. New, Amal Ahmed
   venue: ICFP 2018
   links:
-    Official Link: https://dl.acm.org/citation.cfm?id=3236768
+    Published Version: https://dl.acm.org/citation.cfm?id=3236768
     Extended Version: https://arxiv.org/abs/1807.02786
     Conference Talk: "https://www.youtube.com/watch?v=0GmILGJ1yvA"
 - title: Call-by-name Gradual Type Theory
@@ -27,8 +34,8 @@
   authors: Max S. New, William J. Bowman, Amal Ahmed
   venue: ICFP 2016
   links:
-    Official Link: "http://dl.acm.org/citation.cfm?id=2951941"
     Preprint: "docs/fabcc-paper.pdf"
+    Official Link: "http://dl.acm.org/citation.cfm?id=2951941"
     Extended Technical Report: "docs/fabcc-tech-report.pdf"
     Conference talk: "https://www.youtube.com/watch?v=Hylji4ezQHE"
 
