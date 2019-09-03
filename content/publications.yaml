@@ -64,3 +64,9 @@
     Extended Abstract: "docs/precision-as-retraction.pdf"
     Poster: "docs/popl-17-src-poster.pdf"
   abstract: True
+
+- title: "Graduality and Parametricity: Together Again for the First Time"
+  authors: Max S. New, Dustin Jamner, Amal Ahmed
+  preprint: True
+  links:
+    Draft: "docs/poly.pdf"
