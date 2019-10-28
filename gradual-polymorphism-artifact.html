@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>PolyGNew</title>
+    <link rel="stylesheet" type="text/css" href="codemirror.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <body>
+    <div class="holder">
+      <h1>PolyGNew: a gradual language satisfying parametricity and graduality.</h1>
+
+      <h3>Max S. New, Dustin Jamner, Amal Ahmed.</h3>
+      <!-- <h4>To appear in Programming Language Design and Implementation (PLDI) 2017.</h4> -->
+
+      <!-- <h3><a href="https://dbp.io/pubs/2017/funtal.pdf">paper</a> and <a href="https://dbp.io/pubs/2017/funtal-tr.pdf">technical appendix</a>.</h3> -->
+
+      <!-- <p>We present FunTAL, the first multi-language system to -->
+      <!--    formalize safe interoperability between a high-level -->
+      <!--    functional language and low-level assembly code while -->
+      <!--    supporting compositional reasoning about the mix. A central -->
+      <!--    challenge in developing such a multi-language is how to -->
+      <!--    bridge the gap between assembly, which is staged into calls -->
+      <!--    to continuations, and high-level code, where subterms return -->
+      <!--    a result. We present a compositional stack-based typed -->
+      <!--    assembly language that supports components, comprised of one -->
+      <!--    or more basic blocks, that may be embedded in high-level -->
+      <!--    contexts. We also present a logical relation for FunTAL that -->
+      <!--    supports reasoning about equivalence of high-level components -->
+      <!--    and their assembly replacements, mixed-language programs with -->
+      <!--    callbacks between languages, and assembly components -->
+      <!--    comprised of different numbers of basic blocks.</p> -->
+
+      <!-- <hr/> -->
+
+      <!-- <h2>Artifact: a FunTAL type checker and small-step machine.</h2> -->
+      <!-- <h3>Daniel Patterson and Gabriel Scherer.</h3> -->
+      <!-- <h4>Source code and build instructions: <a href="https://github.com/dbp/funtal">github.com/dbp/funtal</a></h4> -->
+
+      <!-- <p> -->
+      <!--   We present a type checker and stepper for the FunTAL machine -->
+      <!--     semantics. We include <strong>well-typed, runnable examples -->
+      <!--     from -->
+      <!--     the <a href="https://dbp.io/pubs/2017/funtal.pdf">paper</a></strong>, -->
+      <!--   as well as a few smaller examples to start with. With our -->
+      <!--   artifact, you write programs and then type check / load them -->
+      <!--   into a FunTAL machine. You can then step forward and backwards -->
+      <!--   through the evaluation. At each step, the machine shows the -->
+      <!--   registers, stack, and heap, as well as the redex and the -->
+      <!--   context.</p> -->
+
+      <!-- <p> -->
+      <!--   <strong>Important:</strong> the programs entered -->
+      <!--   into the editor should be Fun programs at the top; a pure -->
+      <!--   TAL component <code>C</code> -->
+      <!--   can be embedded as <code>FT[t,?]C</code> where <code>t</code> is -->
+      <!--   the return type, as we see in examples below. We do this so -->
+      <!--   that all programs run through the stepper have a return value. -->
+      <!-- </p> -->
+
+      <!-- <p><strong>Note:</strong> there are some syntactic differences -->
+      <!--   from the presentation in -->
+      <!--   the <a href="https://dbp.io/pubs/2017/funtal.pdf">paper</a>, -->
+      <!--   which nonetheless we expect will be the primary reference for -->
+      <!--   the language. These changes were made to eliminate the -->
+      <!--   necessity of unicode, reduce ambiguity in the grammar, and -->
+      <!--   make the type checking algorithm syntax-directed. We summarize -->
+      <!--   these changes at the bottom of this page.</p> -->
+
+      <p>
+        <strong>Examples:</strong>
+      </p>
+      <ul>
+        <li><a href="#" id="fail_exist_unseal">Failing existential unseal attempt</a></li>
+        <li><a href="#" id="bool">Boolean stuff</a></li>
+        <li><a href="#" id="pair">Pair</a></li>
+        <li><a href="#" id="exist_fun">Functions and Existentials</a></li>
+        <li><a href="#" id="fun_cast">Function Cast</a></li>
+        <li><a href="#" id="ex_mismatch">Different type vars are incompatible</a></li>
+      </ul>
+
+      <p>
+        <strong>Examples from Table 1 in the Paper</strong>
+	<ul>
+	  <li> <a href="#" id="paper_1_noseal">Ex 1 No seal</a>
+	    | <a href="#" id="paper_1_seal">Ex 1 seal</a></li>
+	  <li> <a href="#" id="paper_2_noseal">Ex 2 No seal</a>
+	    | <a href="#" id="paper_2_seal">Ex 2 seal</a></li>
+	  <li> <a href="#" id="paper_3_noseal">Ex 3 No seal</a>
+	    | <a href="#" id="paper_3_seal">Ex 3 seal</a></li>
+	  <li> <a href="#" id="paper_4_noseal">Ex 4 No seal</a>
+	    | <a href="#" id="paper_4_seal">Ex 4 seal</a></li>
+	  <li> <a href="#" id="paper_5_noseal">Ex 5 No seal</a>
+	    | <a href="#" id="paper_5_seal">Ex 5 seal</a></li>
+	  <li> <a href="#" id="paper_6_noseal">Ex 6 No seal</a>
+	    | <a href="#" id="paper_6_seal">Ex 6 seal</a></li>
+	</ul>
+      </p>
+
+      Next, we have examples illustrating free theorems about terms of
+      universally quantified types. Parametricity implies in each case
+      that two different usages of the same function will have the
+      same behavior. We illustrate this by running some example
+      functions with different continuations. The first function in
+      each case is the expected usage, and the second function is one
+      that attempts to violate abstraction using casts. These examples
+      always result in runtime errors, maintaining parametricity.
+      <p>
+	<strong>Universal Example: identity function</strong>
+      </p>
+      <ul>
+        <li> <a href="#" id="id_1"> Good Id </a>
+          |  <a href="#" id="id_2"> Good Id at different type </a>
+        </li>
+        <li> <a href="#" id="bad_id_1"> Bad Id </a>
+          |  <a href="#" id="bad_id_2"> Bad Id at different type </a>
+        </li>
+      </ul>
+
+      <p>
+	<strong>Universal type: swapping the sides of a pair</strong>
+      </p>
+      <ul>
+        <li> <a href="#" id="swap_1"> Good Swap </a>
+          |  <a href="#" id="swap_2"> Good Swapped Swap </a>
+        </li>
+        <li> <a href="#" id="bad_swap_1"> Failing Swap </a>
+          |  <a href="#" id="bad_swap_2"> Failing Swapped Swap </a>
+        </li>
+      </ul>
+
+      Next, we have an example using existential types. For
+      existentials, parametricity implies that two particular packages
+      are equivalent. We show this by placing them in two contexts,
+      the first, an ordinary usage and the second one that attempts to
+      use casts to violate abstraction, as above.
+      <p>
+	<strong>Existential type: abstract flipper</strong>
+      </p>
+      <ul>
+        <li> <a href="#" id="flipper_1"> Good use of Flipper </a>
+          |  <a href="#" id="flipper_2"> Good use of Flipped Flipper </a>
+        </li>
+        <li> <a href="#" id="bad_flipper_1"> Failing use of Flipper </a>
+          |  <a href="#" id="bad_flipper_2"> Failing use of Flipped Flipper </a>
+        </li>
+      </ul>
+
+
+      <div class="box">
+        <textarea id="input">
+        </textarea>
+        <div id="error"></div>
+      </div>
+
+      <div class="buttons">
+        <button id="load">&darr; Type check, elaborate &amp; load &darr;</button>
+      </div>
+
+
+
+      <div class="box">
+        <div class="cm-s-default" id="machine">
+          <div class="buttons left">
+            <button title="many steps backward" id="prevmany">Step &larr;*</button>
+            <button title="one step backward" id="prev">Step &larr;</button>
+            <p id="pc">&nbsp;</p>
+            <button title="one step forward" id="next">Step &rarr;</button>
+            <button title="up to 100 steps" id="nextmany">Step &rarr;*</button>
+          </div>
+          <hr/>
+          <h5>Type:</h5>
+          <pre id="type"></pre>
+          <hr/>
+          <h5>Term:</h5>
+          <pre id="term"></pre>
+          <hr/>
+          <h5>Store:</h5>
+          <pre id="store"></pre>
+          <hr/>
+        <!--   <h5>Context/Result:</h5> -->
+        <!--   <pre id="context"></pre> -->
+        <!--   <hr/> -->
+        <!--   <h5>Heap:</h5> -->
+        <!--   <pre id="heap"></pre> -->
+        <!-- </div> -->
+      </div>
+
+      <!-- <br/><br/> -->
+
+      <!-- <h3>Syntactic differences from the <a href="https://dbp.io/pubs/2017/funtal.pdf">paper</a>:</h3> -->
+
+
+      <!-- <table> -->
+      <!--   <tr><th>Paper</th><th>Artifact</th><th>Description</th></tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>(&iota;; ..., l &rarr; h, ...)</code></td> -->
+      <!--     <td><code>([instr; ...],[l -> h, ...])</code></td> -->
+      <!--     <td>TAL components use brackets around instructions and the heap fragment.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code><sup>&tau;</sup>FT e</code></td> -->
+      <!--     <td><code>FT[t,s] e</code></td> -->
+      <!--     <td><code>FT</code> (Fun outside, TAL inside) boundary -->
+      <!--     specifies the type s that the stack has after running e.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code><sup>&tau;</sup>FT e</code></td> -->
+      <!--     <td><code>FT[t,?] e</code></td> -->
+      <!--     <td><code>FT</code> boundaries can use <code>?</code> to indicate -->
+      <!--       that running <code>e</code> will not modify the type of -->
+      <!--       the stack (though values may be modified), allowing <code>s</code> -->
+      <!--       to be inferred.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>import r,<sup>&sigma;</sup>TF<sup>&tau;</sup> e</code></td> -->
+      <!--     <td><code>import r1, s as z, t TF{e};</code></td> -->
+      <!--     <td><code>import</code> binds the stack <code>s</code> on -->
+      <!--     return as <code>z</code> with Fun expression <code>e</code> of -->
+      <!--     type <code>t</code>.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>&alpha;, &zeta;, &epsilon;</code></td> -->
+      <!--     <td><code>a1, z21, e5</code></td> -->
+      <!--     <td>TAL type variables must begin with <code>a</code>, stack -->
+      <!--     variables with <code>z</code>, and return marker variables -->
+      <!--     with <code>e</code>.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>&middot; | &tau; :: ... </code></td> -->
+      <!--     <td><code>:: | t :: ... ::</code></td> -->
+      <!--     <td>Empty stack prefixes (in protect, stack modifying -->
+      <!--     lambdas) are written as <code>::</code>, and stack prefixes -->
+      <!--     end with <code>::</code>.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>&forall;, &mu;, &lambda;, &#8707;, &bullet;</code></td> -->
+      <!--     <td><code>forall, mu, lam, exists, *</code></td> -->
+      <!--     <td>Greek letters and quantifiers are replaced by english keywords.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>&bullet;</code></td> -->
+      <!--     <td><code>*</code></td> -->
+      <!--     <td>The concrete stack symbol <code>&bullet;</code> is written <code>*</code>.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>u[&omega;]</code></td> -->
+      <!--     <td><code>u[&omega;, &omega;...]</code></td> -->
+      <!--     <td>TAL instantiation is n-ary. (This was mentioned as syntactic sugar.)</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>{&chi;; &sigma;}<sup>q</sup></code></td> -->
+      <!--     <td><code>{&chi;; &sigma;} q</code></td> -->
+      <!--     <td>The return marker superscript is just written in line.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>&lambda;<sup>&phi;</sup><sub>&phi;</sub>(x:&tau;...).t</code></td> -->
+      <!--     <td><code>lam[&phi;][&phi;](x:&tau;...).e</code>,<br/> -->
+      <!--         <code>(&tau;...) [&phi;] -> [&phi;] &tau;</code></td> -->
+      <!--     <td>The stack prefixes of stack-modifying functions are bracketed, in line.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>unpack &lt;&alpha;, r<sub>d</sub>&gt; u</code></td> -->
+      <!--     <td><code>unpack &lt;&alpha;, r<sub>d</sub>&gt;, u</code></td> -->
+      <!--     <td>The TAL instruction <code>unpack</code> has comma-separated argument, -->
+      <!--       for consistency with other instructions.</td> -->
+      <!--   </tr> -->
+
+      <!--   <tr> -->
+      <!--     <td><code>l -> <1, 2>,<br/> l' -> (code[&delta;]...)</code></td> -->
+      <!--     <td><code>[l -> ref <1, 2>,<br/>&nbsp;l' -> box (code[&delta;]...)]</code></td> -->
+      <!--     <td>Heap values are preceded by an explicit mutability marker <code>box</code> or <code>ref</code>.</td> -->
+      <!--   </tr> -->
+      <!-- </table> -->
+
+
+    </div>
+      <div class="footer">
+        Powered by OCaml and js_of_ocaml.
+      </div>
+    <script type="text/javascript" src="codemirror.js"></script>
+    <script type="text/javascript" src="simple.js"></script>
+    <script type="text/javascript" src="matchbrackets.js"></script>
+    <script type="text/javascript" src="runmode.js"></script>
+    <script type="text/javascript">
+     CodeMirror.defineSimpleMode("funtal", {
+       start: [
+         {regex: /lambda|\?|bool|int|in|if|then|else|pack|unpack|Lambda|exists|forall|seal|unseal|up|down|proxy|Dinj|dinj/, token: "keyword"},
+         {regex: /#true|#false|int|exists|mu|\*|\:\:/, token: "atom"}
+       ],
+       meta:
+            { dontIndentStates: ["start"]
+            }});
+
+     window.highlighted_lines = [];
+
+     window.codemirror = CodeMirror.fromTextArea(document.getElementById("input"), {
+       lineNumbers: true,
+       matchBrackets: true,
+       viewportMargin: Infinity,
+       gutters: ["CodeMirror-linenumbers","errors"],
+       mode: "funtal"
+     });
+
+     window.seterror = function(line, msg) {
+       clearerrors();
+       if (line > 0) {
+         var n = document.createElement("div");
+         n.className = "error-marker";
+         n.setAttribute("title", msg);
+         window.codemirror.setGutterMarker(line-1, "errors", n);
+         window.codemirror.addLineClass(line-1, "wrap", "error-line");
+       }
+
+       function esc(s) {
+         return s.replace(/\</g,"&lt;").replace(/\>/g,"&gt;");
+       }
+       var holder = document.getElementById("error");
+       holder.innerHTML = "<div class='error-marker'></div><span>" + esc(msg) + "</span>";
+     };
+
+     window.clearerrors = function() {
+       window.codemirror.clearGutter("errors");
+       document.getElementById("error").innerHTML = "";
+       window.codemirror.eachLine(function (lh) {
+         window.codemirror.removeLineClass(lh,"wrap");
+       });
+     }
+
+     window.settext = function(i, t) {
+       var n = document.getElementById(i);
+       CodeMirror.runMode(t, "funtal", n);
+
+     }
+    </script>
+    <script type="text/javascript" src="web.js"></script>
+  </body>
+</html>

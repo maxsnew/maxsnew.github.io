@@ -1,0 +1,133 @@
+html,body {
+  margin: 0;
+  padding: 0;
+  font-family: sans;
+}
+
+h1,h2,h3,h4 {
+  text-align: center;
+  font-weight: normal;
+}
+
+h4 {
+  margin: 0;
+}
+
+h5 {
+  margin: 0;
+  margin-left: 5px;
+  padding: 0;
+  font-family: monospace;
+}
+
+pre {
+  margin: 5px;
+}
+
+p {
+  max-width: 600px;
+  margin: 10px auto;
+  line-height: 1.4em;
+}
+
+ul {
+  max-width: 600px;
+  margin: 10px auto;
+  line-height: 1.5em;
+}
+
+td,th {
+  padding: 5px;
+  vertical-align: top;
+  text-align: left;
+}
+
+td:last-child {
+  width: 300px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+button {
+  font-size: 1.2em;
+  border: 1px solid #000;
+  padding: 2px;
+  background-color: #fefefe;
+}
+
+#pc {
+    display: inline;
+  font-size: 1.2em;
+  padding: 2px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+code {
+  background-color: #efefef;
+  padding: 2px;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+
+.errors {
+  width: 12px;
+}
+
+.error-marker {
+  border-radius: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: #8B0000;
+  display: inline-block;
+}
+
+.error-line {
+  background: rgba(255,0,0,0.1) !important;
+}
+
+.buttons {
+  margin: 5px;
+  text-align: center;
+}
+
+#error {
+  color: #8B0000;
+  padding: 5px;
+  margin-left: 25px;
+}
+
+#error span {
+  padding-left: 10px;
+}
+
+.left {
+  text-align: left;
+}
+
+.holder {
+  margin: 0 auto;
+  margin-bottom: 100px;
+  width: 800px;
+}
+
+.footer {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.box {
+  margin: 15px;
+  border: 1px solid #000;
+  box-shadow: 5px 2px 5px #666;
+  min-height: 50px;
+}
+
