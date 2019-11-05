@@ -20,13 +20,14 @@ library
                        aeson,
                        bytestring,
                        containers,
-                       hakyll,
+                       hakyll >= 4.0 && < 5,
                        filepath,
                        mtl,
                        process,
                        text,
                        yaml
   default-language:    Haskell2010
+  ghc-options:         -dynamic
 
 executable maxsnew-exe
   hs-source-dirs:      app
@@ -42,7 +43,7 @@ test-suite maxsnew-test
   main-is:             Spec.hs
   build-depends:       base
                      , maxsnew
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -dynamic
   default-language:    Haskell2010
 
 source-repository head
