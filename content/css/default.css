@@ -117,3 +117,9 @@ button:active {
 button:focus {
   outline: none
 }
+
+img#selfportrait {
+  float: right;
+  margin: 0 0 0 100px;
+
+}
