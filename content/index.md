@@ -22,9 +22,3 @@ I was previously at Northwestern University, where I worked with
 [amal]: http://www.ccs.neu.edu/home/amal/
 [robby]: http://www.eecs.northwestern.edu/~robby/
 [github]: https://github.com/maxsnew
-
-## Service
-
-- Co-chair [Eighth Workshop on Mathematically Structured Functional Programming, April 2020](https://msfp-workshop.github.io/msfp2020/)
-- Co-chair [New England Programming Languages and Systems Symposium Series, Fall 2013](https://nepls.org/Events/30/)
-
