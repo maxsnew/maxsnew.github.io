@@ -1,6 +1,8 @@
 - title: "Graduality and Parametricity: Together Again for the First Time"
   authors: Max S. New, Dustin Jamner, Amal Ahmed
   venue: POPL 2020
+  links:
+    Preprint: docs/graduality-parametricity.pdf
 
 - title: How to evaluate the performance of gradual type systems
   authors: Ben Greenman, Asumu Takikawa, Max S. New, Daniel Feltey,
