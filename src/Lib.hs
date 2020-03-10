@@ -6,7 +6,7 @@ module Lib
 import Hakyll
 
 import Control.Monad
-import Control.Monad.Error
+import Control.Monad.Except
 import Data.Aeson.Types (typeMismatch)
 import qualified Data.ByteString.Lazy as LBS
 import qualified Data.List as List
@@ -57,9 +57,9 @@ site = do
                 >>= loadAndApplyTemplate pubsTemplate groupedPubsContext
                 >>= loadAndApplyTemplate defaultTemplate defaultContext
 
-    match "ps/src/Main.purs" $ do
-      route   $ constRoute "js/hubway.js"
-      compile $ psCompiler
+    -- match "ps/src/Main.purs" $ do
+    --   route   $ constRoute "js/hubway.js"
+    --   compile $ psCompiler
 
 
 
@@ -91,7 +91,7 @@ yamlCompiler = do
   path <- getResourceFilePath
   rawItem <- getResourceLBS
   for rawItem $ \raw ->
-    case Yaml.decodeEither . LBS.toStrict $ raw of
+    case Yaml.decodeEither' . LBS.toStrict $ raw of
       Left err     -> throwError ["Failed to parse " <> path <> " : " <> show err]
       Right parsed -> return parsed
 
