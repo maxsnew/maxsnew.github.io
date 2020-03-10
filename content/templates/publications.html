@@ -11,6 +11,9 @@ $for(groups)$
       $for(links)$
 	<a href="$url$">$text$</a>
       $endfor$
+      $if(note)$
+        <br /><em>$note$</em>
+      $endif$
   </p></li>
   $endfor$
 </ul>

@@ -1,8 +1,18 @@
+- title: Call-by-name Gradual Type Theory
+  authors: Max S. New, Daniel R. Licata
+  venue: Logical Methods in Computer Science, Volume 16, Issue 1
+  links:
+    LMCS Link: https://lmcs.episciences.org/6063
+    Arxiv backup: https://arxiv.org/abs/1802.00061
+  note: subsumes earlier conference paper of the same name published at FSCD
+
 - title: "Graduality and Parametricity: Together Again for the First Time"
   authors: Max S. New, Dustin Jamner, Amal Ahmed
   venue: POPL 2020
   links:
     Preprint: docs/graduality-parametricity.pdf
+    Official Link: https://dl.acm.org/doi/10.1145/3371114
+    Technical Appendix: http://www.ccs.neu.edu/home/amal/papers/gradparam-tr.pdf
 
 - title: How to evaluate the performance of gradual type systems
   authors: Ben Greenman, Asumu Takikawa, Max S. New, Daniel Feltey,
@@ -22,15 +32,16 @@
   authors: Max S. New, Amal Ahmed
   venue: ICFP 2018
   links:
-    Published Version: https://dl.acm.org/citation.cfm?id=3236768
+    Official Link: https://dl.acm.org/citation.cfm?id=3236768
     Extended Version: https://arxiv.org/abs/1807.02786
     Conference Talk: "https://www.youtube.com/watch?v=0GmILGJ1yvA"
+
 - title: Call-by-name Gradual Type Theory
   authors: Max S. New, Daniel R. Licata
   venue: FSCD 2018
   links:
-    Published Version: http://drops.dagstuhl.de/opus/volltexte/2018/9194/
-    Extended Version: https://arxiv.org/abs/1802.00061
+    Official Link: http://drops.dagstuhl.de/opus/volltexte/2018/9194/
+  note: subsumed by journal article of the same name published in LMCS    
 
 - title: FabULous Interoperability for ML and a Linear Language
   authors: Gabriel Scherer, Max S. New, Nick Rioux and Amal Ahmed
