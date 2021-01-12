@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 stack build \
     && stack exec maxsnew-exe clean \
