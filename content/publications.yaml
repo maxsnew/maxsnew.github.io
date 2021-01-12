@@ -22,6 +22,13 @@
     Preprint: http://janvitek.org/pubs/jfp18.pdf
     Official Link: https://www.cambridge.org/core/journals/journal-of-functional-programming/article/how-to-evaluate-the-performance-of-gradual-type-systems/DC765724C52A3A462F16C7FB3AD18697/share/a77b5d3395e8eb40f0312080e5bdc1c654632650
 
+- title: From Call-by-push-value to Stack-based TAL?
+  authors: Max S. New
+  venue: LOLA 2019
+  abstract: True
+  links:
+    Extended Abstract: "docs/cbpv-stal-lola-2019.pdf"
+
 - title: Gradual Type Theory
   authors: Max S. New, Daniel R. Licata, Amal Ahmed
   venue: POPL 2019
@@ -90,4 +97,3 @@
     Extended Abstract: "docs/precision-as-retraction.pdf"
     Poster: "docs/popl-17-src-poster.pdf"
   abstract: True
-

@@ -4,21 +4,23 @@ title: Max S. New
 
 <div><img src="/img/max_new.jpg" id="selfportrait"></img></div>
 
-I'm a computer scientist working on the foundations of programming
-languages.
-My PhD work is on the semantics of sound gradually typed languages:
-how to design them and how to prove that they support predictable
-migration from dynamic to static typing.
-More generally I'm interested in the semantics of safe and secure
-interoperability between languages, embracing advanced semantic
-techniques like logical relations and category-theoretic models.
+I am a computer scientist working on the foundations of programming
+languages. Currently I am a postdoc working with [Dan Licata][dan] at
+Wesleyan University. In Fall 2021, I will be an assistant professor at
+the [University of Michigan][umich].
 
-I'm currently a PhD candidate at Northeastern University since Fall
-2014, working with [Amal Ahmed][amal].
+My research utilizes mathematical techniques to help in design,
+analysis and implementation of programming languages. I am recently
+interested in interoperability between languages, especially in the
+guises of Gradual Typing and compiler intermediate languages
+supporting multiple source languages.
 
-I was previously at Northwestern University, where I worked with
-[Robby Findler][robby] on automated test-case generation.
+I completed my PhD at Northeastern University in Fall 2020 [Amal
+Ahmed][amal]. I was previously at Northwestern University, where I
+worked with [Robby Findler][robby] on automated test-case generation.
 
 [amal]: http://www.ccs.neu.edu/home/amal/
 [robby]: http://www.eecs.northwestern.edu/~robby/
+[dan]: https://dlicata.wescreates.wesleyan.edu/
+[umich]: https://eecs.engin.umich.edu/
 [github]: https://github.com/maxsnew

@@ -25,7 +25,15 @@ import System.Process
 site :: IO ()
 site = do
   hakyllWith conf $ do
-    match "*.md" $ mdpost defaultTemplate
+    match "*.md"  $ textPost defaultTemplate
+    match "blog.org" $ do
+      route $ setExtension "html"
+      compile $ do
+        getResourceBody
+          >>= applyAsTemplate blogsCtx
+          >>= loadAndApplyTemplate "templates/default.html" blogsCtx
+          >>= relativizeUrls
+
 
     match "js/*.js" $ do
       route   idRoute
@@ -40,11 +48,12 @@ site = do
   
     match "templates/*" $ compile templateCompiler
 
-    match "wedding/*.md" $ mdpost weddingTemplate
-    -- match "wedding/*.html" $ do
-    --   route idRoute
-    --   compile $ getResourceBody >>=
-    --     loadAndApplyTemplate "templates/wedding.html" defaultContext
+    match "blog/*" $ do
+      route $ setExtension "html"
+      compile $ pandocCompiler
+        >>= loadAndApplyTemplate blogPostTemplate blogPostCtx
+        >>= loadAndApplyTemplate defaultTemplate blogPostCtx
+        >>= relativizeUrls
 
     match "*.html" $ do
       route idRoute
@@ -57,14 +66,14 @@ site = do
                 >>= loadAndApplyTemplate pubsTemplate groupedPubsContext
                 >>= loadAndApplyTemplate defaultTemplate defaultContext
 
+    
+
     -- match "ps/src/Main.purs" $ do
     --   route   $ constRoute "js/hubway.js"
     --   compile $ psCompiler
 
-
-
+blogPostTemplate = "templates/blog-post.html"
 defaultTemplate = "templates/default.html"
-weddingTemplate = "templates/wedding.html"
 pubsTemplate = "templates/publications.html"
         
 -- Configuration
@@ -74,8 +83,8 @@ conf = defaultConfiguration {
   , deployCommand   = "./src/deploy.sh"
   }
 
-mdpost :: Identifier -> Rules ()
-mdpost templ = do
+textPost :: Identifier -> Rules ()
+textPost templ = do
   route   $ setExtension "html"
   compile $ pandocCompiler
     >>= loadAndApplyTemplate templ defaultContext
@@ -165,3 +174,15 @@ groupedPubsContext = listFieldWith "groups" pubsContext (return . traverse separ
                             (prePubs, paperPubs)  = List.partition pPreprint notAbsPubs
                         in filter (not . null . snd)
                              [ ("Peer-Reviewed Papers", paperPubs), ("Drafts", prePubs), ("Abstracts", absPubs) ]
+
+blogPostCtx :: Context String
+blogPostCtx =
+    dateField "date" "%B %e, %Y"
+    <> defaultContext
+
+blogsCtx =
+  listField "posts" blogPostCtx mkPosts
+  <> constField "title" "Blog"
+  <> defaultContext
+
+mkPosts = recentFirst =<< loadAll "blog/*"

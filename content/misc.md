@@ -1,4 +1,4 @@
-# (Pretentious) Quotes I like
+# Quotes I like
 
 > A value is, a computation does.
 
