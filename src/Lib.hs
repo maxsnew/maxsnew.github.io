@@ -28,8 +28,8 @@ site = do
     match "*.md"  $ textPost defaultTemplate
     match "blog.org" $ do
       route $ setExtension "html"
-      compile $ do
-        getResourceBody
+      compile $
+        pandocCompiler
           >>= applyAsTemplate blogsCtx
           >>= loadAndApplyTemplate "templates/default.html" blogsCtx
           >>= relativizeUrls
