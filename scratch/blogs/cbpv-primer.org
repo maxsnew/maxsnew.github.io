@@ -1,0 +1,84 @@
+* Call-by-push-value: A Lambda Calculus for Effectful Functional Programming
+
+  In this post, I want to introduce you to what is in my opinion the
+  best calculus for studying effectful functional programming:
+  Call-by-push-value (CBPV). CBPV was introduced by Paul-Blain Levy in
+  [[https://www.cs.bham.ac.uk/~pbl/papers/tlca99.pdf][LNCS 1999]] as a "subsuming paradigm" that can be used to unify
+  call-by-value (CBV) and call-by-name (CBN) languages under a single
+  calculus that is better behaved than either. Whether it was
+  operational or denotational semantics, any model for CBV or CBN also
+  gave rise to a CBPV model that was simpler to analyze. Long
+  advocated by Levy as a great calculus for anyone studying effectful
+  functional programming, it's clear that it has caught on at least in
+  the more theoretical corners of the programming languages community
+  with researchers using it as a tool to help study cost semantics,
+  probabilistic programming, gradual typing, effect handlers and
+  combining effects with dependent types.
+
+  I often find I have a hard time getting across to my fellow
+  researchers just what all the fuss is about. Especially because most
+  of them have long written off CBN evaluation altogether and are
+  perfectly content to study CBV. But, thinking of CBPV as just a way
+  to study CBV and CBN all at once is really selling it short! CBPV is
+  useful for so many things and from so many different perspectives.
+  1. For type theorists, it's a language that supports effects while
+     also having full beta-eta laws for positive and negative types.
+  2. For categorically inclined, it relates to Moggi's monadic
+     metalanguage the same way that adjunctions relate to
+     monads. Maybe we should call it "Levy's adjunctive metalanguage"?
+  3. For typed functional programmers, it gives you access to
+     well-behaved coinductive types separate from the more familiar
+     inductive types.
+  4. For language implementers, it provides an alternative to A-normal
+     form/Monadic form/CPS with a nice type system that helps reason
+     about stack layout, purity and strictness.
+  5. For language meta-theorists, it has a simple to analyze
+     operational semantics like CPS and its value-stack dichotomy is
+     directly applicable to biorthogonal logical relations.
+
+  All of these things make CBPV an ideal calculus to serve as the
+  target of elaboration passes for whatever your preferred surface
+  language is. But of course, I don't expect you to just take my word
+  for it! In future posts I want to dive into to some of the specific
+  use-cases of CBPV and synthesize some of the ideas that that are
+  spread out across many papers into some more introductory notes. In
+  the remainder of this post I want to get across some CBPV basics:
+  syntax, typing and operational semantics.
+  
+** Overview of Syntax and Operational Semantics
+
+   
+f
+
+** Implemented Languages Based on CBPV 
+
+   If you're lime me and you love functional programming or just
+   trying out interesting languages, you're probably itching to try
+   out what programming in a language like CBPV is actually like!
+   Andrej Bauer has a simple implementation for education purposes
+   called [[http://plzoo.andrej.com/language/levy.html][levy]] in his "PL Zoo" that is probably the best for playing
+   with the calculus I've presented here. I have my own Scheme-like
+   dynamically typed variant of CBPV called [[https://github.com/maxsnew/modal-scheme][Fiddle]] that is still very
+   experimental.
+
+   There aren't really any mature languages that I know of that can be
+   considered CBPV proper languages. Since CBPV is very explicit about
+   evaluation order like CPS or ANF, there aren't many surface
+   languages that follow it exactly it. However, recently designed
+   languages that use algebraic effects like [[Frank][]] and [[Eff][]]
+   are heavily influenced by CBPV, though they hew more toward
+   CBV. And, on the intermediate-language front there is an
+   alternative core language for Haskell called [[https://github.com/lukemaurer/sequent-core][Sequent Core]] that is
+   based on sequent calculus, which is a very close relative of CBPV.
+
+   If you know of any others, please let me know and I'll add them to
+   this list!
+
+** Related Work
+
+   Like most good ideas in computer science, a lot of the ideas in
+   CBPV have been independently discovered and pursued in related work
+   that goes by other names. CBPV is my preferred flavor of effectful
+   calculus, but it is closely related to things like (intuitionistic)
+   Sequent Calculi, Linear-non-linear logic, the Enriched Effect
+   Calculus, Girard's Ludics and surely many others.
