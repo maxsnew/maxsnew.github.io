@@ -1,0 +1,24 @@
+---
+title: Testing out the blog
+---
+
+#+begin_html
+\(\newcommand{\alt}{\,|\,}
+\newcommand{\kw}[1]{\texttt{#1}}
+\)
+#+end_html
+
+* Call-by-push-value
+
+#+begin_html
+\begin{align*}
+  8 * 3 &= 8 + 8 \\
+        &= 24
+\end{align*}
+ #+end_html
+
+#+begin_html
+$$M ::= x \alt \kw{ret} V \,|\, x \leftarrow M; N$$
+#+end_html
+
+$$\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}$$

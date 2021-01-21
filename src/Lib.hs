@@ -26,10 +26,10 @@ site :: IO ()
 site = do
   hakyllWith conf $ do
     match "*.md"  $ textPost defaultTemplate
-    match "blog.org" $ do
-      route $ setExtension "html"
+    match "blog.html" $ do
+      route idRoute
       compile $
-        pandocCompiler
+        getResourceBody
           >>= applyAsTemplate blogsCtx
           >>= loadAndApplyTemplate "templates/default.html" blogsCtx
           >>= relativizeUrls
@@ -126,6 +126,7 @@ data Publication = Publication { pTitle :: Text
                                , pAuthors :: Text
                                , pVenue :: Maybe Text
                                , pLinks :: Map Text Text
+                               , pManuscript :: Bool
                                , pAbstract :: Bool
                                , pPreprint :: Bool
                                , pNote :: Maybe Text
@@ -136,9 +137,10 @@ instance FromJSON Publication where
     v .: "title"     <*>
     v .: "authors"   <*>
     v .:? "venue"    <*>
-    (withDefault mempty $ v .:? "links") <*>
-    (withDefault False  $ v .:? "abstract") <*>
-    (withDefault False  $ v .:? "preprint") <*>
+    (withDefault mempty $ v .:? "links")      <*>
+    (withDefault False  $ v .:? "manuscript") <*>
+    (withDefault False  $ v .:? "abstract")   <*>
+    (withDefault False  $ v .:? "preprint")   <*>
     v .:? "note"
     where withDefault d = fmap (fromMaybe d)
   parseJSON invalid = typeMismatch "Publication" invalid
@@ -170,10 +172,14 @@ pubsContext =
 groupedPubsContext :: Context [Publication]
 groupedPubsContext = listFieldWith "groups" pubsContext (return . traverse separate)
   where -- foo :: Item [Publication] -> Compiler [Item (Text, [Publication])]
-        separate pubs = let (absPubs, notAbsPubs) = List.partition pAbstract pubs
+        separate pubs = let (manus, notManus) = List.partition pManuscript pubs
+                            (absPubs, notAbsPubs) = List.partition pAbstract notManus
                             (prePubs, paperPubs)  = List.partition pPreprint notAbsPubs
                         in filter (not . null . snd)
-                             [ ("Peer-Reviewed Papers", paperPubs), ("Drafts", prePubs), ("Abstracts", absPubs) ]
+                             [ ("Manuscripts", manus)
+                             , ("Peer-Reviewed Papers", paperPubs)
+                             , ("Drafts", prePubs)
+                             , ("Abstracts", absPubs) ]
 
 blogPostCtx :: Context String
 blogPostCtx =
