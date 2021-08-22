@@ -1,0 +1,231 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 3: Boa: Adding new operators</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 3:</span> Boa:<span class="mywbr"> &nbsp;</span> Adding new operators</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Boa_.Language%29" class="tocviewlink" data-pltdoc="x">The Boa Language</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Starter_code_for_this_assignment%29" class="tocviewlink" data-pltdoc="x">Starter code for this assignment</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Implementing_a_.Compiler_for_.Boa%29" class="tocviewlink" data-pltdoc="x">Implementing a Compiler for Boa</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Recommendations%29" class="tocviewlink" data-pltdoc="x">Recommendations</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Testing_the_.Compiler%29" class="tocviewlink" data-pltdoc="x">Testing the Compiler</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Running_main%29" class="tocviewlink" data-pltdoc="x">Running main</a></td></tr><tr><td align="right">7&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">8&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">9&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 3:</span> Boa:<span class="mywbr"> &nbsp;</span> Adding new operators</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Boa_.Language%29" class="tocsubseclink" data-pltdoc="x">The Boa Language</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Concrete_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Abstract_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Abstract Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Starter_code_for_this_assignment%29" class="tocsubseclink" data-pltdoc="x">Starter code for this assignment</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Implementing_a_.Compiler_for_.Boa%29" class="tocsubseclink" data-pltdoc="x">Implementing a Compiler for Boa</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Checking_for_scoping_problems%29" class="tocsubseclink" data-pltdoc="x">Checking for scoping problems</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Tagging%29" class="tocsubseclink" data-pltdoc="x">Tagging</a></td></tr><tr><td><span class="tocsublinknumber">3.3<tt>&nbsp;</tt></span><a href="#%28part._.Renaming%29" class="tocsubseclink" data-pltdoc="x">Renaming</a></td></tr><tr><td><span class="tocsublinknumber">3.4<tt>&nbsp;</tt></span><a href="#%28part._.Converting_to_.A-.Normal_.Form%29" class="tocsubseclink" data-pltdoc="x">Converting to A-<wbr></wbr>Normal Form</a></td></tr><tr><td><span class="tocsublinknumber">3.5<tt>&nbsp;</tt></span><a href="#%28part._.Compilation%29" class="tocsubseclink" data-pltdoc="x">Compilation</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Recommendations%29" class="tocsubseclink" data-pltdoc="x">Recommendations</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Testing_the_.Compiler%29" class="tocsubseclink" data-pltdoc="x">Testing the Compiler</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Running_main%29" class="tocsubseclink" data-pltdoc="x">Running main</a></td></tr><tr><td><span class="tocsublinknumber">7<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">8<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">9<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 3:</span> Boa: Adding new operators</h2><p><h4 class="due">Due: Thursday 01/30 at 8:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://github.ccs.neu.edu/cs4410/starter-boa"/></code></p></p><p><span style="font-style: italic">In this compiler, you&rsquo;ll enhance your existing work with Binary Operators and Arithmetic.</span>
+<p style="text-align: center"><img class="titleimage" src="https://upload.wikimedia.org/wikipedia/commons/9/90/Boa_constrictor%2C_Va%C5%88kovka%2C_Brno_%282%29.jpg"/></p></p><p><span style="font-weight: bold">Reminder:</span> Test names cannot have spaces; this is due to the way the <code>Makefile</code> relies
+on test names being used for filenames.</p><h3>1<tt>&nbsp;</tt><a name="(part._.The_.Boa_.Language)"></a>The Boa Language</h3><h4>1.1<tt>&nbsp;</tt><a name="(part._.Concrete_.Syntax)"></a>Concrete Syntax</h4><p>The concrete syntax of Boa is:<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._13._assignmentboa%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">To read the given <code>parser.mly</code> file,
+start from the line that says <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%type &lt;(Lexing.position * Lexing.position) Exprs.expr&gt; program</code></span>, which means
+that &ldquo;the parse result of a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">program</code></span> should be an <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Exprs.expr</code></span> value&rdquo;
+(decorated with a pair of start- and end-positions), and then <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%start program</code></span>
+means that the entirety of the file should be parseable as a
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">program</code></span>.  The <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%token</code></span> lines indicate the literals in the program (and,
+optionally, their corresponding types), and the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%left</code></span> line indicates that
+the specified infix operators are left-associative.  From there, hopefully the
+grammar should be relatively straightforward to read.  The expressions in
+braces on each line tell the parser &ldquo;when you successfully parse the
+grammatical pattern on the left, construct a new value as follows...&rdquo;</span></span></p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Boa._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit">let</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">if</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">else:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._binop-expr%29%29%29" data-pltdoc="x">&#8249;binop-expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Boa._binop-expr)))"></a><span class="bnf-rule">&#8249;binop-expr&#8250;</span><span class="bnf-meta">:</span> 
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">add1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">sub1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">+</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">-</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">*</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(.Boa._bindings)))"></a><span class="bnf-rule">&#8249;bindings&#8250;</span><span class="bnf-meta">:</span> 
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Boa._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span></p></blockquote><p>As in Adder, a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Let</code></span> can have one or more bindings.</p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Abstract_.Syntax)"></a>Abstract Syntax</h4><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type prim1 =
+  | Add1
+  | Sub1
+
+type prim2 =
+  | Plus
+  | Minus
+  | Times
+
+type 'a bind =
+  (* the 3rd component is any information specifically about the identifier, like its position *)
+  (string * 'a expr * 'a)
+
+and 'a expr =
+  | ELet of 'a bind list * 'a expr * 'a
+  | EPrim1 of prim1 * 'a expr * 'a
+  | EPrim2 of prim2 * 'a expr * 'a expr * 'a
+  | EIf of 'a expr * 'a expr * 'a expr * 'a
+  | ENumber of int * 'a
+  | EId of string * 'a</code></pre></div></div></p><h4>1.3<tt>&nbsp;</tt><a name="(part._.Semantics)"></a>Semantics</h4><p>In addition to the semantics of Adder, we now have infix binary operators
+(addition, subtraction and multiplication), that are evaluated
+leftmost-innermost first (i.e., the standard left-to-right order that obeys
+parentheses), and conditional expressions.  An <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">If</code></span> expression evaluates its
+condition, then evaluates its then-branch if the condition is non-zero, and
+evaluates its else-branch if the condition was zero.</p><p>To compile these expressions, we need a few more assembly instructions:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type instruction = ...
+  | ISub of arg * arg
+  | IMul of arg * arg
+  | ILabel of string
+  | ICmp of arg * arg
+  | IJne of string
+  | IJe of string
+  | IJmp of string</code></pre></div></div></p><p>The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mul</code></span> instructions are analogous to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>, that take
+two arguments, apply their respective operations, and place their results in
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>.  Labels let us name the first of a sequence of instructions, akin to
+how we label <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here:</code></span> to begin our code.  The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">cmp</code></span>
+instruction compares its two arguments, and sets a <span style="font-style: italic">processor flag</span> to
+<span style="font-style: italic">EQUAL</span> or <span style="font-style: italic">NOT-EQUAL</span> accordingly.  This flag is something separate
+from any registers we&rsquo;ve worked with so far, and doesn&rsquo;t have an explicit name.
+Instead, we can test the value of this flag with the jump instructions:
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jne</code></span> will jump control to the named label if the flag is <span style="font-style: italic">NOT-EQUAL</span>,
+and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">je</code></span> will jump control to the named label when the flag is
+<span style="font-style: italic">EQUAL</span>.  Finally, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp</code></span> will unconditionally jump to the named label.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Starter_code_for_this_assignment)"></a>Starter code for this assignment</h3><p>You&rsquo;ve been given a starter codebase that has several pieces of
+infrastructure:</p><ul><li><p>The types for your AST and assembly instructions (<code>types.ml</code>).  You
+don&rsquo;t need to edit this file.</p></li><li><p>A lexer and parser for the Boa language (<code>lexer.mll</code> and
+<code>parser.mly</code>), which together will produce <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">expr</code></span> values tagged by a
+pair of source locations (<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Lexing.position</code></span> values) indicating the start and
+end of each expression.  You don&rsquo;t need to edit these files.</p></li><li><p>A main program (<code>main.ml</code>) that uses the parser and compiler to produce
+assembly code from an input Boa text file.  You don&rsquo;t need to edit this.</p></li><li><p>A <code>Makefile</code> that builds <code>main.ml</code>, builds a tester for Boa that you will
+modify (<code>test.ml</code>), and manipulates assembly programs created by the Boa
+compiler.  You don&rsquo;t need to edit the <code>Makefile</code>, but you will edit
+<code>test.ml</code>.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._14._assignmentboa%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">Note: the <code>.PRECIOUS</code> pseudo-target ensures that
+the Makefile won&rsquo;t delete your assembly files when its finished, so that you
+can manually inspect the results afterward for debugging purposes.</span></span></p></li><li><p>An OCaml program (<code>runner.ml</code>) that works in concert with the <code>Makefile</code> to
+allow you to compile and run an Boa program from within OCaml, which is
+quite useful for testing.  You don&rsquo;t need to edit <code>runner.ml</code>.</p></li><li><p>A pretty-printer (<code>pretty.ml</code>) for expressions.  There are a few
+pretty-printers in this file of different levels of detail, mostly for your
+edification.  The simplest, <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">string_of_expr</code></span>, produces a string that&rsquo;s
+in Boa syntax, and pretty close to the input program (with some extra
+parentheses, just for clarity).  You should be able to read and understand this
+function with little difficulty; it&rsquo;s a straightforward tree-traversing
+function.  Additionally, <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">string_of_pos</code></span> will print out a textual rendition
+of a (start,end) pair of source positions.</p><p>The two functions <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ast_of_expr</code></span> and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ast_of_pos_expr</code></span> will pretty-print
+the program in a form that&rsquo;s closer to <span style="font-style: italic">ML&rsquo;s</span> syntax, so as to better
+visualize the actual expression value you&rsquo;re working with.  The <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">_pos</code></span>
+variant will also print out the position information, if it&rsquo;s available.  This
+function is a lot trickier to read, as it relies on ML&rsquo;s <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Format</code></span> library.
+(Actually <span style="font-style: italic">writing</span> a pretty-printer is a distraction from our goal, but
+<span style="font-style: italic">having</span> a pretty printer is often a welcome debugging aid...)  You&rsquo;re
+welcome to try to figure out how this function works, in tandem with the
+library documentation (which, frankly, is much easier to understand when you
+have an example program that uses it!).</p><p>You do not need to modify this file, but you&rsquo;re welcome to enhance it if you
+define additional types.</p></li></ul><p>All of your edits &#8212;<wbr></wbr> which will be to write the compiler for Boa, and test
+it &#8212;<wbr></wbr> will happen in <code>test.ml</code> and <code>compile.ml</code>.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Implementing_a_.Compiler_for_.Boa)"></a>Implementing a Compiler for Boa</h3><p>Again, the primary task of writing the Boa compiler is simple to state: take an
+instance of the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">expr</code></span> datatype and turn it into a list of assembly
+instructions.  But since we now have more complicated expressions, we need to
+worry about simplifying the program, first.</p><h4>3.1<tt>&nbsp;</tt><a name="(part._.Checking_for_scoping_problems)"></a>Checking for scoping problems</h4><p>In Adder, we asked you to confirm that no <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Let</code></span> expression bound two
+identifiers with the same name, and to confirm that no expression referred to
+an unbound identifier.  You likely interspersed that code with the compiler
+itself.  While this was fine for Adder, let&rsquo;s refactor this code into something
+more maintainable.</p><div class="hw"><ol><li><p>Define the function
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">check_scope (e : (Lexing.position * Lexing.position) expr) : unit</code></span> that
+abstracts out these two checks.  This function returns nothing of any
+consequence; it just raises any appropriate <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">BindingError</code></span>s as its only
+side-effect.  (<span style="font-style: italic">Hint:</span> you may find the function
+<a href="https://caml.inria.fr/pub/docs/manual-ocaml/libref/Stdlib.html#1_Unitoperations"></a>
+{<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ignore : 'a -&gt; unit</code></span>} to be useful.)</p></li></ol></div><h4>3.2<tt>&nbsp;</tt><a name="(part._.Tagging)"></a>Tagging</h4><p><p>Let <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type tag = int</code></span>.
+</p><div class="hw"><ol start="2"><li><p>Design (and test!) a function <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tag : 'a expr -&gt; tag expr</code></span> that gives every
+expression and let-binding a unique numerical id.</p><p><span style="font-style: italic">Hint:</span> you will likely want to define a helper function of type
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">'a expr -&gt; tag -&gt; (tag expr * tag)</code></span> that takes an expression and the
+starting tag to use, and returns both the tagged expression and the next
+available tag for use.  You may also want to write a function
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">untag : 'a expr -&gt; unit expr</code></span> that strips out whatever information
+is decorating the expression; this is most useful for writing small test cases.</p></li></ol></div></p><h4>3.3<tt>&nbsp;</tt><a name="(part._.Renaming)"></a>Renaming</h4><p>As described in the lecture notes, ANF transformations can inadvertently
+introduce new shadowing errors.</p><div class="hw"><ol start="2"><li><p>Design (and test!) a function <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">rename : tag expr -&gt; tag expr</code></span> that
+uniquely renames all names in the program such that there are no longer any
+shadowing collisions, and all name bindings are unique.</p><p><span style="font-style: italic">Hint:</span> you may pick any naming convention to produce new unique names; a
+convenient one may be <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">sprintf "%s#%d" name tag</code></span>, where <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">name</code></span> is the
+original name, and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tag</code></span> is the output of your previous function for this
+node.</p><p><span style="font-style: italic">Hitnt:</span> you will need a helper function that takes in an environment of
+renamings from original names to new unique names, which you will update in the
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ELet</code></span> case and use in the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EId</code></span> case.  Be careful about the ordering of
+this list, and about the ordering of the bindings you produce when transforming
+the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ELet</code></span>!</p></li></ol></div><h4>3.4<tt>&nbsp;</tt><a name="(part._.Converting_to_.A-.Normal_.Form)"></a>Converting to A-Normal Form</h4><p>A-Normal Form asserts that throughout a program, any function-call or operator
+expression contains arguments that are <span style="font-style: italic">immediate</span>: that is, are numbers
+or identifiers, and therefore don&rsquo;t perform any computation of their own.
+Additionally, we can think of the decision in an <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">If</code></span> expression to be an
+operation, so we also need to ensure that the condition is immediate.  The
+following function is a reliable predicate for checking this property:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">let rec is_anf (e : 'a expr) : bool =
+  match e with
+  | EPrim1(_, e, _) -&gt; is_imm e
+  | EPrim2(_, e1, e2, _) -&gt; is_imm e1 &amp;&amp; is_imm e2
+  | ELet(binds, body, _) -&gt;
+     List.for_all (fun (_, e, _) -&gt; is_anf e) binds
+     &amp;&amp; is_anf body
+  | EIf(cond, thn, els, _) -&gt; is_imm cond &amp;&amp; is_anf thn &amp;&amp; is_anf els
+  | _ -&gt; is_imm e
+and is_imm e =
+  match e with
+  | ENumber _ -&gt; true
+  | EId _ -&gt; true
+  | _ -&gt; false
+;;</code></pre></div></div></p><div class="hw"><ol start="3"><li><p>Design (and test!) a function <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf : tag expr -&gt; unit expr</code></span> that takes any
+tagged expression and produces a new expression that is in A-Normal Form.
+Because this program will include some new expressions, we&rsquo;re willing to
+discard any decorations we had on the expression, which explains why the input
+could be decorated with any type of information, but the output will just be
+decorated with unit values.  You will very likely need to write one or more
+helper functions.</p><p><p>There are several ways to define this function.  The simplest is to start with
+a helper <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">help : tag expr -&gt; (unit expr * (string * unit expr) list)</code></span> that
+takes an expression and returns
+</p><ul><li><p>The final <span style="font-style: italic">answer</span> of the program</p></li><li><p>A list of bindings that form the <span style="font-style: italic">context</span> that need to run as
+"setup", in which the answer makes sense.</p></li></ul><p>All of these expressions (the answer and the bound values) must all be in
+A-Normal Form.</p></p><p>When you need to generate <span style="font-style: italic">fresh</span> names (i.e., unique names that aren&rsquo;t
+used anywhere in the expression), generate names of the form
+<code>"$<span style="font-style: italic">reason</span>_###"</code>, where <span style="font-style: italic">reason</span> is "prim1", "prim2", "if", etc., and
+the numbers come from the expression&rsquo;s tag.</p><p>Then, define a helper function that takes this resulting answer-and-context
+pair, and collapses it into a single <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">unit expr</code></span> that is the final,
+converted program.  (You will need to be careful about the order of bindings in
+your context list, and the order in which they are processed by this second
+helper.)</p></li><li><p><span style="font-weight: bold">(6410 students: required; 4410 students: optional)</span>
+Once you&rsquo;ve defined <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf</code></span> as above, you may notice that it produces
+unnecessarily-verbose output, with extra let-bindings that could be avoided.
+For example, <span title="Boa" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">1 + 2</code></span> should not need any let-bindings, since all the
+arguments are immediate.  Split your <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">help</code></span> function into two
+mutually-recursive helpers,</p><ul><li><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">helpC</code></span> can return an answer that is any ANF expression</p></li><li><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">helpI</code></span> must return an answer that is an immediate expression</p></li></ul><p>such that you use as few let-bindings as possible.  (For what it&rsquo;s worth, in my
+reference solution, <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">helpC</code></span> calls <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">helpI</code></span> four times and itself three
+times; conversely <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">helpI</code></span> calls <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">helpC</code></span> just once and itself six times.)</p></li></ol></div><h4>3.5<tt>&nbsp;</tt><a name="(part._.Compilation)"></a>Compilation</h4><div class="hw"><ol start="5"><li><p>Enhance your <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">compile</code></span> function from Adder to compile the new expression
+forms in Boa.  You may want to restrict its signature to only accept tagged
+expressions that are in A-Normal Form.  Remember that the invariant for
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">compile</code></span> is that it always leaves its answer in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>; this invariant
+will definitely help you!</p></li></ol></div><h3>4<tt>&nbsp;</tt><a name="(part._.Recommendations)"></a>Recommendations</h3><p>Here&rsquo;s an order in which you could consider tackling the implementation:</p><ul><li><p>Write some tests for the input and output of <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf</code></span> for nested
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EPrim1</code></span> expressions to understand what the ANF transformation looks like on
+those examples.</p></li><li><p>Finish the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EIf</code></span> case for <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">compile_expr</code></span> (with immediate
+conditions) so you can run simple programs with if. You will also need to fill
+in the printing of the relevant assembly instructions, so that they can be
+output...</p></li><li><p>Write some tests for the input and output of performing <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf</code></span> on
+if-expressions, again to get a feel for what the transformation looks like.</p></li><li><p>Work through both the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf</code></span> implementation and the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EPrim2</code></span> case of
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">compile_expr</code></span>. Write tests as you go.</p></li><li><p>Work through both the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf</code></span> implementation and the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ELet</code></span> case of
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">compile_expr</code></span>.  Write tests as you go.</p></li></ul><h3>5<tt>&nbsp;</tt><a name="(part._.Testing_the_.Compiler)"></a>Testing the Compiler</h3><p>The predefined testing helpers for Boa are mostly the same as for Adder; see
+<a href="hw_adder_assignment.html" data-pltdoc="x">Assignment 2</a> for details.  I&rsquo;ve added <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tprog</code></span>, which is similar to <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">t</code></span>
+except it takes the filename of a Boa input file as input, rather than source
+text, and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">teprog</code></span>, which is similar but expects an error to occur.  There
+are also <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tanf</code></span>, which tests your <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">anf</code></span> function alone, and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ta</code></span>,
+which attempts to compile a program that&rsquo;s already in ANF (so that you can test
+your compiler independently of testing your ANF conversion).</p><p>Testing is truly important.  My initial draft of a solution for this assignment
+had an incredibly silly typo, that was causing my program to behave in a very
+odd manner.  I thought I could figure it out just by looking at the final
+assembly output.  Instead I had to go back and test each individual function,
+at which point the error became immediately obvious.</p><p>Write several test suites, one for each major function that you&rsquo;re trying to
+test.  Sequence them together at the end of <code>test.ml</code> to run them all.</p><h3>6<tt>&nbsp;</tt><a name="(part._.Running_main)"></a>Running main</h3><p>Running your own programs is the same as with Adder, except you&rsquo;ll give them
+the <code>.boa</code> file extension.</p><h3>7<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p>your <code>compile.ml</code></p></li><li><p>any additional modules you saw fit to write</p></li><li><p>tests in an OUnit test module (<code>test.ml</code>)</p></li><li><p>any test input programs (<code>input/*.boa</code> files)</p></li></ul><p><span style="font-weight: bold">Again, please ensure the makefile builds your code properly.
+The black-box tests will give you an automatic 0 if they cannot compile your code!</span></p><h3>8<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>For this assignment, you will be graded on
+</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the clarity and cleanliness of your code, and</p></li><li><p>the comprehensiveness of your test coverage</p></li></ul></p><h3>9<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to <a href="https://handins.ccs.neu.edu/"><span class="url">https://handins.ccs.neu.edu/</span></a> by the above deadline.</p><a name="(part._(gentag._12._assignmentboa))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._13._assignmentboa))"></a>1</span></span>To read the given <code>parser.mly</code> file,
+start from the line that says <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%type &lt;(Lexing.position * Lexing.position) Exprs.expr&gt; program</code></span>, which means
+that &ldquo;the parse result of a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">program</code></span> should be an <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Exprs.expr</code></span> value&rdquo;
+(decorated with a pair of start- and end-positions), and then <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%start program</code></span>
+means that the entirety of the file should be parseable as a
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">program</code></span>.  The <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%token</code></span> lines indicate the literals in the program (and,
+optionally, their corresponding types), and the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">%left</code></span> line indicates that
+the specified infix operators are left-associative.  From there, hopefully the
+grammar should be relatively straightforward to read.  The expressions in
+braces on each line tell the parser &ldquo;when you successfully parse the
+grammatical pattern on the left, construct a new value as follows...&rdquo;</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._14._assignmentboa))"></a>2</span></span>Note: the <code>.PRECIOUS</code> pseudo-target ensures that
+the Makefile won&rsquo;t delete your assembly files when its finished, so that you
+can manually inspect the results afterward for debugging purposes.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>

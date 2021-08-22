@@ -1,0 +1,179 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 10: Proper Tail Calls on x64</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 10:</span> Proper Tail Calls on x64</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Examining_the_stack%29" class="tocviewlink" data-pltdoc="x">Examining the stack</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Strategy__for_fewer_than_7_arguments_%29" class="tocviewlink" data-pltdoc="x">Strategy (for fewer than 7 arguments)</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Implementation_pitfalls%29" class="tocviewlink" data-pltdoc="x">Implementation pitfalls</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 10:</span> Proper Tail Calls on x64</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Examining_the_stack%29" class="tocsubseclink" data-pltdoc="x">Examining the stack</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Strategy__for_fewer_than_7_arguments_%29" class="tocsubseclink" data-pltdoc="x">Strategy (for fewer than 7 arguments)</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Implementation_pitfalls%29" class="tocsubseclink" data-pltdoc="x">Implementation pitfalls</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Reusing_arguments%29" class="tocsubseclink" data-pltdoc="x">Reusing arguments</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Changing_arities%29" class="tocsubseclink" data-pltdoc="x">Changing arities</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 10:</span> Proper Tail Calls on x64</h2><p>This is the counterpart to <a href="lec_tail-calls_stack_notes.html" data-pltdoc="x">Lecture 9</a>, using the x64 calling
+convention instead of the stack-only calling convention.  Most of the material
+is the same, so we focus primarily on the stack-layout diagrams and on the
+details of the tail-calling code itself.</p><h3>1<tt>&nbsp;</tt><a name="(part._.Examining_the_stack)"></a>Examining the stack</h3><p>Let&rsquo;s consider what the stack looks like while evaluating
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1</code></span>.  (As before, in this diagram, colors indicate which stack frame
+<span style="font-style: italic">uses</span> a particular value on the stack, while the brackets indicate which stack
+frame <span style="font-style: italic">created</span> a particular value on the stack.)</p><p><table cellspacing="0" cellpadding="0" class="centered"><tr><td><p>In top-level</p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(4)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(3)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(2)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(1)</code></span></p></td></tr><tr><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(4)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(3)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(2)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v1(1)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>About to return</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = ??</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 4</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 3</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 2</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 1</code></span></p></td></tr><tr><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_11.png" alt="image" width="180.66666666666669" height="381.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_12.png" alt="image" width="222.30729166666669" height="381.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_13.png" alt="image" width="222.30729166666669" height="381.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_14.png" alt="image" width="222.30729166666669" height="381.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_15.png" alt="image" width="222.30729166666669" height="381.0"/></p></td></tr></table></p><p><span style="font-weight: bold">Note:</span> The example code above uses functions with only one argument, so
+no function arguments ever got pushed onto the stack for a given function
+<span style="font-style: italic">call</span>.  However, the first argument to our functions is passed in
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span>, which is a caller-saved register that is going to be needed after
+the call returns: it needs to be saved (onto the stack) before each function
+call so that it can be restored and used afterward. In general, with
+larger-arity functions, our stack picture will contain arguments 7 and up,
+spliced in between the &ldquo;Saved arg1&rdquo; slot of one stack frame and the &ldquo;Return
+address&rdquo; slot of the next stack frame.  Additionally, our diagram only tracks
+the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span>; if the functions needed more arguments, we&rsquo;d need to
+keep track of the remaining argument registers (<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDX</code></span>,
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RCX</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R8</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R9</code></span>), and we&rsquo;d need to save those values onto the
+stack as well.  The specific order of the saved arguments on the stack doesn&rsquo;t
+matter; we just need to pick a location for each saved value and be consistent
+about it.</p><p>Now let&rsquo;s examine the stacks for <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_v2</code></span>, assuming we compile our
+code exactly as we&rsquo;ve always been.  We&rsquo;ll include the local variables, this time:</p><p><table cellspacing="0" cellpadding="0" class="centered"><tr><td><p>In top-level</p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(4, 1)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(3, 4)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(2, 12)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>In <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(1, 24)</code></span></p></td></tr><tr><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(4, 1)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(3, 4)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(2, 12)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>At <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail(1, 24)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p>About to return</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = ??, RSI = ??</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 4, RSI = 1</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 3, RSI = 4</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 2, RSI = 12</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI = 1, RSI = 24</code></span></p></td></tr><tr><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_16.png" alt="image" width="180.66666666666669" height="561.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_17.png" alt="image" width="222.30729166666669" height="561.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_18.png" alt="image" width="222.30729166666669" height="561.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_19.png" alt="image" width="222.30729166666669" height="561.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_20.png" alt="image" width="222.30729166666669" height="561.0"/></p></td></tr></table></p><p>Because the recursive calls here are all in tail-position, the next four
+instructions are <span style="font-style: italic">all</span> going to be <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span> instructions, which means the
+entirety of this stack can effectively be eliminated in one step.  In other
+words, once the olive stack frame makes the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> to the dark green frame,
+we never need to access an olive stack slot again &#8212;<wbr></wbr> those carefully-saved
+values of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span> aren&rsquo;t needed.  Looking carefully
+at the stack, we see that the <span style="font-style: italic">next</span> values for <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">n</code></span> and
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">acc</code></span> are precisely the local values computed in the
+<span style="font-style: italic">previous</span> stack frame, and moreover, each stack frame has exactly the
+same shape.  If instead of creating a <span style="font-style: italic">new</span> stack frame, we simply
+<span style="font-style: italic">reused</span> the existing one, then we wouldn&rsquo;t need more than <span style="font-style: italic">constant</span>
+stack depth to provide <span style="font-style: italic">arbitrary</span> call depth!</p><h3>2<tt>&nbsp;</tt><a name="(part._.Strategy__for_fewer_than_7_arguments_)"></a>Strategy (for fewer than 7 arguments)</h3><p>Rather than saving <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span> before each call by <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span>ing
+them onto the stack, we can elide that step, and just overwrite their values
+with the new argument values.  Once we&rsquo;ve done that, we need to re-enter
+our existing function, but we can&rsquo;t use <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> to do it.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Why not?</p></blockquote><p>The meaning of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> is to push a return address onto the stack and jump
+to the destination address.  But we already have the necessary return address
+sitting on the stack!  We also have a saved <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> on the stack too, which
+means that the function prologue we normally execute isn&rsquo;t really needed here.
+So instead, we&rsquo;ll simply <span style="font-style: italic">jump</span> directly to the next instruction in our
+code.  The compiled assembly for <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact_tail</code></span> would then look
+roughly like this (ignoring all tag checks, and simplifying the code
+slightly):</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">fact_tail:
+fact_tail_prologue:
+  push RBP
+  mov RBP, RSP
+  sub RSP, 16           ; reserve stack slots
+fact_tail_body:
+  mov RAX, RDI          ; load n
+  cmp RAX, 2            ; compare to representation of 1
+  jg keep_going
+  mov RAX, RSI          ; load acc into answer
+  mov RSP, RBP          ; and return directly
+  pop RBP               ; to the original
+  ret                   ; caller
+keep_going:
+  mov RAX, RDI          ; \
+  sub RAX, 2            ; | compute n - 1
+  mov [RBP - 8], RAX    ; /
+  mov RAX, RDI          ; \
+  sar RAX, 1            ; |
+  imul RAX, RSI         ; | compute n * acc
+  mov [RBP - 16], RAX   ; /
+  mov RAX, [RBP - 8]    ; \
+  mov RDI, RAX          ; / OVERWRITE argument n
+  mov RAX, [RBP - 16]   ; \
+  mov RSI, RAX          ; / OVERWRITE argument acc
+  jmp fact_tail_body    ; AND RESTART fact_tail</code></pre></div></div></p><p>This code is almost legible enough that we could turn it into C code pretty
+easily:</p><p><div class="sourceCodeWrapper"><span data-label="C/C++" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-csrc" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">int fact_tail(int n, int acc) {
+  while (true) {
+    if (n &lt;= 1) { return acc; }
+    else {
+      int temp1 = n - 1;
+      int temp2 = n * acc;
+      n = temp1;
+      acc = temp2;
+    }
+  }
+}</code></pre></div></div></p><p>We&rsquo;ve turned our (tail-)recursive function into a while-loop, and eliminated
+all the function calls!</p><h3>3<tt>&nbsp;</tt><a name="(part._.Implementation_pitfalls)"></a>Implementation pitfalls</h3><h4>3.1<tt>&nbsp;</tt><a name="(part._.Reusing_arguments)"></a>Reusing arguments</h4><p>Consider the following code:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def max(x, y):
+  if y &gt;= x: y
+  else: max(y, x)</code></pre></div></div></p><p>This is clearly tail-recursive, so we can apply the same technique above.
+Since we have no intermediate expressions (again, simplifying the conditional),
+we don&rsquo;t even need to move <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> at all; all our values are already on the stack:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max:
+max_prologue:
+  push RBP
+  mov RBP, RSP
+max_body:
+  mov RAX, RSI    ; load y
+  cmp RAX, RDI    ; compare to x
+  jl keep_going
+  mov RAX, RSI    ; load y into answer
+  mov RSP, RBP    ; and return directly
+  pop RBP         ; to the original
+  ret             ; caller
+keep_going:
+  mov RAX, RSI    ; \
+  mov RDI, RAX    ; / OVERWRITE argument x
+  mov RAX, RDI    ; \
+  mov RSI, RAX    ; / OVERWRITE argument y
+  jmp max_body    ; AND RESTART max</code></pre></div></div></p><p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What went horribly wrong?</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Try to fix it.</p></blockquote></p><p>Try tracing through two simple calls to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max</code></span>, to test both
+branches of the <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">if</code></span> expression, and carefully step through the
+generated assembly.  If we call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(10, 20)</code></span>, then we fall through
+the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jl</code></span> instruction, and end up returning <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span>, which is
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> as expected.  But suppose we try <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(20, 10)</code></span>.
+then we fall through to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">keep_going</code></span>, where we load the current value of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span> and overwrite <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span> with it, which effectively
+copies <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> into <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>.  Then we load the current value of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span> and copy it into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span>, in an attempt to copy the
+current value of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> into <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> &#8212;<wbr></wbr> but at this point,
+the value of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is gone!  So the effect of our tail-call of
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(y, x)</code></span> is to call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(10, 10)</code></span>, which then executes
+the first branch of the conditional and returns <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">10</code></span>.</p><p>(Note that if we updated our arguments in the other order, such that we
+overwrote <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> before we overwrote <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>, we would have an
+even more insidious problem: This particular function would compute the correct
+answer!  Our call to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(10, 20)</code></span> would effectively call
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(20, 20)</code></span> and return <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">20</code></span> &#8212;<wbr></wbr> purely coincidentally
+the correct answer.  If we changed our program to compute the minimum instead,
+then this reversed argument-replacement order would once again cause problems.)</p><p>The problem is that our new arguments to the call reside in locations that we
+are about to overwrite, and we&rsquo;ve managed to create a cycle from the
+<span style="font-style: italic">location</span> of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>, to the <span style="font-style: italic">value</span> of the
+new argument of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>, to the <span style="font-style: italic">location</span> of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> to
+the <span style="font-style: italic">value</span> of the new argument of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>.  Our naive strategy of
+simply <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>ing arguments was too simple.  Instead, we can try any of the
+following strategies in increasing sophistication (or others, in a similar spirit):</p><ul><li><p>At the beginning of every function, just copy all the arguments into new
+local variables, and then never use the arguments directly again.  This ensures
+that we can&rsquo;t have cycles, as above, so our tail calls will always work.  On
+the other hand, we&rsquo;ll use twice as much stack space as needed.</p></li><li><p>Before every tail call, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> all the new argument values onto the
+stack, then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">pop</code></span> them (in the opposite order) into their correct
+locations.  This is safe, but every tail call temporarily uses a bit more stack
+space than is necessary.</p></li><li><p>Check whether <span style="font-style: italic">any</span> of the argument values come from locations that
+we&rsquo;re about to overwrite.  If so, use the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span>/<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">pop</code></span> approach above;
+if not, use the simpler <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> approach.</p></li><li><p>Check whether there exists a cycle between new argument values and their
+locations, as in this <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max</code></span> example.  For each cycle, break the
+cycle by pushing one value onto the stack, then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> the remaining
+arguments as needed, then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">pop</code></span> the last argument of the cycle into its
+place.  For any other arguments, just <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> them as needed.</p></li></ul><p>The last strategy above is optimal: it never uses more that one extra stack
+slot at a time, and it uses the minimum number of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>s and stack
+operations.  But it&rsquo;s also clearly the most complicated, and therefore the
+hardest to test and guarantee correct.  The next-to-last strategy strikes a
+good balance between efficiency and simplicity: the safety condition is easy to
+check, and both the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span>/<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">pop</code></span>-based code and the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>-based
+code handle all arguments in a uniform manner, making it much easier to test.</p><h4>3.2<tt>&nbsp;</tt><a name="(part._.Changing_arities)"></a>Changing arities</h4><p>The technique above is not limited to <span style="font-style: italic">self-</span>recursion; it works for
+tail-calls between functions as well, meaning that mutually recursive functions
+can also be compiled to essentially a while-loop with a few conditions inside it.</p><p>However, the technique above works smoothly only for tail calls to callees whose
+arities are <span style="font-style: italic">no greater than</span> their callers&rsquo; arities.  Suppose function
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">F</code></span> calls function <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">G</code></span>, whose arity is <span type="math/tex" style="white-space: pre;" class="math-tex">\(A_G\)</span>.
+Suppose <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">G</code></span> then tail-calls another function <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">H</code></span> with arity
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(A_H &gt; A_G\)</span>.  We have two problems:</p><ul><li><p>First, there isn&rsquo;t enough room to replace
+the existing arguments with the intended new ones.  We&rsquo;d need to shift
+the saved <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> and return address up by a few stack slots, which
+themselves might be in use (those might well be the new argument values we want
+to use!), so we&rsquo;d have to move them as well.  This could easily get expensive.</p></li><li><p>Second, and more importantly, consider what happens when <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">H</code></span>
+finally returns to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">F</code></span> (note: <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">G</code></span> is no longer present;
+that&rsquo;s the point of a tail call).  <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">F</code></span> will pop off the
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(A_G\)</span> arguments it pushed onto the stack...but there are actually now
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(A_H\)</span> arguments, and so <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> will wind up in the wrong place!  In
+other words, the calling convention we&rsquo;ve described so far is <span style="font-style: italic">incapable</span>
+of supporting tail-calls to greater-arity functions.</p></li></ul><p>Obviously, these difficulties are not insurmountable, but they do require some
+clever thought...</p><a name="(part._(gentag._40._lecturetail-calls/x64))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
