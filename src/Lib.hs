@@ -66,7 +66,10 @@ site = do
                 >>= loadAndApplyTemplate pubsTemplate groupedPubsContext
                 >>= loadAndApplyTemplate defaultTemplate defaultContext
 
-    
+
+    match "teaching/eecs-483-fa21/*" $ do
+      route idRoute
+      compile copyFileCompiler
 
     -- match "ps/src/Main.purs" $ do
     --   route   $ constRoute "js/hubway.js"

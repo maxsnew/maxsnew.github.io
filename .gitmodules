@@ -1,3 +1,3 @@
 [submodule "src/website"]
-	path = src/website
+	path = src/eecs-483
 	url = git@gitlab.com:eecs-483/website.git
