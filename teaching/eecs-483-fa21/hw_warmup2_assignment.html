@@ -1,0 +1,127 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 1: OCaml warmup, part 2: trees</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 1:</span> OCaml warmup, part 2:<span class="mywbr"> &nbsp;</span> trees</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Evaluating_arithmetic%29" class="tocviewlink" data-pltdoc="x">Evaluating arithmetic</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Parsing_.S-expressions%29" class="tocviewlink" data-pltdoc="x">Parsing S-<wbr></wbr>expressions</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Grading_standards%29" class="tocviewlink" data-pltdoc="x">Grading standards</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 1:</span> OCaml warmup, part 2:<span class="mywbr"> &nbsp;</span> trees</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Evaluating_arithmetic%29" class="tocsubseclink" data-pltdoc="x">Evaluating arithmetic</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Parsing_.S-expressions%29" class="tocsubseclink" data-pltdoc="x">Parsing S-<wbr></wbr>expressions</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Grading_standards%29" class="tocsubseclink" data-pltdoc="x">Grading standards</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr><tr><td><span class="tocsublinknumber">4.1<tt>&nbsp;</tt></span><a href="#%28part._.Deliverables%29" class="tocsubseclink" data-pltdoc="x">Deliverables</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 1:</span> OCaml warmup, part 2: trees</h2><p><h4 class="due">Due: Mon 01/13 at 8:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://github.ccs.neu.edu/cs4410/starter-warmup2"/></code></p></p><p>Almost every assignment we work on in this course will involve transforming
+list- or tree-shaped data from one form to another.  In this assignment, you
+will be working with traversing a tree and producing results, and traversing a
+list and producing a tree.</p><h3>1<tt>&nbsp;</tt><a name="(part._.Evaluating_arithmetic)"></a>Evaluating arithmetic</h3><p><p>Let&rsquo;s define a data type for describing simple arithmetic expressions:
+<div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type arith =
+  | Plus of arith * arith
+  | Times of arith * arith
+  | Variable of string
+  | Num of int</code></pre></div></div>
+It should be mnemonically apparent what each case ought to represent.  Note
+that there is no notion of a &ldquo;parentheses expression&rdquo;: the parenthesization is
+implicit in the tree structure.  For example,
+</p><table cellspacing="0" cellpadding="0" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>"Math" syntax</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">arith</code></span></p></td></tr><tr><td><p><code>3 * (4 + 5)</code></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Times(Num 3, Plus(Num 4, Num 5))</code></span></p></td></tr><tr><td><p><code>(3 * 4) + 5</code></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Plus(Times(Num 3, Num 4), Num 5)</code></span></p></td></tr></table></p><p>This is a miniature language, and we reasonably want to do typical things
+with it: evaluate it and get an answer, or print it back out as text.
+Evaluation is straightforward, except for handling variables: we need some sort
+of <span style="font-style: italic">environment</span> to look up their values.</p><div class="hw"><ol><li><p>In the starter file <code>expr.ml</code>, we have given you the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">arith</code></span> data
+type, and a type for environments.  Implement the five functions in that file:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(* Looks up the given variable name in the given environment *)
+get : env string -&gt; int option
+
+(* Determines whether the given environment contains a binding for
+   the given variable *)
+contains : env string -&gt; bool
+
+(* Adds a new variable--&gt;value mapping to an environment, and
+   produces a new environment *)
+add : env string int -&gt; env
+
+(* Evaluates the given expression in the given environment *)
+evaluate : arith env -&gt; int
+
+(* Neatly prints the given expression as a string *)
+pretty : arith -&gt; string</code></pre></div></div></p></li><li><p>Enhance the provided starter file <code>test.ml</code> to thoroughly test
+your functions.  Think carefully about how to test them, and be sure
+to check for sneaky edge cases: get used to thinking about that <span style="font-style: italic">now</span>,
+while the languages are still small, so that it becomes second-nature when
+the languages get bigger!</p></li></ol></div><h3>2<tt>&nbsp;</tt><a name="(part._.Parsing_.S-expressions)"></a>Parsing S-expressions</h3><p>In this part, you will be working on obtaining a tree of data from a string
+input: in other words, you will be <span style="font-style: italic">parsing</span> the data.  Generally
+speaking, manually parsing an arbitrary language is tedious, so we will be
+working with a particularly simple language instead: s-expressions.</p><p>The first step in parsing a file is <span style="font-style: italic">tokenization</span>, that is, a function</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tokenize : string -&gt; token list</code></pre></div></div></p><p>You can think of this as breaking up the string into its component words and
+punctuation marks.  The starter file you are given contains a definition of this
+function, and a definition of the token type, but those definitions are slightly
+more intricate than above.  When you make a mistake while a program in almost any
+language, the compiler will give you an error message that contains the location
+of the error in the source.  Accordingly, we need to define</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(* startline, startcol, endline, endcol *)
+type pos = int * int * int * int</code></pre></div></div></p><p>To define tokens, we could explicitly include position information in each token,
+but we&rsquo;ll be more general: we&rsquo;ll let tokens include <span style="font-style: italic">any</span> information,
+and position information will often be handy:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type 'a tok =
+  | LPAREN of 'a
+  | RPAREN of 'a
+  | TSym of string * 'a
+  | TInt of int * 'a
+  | TBool of bool * 'a</code></pre></div></div></p><p>Now the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tokenize</code></span> function actually has signature</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tokenize : string -&gt; pos tok list</code></pre></div></div></p><div class="hw"><ol start="3"><li><p>Explain in a short paragraph how you think this function works.  You
+should be sure to explain why it uses <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">List.fold_left</code></span>, what the
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">try/with</code></span> construction is for, what the call to <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">regexp</code></span> is
+likely doing, and how the function keeps track of position information.</p></li></ol></div><p>The starter file also gives you a type definition of s-expressions, which have also been decorated:
+<div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type 'a sexp =
+  | Sym of string * 'a
+  | Int of int * 'a
+  | Bool of bool * 'a
+  | Nest of 'a sexp list * 'a</code></pre></div></div></p><p>The last function in the file produces a value of type
+<a href="https://caml.inria.fr/pub/docs/manual-ocaml/libref/Stdlib.html#1_Resulttype"><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">result</code></span></a>,
+which is predefined as:
+<div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type ('a , 'b) result =
+  | Ok of 'a
+  | Error of 'b</code></pre></div></div></p><div class="hw"><p><ol start="4"><li><p>Define a function
+<div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">parse_toks : pos tok list -&gt; (pos sexp list, string) result</code></pre></div></div>
+that parses a given list of tokens with position information (the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">pos tok list</code></span> argument)
+into a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">result</code></span>: either it successfully produces a list of valid s-expressions from
+the token list, or else it should produce an error message explaining the error...and
+referencing the location at which the error occurred.  For example:
+<div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(parse_toks (tokenize "(a b)"))          ==&gt; Ok [Nest ([Sym ("a", (0, 1, 0, 2));
+                                                        Sym ("b", (0, 3, 0, 4))],
+                                                       (0, 0, 0, 5))]
+
+(parse_toks (tokenize "(a (b true) 3)")) ==&gt; Ok [Nest
+                                                  ([Sym ("a", (0, 1, 0, 2));
+                                                    Nest ([Sym ("b", (0, 4, 0, 5));
+                                                           Bool (true, (0, 6, 0, 10))],
+                                                          (0, 3, 0, 11));
+                                                    Int (3, (0, 12, 0, 13))],
+                                                   (0, 0, 0, 14))]
+
+
+(parse_toks (tokenize "(a"))             ==&gt; Error "Unmatched left paren at line 0, col 0"
+
+(parse_toks (tokenize "(a (b c"))        ==&gt; Error "Unmatched left paren at line 0, col 3"</code></pre></div></div></p></li></ol><p><span style="font-style: italic">Hint:</span> the signature above is not general enough to be sufficient to parse
+s-expressions, and you&rsquo;ll need one or more helper functions.  First consider
+what a plausible &ldquo;subtask&rdquo; might be, to make progress on producing a
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">pos sexp list</code></span>.  Next, consider the data definition for <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">sexp</code></span>
+carefully, and look very carefully at the second example above: at the point
+just after the token <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">true</code></span> and before the following RPAREN, how might you
+describe your intermediate state?  What have you built up so far, what are you
+in the process of building, and what is left over?</p></p><p><span style="font-style: italic">Hint:</span> you can and should solve this problem by looking at only one token
+at a time.  Trying to &ldquo;look ahead&rdquo; in the list is pretty much guaranteed not
+to work, so you need to use some other technique to match up left and right
+parentheses.  One mnemonic I was shown a long time ago: to check if an
+s-expression is balanced, mentally start a running count at zero, scan across
+the expression from left to right, increment the count at each left
+parenthesis, and decrement it at each right parenthesis.  If the count is zero
+at the end, and never became negative, then you&rsquo;ve got a correctly-matched
+s-expression.  How might you carry the idea of this across into your code?
+(You won&rsquo;t need to maintain an actual <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">int</code></span> counter; you&rsquo;re implicitly
+maintaining a stack...)</p><ol start="5"><li><p>Define a function <div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">parse : string -&gt; (pos sexp list, string) result</code></pre></div></div>
+that is more convenient to use than <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">parse_toks</code></span>.</p></li><li><p>Test your parser carefully.</p></li></ol></div><h3>3<tt>&nbsp;</tt><a name="(part._.Grading_standards)"></a>Grading standards</h3><p>For this assignment, you will be graded on</p><ul><li><p>whether your code compiles,</p></li><li><p>whether your code implements the specification (functional
+correctness),</p></li><li><p>whether you thoroughly test every method that you write, and</p></li><li><p>how readable your code is (indented well, commented well, etc).</p></li></ul><h3>4<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><h4>4.1<tt>&nbsp;</tt><a name="(part._.Deliverables)"></a>Deliverables</h4><p>Your submission should include all the provided files; you should not need to
+create any new ones.</p><p>Please ensure that your code compiles! On this assignment, half of your grade
+is for correctness as determined by automated testing, so code that doesn&rsquo;t
+compile is subject to a 50% penalty up front.  Zip the provided files together:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ zip submission.zip Makefile sexp.ml expr.ml test.ml</code></pre></div></div></p><p>and submit that zip.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>

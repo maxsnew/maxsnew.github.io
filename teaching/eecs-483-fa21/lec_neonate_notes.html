@@ -1,0 +1,143 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 2: A First Compiler -- Neonate</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 2:</span> A First Compiler &ndash; Neonate</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Big_.Picture%29" class="tocviewlink" data-pltdoc="x">The Big Picture</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.The_.Wrapper%29" class="tocviewlink" data-pltdoc="x">The Wrapper</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Hello__x64%29" class="tocviewlink" data-pltdoc="x">Hello, x64</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Hello__nasm%29" class="tocviewlink" data-pltdoc="x">Hello, <code>nasm</code></a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Hello__.Compiler%29" class="tocviewlink" data-pltdoc="x">Hello, Compiler</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Is_that_it_%29" class="tocviewlink" data-pltdoc="x">Is that it?</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 2:</span> A First Compiler &ndash; Neonate</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Big_.Picture%29" class="tocsubseclink" data-pltdoc="x">The Big Picture</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.The_.Wrapper%29" class="tocsubseclink" data-pltdoc="x">The Wrapper</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Hello__x64%29" class="tocsubseclink" data-pltdoc="x">Hello, x64</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Hello__nasm%29" class="tocsubseclink" data-pltdoc="x">Hello, <code>nasm</code></a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Hello__.Compiler%29" class="tocsubseclink" data-pltdoc="x">Hello, Compiler</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Is_that_it_%29" class="tocsubseclink" data-pltdoc="x">Is that it?</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 2:</span> A First Compiler &ndash; Neonate</h2><p>Today we&rsquo;re going to implement a compiler.  It will be called Neonate, because
+it&rsquo;s fun to name things and the name will fit a theme in future weeks.</p><p>It&rsquo;s not going to be terrifically useful, as it will only compile a very small
+language &#8212;<wbr></wbr> integers.  That is, it will take a user program (a number), and
+create an executable binary that prints the number.  There are no files in
+this repository because the point of the lab is for you to see how this is
+built up from scratch.  That way, you&rsquo;ll understand the infrastructure that
+future assignments&rsquo; support code will use.</p><h3>1<tt>&nbsp;</tt><a name="(part._.The_.Big_.Picture)"></a>The Big Picture</h3><p>The heart of each compiler we write will be an OCaml program that takes an
+input program and generates assembly code.  That leaves open a few questions:</p><ul><li><p>How will the input program be handed to, and represented in, OCaml?</p></li><li><p>How will the generated assembly code be run?</p></li></ul><p>Our answer to the first question is going to be simple for today: we&rsquo;ll expect
+that all programs are files containing a single integer, so there&rsquo;s little
+&#8220;front-end&#8221; for the compiler to consider.  Most of this lab is about the
+second question &#8212;<wbr></wbr> how we take our generated assembly and meaningfully run it
+while avoiding both (a) the feeling that there&rsquo;s too much magic going on,
+and (b) getting bogged down in system-level details that don&rsquo;t enlighten us
+about compilers.</p><h3>2<tt>&nbsp;</tt><a name="(part._.The_.Wrapper)"></a>The Wrapper</h3><p>(The idea here is directly taken from <a href="http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf">Abdulaziz
+Ghuloum</a>).</p><p>Our model for the code we generate is that it will start from a C-style
+function call.  This allows us to do a few things:</p><ul><li><p>We can use a C program as the wrapper around our code, which makes it
+somewhat more cross-platform than it would be otherwise</p></li><li><p>We can defer some details to our C wrapper that we want to skip or leave
+until later</p></li></ul><p>So, our wrapper will be a C program with a traditional main that calls a
+function that we will define with our generated code:</p><p><div class="sourceCodeWrapper"><span data-label="C/C++" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-csrc" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+
+extern int64_t our_code_starts_here() asm("our_code_starts_here");
+
+int main(int argc, char** argv) {
+  int64_t result = our_code_starts_here();
+  printf("%ld\n", result);
+  return 0;
+}</code></pre></div></div></p><p>So right now, our compiled program had better return an integer, and our
+wrapper will handle printing it out for us.  The syntax
+<span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">asm("our_code_starts_here")</code></span> tells a compiler like <code>gcc</code> or <code>clang</code> to not do
+any platform-specific name-alterations, and to use the provided name exactly
+as it appears.  This makes it so the names that the compiler tries to find in
+object files don&rsquo;t vary across platforms (not something I&rsquo;d recommended in
+general, but quite useful for our purposes).</p><p>We can put this in a file called <code>main.c</code>.  If we try to compile it, we get an
+error:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ clang -g -o main main.c
+/tmp/main-498561.o: In function `main':
+/home/blerner/compilers/neonate/main.c:7: undefined reference to `our_code_starts_here'</code></pre></div></div></p><p>That&rsquo;s because it&rsquo;s our job to define <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>.  That&rsquo;s what
+we&rsquo;ll do next.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Hello__x64)"></a>Hello, x64</h3><p><p>Our next goal is to:
+</p><ul><li><p>Write an assembly program that defines <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span></p></li><li><p>Link that program with <code>main.c</code> and create an executable</p></li></ul></p><p>In order to write assembly, we need to pick a syntax and an instruction set.
+We&rsquo;re going to generate 64-bit x64 assembly, and use the so-called Intel
+syntax (there&rsquo;s also an AT&amp;T syntax, for those curious), because
+<a href="http://www.cs.virginia.edu/~evans/cs216/guides/x86.html">I like a particular guide</a>
+that uses the Intel syntax, and because it works with the particular assembler
+we&rsquo;ll use.</p><p>Here&rsquo;s a very simple assembly program, matching the above constraints, that
+will act like a C function of no arguments and return a constant number (<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">37</code></span>)
+as the return value:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov RAX, 37
+  ret</code></pre></div></div></p><p>The pieces mean, line by line:</p><ul><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text</code></span> &#8212;<wbr></wbr> Here comes some code, in text form!</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">global our_code_starts_here</code></span> &#8212;<wbr></wbr> This assembly code defines a
+globally-accessible symbol called <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>.  This is what
+makes it so that when we generate an object file later, the linker will know
+what names come from where.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here:</code></span> &#8212;<wbr></wbr> Here&rsquo;s where the code for this symbol starts.  If
+other code jumps to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>, this is where it begins.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, 37</code></span> &#8212;<wbr></wbr> Take the constant number 37 and put it in the register
+called <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>.  This register is the one that compiled C programs expect to
+find return values in, so we should put our &#8220;answer&#8221; there.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span> &#8212;<wbr></wbr> Do mechanics related to managing the stack which we will talk about
+in much more detail later, then jump to wherever the caller of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span> left off.</p></li></ul><p>We can put this in a file called <code>our_code.s</code> (<code>.s</code> is a typical extension for
+assembly code), and then we just need to know how to assemble and link it with
+the main we wrote.</p><h3>4<tt>&nbsp;</tt><a name="(part._.Hello__nasm)"></a>Hello, <code>nasm</code></h3><p>We will be using a program called <a href="http://www.nasm.us/">nasm</a> as our
+assembler, because it works well across a few platforms, and is simple to use.
+The main way we will use it is to take assembly (<code>.s</code>) files and turn them
+into object (<code>.o</code>) files that traditional compilers like <code>clang</code> or <code>gcc</code> can
+work with.  The command we&rsquo;ll use to build with nasm is:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ nasm -f elf64 -o our_code.o our_code.s</code></pre></div></div></p><p>This creates a file called <code>our_code.o</code> in
+<a href="https://en.wikipedia.org/wiki/Executable_and_Linkable_Format">Executable and Linkable Format</a>.
+We won&rsquo;t go into detail (yet, depending on what we have time for in the course)
+about this binary structure.  For our purposes, it&rsquo;s simply a version of the
+assembly we wrote that our particular operating system understands.</p><p>If you are on OSX, you can use <code>-f macho64</code> rather than <code>-f elf64</code>, which will
+produce an OSX-compatible object file.</p><p>With this in hand, and we ought to be able to compile it into a binary along
+with a C source file just like any other object file generated from C.  For
+example:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ clang -g -m64 -o our_code main.c our_code.o</code></pre></div></div></p><p>Now we can run our code:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ./our_code
+37</code></pre></div></div></p><p>(If you get an error:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">/usr/bin/ld: i386 architecture of input file `our_code.o' is incompatible with i386:x86-64 output
+collect2: error: ld returned 1 exit status</code></pre></div></div></p><p>You somehow are attempting to target 32-bit x86, but have input that&rsquo;s 64-bit
+x64.  Be sure to include the <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">-m64</code></span> flag, and see if that helps.)</p><p>Note that I will almost always include the <code>-g</code> option on uses of <code>clang</code>,
+because it&rsquo;s always handy to have debugging information turned on.</p><h3>5<tt>&nbsp;</tt><a name="(part._.Hello__.Compiler)"></a>Hello, Compiler</h3><p>With this pipeline in place, the only step left is to write an OCaml program
+that can generate assembly programs.  Then we can automate the process and get
+a pipeline from user program all the way to executable.</p><p>A very simple compiler might just take the name of a file, and output the
+compiled assembly code on standard output.  Let&rsquo;s try that; here&rsquo;s a simple
+<code>compiler.ml</code> that takes a file as a command line argument, expects it to
+contain a single integer on one line, and generates the corresponding assembly
+code:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">open Printf
+
+(* A very sophisticated compiler - insert the given integer into the mov
+instruction at the correct place *)
+let compile (program : int64) : string =
+  sprintf "
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov RAX, %Ld
+  ret\n" program;;
+
+(* Some OCaml boilerplate for reading files and command-line arguments *)
+let () =
+  let input_file = (open_in (Sys.argv.(1))) in
+  let input_program = Int64.of_string (input_line input_file) in
+  let program = (compile input_program) in
+  printf "%s\n" program;;</code></pre></div></div></p><p>Put this into <code>compiler.ml</code>, and create another file <code>87.int</code> that
+contains just the number 87, then run:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ocaml compiler.ml 87.int
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov RAX, 87
+  ret</code></pre></div></div></p><p>How exciting!  We can redirect the output to a file, and get an entire
+pipeline of compilation to work out:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ocaml compiler.ml 87.int &gt; 87.s
+$ nasm -f elf64 -o 87.o 87.s
+$ clang -g -m64 -o 87.run main.c 87.o
+$ ./87.run
+87</code></pre></div></div></p><p>If we like, we could capture this set of dependencies with a <code>make</code> rule:</p><p><div class="sourceCodeWrapper"><span data-label="Makefile" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-makefile" class="sourceCode"><code data-lang="text/x-makefile" class="sourceCode">%.run: %.o
+        clang -g -m64 -o \$@ main.c \$&lt;
+
+%.o: %.s
+        nasm -f elf64 -o \$@ \$&lt;
+
+%.s: %.int
+        ocaml compiler.ml \$&lt; &gt; \$@</code></pre></div></div></p><p>If we put that in a <code>Makefile</code>, then we can just run:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ make 87.run</code></pre></div></div></p><p>and we have the definition of our compiler.</p><h3>6<tt>&nbsp;</tt><a name="(part._.Is_that_it_)"></a>Is that it?</h3><p>Of course, this is &ldquo;just&rdquo; a bunch of boilerplate.  It got us to the point
+where we have an OCaml program that&rsquo;s defining our translation from input
+program to assembly code.  Our input programs are pretty boring, so those will
+need to get more sophisticated, and correspondingly the function <code>compile</code>
+will need to become more impressive.  That&rsquo;s where our focus will be in the
+coming weeks.</p><p>In the meantime, you have a little compiler to play with.  Can you think of
+any other interesting input program formats to try, or tweaks to the generated
+output to play with?</p></div></div><div id="contextindicator">&nbsp;</div></body></html>

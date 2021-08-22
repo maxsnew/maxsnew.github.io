@@ -1,0 +1,113 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Testing</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._testing-notes%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.How_to_test%29" class="tocsubseclink" data-pltdoc="x">How to test</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Types_and_.Examples%29" class="tocsubseclink" data-pltdoc="x">Types and Examples</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Kinds_of_tests%29" class="tocsubseclink" data-pltdoc="x">Kinds of tests</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Where_do_tests_go_in_my_project_%29" class="tocsubseclink" data-pltdoc="x">Where do tests go in my project?</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._testing-notes)"></a>Testing</h2><h3>1<tt>&nbsp;</tt><a name="(part._.How_to_test)"></a>How to test</h3><p>Writing tests is an essential part of design and implementation. The most
+important skill in writing tests is to determine <span style="font-style: italic">what</span> to test, and then
+determine <span style="font-style: italic">how</span> to test.</p><p><p>Testing a compiler is particularly nuanced: if you find what looks to be a bug,
+how can you localize it?  The problem could be
+</p><ul><li><p>You have misunderstood the semantics of the language you&rsquo;re trying to
+compile, and so have generated incorrect code.</p></li><li><p>You have misunderstood the semantics of the language in which you&rsquo;re
+writing the compiler, and so it isn&rsquo;t doing what you expect.</p></li><li><p>You have misunderstood the semantics of the target language to which
+you&rsquo;re compiling, and so the generated code isn&rsquo;t doing what you expect.</p></li><li><p>You have correctly understood all the languages involved, but just made a
+small mistake.</p></li><li><p>The program being compiled is itself buggy.</p></li><li><p>One of the phases of the compiler is buggy.</p></li><li><p>Several phases of the compiler are buggy, and conspire to usually work
+correctly anyway.</p></li><li><p>You&rsquo;ve forgotten some invariant about some aspect of your codebase, and
+therefore violated it.</p></li><li><p>You&rsquo;re compiling multiple files, and they weren&rsquo;t all compiled with the
+same version of your compiler.</p></li><li><p>...</p></li></ul></p><p>Programming under this level of uncertainty is like fighting quicksand: The
+more you struggle and the more things you change, the less likely it is that
+you&rsquo;ll figure out the underlying problem and get unstuck.  So what to do?</p><h3>2<tt>&nbsp;</tt><a name="(part._.Types_and_.Examples)"></a>Types and Examples</h3><p>The one thing you can absolutely rely upon is that if your OCaml code compiles,
+then it is type-correct: you will never misuse a value of one type as if it
+were of some other type.  This means that if you can encode important
+invariants about your program in the types, then the OCaml compiler itself will
+enforce that they are upheld.  So before you dive into hacking away, consider
+the signatures of your functions <span style="font-style: italic">very</span> carefully.</p><p>Imagine you have some type signature <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Typ1 Typ2 -&gt; Typ3</code></span>, and you need to
+provide some implementation of that type.  Additionally you have some
+specification of what that function is supposed to compute: You must check that
+your concrete implementation of that type works as specified. However thinking
+about tests after you have completed the implementation is not ideal. Since you
+have already written your implementation, you will likely come up with tests
+that you already know will pass, rather than tests that <span style="font-style: italic">should</span>
+pass. Here are some recommendations on how to come up with effective test
+cases:</p><ul><li><p>Follow this workflow: <span style="font-style: italic">Write signatures</span> &gt; <span style="font-style: italic">Write an empty
+implementation</span> &gt; <span style="font-style: italic">Write test cases</span>. Writing an empty implementation (all
+the functions are present, but essentially empty) will ensure that referring to the
+implementation in your test cases does not produce compiling errors. Fill
+in the implementation <span style="font-style: italic">after</span> writing your test cases.</p></li><li><p>Convince yourself that the code to be tested cannot be trusted, and it&rsquo;s
+up to you to find any mistakes. Often a role reversal helps: imagine the
+instructor was writing code for the homework, and
+you get credit for finding mistakes in the instructor&rsquo;s code! Be creative:
+where might the gotchas be in the design, and how might someone else
+misunderstand or mis-implement the design?</p></li><li><p>Look at each function in isolation. Think about what
+behavior you expect when all inputs are <span style="font-style: italic">correct</span> and <span style="font-style: italic">as expected</span>
+(if you wrote the interface be sure to document its intended behavior when you
+are writing it!). Remember that a test passes if the <span style="font-style: italic">expected behavior</span>
+is the same as the <span style="font-style: italic">actual behavior</span>.</p></li><li><p>Look at each function in isolation. Think about every
+possibility of passing <span style="font-style: italic">correct</span> and <span style="font-style: italic">incorrect</span> parameters, and
+figure out how to check for whether the function behaves as expected in each
+situation.</p></li><li><p>Look at each function in isolation. Carefully read about
+its objectives, including exceptional cases. Think about how you will verify
+that an implementation of that function actually fulfills these objectives. How
+will you reproduce exceptional cases so that you can test them?</p></li><li><p>Now think about the sequences in which various functions
+might be called. Is there a &ldquo;correct&rdquo; sequence of calling them? What happens
+when they are called &ldquo;out of sequence,&rdquo; and what should happen?</p></li><li><p>Remember that the best option is to catch incorrect uses of your code at
+compile time, such that <span style="font-style: italic">client</span> code that incorrectly uses <span style="font-style: italic">your</span>
+code will produce <span style="font-style: italic">compile-time</span> errors. This ensures that if someone uses
+your code incorrectly, they cannot even compile their program. The next best
+option is to flag incorrect uses at run time (e.g. using exceptions). This
+ensures that client code will produce errors when it is run, because it used
+your code incorrectly. The unacceptable option is to <span style="font-style: italic">hope</span> that everybody
+will read your documentation (or worse, your code), understand it, and use it
+accordingly&#8212;<wbr></wbr>and therefore convince yourself there&rsquo;s no need to actually put
+checks in your code. Remember that if documentation is vague somebody will
+misinterpret it, if functionality does not consider some specific scenario
+somebody will produce it. Better your tests than the user.</p></li></ul><p>Writing tests before writing your implementation will give you insight into
+what your implementation ought to do. Moreover, it will help you work through
+the types that you have versus the ones you may want, and often just
+understanding that structure is a big help in understanding the problem.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h3><p>Obviously, unfortunately, you often can&rsquo;t write a <span style="font-style: italic">complete</span> set of tests
+for your code before you&rsquo;ve started writing your code, as the process of
+implementing a design can easily bring issues to the forefront that you didn&rsquo;t
+notice or anticipate.  Proper testing is an iterative process: starting from
+initial examples you create an initial implementation, which might suggest
+additional tests, which might cause test failures, which you need to fix, which
+might suggest additional tests, etc. A successful set of test cases is one that
+tests whether your implementation adheres to your design, whether your design
+leaves loopholes and ambiguities that allow its incorrect usage, and whether
+the behavior of your implementation can be predicted in all situations. This
+set of test cases <span style="font-style: italic">should compile</span>, and upon running, <span style="font-style: italic">should pass.</span></p><p><img src="http://optimalbi.com/wp-content/uploads/2015/03/Test-First-Comic.png"/></p><p><span style="font-weight: bold">NOTE:</span> It is far better to include tests that you know to fail, rather
+than comment them out or delete them.  Leave a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(* FIXME *)</code></span> comment next to
+the failing tests, explaining what you intended the test to check for, and why
+you think it&rsquo;s currently failing.  At some point you clearly had a reason for
+writing the test case, and it would be a shame to lose that insight by deleting
+the test!  Equally bad is commenting the test out, since it gives the
+misleading impression that everything is fine and all tests pass, when there
+are known problems remaining...</p><h4>3.1<tt>&nbsp;</tt><a name="(part._.Kinds_of_tests)"></a>Kinds of tests</h4><p>There are many kinds of tests you may wish to write:</p><ul><li><p><span style="font-weight: bold">Unit tests</span> are the style of tests we&rsquo;ve written all along: they
+test the smallest components of your program&#8212;<wbr></wbr>individual functions, classes,
+or interfaces, for example&#8212;<wbr></wbr>and confirm that they work as expected.  Unit
+tests are useful for confirming that edge cases are properly handled, that
+algorithms seem to work as expected on their inputs, etc.</p><p><img src="https://i1.wp.com/devops.com/wp-content/uploads/2015/11/unit-tests-pass-01-450.png"/></p></li><li><p><span style="font-weight: bold">Regression tests</span> are the kinds of tests you always regret not
+having written sooner.  They are written as soon as you notice a bug in your
+code and fix it: their purpose is to ensure that the bug can never creep back
+into your program inadvertently.  Regression tests are especially useful for
+compilers, since there are often so many interacting parts that it is easy to
+reintroduce bugs that might have been fixed before.  Write regression tests
+even for the simplest of bugs: if you were inattentive enough to make that
+mistake once, you could make it again, and so could your colleagues.  Let them,
+and your future self, benefit from noticing the bug now!</p><p><img src="https://checkpointech.com/wp-content/uploads/2018/09/Dont-Overlook-Your-Regression-Testing.jpg"/></p></li><li><p><span style="font-weight: bold">Integration tests</span> test larger units of functionality, or indeed
+even libraries at a time.  They are trickier to write, because their inputs are
+usually larger and more structured: for instance, testing that a sequence of
+user inputs produces the correct sequence of outputs.  These might try sending
+an entire program through your compiler and checking that its final behavior is
+as expected.</p><p><img src="https://chriskottom.com/images/unit-tests-passing-no-integration-tests.jpg"/></p></li><li><p><span style="font-weight: bold">Randomized or &ldquo;fuzz&rdquo; tests</span> are designed to rapidly explore a
+wider space of potential inputs than can easily be written manually.  Typically
+these tests require writing the code to be tested (obviously!), the code to
+randomly generate inputs, and either a secondary implementation of the code
+being tested or a predicate that can confirm the proper operation of that code.
+These latter two are known as <span style="font-style: italic">oracles</span>, because they never make mistakes,
+but you have to interpret their results carefully.  Fuzz testing is fantastic
+for checking (for example) the robustness of the error handling of your
+program, to see whether it holds up without crashing even under truly odd
+inputs.  Likewise, it&rsquo;s particularly good at generating
+wacky-but-syntactically-valid input programs to test your compiler.  (Fuzz
+testing with malicious intent is one of the tools hackers use to exploit
+weaknesses in systems.)</p><p><img src="https://imgs.xkcd.com/comics/random_number.png"/></p></li></ul><h4>3.2<tt>&nbsp;</tt><a name="(part._.Where_do_tests_go_in_my_project_)"></a>Where do tests go in my project?</h4><p>At the moment, we aren&rsquo;t exploiting OCaml&rsquo;s support for packaging too heavily:
+every file is a package, and there are no subdirectories or "Java packages" to
+worry about.  You can even place all your tests within a single <code>test.ml</code>
+file.  Still, it&rsquo;s worth breaking the tests out into separately-named test
+suites, so that their purpose and organization is more readily apparent.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
