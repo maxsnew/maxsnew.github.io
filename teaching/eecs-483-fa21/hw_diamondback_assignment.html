@@ -1,0 +1,304 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 5: Diamondback: Defining functions</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 5:</span> Diamondback:<span class="mywbr"> &nbsp;</span> Defining functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Diamondback_.Language%29" class="tocviewlink" data-pltdoc="x">The Diamondback Language</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Running_main%29" class="tocviewlink" data-pltdoc="x">Running main</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 5:</span> Diamondback:<span class="mywbr"> &nbsp;</span> Defining functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Diamondback_.Language%29" class="tocsubseclink" data-pltdoc="x">The Diamondback Language</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Concrete_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Abstract_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Abstract Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.4<tt>&nbsp;</tt></span><a href="#%28part._.Implementation%29" class="tocsubseclink" data-pltdoc="x">Implementation</a></td></tr><tr><td><span class="tocsublinknumber">1.5<tt>&nbsp;</tt></span><a href="#%28part._.Tail_calls%29" class="tocsubseclink" data-pltdoc="x">Tail calls</a></td></tr><tr><td><span class="tocsublinknumber">1.6<tt>&nbsp;</tt></span><a href="#%28part._.Extra_credit__.Printing_stack_traces%29" class="tocsubseclink" data-pltdoc="x">Extra credit:<span class="mywbr"> &nbsp;</span> Printing stack traces</a></td></tr><tr><td><span class="tocsublinknumber">1.7<tt>&nbsp;</tt></span><a href="#%28part._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Running_main%29" class="tocsubseclink" data-pltdoc="x">Running main</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 5:</span> Diamondback: Defining functions</h2><p><h4 class="due">Due: Tue 02/18 at 8:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://github.ccs.neu.edu/cs4410/starter-diamondback"/></code></p></p><p><span style="font-style: italic">In this assignment, you&rsquo;ll implement a compiler for a small language with
+functions declarations and function calls, that can communicate with functions
+written in C.  You&rsquo;ll also add some static well-formedness checks to the
+compiler.</span></p><p><span style="font-style: italic">As for the project acronym, so far our greatest minds have come up with</span></p><ul><li><p><span style="font-weight: bold">D</span>esigning an</p></li><li><p><span style="font-weight: bold">I</span>ntel <span style="font-weight: bold">A</span>rchitecture</p></li><li><p><span style="font-weight: bold">MO</span>stly dynamic</p></li><li><p><span style="font-weight: bold">N</span>ested-expression</p></li><li><p>(<span style="font-weight: bold">D</span>iamondback supports recursion)</p></li><li><p><span style="font-weight: bold">B</span>oolean-tagged</p></li><li><p><span style="font-weight: bold">A</span>NF-transformed</p></li><li><p><span style="font-weight: bold">C</span>ompiler.</p></li><li><p>...<span style="font-weight: bold">K</span>?</p></li></ul><p><p style="text-align: center"><img class="titleimage" src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Crotalus_ruber_02.jpg"/></p></p><h3>1<tt>&nbsp;</tt><a name="(part._.The_.Diamondback_.Language)"></a>The Diamondback Language</h3><p>As usual, we have concrete and abstract syntaxes, along with a specification
+of semantics.</p><h4>1.1<tt>&nbsp;</tt><a name="(part._.Concrete_.Syntax)"></a>Concrete Syntax</h4><p>The major addition to Diamondback are <span style="font-style: italic">function declarations</span>.  Our programs
+are now a sequence of zero or more function declarations, followed by a single
+<span style="font-style: italic">main expression</span>.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Diamondback._program)))"></a><span class="bnf-rule">&#8249;program&#8250;</span><span class="bnf-meta">:</span> 
+                <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._decls%29%29%29" data-pltdoc="x">&#8249;decls&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Diamondback._binop-expr)))"></a><span class="bnf-rule">&#8249;binop-expr&#8250;</span><span class="bnf-meta">:</span> 
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">true</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">false</span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._prim1%29%29%29" data-pltdoc="x">&#8249;prim1&#8250;</a></span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._prim2%29%29%29" data-pltdoc="x">&#8249;prim2&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">true</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">false</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(.Diamondback._prim1)))"></a><span class="bnf-rule">&#8249;prim1&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class="bnf-lit">add1</span><span class="bnf-meta"> | </span><span class="bnf-lit">sub1</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">!</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">print</span><span class="bnf-meta"> | </span><span class="bnf-lit">printStack</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">isbool</span><span class="bnf-meta"> | </span><span class="bnf-lit">isnum</span>
+<a name="(elem._(bnf-prod._(.Diamondback._prim2)))"></a><span class="bnf-rule">&#8249;prim2&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class="bnf-lit">+</span><span class="bnf-meta"> | </span><span class="bnf-lit">-</span><span class="bnf-meta"> | </span><span class="bnf-lit">*</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">&lt;</span><span class="bnf-meta"> | </span><span class="bnf-lit">&gt;</span><span class="bnf-meta"> | </span><span class="bnf-lit">&lt;=</span><span class="bnf-meta"> | </span><span class="bnf-lit">&gt;=</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">==</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">&amp;&amp;</span><span class="bnf-meta"> | </span><span class="bnf-lit">||</span>
+<a name="(elem._(bnf-prod._(.Diamondback._decls)))"></a><span class="bnf-rule">&#8249;decls&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._decl%29%29%29" data-pltdoc="x">&#8249;decl&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._decl%29%29%29" data-pltdoc="x">&#8249;decl&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._decls%29%29%29" data-pltdoc="x">&#8249;decls&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Diamondback._decl)))"></a><span class="bnf-rule">&#8249;decl&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Diamondback._ids)))"></a><span class="bnf-rule">&#8249;ids&#8250;</span><span class="bnf-meta">:</span> 
+        <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+        <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Diamondback._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit">let</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">if</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">else:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._binop-expr%29%29%29" data-pltdoc="x">&#8249;binop-expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Diamondback._exprs)))"></a><span class="bnf-rule">&#8249;exprs&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Diamondback._bindings)))"></a><span class="bnf-rule">&#8249;bindings&#8250;</span><span class="bnf-meta">:</span> 
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span></p></blockquote><p>Diamondback also supports line comments, beginning with a <code>#</code> and
+continuing to the end of the line.</p><p>The other addition is <span style="font-style: italic">function applications</span>, which are written
+<code><span class="bnf-lit bnf-unknown">IDENTIFIER</span>(<a href="#%28elem._%28bnf-prod._%28.Diamondback._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a>)</code>, for
+example <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(1, 2, 3)</code></span>.  This is the syntax for a <span style="font-style: italic">call</span> to a function.
+Note that primops and function calls are whitespace-sensitive: there can be no
+space before the left parenthesis.  (This is a workaround for a grammatical
+ambiguity in the language.  You can see a remnant of that ambiguity by the "1
+shift/reduce conflict" warning produced by <code>ocamlyacc</code> in the provided
+code.)</p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Abstract_.Syntax)"></a>Abstract Syntax</h4><p>In this assignment, we distinguish between the surface syntax that the parser
+produces (<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">expr</code></span>) from the ANF expression forms (<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">aexpr</code></span>).  All these
+types are given in <code>exprs.ml</code>; below we show a simplified, undecorated form:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type prim1 =
+  | Add1
+  | Sub1
+  | Not
+  | Print
+  | IsNum
+  | IsBool
+
+type prim2 =
+  | Plus
+  | Minus
+  | Times
+  | And
+  | Or
+  | Greater
+  | GreaterEq
+  | Less
+  | LessEq
+  | Eq
+
+(* Surface expressions *)
+type bind = (string * expr)
+
+type expr =
+  | ELet of bind list * expr
+  | EPrim1 of prim1 * expr
+  | EPrim2 of prim2 * expr * expr
+  | EApp of string * expr list
+  | EIf of expr * expr * expr
+  | ENumber of int
+  | EBool of bool
+  | EId of string
+
+type decl =
+  | DFun of string * string list * expr
+
+type program =
+  | Program of decl list * expr
+
+
+(* Internal ANF expressions *)
+type immexpr =
+  | ImmNumber of int
+  | ImmBool of bool
+  | ImmId of string
+
+and cexpr =
+  | CPrim1 of prim1 * immexpr
+  | CPrim2 of prim2 * immexpr * immexpr
+  | CApp of string * immexpr list
+  | CIf of immexpr * aexpr * aexpr
+  | CImmExpr of immexpr
+
+and aexpr =
+  | ALet of string * cexpr * aexpr
+  | ACExpr of cexpr
+
+and adecl =
+  | ADFun of string * string list * aexpr
+
+and aprogram =
+  | AProgram of adecl list * aexpr</code></pre></div></div></p><p>The <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EApp</code></span> and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">CApp</code></span> constructors correspond to function applications, and
+the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">decl</code></span> and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">adecl</code></span> types respresent function declarations.  A program is a
+list of <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">decls</code></span> (surface) or <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">adecls</code></span> (ANF), with a main expression.</p><h4>1.3<tt>&nbsp;</tt><a name="(part._.Semantics)"></a>Semantics</h4><p>There are several distinguishing features of Diamondback.  The first is
+function applications.  A function application should give the answer we&rsquo;d get
+if we followed the rules for substituting argument values for parameter names.
+So, for example:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x, y):
+  x + y
+
+f(1, 2)</code></pre></div></div></p><p>should produce 3.</p><p>Logical operators <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">&amp;&amp;</code></span> and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">||</code></span> do not need to
+short-circuit; they should have the same behavior as you gave them in <a href="hw_cobra_assignment.html" data-pltdoc="x">Assignment 4</a>.</p><p>Since our Diamondback functions only call other Diamondback functions, rather
+than arbitrary functions in C, you can use a simpler calling convention than the
+full x64 calling convention: you can simply push all the arguments onto the
+stack and pop them all back off again.  For primitives like
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>, obviously, you&rsquo;ll need to follow the proper
+<a href="https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64">x64
+stack layout</a>.  (If you&rsquo;d like to use the x64 calling convention everywhere,
+you certainly may do so.  Test thoroughly.)</p><p>There are a number of new <span style="font-style: italic">errors</span> that can occur now that we have function
+declarations and calls.  Your implementation should catch all of these cases
+<span style="font-style: italic">statically</span>; that is, at compile time before the program runs:</p><ul><li><p>A function application with the wrong number of arguments should signal an
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Arity</code></span> error</p></li><li><p>A function application of a non-existent function should signal an
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">UnboundFun</code></span> error</p></li><li><p>An identifier without a corresponding binding location should report an
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">UnboundId</code></span> error</p></li><li><p>A let binding with duplicate names should report a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">DuplicateId</code></span> error</p></li><li><p>A function declaration with duplicate names in the argument list should
+report a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">DuplicateId</code></span> error</p></li><li><p>If there are multiple function definitions with the same name, report a
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">DuplicateFun</code></span> error</p></li><li><p>If a numeric constant is too large, report an <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Overflow</code></span> error</p></li></ul><p>Again, these errors should stop the program from compiling, <span style="font-style: italic">not</span> happen
+at runtime.  Moreover, you should report <span style="font-style: italic"><span style="font-weight: bold">all</span></span> the errors in this
+program, not just the first one encountered.  See the notes on <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">is_well_formed</code></span>
+below for implementation details.</p><p>These errors, in addition to <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ParseError</code></span>s, are all defined in
+<code>errors.ml</code>.  Additionally, there are two more errors given to you:
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">NotYetImplemented</code></span> errors, which you should obviously remove and implement;
+and <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">InternalCompilerError</code></span>s, which indicate intended-to-be-impossible
+scenarios in your compiler.  <span style="font-style: italic">Ideally,</span> your final compiler should not need these
+(either by coming up with useful semantics in all scenarios, or by using the
+ML type system to your advantage to avoid any such unplanned scenarios, but in
+practice you might still need them.</p><h4>1.4<tt>&nbsp;</tt><a name="(part._.Implementation)"></a>Implementation</h4><p>The file <code>assembly.ml</code> gives you all the assembly instructions you should
+need, though you&rsquo;re free to add your own new instructions if you want.</p><p>There are a few new pieces to the implementation:</p><ul><li><p>A new structure for ANF.  You should study and understand it (see
+<a href="lec_anf-redux_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Revisiting ANF: Encoding A-Normal Form with Types</a>) so you can implement the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EApp</code></span> case.  This is the first thing you
+should add.</p></li><li><p>A new <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">is_well_formed</code></span> function, which is called prior to performing
+  ANF and are used to report the errors above.  This function either returns
+  the program unchanged, or returns an <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">exn list</code></span>, which represents
+  <span style="font-style: italic">all</span> the errors that are found in a program or expression.  So a
+  program like</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x, x):
+  y
+f(1)</code></pre></div></div></p><p>would report three errors, one for <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> being unbound, one for duplicated <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>
+  parameters, and one for the arity mismatch on the call to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>.</p><p>These errors can be reported in any order; in general (and in grading), it&rsquo;s
+  easy to test for one at a time.  But reporting multiple errors makes using
+  the <code>main</code> of the compiler much more pleasant, and is a nice view into
+  the kinds of compiler ergonomics we should expect from a modern compiler.</p></li><li><p>The <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">AProgram</code></span> structure, which contains both function declarations and the
+  expression for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>.  You will probably want to generate
+  an assembly structure that looks like:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  ;; extern and global stuff
+section .text
+...
+fun_decl1:
+  ;; code for fun_decl1, including stack management
+fun_decl2:
+  ;; code for fun_decl2, including stack management
+...
+our_code_starts_here:
+  ;; main entrypoint, as before, with stack management
+
+  ;; errors, as before
+internal_error_non_number:
+...</code></pre></div></div></p><p>(Hint: while the <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">AProgram</code></span> construct is not quite uniform, since the body
+is treated separately from the function definitions, a relatively
+simple observation makes generating the output assembly of the entire program
+very uniform...)</p></li></ul><h4>1.5<tt>&nbsp;</tt><a name="(part._.Tail_calls)"></a>Tail calls</h4><p>Refine your compilation of function
+applications to support tail-calls.  There are three levels of complexity here:</p><ul><li><p><span style="font-weight: bold">6410: required; 4410: optional.</span>  Support self-recursive tail-calls.</p></li><li><p><span style="font-weight: bold">6410: required; 4410: optional.</span>  Support arbitrary tail-calls,
+when the number of arguments is the same or decreasing between caller and callee.</p></li><li><p><span style="font-weight: bold">Everyone: Optional.</span> Support arbitrary tail-calls, when the number
+of arguments is different between caller and callee.</p></li></ul><p>To support the last one, you&rsquo;ll need to be creative with the calling
+convention.  The only truly essential feature of a stack frame is knowing where
+the saved <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> and return addresses must be, and all other
+variables&rsquo; locations can be calculated from knowing those.  In particular,
+you&rsquo;ll need to change the ordering of values in your stack frame, where
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> points between parameters and locals.  Instead, both parameters and
+locals will need to be above <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>: change your compilation
+of function calls &#8212;<wbr></wbr> and anything else that is affected! &#8212;<wbr></wbr> to support this
+new convention.  This change will prevent you from using the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>
+instruction (why?), so you&rsquo;ll need to come up with something clever to save
+the desired return address.  Come see me if you try this, for a hint.</p><p>To detect that you&rsquo;ve implemented tail calls correctly, you may want to attempt
+the following extra credit.</p><h4>1.6<tt>&nbsp;</tt><a name="(part._.Extra_credit__.Printing_stack_traces)"></a>Extra credit: Printing stack traces</h4><p>Implement a new <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">prim1</code></span> operator, <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">printStack</code></span>, that takes a
+single argument and returns it, just like <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span> does.  What makes
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">printStack</code></span> special is its output: it will print out a stack trace
+of all the call frames from wherever it&rsquo;s called, down to wherever
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span> began.  For example, given the following program:
+<div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def fact(acc, n):
+  if n &lt; 1: printStack(acc)
+  else: fact(acc * n, n - 1) + 0
+  # NOTE: This + 0 is to prevent tail-recursion in this example
+
+fact(1, 3)</code></pre></div></div>
+Here is a potential stack trace:</p><p><div class="sourceCodeWrapper"><div class="sourceCode"><pre data-lang="" class="sourceCode"><code data-lang="" class="sourceCode">RSP: 0x00007ffc352b1bb0	==&gt;  0
+RBP: 0x00007ffc352b1bd0	==&gt;  70360600251912
+(difference: -4)
+Requested return val: 0x000000000000000c	==&gt; 6
+Num args: 2
+    0x00007ffc352b1bb0: 000000000000000000	==&gt;  old rbp
+    0x00007ffc352b1bb8: 000000000000000000	==&gt;  0
+    0x00007ffc352b1bc0: 000000000000000000	==&gt;  0
+    0x00007ffc352b1bc8: 0xffffffffffffffff	==&gt;  true
+RBP 0x00007ffc352b1bd0: 0x00007ffc352b1c10	==&gt;  old rbp
+    0x00007ffc352b1bd8: 0x0000000000401077	==&gt;  saved ret
+    0x00007ffc352b1be0: 0x000000000000000c	==&gt;  6
+    0x00007ffc352b1be8: 000000000000000000	==&gt;  0
+    0x00007ffc352b1bf0: 000000000000000000	==&gt;  0
+    0x00007ffc352b1bf8: 000000000000000000	==&gt;  0
+    0x00007ffc352b1c00: 0x000000000000000c	==&gt;  6
+    0x00007ffc352b1c08: 0x7fffffffffffffff	==&gt;  false
+RBP 0x00007ffc352b1c10: 0x00007ffc352b1c50	==&gt;  old rbp
+    0x00007ffc352b1c18: 0x0000000000401077	==&gt;  saved ret
+    0x00007ffc352b1c20: 0x000000000000000c	==&gt;  6
+    0x00007ffc352b1c28: 0x0000000000000002	==&gt;  1
+    0x00007ffc352b1c30: 000000000000000000	==&gt;  0
+    0x00007ffc352b1c38: 0x0000000000000002	==&gt;  1
+    0x00007ffc352b1c40: 0x000000000000000c	==&gt;  6
+    0x00007ffc352b1c48: 0x7fffffffffffffff	==&gt;  false
+RBP 0x00007ffc352b1c50: 0x00007ffc352b1c90	==&gt;  old rbp
+    0x00007ffc352b1c58: 0x0000000000401077	==&gt;  saved ret
+    0x00007ffc352b1c60: 0x0000000000000006	==&gt;  3
+    0x00007ffc352b1c68: 0x0000000000000004	==&gt;  2
+    0x00007ffc352b1c70: 000000000000000000	==&gt;  0
+    0x00007ffc352b1c78: 0x0000000000000004	==&gt;  2
+    0x00007ffc352b1c80: 0x0000000000000006	==&gt;  3
+    0x00007ffc352b1c88: 0x7fffffffffffffff	==&gt;  false
+RBP 0x00007ffc352b1c90: 0x00007ffc352b1cb0	==&gt;  old rbp
+    0x00007ffc352b1c98: 0x00000000004010c1	==&gt;  saved ret
+    0x00007ffc352b1ca0: 0x0000000000000002	==&gt;  1
+    0x00007ffc352b1ca8: 0x0000000000000006	==&gt;  3
+BOT 0x00007ffc352b1cb0: 0x00007ffc352b1cf0	==&gt;  old rbp
+    0x00007ffc352b1cb8: 0x0000000000400f37	==&gt;  saved ret
+    0x00007ffc352b1cc0: 0x00007f04f63949a0	==&gt;  heap
+6</code></pre></div></div></p><p><p>The output shows:
+</p><ul><li><p>The current values of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> at the moment of the the
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">printStack</code></span> call.  The difference between them should be the size
+of the current stack frame.</p></li><li><p>The requested return value is the argument given to
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">printStack</code></span>.</p></li><li><p><code>Num args</code> shows the number of arguments passed to the current
+function &ndash; i.e., the two arguments given to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact</code></span>.</p></li><li><p>The next bunch of segments show individual stack frames.  The three
+columns show the memory address, the value at that address, and then the result
+of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>ing that address as a Diamondback value, or identifying
+it as the saved <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> and return address.  Each line labelled <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>
+indicates the beginning of a new stack frame: the value at each of those lines
+contains the address of the <span style="font-style: italic">next</span> <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> line.</p><p>Looking at these stack frames, from bottom to top, you can see: the boolean
+result of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">n &lt; 1</code></span>, local values <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">acc * n</code></span> and
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">n - 1</code></span>, a slot for the return value of the <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fact(...)</code></span>
+call (which is still zero because the call hasn&rsquo;t finished yet), then the
+arguments <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">n</code></span> and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">acc</code></span> for the next call.</p></li><li><p>The final segment, marked <code>BOT</code>, is the stack frame of <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">main</code></span>
+itself.</p></li><li><p>The last line of output is the final output of the entire
+program, and comes from the <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">printf</code></span> in <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">main()</code></span>.</p></li></ul></p><p><span style="font-style: italic">Hint:</span> To identify where to stop printing the stack (after all, <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">main</code></span>
+isn&rsquo;t the very last thing in the stack; there are operating-system frames as
+well...), I used a trick: declare a global, non-<span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">const</code></span> variable in C,
+<span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">uint64_t* STACK_BOTTOM</code></span>, and mark it as <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">extern</code></span>.  At the beginning of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>, initialize that value with the current value of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> (you&rsquo;ll need a new assembly <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">arg</code></span> for this), and then you&rsquo;re
+guaranteed to know where your stack ends, dynamically.</p><p><span style="font-weight: bold">Note:</span> if you&rsquo;ve properly implemented tail calls, then eliminating the
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">+ 0</code></span> from the program above, and rerunning it, should produce a
+<span style="font-style: italic">much</span> shorter stack trace...</p><p><span style="font-weight: bold">Note:</span> If you implement this extra credit, provide a brief, written
+explanation (in a comment in <code>main.c</code>, near whatever new functions you
+define) of why this must be implemented as a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EPrim1</code></span> and not as a
+<span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">EApp</code></span> expression.</p><h4>1.7<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h4><p>There is one new testing function provided, <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tvg</code></span>.  This works just like <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">t</code></span>,
+except it runs <code>valgrind</code> on the executable it creates, and checks whether or
+not it reports errors.  If <code>valgrind</code> does report memory errors, the test
+fails and the errors are reported.  The test succeeds if there are no memory
+errors and the answer is correct.</p><p>You can test the well-formedness errors using the error tester as usual.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Running_main)"></a>Running main</h3><p>Running your own programs is the same as with Cobra, except you&rsquo;ll give them
+the <code>.diamond</code> file extension.</p><h3>3<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p>your <code>compile.ml</code></p></li><li><p>any additional modules you saw fit to write</p></li><li><p>any starter modules that you modifed</p></li><li><p>tests in an OUnit test module (<code>test.ml</code>)</p></li><li><p>any test input programs (<code>input/*.diamond</code> files or <code>input/*/*</code> subdirectories)</p></li><li><p>any additional files that are needed to build your tests (e.g. <code>main.c</code>, etc)</p></li></ul><p><span style="font-weight: bold">Again, please ensure the makefile builds your code properly.
+The black-box tests will give you an automatic 0 if they cannot compile your code!</span></p><p><span style="font-weight: bold">DO NOT SUBMIT YOUR <code>.git</code> DIRECTORY!</span>  For that matter, don&rsquo;t submit
+your <code>output</code> or <code>_build</code> directories.</p><h3>4<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>For this assignment, you will be graded on
+</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the clarity and cleanliness of your code, and</p></li><li><p>the comprehensiveness of your test coverage</p></li></ul></p><h3>5<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to <a href="https://handins.ccs.neu.edu/"><span class="url">https://handins.ccs.neu.edu/</span></a> by the above deadline.</p><a name="(part._(gentag._9._assignmentdiamondback))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>

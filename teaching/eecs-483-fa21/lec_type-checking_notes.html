@@ -1,0 +1,141 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 11: Type Checking</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 11:</span> Type Checking</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Introduction%29" class="tocviewlink" data-pltdoc="x">Introduction</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Type_systems_as_formal_judgements%29" class="tocviewlink" data-pltdoc="x">Type systems as formal judgements</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Implementing_the_type_system%29" class="tocviewlink" data-pltdoc="x">Implementing the type system</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 11:</span> Type Checking</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Introduction%29" class="tocsubseclink" data-pltdoc="x">Introduction</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Type_systems_as_formal_judgements%29" class="tocsubseclink" data-pltdoc="x">Type systems as formal judgements</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Values%29" class="tocsubseclink" data-pltdoc="x">Values</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._.Primitives_and_derivation_trees%29" class="tocsubseclink" data-pltdoc="x">Primitives and derivation trees</a></td></tr><tr><td><span class="tocsublinknumber">2.3<tt>&nbsp;</tt></span><a href="#%28part._.Type_variables%29" class="tocsubseclink" data-pltdoc="x">Type variables</a></td></tr><tr><td><span class="tocsublinknumber">2.4<tt>&nbsp;</tt></span><a href="#%28part._.Variables%29" class="tocsubseclink" data-pltdoc="x">Variables</a></td></tr><tr><td><span class="tocsublinknumber">2.5<tt>&nbsp;</tt></span><a href="#%28part._.Functions_and_function_calls%29" class="tocsubseclink" data-pltdoc="x">Functions and function calls</a></td></tr><tr><td><span class="tocsublinknumber">2.6<tt>&nbsp;</tt></span><a href="#%28part._.Typechecking_entire_programs%29" class="tocsubseclink" data-pltdoc="x">Typechecking entire programs</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Implementing_the_type_system%29" class="tocsubseclink" data-pltdoc="x">Implementing the type system</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 11:</span> Type Checking</h2><h3>1<tt>&nbsp;</tt><a name="(part._.Introduction)"></a>Introduction</h3><p>As our language gets richer, we&rsquo;re finding more reasons to <span style="font-style: italic">reject</span>
+programs that we do not want to compile: because names are not in scope
+correctly, or definitions hide existing definitions, or functions aren&rsquo;t used
+with the proper number of arguments.  To this list we can add another problem:
+using functions or operators with the wrong types of arguments.  We&rsquo;ve already
+seen the impact this has on our compiled output: we have to include
+tag-checking code before every operation, to ensure that the operands are
+plausible inputs.  But such dynamic checking has drawbacks: while it&rsquo;s
+convenient to start writing programs in a dynamically typed language, we pay
+the cost of repeated runtime checking, a lack of guarantees that hidden bugs
+aren&rsquo;t still lingering in our code, and no clear attribution of how the
+implausible data managed to get to the operation that (mis)used it.
+Statically typed languages avoid these downsides, and so it makes sense for us
+to try to develop a <span style="font-style: italic">type checker</span> that can confirm, at compile time,
+whether or not a given input program is internally consistent with its usage of
+data.</p><p>As we&rsquo;ll soon see, the challenge in designing a type system lies in balancing
+expressiveness, ergonomics, and decidability.  There will always be programs
+that are <span style="font-style: italic">correct</span>, in the sense that they will never crash at runtime due
+to misuse of data, but that we cannot convince the compiler of their
+correctness.  They may rely on intricate invariants, or subtle data and
+control-flow dependencies, that the type system isn&rsquo;t rich enough to recognize
+and exploit.  We could attempt to enhance the type system to do so, but then we
+force the programmer to supply enough evidence at all times to satisfy that new
+type system, and such evidence (in the form of type annotations) might be
+overwhelmingly tedious.  Worse yet, some type safety properties just might not
+even be decidable<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._39._lecturetype-checking%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">By
+<a href="https://en.wikipedia.org/wiki/Rice%27s_theorem">Rice&rsquo;s theorem</a>,
+we&rsquo;re inevitably out of luck if we wanted to get a correct and precise
+delineation between &ldquo;correct&rdquo; and &ldquo;incorrect&rdquo; programs.</span></span>, and it would be a
+shame to enhance our compiler&rsquo;s type system to the point that it outright gets
+stuck in an infinite loop, trying to compile our program!  It is not our goal
+right now to dive into advanced type system design, or to explore the various
+trade-offs in type system ergonomics.  The type system we will develop here is
+one of the simpler ones, and understanding how it works will lay the groundwork
+for understanding more advanced systems.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Type_systems_as_formal_judgements)"></a>Type systems as formal judgements</h3><p>The informal goal of a type system is to confirm that a program obeys a certain
+self-consistency property.  We can achieve this in many ways, but as with all
+the other phases of our compiler, the most convenient way to do so is by
+examining the syntax tree of our program, and locally confirming that each node
+of the tree obeys the property we want.  Note that we have subtly moved the
+goalposts here: we are measuring a particular <span style="font-style: italic">syntactic</span> property of our
+program that is <span style="font-style: italic">sufficient</span> but not <span style="font-style: italic">necessary</span> to confirm that our
+program is type-sound.  Our syntactic property will take the form of a
+<span style="font-style: italic">judgement</span>, i.e., &ldquo;we hereby judge this expression to have our desired
+property, assuming the following preconditions.&rdquo;  We&rsquo;ll develop the notation
+for this in stages.</p><h4>2.1<tt>&nbsp;</tt><a name="(part._.Values)"></a>Values</h4><p>Let&rsquo;s start with the simplest cases in our language.  It&rsquo;s safe to agree that
+all numbers in our language are, in fact, integers; likewise, <span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> and
+<span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">false</code></span> are booleans.  We will simply annotate this as</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{}{n : \mathsf{Int}}
+\qquad\qquad
+\dfrac{}{b : \mathsf{Bool}}\end{equation*}</p></p><h4>2.2<tt>&nbsp;</tt><a name="(part._.Primitives_and_derivation_trees)"></a>Primitives and derivation trees</h4><p>Next, let&rsquo;s look at one of the easier operations in our language, addition.
+Addition produces a number provided both of its arguments are numbers:</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{e_1 : \mathsf{Int} \quad e_2 : \mathsf{Int}}{e_1 + e_2 : \mathsf{Int}}\end{equation*}</p></p><p>Read this aloud as &ldquo;If <span type="math/tex" style="white-space: pre;" class="math-tex">\(e_1\)</span> has type <span type="math/tex" style="white-space: pre;" class="math-tex">\(\mathsf{Int}\)</span> and <span type="math/tex" style="white-space: pre;" class="math-tex">\(e_2\)</span>
+has type <span type="math/tex" style="white-space: pre;" class="math-tex">\(\mathsf{Int}\)</span>, then <span type="math/tex" style="white-space: pre;" class="math-tex">\(e_1 + e_2\)</span> has type
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(\mathsf{Int}\)</span>&rdquo;.  In other words, the bar acts as an if-then, while the
+colon acts as the phrase &ldquo;has type&rdquo;.  Looking again at the two rules for
+values above, we see they&rsquo;re degenerate cases of this: there are simply no
+preconditions needed for determining that numbers or booleans have the
+appropriate types.  We say that such typing rules are <span style="font-style: italic">axioms</span>.</p><p>How might we deduce that the expression <span type="math/tex" style="white-space: pre;" class="math-tex">\((3 + 4) + 5\)</span> has type
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(\mathsf{Int}\)</span>?  Since the premises of our rule for plus-expressions have
+the same form as our judgement does, we can simply join multiple uses of the
+rules we have into a <span style="font-style: italic">derivation tree</span>, where the root of the tree is the
+judgement we want to prove, and the leaves of the tree are all axioms.</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{\dfrac{\dfrac{}{3 : \mathsf{Int}} \quad \dfrac{}{4 : \mathsf{Int}}}{3 + 4 : \mathsf{Int}} \quad \dfrac{}{5 : \mathsf{Int}}}{(3 + 4) + 5 : \mathsf{Int}}\end{equation*}</p></p><p>Analogous rule hold for most of our other primitive operations.  For example,</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{e_1 : \mathsf{Int} \quad e_2 : \mathsf{Int}}{e_1 &lt; e_2 : \mathsf{Bool}}\end{equation*}</p></p><h4>2.3<tt>&nbsp;</tt><a name="(part._.Type_variables)"></a>Type variables</h4><p>However, some of our primitives are more complicated.  For example,
+<span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">isbool</code></span> accepts <span style="font-style: italic">anything</span> as its argument, and returns a
+boolean.  We could write something like</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{e : \mathsf{Any}}{\mathtt{isbool}(e) : \mathsf{Bool}}\end{equation*}</p></p><p>and this would work, at least so far.  But if we attempted the same thing with
+<span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>, which accepts anything and returns it, we&rsquo;d get</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{e : \mathsf{Any}}{\mathtt{print}(e) : \mathsf{Any}}\end{equation*}</p></p><p>...and now we have a problem.  The result type of <span type="math/tex" style="white-space: pre;" class="math-tex">\(\mathsf{Any}\)</span> isn&rsquo;t an
+acceptable premise for most of our typing rules: it&rsquo;s lost too much information
+about its argument.  Instead, we need a way to indicate that these operators
+are &ldquo;generic&rdquo;, or parametric over the type of their argument.  We typically
+use the Greek letter <span type="math/tex" style="white-space: pre;" class="math-tex">\(\tau\)</span> to indicate a type, and so we would write</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{e : \mathsf{\tau}}{\mathtt{isbool}(e) : \mathsf{Bool}}
+\qquad\qquad
+\dfrac{e : \mathsf{\tau}}{\mathtt{print}(e) : \mathsf{\tau}}\end{equation*}</p></p><p>Every time the same type-variable appears in a rule, it must mean the same
+type.  So the latter rule says, &ldquo;If <span type="math/tex" style="white-space: pre;" class="math-tex">\(e\)</span> has type <span type="math/tex" style="white-space: pre;" class="math-tex">\(\tau\)</span>, then
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(\mathtt{print}(e)\)</span> does too.&rdquo;</p><p>Likewise, <span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">==</code></span> compares any two values and returns a boolean.
+We have a choice to make: we could permit the two values to be of distinct
+types, or we could require that they be of the same type.  Since the former
+situation is guaranteed to produce <span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">false</code></span> as an answer, most type
+systems require that equality take two arguments of the same type:</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{e_1 : \mathsf{\tau} \quad e_2 : \mathsf{\tau}}{e_1 == e_2 : \mathsf{Bool}}\end{equation*}</p></p><h4>2.4<tt>&nbsp;</tt><a name="(part._.Variables)"></a>Variables</h4><p>How might we handle variables and let-bindings?  We don&rsquo;t seem to have enough
+information in our typing judgement to keep track of what variables are in
+scope, and of what types.  So we need to generalize our judgement form to</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\Gamma \vdash e : \mathsf{\tau}\end{equation*}</p></p><p>which is read, &ldquo;In context <span type="math/tex" style="white-space: pre;" class="math-tex">\(\Gamma\)</span>, expression <span type="math/tex" style="white-space: pre;" class="math-tex">\(e\)</span> has type
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(\tau\)</span>.&rdquo;  A <span style="font-style: italic">context</span> is simply a list of bindings of variable
+names to types.  We&rsquo;ll use it as follows:</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{\Gamma(x) = \tau}{\Gamma \vdash x : \mathsf{\tau}}
+\qquad\qquad
+\dfrac{\Gamma \vdash e : \mathsf{\tau_1} \quad \Gamma, x : \tau_1 \vdash b : \mathsf{\tau_2}}{\Gamma \vdash (\mathtt{let\:} x : \tau_1 = e \mathtt{\:in\:} b)_{\tau_2} : \mathsf{\tau_2}}\end{equation*}</p></p><p>The first rule confirms that a variable has a given type if the context maps
+that variable to that type.  The second rule manipulates the context: first, it
+typechecks the let-binding itself in the original context <span type="math/tex" style="white-space: pre;" class="math-tex">\(\Gamma\)</span>.
+Assuming that succeeds, it typechecks the body at the desired type
+(<span type="math/tex" style="white-space: pre;" class="math-tex">\(\tau_2\)</span>) in a context that has been enhanced with the binding for
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(x\)</span>.</p><p>(Note that if we had not provided <span type="math/tex" style="white-space: pre;" class="math-tex">\(\tau_1\)</span> or <span type="math/tex" style="white-space: pre;" class="math-tex">\(\tau_2\)</span> as part of
+the syntax of our program, then we would have had to <span style="font-style: italic">guess</span> what they
+were, in order to derive the premises of this rule.  This is why languages
+without type inference require the programmer to annotate the types of their
+variables, or return types of their functions, etc.)</p><p>All of our other rules do not manipulate bindings, so they just pass the
+context through unchanged.  For example,</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{\Gamma \vdash e_1 : \mathsf{\tau} \quad \Gamma \vdash e_2 : \mathsf{\tau}}{\Gamma \vdash e_1 == e_2 : \mathsf{Bool}}\end{equation*}</p></p><h4>2.5<tt>&nbsp;</tt><a name="(part._.Functions_and_function_calls)"></a>Functions and function calls</h4><p>Suppose we have a function definition and use:</p><p><div class="sourceCodeWrapper"><span data-label="Taipan" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def add(x : Int, y : Int) -&gt; Int:
+  x + y
+
+add(3, 5) : Int</code></pre></div></div></p><p>In order to check this program, we need to know the type for <span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add</code></span>.
+It&rsquo;s not enough to merely record that it is a function; we need to know that it
+takes two arguments, both of which must be <span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">Int</code></span>s, and that it returns
+an <span title="Taipan" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">Int</code></span>.  We will write this as a type
+<span type="math/tex" style="white-space: pre;" class="math-tex">\((\mathsf{Int}, \mathsf{Int} \rightarrow \mathsf{Int})\)</span>.  Conversely,
+when we apply a function, we need to be sure that the application supplies the
+correct number of arguments, of the correct types, and then we can derive the
+final type as needed.  Formally, the application typing rule looks as follows:</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{\Gamma \vdash f : \mathsf{(\tau_1, \ldots, \tau_n \rightarrow \tau_r)} \quad \Gamma \vdash e_i : \mathsf{\tau_i}}{\Gamma \vdash f(e_1, \ldots, e_n) : \mathsf{\tau_r}}\end{equation*}</p></p><p>To typecheck a function body, we simply bind all the arguments at their
+annotated types and add them to <span type="math/tex" style="white-space: pre;" class="math-tex">\(\Gamma\)</span>, then typecheck that the body has
+the requested result type:</p><p><p type="math/tex" style="white-space: pre;" class="math-tex">\begin{equation*}\dfrac{\Gamma, x_1 : \tau_1, \cdots, x_n : \tau_n \vdash b : \mathsf{\tau_r}}{\Gamma \vdash \mathtt{def\:}f(x_1, \ldots, x_n)\:\:\mathtt{{-}{&gt;}}\:\tau_r\mathtt{\::\:}body : \mathsf{(\tau_1, \cdots, \tau_n \rightarrow \tau_r)}}\end{equation*}</p></p><h4>2.6<tt>&nbsp;</tt><a name="(part._.Typechecking_entire_programs)"></a>Typechecking entire programs</h4><p>When considering an entire program, there are no variables in scope.  So our
+program must type-check in the empty context.</p><p>Once we&rsquo;ve typechecked a function definition, though, we must add it to our
+resulting context for the rest of the program.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Implementing_the_type_system)"></a>Implementing the type system</h3><p>We need a type definition to describe the syntax of our types:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">type 'a typ =
+  | TyVar of string * 'a (* type variables like tau_1 *)
+  | TyCon of string * 'a (* type constants like Int or Bool *)
+  | TyArr of 'a typ list * 'a typ (* Arrow types, containing argument types and return type *)
+  | TyApp of 'a typ * 'a typ list (* Type applications, like `int list`, if we add them *)</code></pre></div></div></p><p>We&rsquo;ll also consider a constructor <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">TyBlank of 'a</code></span>, to indicate that the programmer
+neglected to provide a type annotation.</p><p>Our type checker will effectively be a function</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">let rec type_check_prog env prog : bool =
+  match prog with
+  | Program(defns, body, typ, _) -&gt;
+    let env' = ... do stuff with the definitions ... in
+    type_check_exp env' body typ
+and type_check_exp env exp typ : bool =
+  ...</code></pre></div></div></p><p>that takes an initial environment (wherein we include any primitive operator
+types), the expression to check, and the desired type, and returns whether the
+expression has that type or not.  We can elaborate this type by returning an
+type error message if the program fails to typecheck.</p><a name="(part._(gentag._38._lecturetype-checking))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._39._lecturetype-checking))"></a>1</span></span>By
+<a href="https://en.wikipedia.org/wiki/Rice%27s_theorem">Rice&rsquo;s theorem</a>,
+we&rsquo;re inevitably out of luck if we wanted to get a correct and precise
+delineation between &ldquo;correct&rdquo; and &ldquo;incorrect&rdquo; programs.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
