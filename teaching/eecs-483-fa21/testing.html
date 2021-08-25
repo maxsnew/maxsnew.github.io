@@ -12,22 +12,26 @@ correctly anyway.</p></li><li><p>You&rsquo;ve forgotten some invariant about som
 therefore violated it.</p></li><li><p>You&rsquo;re compiling multiple files, and they weren&rsquo;t all compiled with the
 same version of your compiler.</p></li><li><p>...</p></li></ul></p><p>Programming under this level of uncertainty is like fighting quicksand: The
 more you struggle and the more things you change, the less likely it is that
-you&rsquo;ll figure out the underlying problem and get unstuck.  So what to do?</p><h3>2<tt>&nbsp;</tt><a name="(part._.Types_and_.Examples)"></a>Types and Examples</h3><p>The one thing you can absolutely rely upon is that if your OCaml code compiles,
+you&rsquo;ll figure out the underlying problem and get unstuck.  So what to do?</p><h3>2<tt>&nbsp;</tt><a name="(part._.Types_and_.Examples)"></a>Types and Examples</h3><p>The one thing you can absolutely rely upon is that if your Rust code compiles,
 then it is type-correct: you will never misuse a value of one type as if it
 were of some other type.  This means that if you can encode important
-invariants about your program in the types, then the OCaml compiler itself will
+invariants about your program in the types, then the Rust compiler itself will
 enforce that they are upheld.  So before you dive into hacking away, consider
-the signatures of your functions <span style="font-style: italic">very</span> carefully.</p><p>Imagine you have some type signature <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Typ1 Typ2 -&gt; Typ3</code></span>, and you need to
-provide some implementation of that type.  Additionally you have some
-specification of what that function is supposed to compute: You must check that
-your concrete implementation of that type works as specified. However thinking
-about tests after you have completed the implementation is not ideal. Since you
-have already written your implementation, you will likely come up with tests
-that you already know will pass, rather than tests that <span style="font-style: italic">should</span>
-pass. Here are some recommendations on how to come up with effective test
-cases:</p><ul><li><p>Follow this workflow: <span style="font-style: italic">Write signatures</span> &gt; <span style="font-style: italic">Write an empty
-implementation</span> &gt; <span style="font-style: italic">Write test cases</span>. Writing an empty implementation (all
-the functions are present, but essentially empty) will ensure that referring to the
+the signatures of your functions <span style="font-style: italic">very</span> carefully.</p><p>Imagine you want to implement some function where you have already
+identified the input and output types:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rust" class="sourceCode"><code data-lang="text/x-rust" class="sourceCode">fn f(x1: Typ1, x2: Typ2) -&gt; Typ3 {
+...
+}</code></pre></div></div>
+Additionally you have some specification of
+what that function is supposed to compute: You must check that your
+concrete implementation of that type works as specified. However
+thinking about tests after you have completed the implementation is
+not ideal. Since you have already written your implementation, you
+will likely come up with tests that you already know will pass, rather
+than tests that <span style="font-style: italic">should</span> pass. Here are some recommendations on
+how to come up with effective test cases:</p><ul><li><p>Follow this workflow:
+<span style="font-style: italic">Write signatures</span> &gt; <span style="font-style: italic">Write a stub panicking implementation</span> &gt; <span style="font-style: italic">Write test cases</span>. Writing a panicking implementation (all
+the functions are present, but immediately <span title="Rust" class="sourceCode"><code data-lang="text/x-rust" class="sourceCode">panic!("NYI")</code></span> or similar) will ensure that referring to the
 implementation in your test cases does not produce compiling errors. Fill
 in the implementation <span style="font-style: italic">after</span> writing your test cases.</p></li><li><p>Convince yourself that the code to be tested cannot be trusted, and it&rsquo;s
 up to you to find any mistakes. Often a role reversal helps: imagine the
@@ -71,7 +75,7 @@ tests whether your implementation adheres to your design, whether your design
 leaves loopholes and ambiguities that allow its incorrect usage, and whether
 the behavior of your implementation can be predicted in all situations. This
 set of test cases <span style="font-style: italic">should compile</span>, and upon running, <span style="font-style: italic">should pass.</span></p><p><img src="http://optimalbi.com/wp-content/uploads/2015/03/Test-First-Comic.png"/></p><p><span style="font-weight: bold">NOTE:</span> It is far better to include tests that you know to fail, rather
-than comment them out or delete them.  Leave a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(* FIXME *)</code></span> comment next to
+than comment them out or delete them.  Leave a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">/* FIXME */</code></span> comment next to
 the failing tests, explaining what you intended the test to check for, and why
 you think it&rsquo;s currently failing.  At some point you clearly had a reason for
 writing the test case, and it would be a shame to lose that insight by deleting
@@ -106,8 +110,5 @@ program, to see whether it holds up without crashing even under truly odd
 inputs.  Likewise, it&rsquo;s particularly good at generating
 wacky-but-syntactically-valid input programs to test your compiler.  (Fuzz
 testing with malicious intent is one of the tools hackers use to exploit
-weaknesses in systems.)</p><p><img src="https://imgs.xkcd.com/comics/random_number.png"/></p></li></ul><h4>3.2<tt>&nbsp;</tt><a name="(part._.Where_do_tests_go_in_my_project_)"></a>Where do tests go in my project?</h4><p>At the moment, we aren&rsquo;t exploiting OCaml&rsquo;s support for packaging too heavily:
-every file is a package, and there are no subdirectories or "Java packages" to
-worry about.  You can even place all your tests within a single <code>test.ml</code>
-file.  Still, it&rsquo;s worth breaking the tests out into separately-named test
-suites, so that their purpose and organization is more readily apparent.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
+weaknesses in systems.)</p><p><img src="https://imgs.xkcd.com/comics/random_number.png"/></p></li></ul><h4>3.2<tt>&nbsp;</tt><a name="(part._.Where_do_tests_go_in_my_project_)"></a>Where do tests go in my project?</h4><p>We will write unit tests in the same file as the defined function, and
+integration tests in a separate, dedicated <code>test.rs</code> file.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
