@@ -1,0 +1,125 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 10: Garter: Garbage Collection</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 10:</span> Garter:<span class="mywbr"> &nbsp;</span> Garbage Collection</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Garbage-collection%29" class="tocviewlink" data-pltdoc="x">Garbage-<wbr></wbr>collection</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 10:</span> Garter:<span class="mywbr"> &nbsp;</span> Garbage Collection</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Garbage-collection%29" class="tocsubseclink" data-pltdoc="x">Garbage-<wbr></wbr>collection</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Setting_up_.G.C%29" class="tocsubseclink" data-pltdoc="x">Setting up GC</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Finding_the_root_set__walking_the_stack%29" class="tocsubseclink" data-pltdoc="x">Finding the root set:<span class="mywbr"> &nbsp;</span> walking the stack</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._.Copying_values__the_core_of_the_algorithm__depth-first_version_%29" class="tocsubseclink" data-pltdoc="x">Copying values:<span class="mywbr"> &nbsp;</span> the core of the algorithm (depth-<wbr></wbr>first version)</a></td></tr><tr><td><span class="tocsublinknumber">1.4<tt>&nbsp;</tt></span><a href="#%28part._.Copying_values__breadth-first_version%29" class="tocsubseclink" data-pltdoc="x">Copying values:<span class="mywbr"> &nbsp;</span> breadth-<wbr></wbr>first version</a></td></tr><tr><td><span class="tocsublinknumber">1.5<tt>&nbsp;</tt></span><a href="#%28part._.Running_with_multiple_heap_sizes%29" class="tocsubseclink" data-pltdoc="x">Running with multiple heap sizes</a></td></tr><tr><td><span class="tocsublinknumber">1.6<tt>&nbsp;</tt></span><a href="#%28part._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">7.5</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 10:</span> Garter: Garbage Collection</h2><p><h4 class="due">Due: Mon 04/13 at 8:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://github.ccs.neu.edu/cs4410/starter-garter"/></code></p></p><p><span style="font-style: italic">In this assignment you&rsquo;ll implement a GARbage-collected, Type-Enforced(?) Runtime.</span>
+<img class="titleimage" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Thamnophis_sirtalis_sirtalis_Wooster.jpg/1080px-Thamnophis_sirtalis_sirtalis_Wooster.jpg"/></p><h3>1<tt>&nbsp;</tt><a name="(part._.Garbage-collection)"></a>Garbage-collection</h3><h4>1.1<tt>&nbsp;</tt><a name="(part._.Setting_up_.G.C)"></a>Setting up GC</h4><p>Now that you have mutation, garbage collection becomes interesting: you have
+the potential for cycles and for unreachable data, i.e. garbage to be
+collected.  Now, you need to implement garbage collection.  The garbage
+collector will be run on every single allocation attempt: in other words,
+instead of <span style="font-style: italic">only</span> manually bumping <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> every time you want to
+allocate some memory, you will first call <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">try_gc</code></span>, which will collect
+garbage if necessary so that you can do the allocation.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._2._assignmentgarter%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">You may optimize
+this, by using the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">HEAP_END</code></span> variable to check whether a
+garbage-collection is needed and skipping it when possible.  But this
+optimization is not mandatory.</span></span>  It will abort your program if garbage
+collection could not allocate a new semispace heap, so <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">try_gc</code></span> should never
+return <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">NULL</code></span>.</p><p><div class="sourceCodeWrapper"><span data-label="C/C++" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-csrc" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">/*
+  Try to reserve the desired number of bytes of memory, and free garbage if
+  needed.  Fail (and exit the program) if there is insufficient memory.  Does
+  not actually allocate the desired number of bytes of memory; the caller
+  will do that.
+
+  Arguments:
+
+    uint64_t* alloc_ptr - the current top of the heap (which we store in R15), where
+                          the next allocation should occur, if possible
+    int bytes_needed - the number of bytes of memory we want to allocate
+                       (including padding)
+    uint64_t* cur_frame - the base pointer of the topmost stack frame of our code
+                          (i.e., RBP)
+    uint64_t* cur_stack_top - the stack pointer of the topmost stack frame of our
+                              code (i.e., RSP)
+
+  Returns:
+    The new top of the heap (i.e. the new value of R15) after garbage collection.
+    Does not actually allocate bytes_needed space.
+
+  Side effect:
+    Also updates HEAP_END to point to the new end of the heap, if it's changed
+*/
+uint64_t* try_gc(uint64_t* alloc_ptr, int bytes_needed,
+                 uint64_t* cur_frame, uint64_t* cur_stack_top);</code></pre></div></div></p><p>The provided code includes a <span style="font-style: italic">dummy</span> implementation of a garbage
+collector: it does not collect anything, but does check whether there is
+sufficient space for the desired allocation.</p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Finding_the_root_set__walking_the_stack)"></a>Finding the root set: walking the stack</h4><p>You will need to be able to walk the Garter stack frames to find any pointers
+in those frames.  We will assume that the Garter stack is contiguous, and that
+there are no C frames in there (as might happen if Garter code called C code
+which called back into Garter code).  We therefore need to mark the beginning
+and end of the Garter stack.  To do so, we&rsquo;ll employ a trick.  In <code>main.c</code>,
+we will declare a global variable <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">uint64_t* STACK_BOTTOM</code></span>.  As part of the
+prelude of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>, once we&rsquo;ve set <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> correctly, we
+will <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov STACK_BOTTOM, RBP</code></span>, and thereby inform our runtime about exactly
+where the Garter stack will end.</p><p>We have provided you with some skeleton (and untested) code in <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">gc</code></span> that will
+walk the Garter stack frames, from the provided stack-top down to
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">STACK_BOTTOM</code></span>.  Along the way, it will try to copy any heap-allocated
+values, if needed.</p><h4>1.3<tt>&nbsp;</tt><a name="(part._.Copying_values__the_core_of_the_algorithm__depth-first_version_)"></a>Copying values: the core of the algorithm (depth-first version)</h4><p>At its heart, Cheney&rsquo;s semispace collector works with two values: the address
+of a value to be copied if needed, and the address where to copy values if
+needed. Note: the description of Cheney&rsquo;s algorithm online is a
+breadth-first traversal of the heap, whereas the description in this section is
+depth-first.  The breadth-first approach is presented next.  Implement either
+of them.</p><p>Let&rsquo;s call the value to be copied <code>garter_val</code>, and its address
+<code>garter_val_addr</code>.  Call the destination address <code>heap_top</code>.</p><ul><li><p>If <code>garter_val</code> is a primitive (number or boolean), return the
+unchanged <code>heap_top</code>; nothing needs to be allocated.</p></li><li><p>If <code>garter_val</code> is a (tagged) pointer to a heap-allocated Garter
+value (tuple or closure): Call the pointed-to value <code>heap_thing</code>, such
+that <code>untag(garter_val) = heap_thing_addr</code>, then</p><ol><li><p>Copy the full contents of <code>heap_thing</code> to <code>heap_top</code>.</p></li><li><p><span style="font-style: italic">Update</span> the value at <code>garter_val_addr</code> with the value of
+<code>heap_top</code>.</p></li><li><p><span style="font-style: italic">Replace</span> the value at <code>heap_thing_addr</code> (i.e., the location
+referred to by <code>garter_val</code>) with a <span style="font-style: italic">forwarding pointer</span> to <code>heap_top</code>.</p></li><li><p>Increment <code>heap_top</code> as needed to record the allocation.</p></li><li><p>For each field within <code>heap_thing</code> <span style="font-style: italic">at the new location</span>,
+recursively call <code>copy_if_needed</code>.  (Be careful about using the return
+value of those calls correctly!)</p></li><li><p>Return the current <code>heap_top</code>.</p></li></ol></li><li><p>If <code>garter_val</code> is a (tagged) pointer to a <code>heap_thing</code> that is
+now a forwarding pointer, <span style="font-style: italic">replace</span> the value at <code>garter_val_addr</code>
+with the appropriately tagged version of that forwarding pointer.  Return the
+unchanged <code>heap_top</code>.</p></li></ul><p>Be careful to keep straight the differences between <code>garter_val_addr</code>,
+which is where the Garter value is currently stored and which must be updated;
+<code>garter_val</code>, which may be a primitive value or a tagged heap-allocated
+thing; and <code>heap_thing</code>, which is the data pointed-to by <code>garter_val</code>
+and which may be a tuple, a closure or a forwarding pointer.</p><p>I recommend running your program with very small heap sizes (20 words or so),
+and calling <code>smart_print_heap</code> after every call to <code>copy_if_needed</code>,
+to see how your heap is changing over the course of the algorithm.</p><h4>1.4<tt>&nbsp;</tt><a name="(part._.Copying_values__breadth-first_version)"></a>Copying values: breadth-first version</h4><p>(Note: the signature of <code>copy_if_needed</code> and the implementation of
+<code>gc</code> will need to change to support breadth-first traversal.)</p><p>Instead of calling <code>copy_if_needed</code> recursively, we separate the two
+steps.  First, we walk the stack and copy each value if needed, without
+recurring.  That is, we copy the contents of each <code>heap_thing</code>, update the
+value at the old <code>garter_val</code> location to be a forwarding pointer, and
+return the newly allocated location, which we use to update the pointer in
+<code>garter_val_addr</code>.  Once we&rsquo;ve done this, our roots will all point into
+the to-space, and the to-space will contain heap-allocated values that all
+point into the from-space.</p><p>Next, we loop over the to-space, one heap-thing at a time, until we run out of
+values in the to-space.  (This is a tricky iteration, since it modifies the
+number of values in the to-space as the iteration proceeds.  Nevertheless it
+must terminate, when implemented correctly, since every step moves one
+heap-thing into the to-space, and there are finite number of heap-things to
+move.)  For each value within the heap-thing, copy it to the to-space if
+needed.  If the value points to a forwarding pointer, just update the value to
+point to the forwarded value directly.</p><p>The advantage of the breadth-first traversal is that it is non-recursive and
+uses no stack space, and you can easily inspect the state of the heap after
+each iteration of the loop.  The disadvantage is that it does not keep linked
+items near each other in contiguous memory the way the depth-first traversal does.</p><h4>1.5<tt>&nbsp;</tt><a name="(part._.Running_with_multiple_heap_sizes)"></a>Running with multiple heap sizes</h4><p>We&rsquo;ve extended the command line for <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">main.c</code></span> to accept a heap size (as an
+integer in words) as its first command-line argument.  If none is provided, a
+default heap size of 100K words is allocated.</p><h4>1.6<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h4><p>This works mostly as before, except that there are a few additional forms for
+checking things relative to the garbage collector. As mentioned, the main program is
+parameterized over an integer argument that allows you to select the size of
+the heap in terms of (8-byte) words. This is exposed through the testing
+library as well, so you can write:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tgc "gctest" 10 "(1, 2)" "(1, 2)"</code></pre></div></div></p><p>and this will run the test with a heap size of 10.</p><p>You can also test for specific errors, for example in the case that there will
+never be enough memory to fit the required data:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tgcerr "gctest" 10 "(1, (3, (4, 5)))" "Out of memory"</code></pre></div></div></p><p>Finally, you can use <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tvgc</code></span> to run a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">tgc</code></span> test with <code>valgrind</code>, to
+improve errors on segfaults and check memory.</p><h3>2<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p><span style="font-style: italic">all</span> your modified files</p></li><li><p>tests in an OUnit test module (<code>test.ml</code>)</p></li><li><p>any test input programs (<code>input/*.garter</code> files)</p></li></ul><p><span style="font-weight: bold">Again, please ensure the makefile builds your code properly.
+The black-box tests will give you an automatic 0 if they cannot compile your code!</span></p><p><span style="font-weight: bold">DO NOT SUBMIT YOUR <code>.git</code> DIRECTORY!</span>  For that matter, don&rsquo;t submit
+your <code>output</code> or <code>_build</code> directories.  Basically, run
+<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">make clean</code></span> and then submit a zip of the remaining directory.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>For this assignment, you will be graded on
+</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the clarity and cleanliness of your code, and</p></li><li><p>the comprehensiveness of your test coverage</p></li></ul></p><h3>4<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to <a href="https://handins.ccs.neu.edu/"><span class="url">https://handins.ccs.neu.edu/</span></a> by the above deadline.</p><a name="(part._(gentag._1._assignmentgarter))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._2._assignmentgarter))"></a>1</span></span>You may optimize
+this, by using the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">HEAP_END</code></span> variable to check whether a
+garbage-collection is needed and skipping it when possible.  But this
+optimization is not mandatory.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
