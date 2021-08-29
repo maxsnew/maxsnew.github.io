@@ -19,7 +19,7 @@ invariants about your program in the types, then the Rust compiler itself will
 enforce that they are upheld.  So before you dive into hacking away, consider
 the signatures of your functions <span style="font-style: italic">very</span> carefully.</p><p>Imagine you want to implement some function where you have already
 identified the input and output types:
-<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rust" class="sourceCode"><code data-lang="text/x-rust" class="sourceCode">fn f(x1: Typ1, x2: Typ2) -&gt; Typ3 {
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn f(x1: Typ1, x2: Typ2) -&gt; Typ3 {
 ...
 }</code></pre></div></div>
 Additionally you have some specification of
@@ -31,7 +31,7 @@ will likely come up with tests that you already know will pass, rather
 than tests that <span style="font-style: italic">should</span> pass. Here are some recommendations on
 how to come up with effective test cases:</p><ul><li><p>Follow this workflow:
 <span style="font-style: italic">Write signatures</span> &gt; <span style="font-style: italic">Write a stub panicking implementation</span> &gt; <span style="font-style: italic">Write test cases</span>. Writing a panicking implementation (all
-the functions are present, but immediately <span title="Rust" class="sourceCode"><code data-lang="text/x-rust" class="sourceCode">panic!("NYI")</code></span> or similar) will ensure that referring to the
+the functions are present, but immediately <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">panic!("NYI")</code></span> or similar) will ensure that referring to the
 implementation in your test cases does not produce compiling errors. Fill
 in the implementation <span style="font-style: italic">after</span> writing your test cases.</p></li><li><p>Convince yourself that the code to be tested cannot be trusted, and it&rsquo;s
 up to you to find any mistakes. Often a role reversal helps: imagine the
@@ -75,7 +75,7 @@ tests whether your implementation adheres to your design, whether your design
 leaves loopholes and ambiguities that allow its incorrect usage, and whether
 the behavior of your implementation can be predicted in all situations. This
 set of test cases <span style="font-style: italic">should compile</span>, and upon running, <span style="font-style: italic">should pass.</span></p><p><img src="http://optimalbi.com/wp-content/uploads/2015/03/Test-First-Comic.png"/></p><p><span style="font-weight: bold">NOTE:</span> It is far better to include tests that you know to fail, rather
-than comment them out or delete them.  Leave a <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">/* FIXME */</code></span> comment next to
+than comment them out or delete them.  Leave a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">/* FIXME */</code></span> comment next to
 the failing tests, explaining what you intended the test to check for, and why
 you think it&rsquo;s currently failing.  At some point you clearly had a reason for
 writing the test case, and it would be a shame to lose that insight by deleting
