@@ -170,15 +170,16 @@ what a plausible &ldquo;subtask&rdquo; might be, to make progress on producing a
 carefully, and look very carefully at the second example above: at the point
 just after the token <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">true</code></span> and before the following RPAREN, how might you
 describe your intermediate state?  What have you built up so far, what are you
-in the process of building, and what is left over?</p><p><span class="emph">Hint:</span> you can and should solve this problem by looking at only one token
-at a time.  Trying to &ldquo;look ahead&rdquo; in the list is pretty much guaranteed not
-to work, so you need to use some other technique to match up left and right
-parentheses.  One mnemonic I was shown a long time ago: to check if an
-s-expression is balanced, mentally start a running count at zero, scan across
-the expression from left to right, increment the count at each left
-parenthesis, and decrement it at each right parenthesis.  If the count is zero
-at the end, and never became negative, then you&rsquo;ve got a correctly-matched
-s-expression.  How might you carry the idea of this across into your code?
-(You won&rsquo;t need to maintain an actual <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">int</code></span> counter; you&rsquo;re implicitly
-maintaining a stack...)</p><h3>3<tt>&nbsp;</tt><a name="(part._.Grading_standards)"></a>Grading standards</h3><p>For this assignment, you will be graded on</p><ul><li><p>whether your code compiles,</p></li><li><p>whether your code implements the specification (functional correctness),</p></li><li><p>whether you thoroughly test every method that you write, and</p></li><li><p>how readable your code is (indented well, commented well, etc).</p></li></ul><h3>4<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><h4>4.1<tt>&nbsp;</tt><a name="(part._.Deliverables)"></a>Deliverables</h4><p>Your submission should include all the provided files; you should not need to
+in the process of building, and what is left over?</p><p><span class="emph">Hint:</span> you can and should solve this problem by looking at only
+one token at a time.  Trying to &ldquo;look ahead&rdquo; in the list is pretty
+much guaranteed not to work, so you need to use some other technique
+to match up left and right parentheses.  One mnemonic I was shown a
+long time ago: to check if an s-expression is balanced, mentally start
+a running count at zero, scan across the expression from left to
+right, increment the count at each left parenthesis, and decrement it
+at each right parenthesis.  If the count is zero at the end, and never
+became negative, then you&rsquo;ve got a correctly-matched s-expression.
+How might you carry the idea of this across into your code?  (You
+don&rsquo;t necessarily need to maintain an actual <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">int</code></span> counter;
+you&rsquo;re implicitly maintaining the call stack...)</p><h3>3<tt>&nbsp;</tt><a name="(part._.Grading_standards)"></a>Grading standards</h3><p>For this assignment, you will be graded on</p><ul><li><p>whether your code compiles,</p></li><li><p>whether your code implements the specification (functional correctness),</p></li><li><p>whether you thoroughly test every method that you write, and</p></li><li><p>how readable your code is (indented well, commented well, etc).</p></li></ul><h3>4<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><h4>4.1<tt>&nbsp;</tt><a name="(part._.Deliverables)"></a>Deliverables</h4><p>Your submission should include all the provided files; you should not need to
 create any new ones.</p><p>To submit on gradescope, zip the files</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ zip submission.zip Cargo.toml src/lib.rs src/tokenize.rs src/sexp.rs src/arith.rs</code></pre></div></div></p><p>and submit that zip.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
