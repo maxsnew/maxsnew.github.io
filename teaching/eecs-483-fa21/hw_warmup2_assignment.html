@@ -51,13 +51,14 @@ read them carefully.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Parsing_.Parenthesi
 string input: in other words, you will be <span class="emph">parsing</span> the data.
 Generally speaking, manually parsing an arbitrary language is tedious,
 so we will be working with a particularly simple language instead:
-S-expressions as used in the Lisp/Scheme family of languages.</p><p>An S-expression is either an <span class="emph">atom</span> or a parenthesized list of
-S-expressions separated by spaces. An atom is either an (unsigned)
-number, a boolean or an (ASCII) alphabetic string besides true/false</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Sexp._sexp)))"></a><span class="bnf-rule">&#8249;sexp&#8250;</span><span class="bnf-meta">:</span> 
+S-expressions as used in the Lisp/Scheme family of languages.</p><p>An S-expression is either an <span class="emph">atom</span> or a parenthesized list of 0
+or more S-expressions separated by spaces (EPSILON denotes the empty
+string). An atom is either an (unsigned) number, a boolean or an
+(ASCII) alphabetic string besides true/false</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Sexp._sexp)))"></a><span class="bnf-rule">&#8249;sexp&#8250;</span><span class="bnf-meta">:</span> 
           <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._atom%29%29%29" data-pltdoc="x">&#8249;atom&#8250;</a></span>
           <span class="bnf-meta"> | </span><span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp_seq%29%29%29" data-pltdoc="x">&#8249;sexp_seq&#8250;</a></span> <span class="bnf-lit">)</span>
 <a name="(elem._(bnf-prod._(.Sexp._sexp_seq)))"></a><span class="bnf-rule">&#8249;sexp_seq&#8250;</span><span class="bnf-meta">:</span> 
-                  <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp%29%29%29" data-pltdoc="x">&#8249;sexp&#8250;</a></span>
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">EPSILON</span>
                   <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp_seq%29%29%29" data-pltdoc="x">&#8249;sexp_seq&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp%29%29%29" data-pltdoc="x">&#8249;sexp&#8250;</a></span>
 <a name="(elem._(bnf-prod._(.Sexp._atom)))"></a><span class="bnf-rule">&#8249;atom&#8250;</span><span class="bnf-meta">:</span> 
           <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
@@ -144,24 +145,27 @@ enum Sexp&lt;Ann&gt; {
 compiler will be able to fill this in with other useful datatypes.</p><div class="hw"><ol start="3"><li><p>Define a function
 <div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">parse_tokens(&amp;[(Token, Span)]) -&gt; Result&lt;Vec&lt;Sexp&lt;Span&gt;&gt;, String&gt;</code></pre></div></div>
 that parses a given sequence of tokens with position information
-into a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Result</code></span>: either it successfully produces a vector of valid s-expressions from
+into a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Result</code></span>: either it successfully parses a sequence of s-expressions from
 the token list, or else it should produce an error message explaining the error...and
 referencing the location at which the error occurred. For example:
-<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">parse_tokens(&amp;tokenize("(a b)").unwrap()).unwrap() ==&gt;
-  [Nest([Atom(Sym("a"), Span { start_line: 0, start_col: 1, end_line: 1, end_col: 2 }),
-         Atom(Sym("b"), Span { start_line: 0, start_col: 3, end_line: 1, end_col: 4 })],
-        Span { start_line: 0, start_col: 0, end_line: 1, end_col: 5 })]
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">parse_tokens(&amp;tokenize("(a b)").unwrap()) ==&gt;
+  Ok([Nest([Atom(Sym("a"), Span { start_line: 0, start_col: 1, end_line: 1, end_col: 2 }),
+           Atom(Sym("b"), Span { start_line: 0, start_col: 3, end_line: 1, end_col: 4 })],
+          Span { start_line: 0, start_col: 0, end_line: 1, end_col: 5 })])
 
+parse_tokens(&amp;tokenize("a b").unwrap())   ===&gt;
+  Ok([SExp::Atom(Atom::Sym(String::from("a")), Span{ start_line: 0, start_col: 0, end_line: 1, end_col: 1}),
+      SExp::Atom(Atom::Sym(String::from("b")), Span{ start_line: 0, start_col: 2, end_line: 1, end_col: 3})])
 
-parse_tokens(&amp;tokenize("(a (b true) 3)").unwrap()).unwrap() ==&gt;
-  [Nest([Atom(Sym("a"), Span { start_line: 0, start_col: 1, end_line: 1, end_col: 2 }),
-         Nest([Atom(Sym("b"), Span { start_line: 0, start_col: 4, end_line: 1, end_col: 5 }),
-               Atom(Bool(true), Span { start_line: 0, start_col: 6, end_line: 1, end_col: 10 })],
-              Span { start_line: 0, start_col: 3, end_line: 1, end_col: 11 }),
-         Atom(Int(3), Span { start_line: 0, start_col: 12, end_line: 1, end_col: 13 })],
-        Span { start_line: 0, start_col: 0, end_line: 1, end_col: 14 })]
+parse_tokens(&amp;tokenize("(a (b true) 3)").unwrap()) ==&gt;
+  Ok([Nest([Atom(Sym("a"), Span { start_line: 0, start_col: 1, end_line: 1, end_col: 2 }),
+            Nest([Atom(Sym("b"), Span { start_line: 0, start_col: 4, end_line: 1, end_col: 5 }),
+                  Atom(Bool(true), Span { start_line: 0, start_col: 6, end_line: 1, end_col: 10 })],
+                 Span { start_line: 0, start_col: 3, end_line: 1, end_col: 11 }),
+            Atom(Int(3), Span { start_line: 0, start_col: 12, end_line: 1, end_col: 13 })],
+           Span { start_line: 0, start_col: 0, end_line: 1, end_col: 14 })])
 
-parse_toks(&amp;tokenize("(a (b c").unwrap())   ==&gt; Err("Left paren '(' at line 0, column 3 never matched")
+parse_tokens(&amp;tokenize("(a (b c").unwrap())  ==&gt; Err("Left paren '(' at line 0, column 3 never matched")
 
 parse_tokens(&amp;tokenize("true) 3)").unwrap()) ==&gt; Err("Unmatched right paren ')' on line 0, column 4")</code></pre></div></div></p></li><li><p>Test your parser carefully.</p></li></ol></div><p><span class="emph">Hint:</span> the signature above is not general enough to be sufficient to parse
 s-expressions, and you&rsquo;ll need one or more helper functions.  First consider
