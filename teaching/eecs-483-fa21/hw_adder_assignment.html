@@ -140,10 +140,10 @@ interpreter on a file <span title="Shell" class="sourceCode"><code data-lang="te
 possible. I have tested that the programs work on Linux and Mac OS X,
 and I think they should work on Windows as well. On any platform you
 need to have <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">nasm</code></span> and <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">ar</code></span> installed. Ask on Piazza if
-you have any issues installing these.</p><p>Here are the explicit commands I use. To compile a file
-<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">compiled_code.s</code></span> and link it with <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span>. First build an
-object file using <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">nasm</code></span>, passing the appropriate format flag
-for your platform.</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ nasm -felf64 compiled_code.s -o compiled_code.o   # Linux
+you have any issues installing these.</p><p>Here are the explicit commands the runner uses to build an executable
+from an assembly code file <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">compiled_code.s</code></span> and the rust stub
+<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span>. First build an object file using <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">nasm</code></span>,
+passing the appropriate format flag for your platform.</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ nasm -felf64 compiled_code.s -o compiled_code.o   # Linux
 $ nasm -fmacho64 compiled_code.s -o compiled_code.o # Mac
 $ nasm -fwin64 compiled_code.s -o compiled_code.o   # Windows</code></pre></div></div></p><p>Then build a static library file to link with the rust file
 <div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ar r libcompiled_code.a compiled_code.o # Linux &amp; Mac
