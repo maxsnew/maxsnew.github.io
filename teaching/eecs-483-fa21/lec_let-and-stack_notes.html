@@ -1,0 +1,426 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 3: Let-bindings and simple stack allocations</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 3:</span> Let-<wbr></wbr>bindings and simple stack allocations</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Recap_and_refactoring%29" class="tocviewlink" data-pltdoc="x">Recap and refactoring</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._incr._.Growing_the_language__adding__and_subtracting__1%29" class="tocviewlink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding (and subtracting) 1</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._let._.Growing_the_language__adding_let%29" class="tocviewlink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span></a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.The_stack%29" class="tocviewlink" data-pltdoc="x">The stack</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Allocating_identifiers_on_the_stack%29" class="tocviewlink" data-pltdoc="x">Allocating identifiers on the stack</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Supporting_let__.Implementing_.Attempt_2%29" class="tocviewlink" data-pltdoc="x">Supporting <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>:<span class="mywbr"> &nbsp;</span> Implementing Attempt 2</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 3:</span> Let-<wbr></wbr>bindings and simple stack allocations</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Recap_and_refactoring%29" class="tocsubseclink" data-pltdoc="x">Recap and refactoring</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._incr._.Growing_the_language__adding__and_subtracting__1%29" class="tocsubseclink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding (and subtracting) 1</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._incr._.The_new_concrete_syntax%29" class="tocsubseclink" data-pltdoc="x">The new concrete syntax</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._incr._.Examples%29" class="tocsubseclink" data-pltdoc="x">Examples</a></td></tr><tr><td><span class="tocsublinknumber">2.3<tt>&nbsp;</tt></span><a href="#%28part._incr._.Enhancing_the_abstract_syntax%29" class="tocsubseclink" data-pltdoc="x">Enhancing the abstract syntax</a></td></tr><tr><td><span class="tocsublinknumber">2.4<tt>&nbsp;</tt></span><a href="#%28part._incr._.Enhancing_the_transformations%29" class="tocsubseclink" data-pltdoc="x">Enhancing the transformations</a></td></tr><tr><td><span class="tocsublinknumber">2.5<tt>&nbsp;</tt></span><a href="#%28part._incr._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._let._.Growing_the_language__adding_let%29" class="tocsubseclink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span></a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._let._.The_new_syntax__both_concrete_and_abstract%29" class="tocsubseclink" data-pltdoc="x">The new syntax, both concrete and abstract</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._let._.Examples_and_semantics%29" class="tocsubseclink" data-pltdoc="x">Examples and semantics</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.The_stack%29" class="tocsubseclink" data-pltdoc="x">The stack</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Allocating_identifiers_on_the_stack%29" class="tocsubseclink" data-pltdoc="x">Allocating identifiers on the stack</a></td></tr><tr><td><span class="tocsublinknumber">5.1<tt>&nbsp;</tt></span><a href="#%28part._.Attempt_1__.Naive_allocation%29" class="tocsubseclink" data-pltdoc="x">Attempt 1:<span class="mywbr"> &nbsp;</span> Naive allocation</a></td></tr><tr><td><span class="tocsublinknumber">5.2<tt>&nbsp;</tt></span><a href="#%28part._.Attempt_2__.Stack_allocation%29" class="tocsubseclink" data-pltdoc="x">Attempt 2:<span class="mywbr"> &nbsp;</span> Stack allocation</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Supporting_let__.Implementing_.Attempt_2%29" class="tocsubseclink" data-pltdoc="x">Supporting <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>:<span class="mywbr"> &nbsp;</span> Implementing Attempt 2</a></td></tr><tr><td><span class="tocsublinknumber">6.1<tt>&nbsp;</tt></span><a href="#%28part._.Extending_our_transformations%29" class="tocsubseclink" data-pltdoc="x">Extending our transformations</a></td></tr><tr><td><span class="tocsublinknumber">6.2<tt>&nbsp;</tt></span><a href="#%28part._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 3:</span> Let-bindings and simple stack allocations</h2><h3>1<tt>&nbsp;</tt><a name="(part._.Recap_and_refactoring)"></a>Recap and refactoring</h3><p>Last time, we considered the following miniscule language:</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(tiny-lang._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">NUMBER</span></p></blockquote><p>Our abstract syntax was simply</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type expr = int64</code></pre></div></div></p><p>and our compiler simply placed that integer in the appropriate place in the
+assembly.  But let&rsquo;s clean up that code somewhat: for a given number (let&rsquo;s say
+483), we generated the following assembly:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text
+global start_here
+start_here:
+  mov RAX, 483
+  ret</code></pre></div></div></p><p>Of all of that code, only one line corresponds to our input program &ndash; the rest
+is scaffolding.  Let&rsquo;s refactor our compiler into two pieces, as follows:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Reg {
+    Rax,
+}
+
+pub enum Instr {
+    Mov(Reg, i64),
+}
+
+fn instrs_to_string(is: &amp;[Instr]) -&gt; String {
+  /* do something to get a string of assembly */
+}
+
+/* compile_expr is responsible for compiling just a single expression,
+   and does not care about the surrounding scaffolding */
+fn compile_to_instrs(e: &amp;Exp) -&gt; Vec&lt;Instr&gt; {
+  vec![ Instr::Mov(Reg::Rax, *e)]
+}
+
+/* compile_to_string surrounds a compiled program by whatever scaffolding is needed */
+fn compile_to_string(e: &amp;Exp) -&gt; String {
+    Ok(format!("\
+        section .text
+        global start_here
+start_here:
+{}
+", instrs_to_string(&amp;compile_to_instrs(e))))
+}</code></pre></div></div></p><p>This is a bit more code than we previously had, but it&rsquo;s much more usefully
+organized: <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span> isn&rsquo;t going to change <span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._2._lecturelet-and-stack%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">For a little while!
+The details of this function will get more elaborate, and we&rsquo;ll actually wrap
+this function in a larger pipeline, but the overall signature and purpose of
+the function will remain unchanged.</span></span>, and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_instrs</code></span> will simply grow to
+accomodate more elaborate expression forms.</p><h3>2<tt>&nbsp;</tt><a name="(part._incr._.Growing_the_language__adding__and_subtracting__1)"></a>Growing the language: adding (and subtracting) 1</h3><p><p>Every time we enhance our source language, we need to consider several things:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition of them</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new
+forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><p>Let&rsquo;s start by adding increment and decrement operations to our language.</p><h4>2.1<tt>&nbsp;</tt><a name="(part._incr._.The_new_concrete_syntax)"></a>The new concrete syntax</h4><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._incr._(bnf-prod._(add1._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">add1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._incr._%28bnf-prod._%28add1._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">sub1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._incr._%28bnf-prod._%28add1._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span></p></blockquote><h4>2.2<tt>&nbsp;</tt><a name="(part._incr._.Examples)"></a>Examples</h4><p><p>These are not just example programs in the new language, but
+pairs of example programs and their intended behavior:
+</p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Concrete Syntax</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Answer</p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">42</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>42</code></p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1(42)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>43</code></p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(42)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>41</code></p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(add1(add1(42)))</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>43</code></p></td></tr></table></p><h4>2.3<tt>&nbsp;</tt><a name="(part._incr._.Enhancing_the_abstract_syntax)"></a>Enhancing the abstract syntax</h4><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub enum Exp {
+    Num(i64),
+    Add1(Box&lt;Exp&gt;),
+    Sub1(Box&lt;Exp&gt;),
+}</code></pre></div></div></p><p>Based on the examples above, the semantics for <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span>
+should be fairly obvious: they evaluate their argument to a number, and add or
+subtract one from it.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Design an <span class="emph">interpreter</span> for this language. What should its
+signature be, and why?</p></blockquote><h4>2.4<tt>&nbsp;</tt><a name="(part._incr._.Enhancing_the_transformations)"></a>Enhancing the transformations</h4><p>To compile addition and subtraction, we need to enhance our knowledge of
+assembly.  We&rsquo;ll introduce one new instruction: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add &lt;dest&gt;, &lt;val&gt;</code></span> will
+increment the destination by the right-side value.  (This mutates the
+destination, so if we still need the old value, we&rsquo;ll need to have saved it
+somewhere else, first.)  We&rsquo;ll correspondingly enhance our definition of
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Instr</code></span> to represent this new form:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Instr {
+  ...
+  Add(Reg, i32) /* Increment the left-hand reg by the value of the right-hand immediate */
+  // In x86 only 32-bit literals can be on the right side of an add instruction
+}</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Given this new instruction, work out the desired assembly for the
+examples above.</p></blockquote><p>Let&rsquo;s consider the second example: <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1(42)</code></span>.  To compile this, we
+should load 42 into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>, and then add 1 to it.  Or in symbols,
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, 42
+add RAX, 1</code></pre></div></div></p><p>The last example is similar: given
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">~hl:4:s~sub1(~hl:3:s~add1(~hl:2:s~add1(~hl:1:s~42~hl:1:e~)~hl:2:e~)~hl:3:e~)~hl:4:e~</code></span>,
+we want to
+load 42, then add 1 to it, then add 1 to that, then subtract 1 from that
+result.  We currently only have <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>, though, so we&rsquo;ll add -1 instead of subtracting:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:1:s~mov RAX, 42~hl:1:e~
+~hl:2:s~add RAX, 1~hl:2:e~
+~hl:3:s~add RAX, 1~hl:3:e~
+~hl:4:s~add RAX, -1~hl:4:e~</code></pre></div></div></p><p>Notice how each piece of the input program corresponds to a related piece of
+the output assembly.</p><p><p>Our <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_instrs</code></span> function now looks like this:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile_to_instrs(e: &amp;Exp) -&gt; Vec&lt;Instr&gt; {
+  match e {
+    Exp::Num(n) =&gt; vec![ Instr::Mov(Reg::Rax, *n)],
+    Exp::Add1(e) =&gt; {
+      /* ?? */
+    }
+    Exp::Sub1(e) =&gt; {
+      /* ?? */
+    }
+  }
+}</code></pre></div></div>
+</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Try to complete this scaffolding yourself.</p></blockquote><p>The key observation in the hand-written assembly above is that our translations
+are <span class="emph">compositional</span>, that is, they recur on their subpieces, and a
+translation of a composite expression is simply a function of the translations
+of its pieces.  Moreover, we know that constants always wind up in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>,
+and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add1</code></span> mutates in place, which means that our answers will always be in
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> as desired.  So our compiler for this language is
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile_to_instrs(e: &amp;Exp) -&gt; Vec&lt;Instr&gt; {
+  match e {
+    Exp::Num(n) =&gt; vec![ Instr::Mov(Reg::Rax, *n)],
+    Exp::Add1(e) =&gt; {
+      let mut is = compile_to_instrs(e);
+      is.push(Instr::Mov(Reg::Rax, 1))
+      is
+    }
+    Exp::Sub1(e) =&gt; {
+      let mut is = compile_to_instrs(e);
+      is.push(Instr::Mov(Reg::Rax, -1))
+      is
+    }
+  }
+}</code></pre></div></div></p></p><h4>2.5<tt>&nbsp;</tt><a name="(part._incr._.Testing)"></a>Testing</h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Run the given source programs through our compiler pipeline.  It
+should give us exactly the handwritten assembly we intend.  If not, debug the
+compiler until it does.</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend this language with a new operation: <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">double(expr)</code></span>
+should produce twice the value of the inner expression.  Go through the five
+stages above: concrete syntax, examples, abstract syntax, transformation, and
+tests.  Do we need any new features of the compiler pipeline, or of assembly,
+in order to achive this?  What if the operation were <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">halve(expr)</code></span>
+instead?</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>There are other assembly instructions we could have added to our
+output language.  The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span> instruction is the counterpart to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>,
+but performs subtraction instead.  The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">inc</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">dec</code></span> instructions
+specifically add or subtract <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">1</code></span>.  Enhance our definition of
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Instr</code></span> to include one or more of these new instructions, and modify
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_instrs</code></span> (and any other functions necessary) to take advantage of
+them.</p></blockquote><h3>3<tt>&nbsp;</tt><a name="(part._let._.Growing_the_language__adding_let)"></a>Growing the language: adding <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span></h3><p><p>As above, every time we enhance our source language, we need to consider several things:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition of them</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new
+forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><h4>3.1<tt>&nbsp;</tt><a name="(part._let._.The_new_syntax__both_concrete_and_abstract)"></a>The new syntax, both concrete and abstract</h4><p>Let&rsquo;s grow the language above further, by adding the concepts of identifiers
+and let-bindings:</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._let._(bnf-prod._(let-lang._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">let</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._let._%28bnf-prod._%28let-lang._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._let._%28bnf-prod._%28let-lang._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span></p></blockquote><p>and its corresponding abstract syntax</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp {
+  ...
+  Id(String),
+  Let(String, Box&lt;Exp&gt;, Box&lt;Exp&gt;)
+}</code></pre></div></div></p><h4>3.2<tt>&nbsp;</tt><a name="(part._let._.Examples_and_semantics)"></a>Examples and semantics</h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Extend the interpreter from above to handle the new constructs in
+this language.  You will need a function with signature</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">interpret(&amp;Exp) -&gt; i64</code></pre></div></div></p><p>...and you will certainly need a helper function.  What should that function
+do, and what should its signature be?</p></blockquote><p>Writing this interpreter is straightforward, at least initially: numbers
+evaluate to themselves, and adding or subtracting one from an expression should
+simply evaluate the expression and then add or subtract one from the result.
+But what should we do about identifiers and let-bindings?</p><p>Something needs to keep track of what each identifier currently means, which
+implies we need an environment.  The type of that environment leads to two
+&ldquo;obvious&rdquo; design choices: we could match each identifier to the expression
+that it was bound to, leading to an environment of type <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">[(&amp;str, Exp)]</code></span>, or we
+could match each identifier to the result of evaluating that expression,
+leading to an environment type of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">[(&amp;str, i64)]</code></span>.  In <span class="emph">this</span>
+language, there is no distinction in meaning between the two &#8212;<wbr></wbr> every program
+will compute the same number.  But, for a more complicated language, there
+could be massive differences in performance or even meaning.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Suppose we added an infix <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Plus(Box&lt;Exp&gt;, Box&lt;Exp&gt;)</code></span> operation.
+Construct a program whose running time is drastically worse with the first
+environment type, compared to the second environment type.</p><p>Suppose we added an expression <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Print(Box&lt;Exp&gt;)</code></span> that both prints its argument
+to the console, and evaluates to the same value as its argument.  Construct a
+program whose behavior is actually different with the two environment types.</p></blockquote><p>The former environment type leads to what&rsquo;s known as <span class="emph">lazy</span> behavior,
+where an identifier is evaluated to a result on demand, while the latter
+environment type leads to what&rsquo;s known as <span class="emph">eager</span> behavior, where an
+expression is fully evaluated before being bound to an identifier, and never
+needs to be evaluated again.</p><p>Once we have the notion of an environment, interpreting <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span> and
+identifiers is easy: the former extends the environment, and the latter looks
+up the identifier name in the environment.  But is it really that simple?</p><p>As soon as we introduce names and bindings, we have to contend with
+the notion of <span class="emph">scope</span>, that is, which names are available for use
+within any given expression.  Let us declare that the intended meaning
+of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = e1 in e2</code></span> is such that <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> can be used in the
+second expression, but cannot be used in the first one. So one
+potential meaningless program in our language would be <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x =
+5 in add1(y)</code></span>.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Are there other potential forms of failure for our current language?
+Explain them, if any.</p></blockquote><p>We need to decide on a semantics for multiple bindings of the &ldquo;same name&rdquo;: what
+should the program <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 1 in let x = 2 in x</code></span> mean?  We could decree that
+such a program is simply in error, but it is more convenient to decide that it
+evaluates to 2, that is, <span class="emph">inner bindings shadow outer ones</span>.</p><p>Now that we know what our programs are supposed to mean, let&rsquo;s try to
+<span class="emph">compile</span> them instead of interpreting them.  For now, let&rsquo;s <span class="emph">assume</span>
+that scoping errors cannot happen; we&rsquo;ll need to revisit this faulty assumption
+and <span class="emph">ensure</span> it later.</p><h3>4<tt>&nbsp;</tt><a name="(part._.The_stack)"></a>The stack</h3><p>Immediately, we can see two key challenges in compiling this code: in the
+little fragment of assembly that we currently know, we have no notion of
+&ldquo;identifier names&rdquo;, and we certainly have no notion of &ldquo;environments&rdquo;.  Worse,
+we can see that a single register can&rsquo;t possibly be enough, since we may need
+to keep track of several names simultaneously.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._3._lecturelet-and-stack%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">To be fair, this language
+is simple enough that we actually don&rsquo;t really need to; we could optimize it
+easily such that it never needs more than one.  But as such optimizations won&rsquo;t
+always work for us, we need to handle this case more generally.</span></span>  So how
+can we make progress?  One key insight is to broaden what we think of when considering
+<span class="emph">names</span>.  In our interpreter, a name was used to look up what value we
+meant.  But realistically, <span class="emph">any</span> unique identifier will suffice, and all
+our values will ultimately need to exist somewhere in memory at runtime.
+Therefore we can replace our notion of <span class="emph">a name is a string</span> with <span class="emph">a
+name is a memory address</span>.  This leads to our second key insight: during
+compilation, we can maintain an environment of type <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Vec&lt;&amp;str, Address&gt;</code></span>
+(for some still-to-be-determined type <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Address</code></span>).  We can extend
+this environment with new addresses for new identifiers, each time we compile a
+let-binding, and we can look up the relevant address every time we compile an
+identifier.  Once we&rsquo;ve done so, we <span class="emph">don&rsquo;t need this environment at
+runtime</span> &#8212;<wbr></wbr> its contents have been used in the construction of the compiled
+output, and therefore we don&rsquo;t need to maintain this structure any further.
+This eliminates both of our representation problems (of how to encode string
+names and the whole environment), but raises a new question: how do we assign
+addresses to identifiers in a sufficient way?</p><p>To make any further progress, we need to know a little bit about how memory is
+used in programs.  Memory is conceptually just a giant array of bytes,
+addressed from 0 to <span style="font-style: italic"></span>2<span style="font-style: italic"></span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic"></span>6<span style="font-style: italic"></span>4<span style="font-style: italic"></span></span><span style="font-style: italic"></span> (on 64-bit machines).  There are restrictions
+on which addresses can be used, and conventions on how to use them
+appropriately.  Programs don&rsquo;t start at memory address 0, or at address
+<span style="font-style: italic"></span>2<span style="font-style: italic"></span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic"></span>6<span style="font-style: italic"></span>4<span style="font-style: italic"></span></span><span style="font-style: italic"></span>, but they do have access to some contiguous region:</p><p><p class="center"><img style="vertical-align: 3.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="387.0" height="626.953125"/></p></p><p>The <span class="emph">Code</span> segment includes the code for our program.  The <span class="emph">Global</span>
+segment includes any global data that should be available throughout our
+program&rsquo;s execution.  The <span class="emph">Heap</span> includes memory that is dynamically
+allocated as our program runs &#8212;<wbr></wbr> we&rsquo;ll come back to using the heap later.
+Finally the <span class="emph">Stack</span> segment is used as our program calls functions and
+returns from them &#8212;<wbr></wbr> we&rsquo;ll need to work with this segment right away.</p><p>Because the heap and the stack segments are adjacent to each other, care must
+be taken to ensure they don&rsquo;t actually overlap each other, or else the same
+region of memory would not have a unique interpretation, and our program would
+crash.  This implies that as we start using addresses within each region, one
+convenient way to ensure such a separation is to choose addresses from opposite
+ends.  Historically, the convention has been that the heap grows upwards from
+lower addresses, while the stack grows downward from higher addresses.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._4._lecturelet-and-stack%29%29" data-pltdoc="x">3</a></span></span><span class="FootnoteContent">This
+makes allocating and using arrays particularly easy, as the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span>
+element will simply be <span style="font-style: italic">i</span> words away from the starting address of the
+array.</span></span></p><p>The stack itself must conform to a particular structure, so that functions can
+call each other reliably.  This is (part of) what&rsquo;s known as the <span class="emph">calling
+convention</span>, and we&rsquo;ll add more details to this later.  For now, the high-level
+picture is that the stack is divided into <span class="emph">stack frames</span>, one per
+function-in-progress, that each stack frame can be used freely by its function,
+and that when the function returns, its stack frame is freed for use by future
+calls.  (Hence the appropriateness of the name &ldquo;stack&rdquo;: stack frames obey a
+last-in-first-out discipline as functions call one another and return.)  When a
+function is called, it needs to be told where its stack frame begins.  Per the
+calling convention, this address is stored in the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> register (short for
+&ldquo;stack pointer&rdquo;)<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._5._lecturelet-and-stack%29%29" data-pltdoc="x">4</a></span></span><span class="FootnoteContent">This is a simplification.  We&rsquo;ll see the fuller rules
+soon.</span></span>.  Addresses <span class="emph">lower</span> than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> are free for use; addresses
+<span class="emph">greater</span> than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> are already used and should not be tampered
+with:</p><p><p class="center"><img style="vertical-align: 3.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="430.0" height="336.4765625"/></p></p><h3>5<tt>&nbsp;</tt><a name="(part._.Allocating_identifiers_on_the_stack)"></a>Allocating identifiers on the stack</h3><p><p>The description above lets us refine our compilation challenge: we have an
+arbitrary number of addresses available to us on the stack, at locations
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP - 8 * 1</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP - 8 * 2</code></span>, ... <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP - 8 * i</code></span>.  (The factor of 8
+comes because we&rsquo;re targeting 64-bit machines, and addresses are measured in
+bytes.)  Therefore:
+</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Given the description of the stack above, come up with a strategy for
+allocating numbers to each identifier in the program, such that identifiers
+that are potentially needed simultaneously are mapped to different numbers.</p></blockquote></p><h4>5.1<tt>&nbsp;</tt><a name="(part._.Attempt_1__.Naive_allocation)"></a>Attempt 1: Naive allocation</h4><p>One possibility is simply to give every unique binding its own unique integer.
+Trivially, if we reserve enough stack space for all bindings, and every binding
+gets its own stack slot, then no two bindings will conflict with each other and
+our program will work properly.</p><p>In the following examples, the code is on the left, and the mappings of names
+to stack slots is on the right.</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let x = 10       /* [] */
+in add1(x)          /* [ x --&gt; 1 ] */
+
+   let x = 10       /* [] */
+in let y = add1(x)  /* [x --&gt; 1] */
+in let z = add1(y)  /* [y --&gt; 2, x --&gt; 1] */
+in add1(z)          /* [z --&gt; 3, y --&gt; 2, x --&gt; 1] */
+
+   let a = 10             /* [] */
+in let c =    let b = add1(a)   /* [a --&gt; 1] */
+           in let d = add1(b)   /* [b --&gt; 2, a --&gt; 1] */
+           in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
+in  add1(c)               /* [c --&gt; 4, d --&gt; 3, b --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>We can implement this strategy fairly easily: simply keep a global mutable
+counter of how many variables have been seen, and a global mutable table
+mapping names to counters.  But as the last example shows, this is wasteful of
+space: in the final line, neither <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> nor <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">d</code></span> are in scope, but their
+stack slots are still reserved.  As programs get bigger, this would be very
+inefficient.</p><p>An equally important, though much subtler, problem is the difficulty
+of <span class="emph">testing</span> this implementation.  We would expect that
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_instrs</code></span> should be a deterministic function, and that
+compiling the same program twice in a row should produce identical
+output.  But because of mutable state, this is not true: the second
+time through, our global counter has been incremented beyond its
+initial value, so all our stack slots will be offset by an unwanted
+amount.  We <span class="emph">could</span> try to resolve this by having some way to
+&ldquo;reset&rdquo; the counter to its initial value, but now we have two new
+hazards: we have to remember to reset it exactly when we mean to, and
+we have to remember <span class="emph">not</span> to reset it at any other time (even if
+it would be &ldquo;convenient&rdquo;).  This is an example of the singleton
+anti-pattern: having a single global value is almost always
+undesirable, because you often want at least two such values &#8212;<wbr></wbr> one
+for the answer and one for testing &#8212;<wbr></wbr> and you&rsquo;ll likely want more
+than that, eventually.  Additionally, as our compilers get more
+complex, we&rsquo;d have more and more such mutable variables to remember to
+reset, and the likelihood of mistakes rises quickly.</p><p>(Anecdotally: a growing trend in compiler architecture is to design a
+<a href="https://langserver.org/">language server</a>, which basically takes
+the compiler and leaves it running as a service that can be repeatedly queried
+to recompile files on demand.  This helps amortize the increasingly large
+startup cost of sophisticated compilers, and makes it much easier to build
+language support for new languages into new editors.  But having &ldquo;compilers as
+a service&rdquo; implies that they <span class="emph">must</span> be exceedingly careful of mutable
+state, or else subsequent compilations might produce different, potentially
+incorrect, results than earlier ones!)</p><h4>5.2<tt>&nbsp;</tt><a name="(part._.Attempt_2__.Stack_allocation)"></a>Attempt 2: Stack allocation</h4><p>A closer reading of the code reveals that our usage of let bindings also forms
+a stack discipline: as we enter the bodies of let-expressions, only the
+bindings of those particular let-expressions are in scope; everything else is
+unavailable.  And since we can trace a straight-line path from any given
+let-body out through its parents to the outermost expression of a given
+program, we only need to maintain uniqueness among the variables on those
+paths.  Here are the same examples as above, with this new strategy:
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let x = 10       /* [] */
+in add1(x)          /* [ x --&gt; 1 ] */
+
+   let x = 10       /* [] */
+in let y = add1(x)  /* [x --&gt; 1] */
+in let z = add1(y)  /* [y --&gt; 2, x --&gt; 1] */
+in add1(z)          /* [z --&gt; 3, y --&gt; 2, x --&gt; 1] */
+
+   let a = 10             /* [] */
+in let c =    let b = add1(a)   /* [a --&gt; 1] */
+           in let d = add1(b)   /* [b --&gt; 2, a --&gt; 1] */
+           in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
+in  add1(c)               /* [c --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>Only the last line differs, but it is typical of what this algorithm can
+achieve.  Let&rsquo;s work through the examples above to see their intended compiled
+assembly forms.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._6._lecturelet-and-stack%29%29" data-pltdoc="x">5</a></span></span><span class="FootnoteContent">Note that we do not care at all, right now, about
+inefficient assembly.  There are clearly a lot of wasted instructions that move
+a value out of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> only to move it right back again.  We&rsquo;ll consider
+cleaning these up in a later, more general-purpose compiler pass.</span></span>  Each
+binding is colored in a unique color, and the corresponding assembly is
+highlighted to match.</p><p><table cellspacing="0" cellpadding="0" class="centered"><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let ~hl:1:s~x =~hl:1:e~ ~hl:2:s~10~hl:2:e~
+in ~hl:3:s~add1(~hl:4:s~x~hl:4:e~)~hl:3:e~</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:2:s~mov RAX, 10~hl:2:e~
+~hl:1:s~mov [RSP - 8*1], RAX~hl:1:e~
+~hl:4:s~mov RAX, [RSP - 8*1]~hl:4:e~
+~hl:3:s~add RAX, 1~hl:3:e~</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let ~hl:1:s~x = 10~hl:1:e~
+in let ~hl:3:s~y =~hl:3:e~ ~hl:2:s~add1(x)~hl:2:e~
+in let ~hl:5:s~z =~hl:5:e~ ~hl:4:s~add1(y)~hl:4:e~
+in ~hl:6:s~add1(z)~hl:6:e~</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:1:s~mov RAX, 10
+mov [RSP - 8*1], RAX~hl:1:e~
+~hl:2:s~mov RAX, [RSP - 8*1]
+add RAX, 1~hl:2:e~
+~hl:3:s~mov [RSP - 8*2], RAX~hl:3:e~
+~hl:4:s~mov RAX, [RSP - 8*2]
+add RAX, 1~hl:4:e~
+~hl:5:s~mov [RSP - 8*3], RAX~hl:5:e~
+~hl:6:s~mov RAX, [RSP - 8*3]
+add RAX, 1~hl:6:e~</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let ~hl:1:s~a = 10~hl:1:e~
+in let ~hl:5:s~c =~hl:5:e~    let ~hl:2:s~b = add1(a)~hl:2:e~
+           in let ~hl:3:s~d = add1(b)~hl:3:e~
+           in ~hl:4:s~add1(b)~hl:4:e~
+in  ~hl:6:s~add1(c)~hl:6:e~</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:1:s~mov RAX, 10
+mov [RSP - 8*1], RAX~hl:1:e~
+~hl:2:s~mov RAX, [RSP - 8*1]
+add RAX, 1
+mov [RSP - 8*2], RAX~hl:2:e~
+~hl:3:s~mov RAX, [RSP - 8*2]
+add RAX, 1
+mov [RSP - 8*3], RAX~hl:3:e~
+~hl:4:s~mov RAX, [RSP - 8*2]
+add RAX, 1~hl:4:e~
+~hl:5:s~mov [RSP - 8*2], RAX~hl:5:e~
+~hl:6:s~mov RAX, [RSP - 8*2]
+add RAX, 1~hl:6:e~</code></pre></div></div></p></td></tr></table></p><p>Additionally, this algorithm is much easier to implement than the previous one:
+adding a binding to the environment simply allocates it at a slot equal to the
+new size of the environment.  As we descend into a let-binding, we keep the
+current environment.  As we descend into a let-body, we augment the environment
+with the new binding.  <span class="emph">And as we exit a let-expression, we discard the
+augmented environment &#8212;<wbr></wbr> the bindings inside it have now fallen out of scope.</span>
+Our implementation no longer needs any mutable, global state.</p><h3>6<tt>&nbsp;</tt><a name="(part._.Supporting_let__.Implementing_.Attempt_2)"></a>Supporting <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>: Implementing Attempt 2</h3><h4>6.1<tt>&nbsp;</tt><a name="(part._.Extending_our_transformations)"></a>Extending our transformations</h4><p>We need to enhance our definition of registers and allow for new kinds
+of arguments to mov. See how can use Rust&rsquo;s enums to encode the
+syntactic restrictions that x86-64 uses, utilizing the type system to
+prevent us from producing ill-formed assembly.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Reg {
+    Rax,
+    Rsp,
+}
+
+// Represents the address [ reg + 8 * offset]
+struct MemRef {
+    reg: Reg,
+    offset: i32,
+}
+
+enum Arg64 {
+     Reg(Reg),
+     Imm(i64),
+     Mem(MemRef)
+}
+
+enum MovArgs {
+    ToReg(Reg, Arg64),
+    ToMem(MemRef, Reg32),
+}
+
+enum Instr {
+     Mov(MovArgs),
+     Add(Reg, i32),
+}</code></pre></div></div></p><p>And we our type of environments can be <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Vec&lt;(String, i64)&gt;</code></span></p><p>Looking up an identifier in an environment is straightforward (you
+implemented this for last homework). We search in reverse because we
+will be pushing the pairs on as we descend into the expression.
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn get(env: &amp;[(String, i32)], x: &amp;str) -&gt; Option&lt;i32&gt; {
+    for (y,n) in env.iter().rev() {
+        if &amp;x == y {
+            return Some(*n);
+        }
+    }
+    None
+}</code></pre></div></div></p><p>We can add a name to an environment using <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">.push()</code></span>.</p><p>Now our compilation is straightforward.  We sketch just the
+let-binding case; we leave the others as an exercise (note that we
+return a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Result</code></span> now because we might have unbound variable
+errors):
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile(e: &amp;Exp mut env: Vec&lt;(String, i32)&gt;) -&gt; Result&lt;Vec&lt;Instr&gt;, String&gt; {
+   match e {
+     Let(x, e1, e2) =&gt; {
+       let mut is = compile(e1, env.clone())?;
+       let offset = ... // Calculate the offset from env
+       env.push((String::from(x), offset));
+       is.push(Instr::Mov(MovArgs::ToMem(MemRef { reg: Reg::Rsp, offset: offset }), Reg::Rax));
+       is.extend(compile(e2, env))?;
+       Ok(is)
+     }
+   }
+}</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Here we clone the environment when we compile the
+sub-expression. What are alternative approaches we could use to
+managing the environment that don&rsquo;t use as much copying?</p></blockquote><h4>6.2<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h4><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Complete this compiler, and test that it works on all these and any
+other examples you can throw at it.</p></blockquote><a name="(part._(gentag._1._lecturelet-and-stack))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._2._lecturelet-and-stack))"></a>1</span></span>For a little while!
+The details of this function will get more elaborate, and we&rsquo;ll actually wrap
+this function in a larger pipeline, but the overall signature and purpose of
+the function will remain unchanged.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._3._lecturelet-and-stack))"></a>2</span></span>To be fair, this language
+is simple enough that we actually don&rsquo;t really need to; we could optimize it
+easily such that it never needs more than one.  But as such optimizations won&rsquo;t
+always work for us, we need to handle this case more generally.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._4._lecturelet-and-stack))"></a>3</span></span>This
+makes allocating and using arrays particularly easy, as the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span>
+element will simply be <span style="font-style: italic">i</span> words away from the starting address of the
+array.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._5._lecturelet-and-stack))"></a>4</span></span>This is a simplification.  We&rsquo;ll see the fuller rules
+soon.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._6._lecturelet-and-stack))"></a>5</span></span>Note that we do not care at all, right now, about
+inefficient assembly.  There are clearly a lot of wasted instructions that move
+a value out of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> only to move it right back again.  We&rsquo;ll consider
+cleaning these up in a later, more general-purpose compiler pass.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
