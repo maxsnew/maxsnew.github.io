@@ -76,7 +76,7 @@ written in the style of Debug):</p><p><table cellspacing="0" cellpadding="0" cla
                 ("y", Prim1(Sub1, Id("x")))],
      body: Prim1(Sub1, Id("y"))}</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>3</code></p></td></tr></table></p><p>Note that as discussed in class, shadowing of variables is allowed,
 but all variable names in a single binding list must be unique. So</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(let ((x 3))
-  (let ((x 4))) x)</code></pre></div></div></p><p>is a valid program, but</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(let ((x 3)
+  (let ((x 4)) x))</code></pre></div></div></p><p>is a valid program, but</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(let ((x 3)
       (x 4))
   x)</code></pre></div></div></p><p>should produce a compile-time error.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Starter_code_for_this_assignment)"></a>Starter code for this assignment</h3><p>You&rsquo;ve been given a starter codebase that has several pieces of
 infrastructure:</p><ul><li><p>A file <code>syntax.rs</code> that defines tokens, s-expressions and
@@ -140,7 +140,23 @@ interpreter on a file <span title="Shell" class="sourceCode"><code data-lang="te
 possible. I have tested that the programs work on Linux and Mac OS X,
 and I think they should work on Windows as well. On any platform you
 need to have <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">nasm</code></span> and <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">ar</code></span> installed. Ask on Piazza if
-you have any issues installing these.</p><h3>5<tt>&nbsp;</tt><a name="(part._.Rust_.Tips)"></a>Rust Tips</h3><p>To read more about pattern matching on structs like <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">MemRef</code></span> and
+you have any issues installing these.</p><p>Here are the explicit commands I use. To compile a file
+<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">compiled_code.s</code></span> and link it with <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span>. First build an
+object file using <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">nasm</code></span>, passing the appropriate format flag
+for your platform.</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ nasm -felf64 compiled_code.s -o compiled_code.o   # Linux
+$ nasm -fmacho64 compiled_code.s -o compiled_code.o # Mac
+$ nasm -fwin64 compiled_code.s -o compiled_code.o   # Windows</code></pre></div></div></p><p>Then build a static library file to link with the rust file
+<div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ar r libcompiled_code.a compiled_code.o # Linux &amp; Mac
+$ ar r compiled_code.lib compiled_code.o  # Windows</code></pre></div></div></p><p>Finally, compile the rust file, indicating where to look for the static library.</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ rustc stub.rs -L . -o stub.exe</code></pre></div></div></p><p>This should make an executable that you can run.
+<div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ./stub.exe</code></pre></div></div></p><p>I recommend you try this out with the sample file
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text
+global start_here
+start_here:
+  mov RAX, 483
+  ret</code></pre></div></div>
+To make sure you have installed nasm and ar correctly.
+Note that you do not need an underscore in front of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>
+on Mac anymore as I found an undocumented workaround to that issue.</p><h3>5<tt>&nbsp;</tt><a name="(part._.Rust_.Tips)"></a>Rust Tips</h3><p>To read more about pattern matching on structs like <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">MemRef</code></span> and
 enums with named arguments like <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> see
 <a href="https://doc.rust-lang.org/stable/book/ch18-03-pattern-syntax.html">this
 chapter of the Rust book</a>.</p><p>Sometimes you need to convert between different numeric types in Rust,
