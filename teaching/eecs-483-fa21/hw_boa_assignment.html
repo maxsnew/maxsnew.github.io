@@ -154,10 +154,14 @@ tagged expression and produces a new expression that is in Sequential Form.
 Because this program will include some new expressions, we&rsquo;re willing to
 discard any decorations we had on the expression, which explains why the input
 could be decorated with any type of information, but the output will just be
-decorated with unit values.</p><p>When you need to generate <span class="emph">fresh</span> names (i.e., unique names that aren&rsquo;t
-used anywhere in the expression), generate names of the form
-<code>"#emph{reason}_###"</code>, where <span class="emph">reason</span> is "prim1", "prim2", "if", etc., and
-the numbers come from the expression&rsquo;s tag.</p></li></ol></div><h4>3.4<tt>&nbsp;</tt><a name="(part._.Compilation)"></a>Compilation</h4><div class="hw"><ol start="4"><li><p>Adapt
+decorated with unit values.</p></li></ol></div><p>When you need to generate <span class="emph">fresh</span> names (i.e., unique names that
+aren&rsquo;t used anywhere in the expression), a useful strategy is to
+generate names of the form <code>format!("#{}_{}", reason, tag)</code>,
+where <span class="emph">reason</span> is "prim1", "prim2_1", "prim2_2", "if", etc., and
+tag is the annotation on the expression. So if you need to generate a
+variable and your input expression is <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::Prim1(op, e, 7)</code></span>, you
+can use the name <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"#prim1_7"</code></span>. This is only a suggestion, you may
+use whatever strategy you like in your compiler.</p><h4>3.4<tt>&nbsp;</tt><a name="(part._.Compilation)"></a>Compilation</h4><div class="hw"><ol start="4"><li><p>Adapt
 your <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_instrs</code></span> function from Adder to compile the
 sequential expression forms in Boa. This means refactoring the similar
 cases as well as adding new support for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">If</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim2</code></span>.
