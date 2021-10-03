@@ -1,0 +1,259 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 7: Checking for errors and calling functions</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 7:</span> Checking for errors and calling functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._funcalls._.Checking_for_errors__.Calling_functions%29" class="tocviewlink" data-pltdoc="x">Checking for errors:<span class="mywbr"> &nbsp;</span> Calling functions</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Upgrading_to_64-bit_calling_conventions%29" class="tocviewlink" data-pltdoc="x">Upgrading to 64-<wbr></wbr>bit calling conventions</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.What_calling_convention_to_use_%29" class="tocviewlink" data-pltdoc="x">What calling convention to use?</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Testing%29" class="tocviewlink" data-pltdoc="x">Testing</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 7:</span> Checking for errors and calling functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._funcalls._.Checking_for_errors__.Calling_functions%29" class="tocsubseclink" data-pltdoc="x">Checking for errors:<span class="mywbr"> &nbsp;</span> Calling functions</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._funcalls._.Caller-_and_callee-save_registers%29" class="tocsubseclink" data-pltdoc="x">Caller-<wbr></wbr> and callee-<wbr></wbr>save registers</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._funcalls._.The_base_pointer%29" class="tocsubseclink" data-pltdoc="x">The base pointer</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Upgrading_to_64-bit_calling_conventions%29" class="tocsubseclink" data-pltdoc="x">Upgrading to 64-<wbr></wbr>bit calling conventions</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Step_1__passing_some_arguments_via_registers%29" class="tocsubseclink" data-pltdoc="x">Step 1:<span class="mywbr"> &nbsp;</span> passing some arguments via registers</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._.Step_2__.Saving_the_caller-save_registers%29" class="tocsubseclink" data-pltdoc="x">Step 2:<span class="mywbr"> &nbsp;</span> Saving the caller-<wbr></wbr>save registers</a></td></tr><tr><td><span class="tocsublinknumber">2.3<tt>&nbsp;</tt></span><a href="#%28part._.Putting_the_pieces_together%29" class="tocsubseclink" data-pltdoc="x">Putting the pieces together</a></td></tr><tr><td><span class="tocsublinknumber">2.4<tt>&nbsp;</tt></span><a href="#%28part._.Stack_frame_sizes%29" class="tocsubseclink" data-pltdoc="x">Stack frame sizes</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.What_calling_convention_to_use_%29" class="tocsubseclink" data-pltdoc="x">What calling convention to use?</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 7:</span> Checking for errors and calling functions</h2><p>Where we left off last time, we could work with both numbers and booleans in
+our program.  Unfortunately, we had no way of ensuring that we only worked with
+them <span class="emph">consistently</span>, as opposed to, say, applying an arithmetic operation
+to boolean values.  Let&rsquo;s remedy that.  Our plan is to introduce a simplified
+calling convention (essentially the 32-bit
+<a href="https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl"><span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">cdecl</code></span>
+calling convention</a>), and then fix up the details to match the actual calling
+convention we&rsquo;ll use (the 64-bit
+<a href="https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI">&ldquo;System
+V AMD64&rdquo; calling convention</a>).</p><h3>1<tt>&nbsp;</tt><a name="(part._funcalls._.Checking_for_errors__.Calling_functions)"></a>Checking for errors: Calling functions</h3><p>Error handling is going to be a pervasive feature in our compiled
+output: we need to check the arguments and returned values of every
+operation are valid.  That sequenece of checking instructions will
+appear at every location in the program that it&rsquo;s needed.  But the
+error handling itself is identical everywhere: we want to show some
+kind of message that describes the error that occured.  So for
+example, we might want to check if a value is a number as follows:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  ... ;; get RAX to have the value we need
+  test RAX, 0x0000000000000001 ;; check only the tag bit of the value
+  jnz error_not_number         ;; if the bit is set, go to some centralized error handler
+
+error_not_number:
+  ?????</code></pre></div></div></p><p>(The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">test</code></span> instruction performs a bitwise-and of its two arguments and
+discards the result, but sets the zero and signedness flags to be used with
+conditional jumps.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._7._lecturefunction-calls%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent"><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">test</code></span> is to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">and</code></span> the same way <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">cmp</code></span> is
+to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span>: they perform the same logical operation, but throw away the
+results and keep only the flags.</span></span>  It&rsquo;s convenient in this case, though for
+more complex tag checks, we might need a cleverer sequence of assembly
+instructions, possibly involving a second register as a temporary value.)</p><h4>1.1<tt>&nbsp;</tt><a name="(part._funcalls._.Caller-_and_callee-save_registers)"></a>Caller- and callee-save registers</h4><p>What code should we have at the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number</code></span> label?  We&rsquo;d like to be
+able to be able to print some kind of error message when the arguments to an
+operation are invalid.  But our language doesn&rsquo;t have any notion of strings
+yet, so we have no way of representing a message, let alone actually printing
+it.  Fortunately, we have <code>stub.rs</code> available to us, and Rust <span class="emph">does</span> have
+strings and printing.  Our goal should then be to define a new function in
+<code>stub.rs</code> and somehow call it from our compiled output.</p><p>(Note that this does not necessarily mean that we can call arbitrary functions
+<span class="emph">from our source language</span>, though it certainly does set the stage for us
+to do so later!)</p><p>To understand how to call a Rust function, we need to understand a bit about the C
+<span class="emph">calling convention</span>.  The calling convention describes an agreement
+between the callers of functions and the callee functions on where to place
+arguments and return values so the other function can find them, and on which
+function is responsible for saving any temporary values in registers.</p><p>We&rsquo;ve already encountered one part of the calling convention: &ldquo;the answer goes
+in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>.&rdquo;  This simple statement asserts that the callee
+places its answer in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>, and the caller should expect to look for the
+answer there...which means that the caller should expect the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>
+to change as a result of the call.  If the caller needs to keep the old value
+of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>, it is responsible for saving that value before performing the
+call: we say this is a <span class="emph">caller-save register</span>.  On the other hand,
+functions are allowed to manipulate the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> register to allocate
+variables on the stack.  When the function returns, though, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> must be
+restored to its value prior to the function invocation, or else the caller will
+be hopelessly confused.  We say that <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> is a <span class="emph">callee-save
+register</span>.  In general, the calling convention specifies which registers are
+caller-save, and which are callee-save, and we must encode those rules into our
+compilation as appropriate.</p><p>So far, our compilation has only ever dealt with local variables; we haven&rsquo;t
+considered what it means to accept any parameters as inputs.  Where should they
+go?  Our current reference point for finding local variables is <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>, and
+our variables are found at consecutive offsets just smaller than it, which
+implies our parameters probably ought to go in the other direction, at
+consecutive offsets after it.  Since we&rsquo;re counting &ldquo;outwards&rdquo; from this
+reference point, we should wind up with a picture that looks vaguely like this:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="410.6666666666667" height="276.0"/></p></p><p>This suggests that we can call a function using the 32-bit calling
+convention by <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span>ing its arguments onto the stack in reverse
+order, and then simply <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>ing it.  The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> instruction
+decrements <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> by one slot, and then moves its argument into the
+memory location now pointed to by the new <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> value.
+Pictorially,</p><p><table cellspacing="0" cellpadding="0" class="centered"><tr><td><p>Initial</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push 42</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push 65</code></span></p></td></tr><tr><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="255.66666666666669" height="136.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_3.png" alt="image" width="255.66666666666669" height="136.0"/></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_4.png" alt="image" width="255.66666666666669" height="136.0"/></p></td></tr></table></p><p>The <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instruction is slightly more complicated, mostly because it needs
+to handle the bookkeeping for what should happen when the call <span class="emph">returns:</span>
+where should execution resume?  Every instruction exists at some address in
+memory, and the currently executing instruction&rsquo;s address is stored in
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RIP</code></span>, the <span class="emph">instruction pointer</span>.  Our assembly code should never
+modify this register directly.  Instead, the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instruction first
+pushes a <span class="emph">return address</span> describing the location of the next instruction
+to run &#8212;<wbr></wbr> i.e. the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RIP</code></span> just <span class="emph">after</span> the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>
+instruction itself &#8212;<wbr></wbr> and then jumps to the specified label.</p><p>Putting these two instructions together, if we were using the 32-bit
+calling convention, we would implement <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number</code></span> as follows:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number:
+  push RAX   ;; Arg 2: push the badly behaved value
+  push 1     ;; Arg 1: a constant describing which error-code occurred
+  call error ;; our error handler</code></pre></div></div></p><p>And then in <code>stub.rs</code>:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type ErrorCode = u64;
+static ADD1_ERROR: ErrorCode = 0;
+static ADD_ERROR: ErrorCode  = 1;
+
+#[export_name = "\x01snake_error"]
+extern "C" fn snake_error(err_code: u64, v: SnakeVal) {
+    if err_code == ADD1_ERROR {
+        eprintln!("add1 expected a number but got a boolean {}", sprint_snake_val(v));
+    } else if err_code == ADD_ERROR {
+        eprintln!("+ expected a number but got a boolean {}", sprint_snake_val(v));
+    } else {
+        eprintln!("I apologize to you, dear user. I made a bug. Here's a snake value: {}", sprint_snake_val(v));
+    }
+    std::process::exit(1);
+}</code></pre></div></div></p><h4>1.2<tt>&nbsp;</tt><a name="(part._funcalls._.The_base_pointer)"></a>The base pointer</h4><p>If we compiled this code against Rust with the 32-bit calling
+convention, it would crash.  We are not yet quite respecting the
+calling convention completely.  Notice that we refer to it as the
+&ldquo;call stack&rdquo;, and yet we only are pushing onto our stack: we&rsquo;re
+never popping anything back off!  Moreover, all this pushing and
+(eventually) popping keeps changing our <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> value, which means
+anything we try to do to access our local variables will break at
+runtime.</p><p>Instead of basing our local variables off this constantly-shifting stack
+pointer, the calling convention stipulates that we <span class="emph">save</span> the stack
+pointer as it was at the beginning of our function.  Provided we never modify
+that register during the execution of our function, it will remain a constant
+against which our local-variables&rsquo; offsets can be based.  This register,
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>, is accordingly known as the <span class="emph">base pointer</span>.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Should <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> be a caller-save or callee-save register?</p></blockquote><p>Since the mere act of using a <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instruction changes <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>, we
+can&rsquo;t know what the correct value should be until inside the callee.
+Therefore, if the callee sets the value, it must be responsible for restoring
+the old value.  To do that, we must push the old value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> onto the
+stack, and restore it on our way out.  We can now revise our original sketch of
+a 32-bit C-compatible stack:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_5.png" alt="image" width="310.6666666666667" height="496.0"/></p></p><p>Between the parameters and the locals we have two additional slots, for storing
+the return address and the old value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>.  The stack obeys the
+invariant that</p><ul><li><p>Every function&rsquo;s locals are saved in its <span class="emph">stack frame</span>, the region
+between <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> always points to the beginning of the <span class="emph">current</span> stack
+frame</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> always points to the beginning of the <span class="emph">next</span> stack frame</p></li></ul><p>(In this diagram, the color of the cells does not quite align with the labeling
+of stack regions as &ldquo;caller&rdquo; or &ldquo;callee&rdquo;: the labels describe what values
+a function puts on to the stack, while the color marks which values a function
+uses during its computation.)</p><p>To preserve this invariant, we have to add some setup and teardown code to the
+beginnings and ends of functions.  In particular, we need to add this code to
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>, because our code really just is a function that
+participates in the C stack.  We also need to add code surrounding every
+function call.</p><p><span style="font-weight: bold">In the callee:</span></p><ul><li><p>At the start of the function:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push RBP          ; save (previous, caller's) RBP on stack
+push ...          ; save any other callee-save registers
+mov RBP, RSP      ; make current RSP the new RBP
+sub RSP, 8*N      ; "allocate space" for N local variables</code></pre></div></div></p></li><li><p>At the end of the function</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RSP, RBP      ; restore value of RSP to that just before call
+                  ; now, value at [RSP] is caller's (saved) RBP
+pop ...           ; pop any other callee-save registers
+pop RBP           ; so: restore caller's RBP from stack [RSP]
+ret               ; return to caller</code></pre></div></div></p></li></ul><p><span style="font-weight: bold">In the Caller:</span></p><ul><li><p>To call a function target that takes M parameters:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push arg_M        ; push last arg first ...
+...
+push arg_2        ; then the second ...
+push arg_1        ; finally the first
+call target       ; make the call (which puts return addr on stack)
+add RSP, 8*M      ; now we are back: "clear" args by adding 8*numArgs</code></pre></div></div></p></li></ul><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Draw the sequence of stacks that results from our error-handling
+code, using this more precise understanding of what belongs on the stack.</p></blockquote><h3>2<tt>&nbsp;</tt><a name="(part._.Upgrading_to_64-bit_calling_conventions)"></a>Upgrading to 64-bit calling conventions</h3><h4>2.1<tt>&nbsp;</tt><a name="(part._.Step_1__passing_some_arguments_via_registers)"></a>Step 1: passing some arguments via registers</h4><p>All this messing about with the stack pointer is expensive, since in general
+most functions don&rsquo;t have many arguments, and on 64-bit architectures we have
+enough registers available that most functions can get away
+without using the stack at all.  Accordingly, the 64-bit calling convention in
+use on Linux and Mac systems <span class="emph">doesn&rsquo;t put all the arguments on the stack.</span>
+Instead, the first six arguments go in registers <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span>,
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDX</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RCX</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R8</code></span>, and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R9</code></span> in that order, and the seventh and
+subsequent arguments go on the stack.  So our caller code for a function with
+<span type="math/tex" style="white-space: pre;" class="math-tex">\(M \geq 7\)</span> arguments should look like:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push arg_M
+...
+push arg_7
+mov R9, arg_6
+mov R8, arg_5
+mov RCX, arg_4
+mov RDX, arg_3
+mov RSI, arg_2
+mov RDI, arg_1
+call target
+add RSP, 8*(M - 6)</code></pre></div></div></p><p>For six or fewer arguments, we might be able to elide some or all of that
+machinery, and in particular avoid manipulating <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>.</p><p>However, there is one more remaining caveat. Upon entry to a function <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>
+must be a multiple of 16, i.e. it must look like <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xWWWWWWWWWWWWWWW0</code></span>.
+Depending on the current value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>, we might need to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> an
+extra slot of padding onto the stack to ensure the required alignment before
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>ing the target function; on return from the function, we might need
+to pop that slot back off by <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>ing one extra slot in our cleanup
+step.</p><h4>2.2<tt>&nbsp;</tt><a name="(part._.Step_2__.Saving_the_caller-save_registers)"></a>Step 2: Saving the caller-save registers</h4><p>As part of the function-call process, we overwrite the values of the six
+argument registers.  Unfortunately, we might have been using those registers
+ourselves.  If there&rsquo;s more code later in our function that needs those values,
+we need to have saved them somewhere: these six argument registers are
+definitely <span class="emph">caller-save</span> registers.  We could do this in a few different
+ways:</p><ul><li><p>The easiest, and probably most expensive, way is to save the arguments we
+need onto the stack before the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>, and restore them after the call
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span>urns:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push R9            ; \
+push R8            ; |
+push RCX           ; | save the current values
+push RDX           ; | of the caller-save
+push RSI           ; | argument registers
+push RDI           ; /
+push arg_M         ; \
+...                ; | push arguments 7--M
+push arg_7         ; /
+mov R9, arg_6      ; \
+mov R8, arg_5      ; |
+mov RCX, arg_4     ; |
+mov RDX, arg_3     ; | set up the first six arguments
+mov RSI, arg_2     ; |
+mov RDI, arg_1     ; /
+call target
+add RSP, 8*(M - 6) ; pop arguments 7--M
+pop RDI            ; \
+pop RSI            ; | restore the current values
+pop RDX            ; | of the caller-save
+pop RCX            ; | argument registers
+pop R8             ; | in reverse order from saving them
+pop R9             ; /</code></pre></div></div></p><p>(Again, we can simplify this if there are fewer arguments.)</p></li><li><p>The smarter, but trickier, approach might be to copy all the arguments
+out of registers into local variables (on the stack) at the beginning of each
+function, and then never refer to the registers directly again.  This will
+always work, but somewhat defeats the efficiency gains of passing arguments in
+registers...</p></li><li><p>Smarter still is to determine which of the arguments we actually
+will use again once this function call returns, and save only that
+subset of the argument registers. This is called
+<span class="emph">liveness analysis</span>, which we will return to in due time.</p></li></ul><h4>2.3<tt>&nbsp;</tt><a name="(part._.Putting_the_pieces_together)"></a>Putting the pieces together</h4><p>Our compiler should now insert type checks, akin to the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">test</code></span> instruction
+with which we started this lecture, everywhere that we need to assert the type
+of some value.  We then need to add a label at the end of our compiled output
+for each kind of error scenario that we face.  The code at those labels should
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>e the offending value (likely in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>) into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span>, followed
+by the error code into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSI</code></span>, and then call the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">snake_error</code></span> function in
+<code>stub.rs</code>.  That function must be elaborated with a case for each kind of
+error we face.</p><p>We must change the prologue and epilogue of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span> to
+include the callee&rsquo;s responsibilities of saving and restoring <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> and
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>.  <span class="emph">Also</span>, we must change our compilation of local variables!  In
+particular, we need to stop referring directly to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>, and instead use
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>&#8212;<wbr></wbr>which we are now carefully maintaining according to the calling
+convention.</p><p>With all these changes in place, our code should now properly test for erroneous
+operands and complain rather than produce bogus output.  Unfortunately, it&rsquo;s
+still slightly broken.</p><h4>2.4<tt>&nbsp;</tt><a name="(part._.Stack_frame_sizes)"></a>Stack frame sizes</h4><p>We have one last problem to manage.  Since the code sequence for a function
+call uses <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> to push arguments onto the stack, we need to ensure that
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> is above all our local variables.  We need to &ldquo;preallocate&rdquo; space
+for them in our stack frame.  To do that, we need to know how much space we&rsquo;ll
+need, which in turn means we need to know how many local variables we&rsquo;ll
+need.  Sadly, computing the exact answer here is undecidable.  But we can
+overapproximate:</p><ul><li><p>We could just allocate 100 variables and call it good-enough-for-now.
+This is lousy, but it&rsquo;s a decent heuristic with which to test all the rest of
+our code.</p></li><li><p>We could count the total number of let-bindings in our expression.</p></li></ul><p>Can we do better?  Consider how the environment grows and shrinks as we
+manipulate an expression: its maximum size occurs at the <span class="emph">deepest</span> number
+of nested let-bindings.  Surely we&rsquo;ll never need more locals than that, since
+we&rsquo;ll never have more names in scope at once than that!</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Construct a function <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">count_vars</code></span> that computes this quantity.
+Work by cases over the AST in sequential form.</p></blockquote><p>Once we&rsquo;ve computed this quantity, we use it to decrement <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> at the start
+of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span>, and now at last our compiled output works
+correctly.</p><h3>3<tt>&nbsp;</tt><a name="(part._.What_calling_convention_to_use_)"></a>What calling convention to use?</h3><p>The initial calling convention presented above was straightforward: all the
+arguments go on the stack: they&rsquo;re pushed in reverse order by the caller, used
+by the callee, and then popped off again by the caller.</p><p>The 64-bit calling convention is much less uniform, with the first six
+arguments being passed in registers.  It has some performance advantages in
+some circumstances (and with more sophisticated compiler passes that we don&rsquo;t
+yet have, to take advantage of it), but its primary selling point is simply
+that it is what C uses, and therefore it&rsquo;s what our runtime uses, and therefore
+it&rsquo;s what we need to use to interact with our runtime.</p><p>But that does not mean we necessarily need to use that calling convention
+ourselves, for functions in our source language (as we&rsquo;ll do soon) that call
+other functions from the source language.  In some ways, we can think of our
+simpler stack-only calling convention as a subset of the 64-bit one: every one
+of our functions takes six extra &ldquo;junk&rdquo; arguments in the six argument
+registers, and then arguments 7 and up are all passed on the stack.  As a
+result, we&rsquo;ll stick with the simpler stack convention in this course, and we
+can revisit this decision later if necessary.</p><h3>4<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h3><p>Our programs can now produce observable output!  Granted, it is only complaints
+about type mismatches, so far, but even this is useful.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Construct a test program that demonstrates that your type testing
+works properly.  Construct a second test program that demonstrates that your
+<span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">if</code></span> expressions work properly, too.  Hint: sometimes, &ldquo;no news is good
+news.&rdquo;</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Enhance your compiler with a new unary primitive, <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>, that
+accepts a single argument, prints it to the console, and returns its value.</p></blockquote><a name="(part._(gentag._6._lecturefunction-calls))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._7._lecturefunction-calls))"></a>1</span></span><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">test</code></span> is to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">and</code></span> the same way <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">cmp</code></span> is
+to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span>: they perform the same logical operation, but throw away the
+results and keep only the flags.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
