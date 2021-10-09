@@ -88,10 +88,15 @@ modify this register directly.  Instead, the <span title="X64 Assembly" class="s
 pushes a <span class="emph">return address</span> describing the location of the next instruction
 to run &#8212;<wbr></wbr> i.e. the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RIP</code></span> just <span class="emph">after</span> the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>
 instruction itself &#8212;<wbr></wbr> and then jumps to the specified label.</p><p>Putting these two instructions together, if we were using the 32-bit
-calling convention, we would implement <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number</code></span> as follows:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number:
+calling convention, we would implement <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number</code></span> as follows.</p><p>First we need to declare at the beginning of our generated assembly
+that we expect our rust code to define a symbol &lsquo;snake_error&lsquo;</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text
+global start_here
+extern snake_error</code></pre></div></div></p><p>Then we define a block that calls the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">snake_error</code></span> function.</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">error_not_number:
   push RAX   ;; Arg 2: push the badly behaved value
   push 1     ;; Arg 1: a constant describing which error-code occurred
-  call error ;; our error handler</code></pre></div></div></p><p>And then in <code>stub.rs</code>:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type ErrorCode = u64;
+  call snake_error ;; our error handler</code></pre></div></div></p><p>And finally in <code>stub.rs</code> we implement the error handler, with
+annotations that tell the Rust compiler to make it available to
+<code>compiled_code.s</code>:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type ErrorCode = u64;
 static ADD1_ERROR: ErrorCode = 0;
 static ADD_ERROR: ErrorCode  = 1;
 
