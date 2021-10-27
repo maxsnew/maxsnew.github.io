@@ -52,7 +52,7 @@ start_here:
 {}
 ", instrs_to_string(&amp;compile_to_instrs(e))))
 }</code></pre></div></div></p><p>This is a bit more code than we previously had, but it&rsquo;s much more usefully
-organized: <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span> isn&rsquo;t going to change <span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._19._lecturelet-and-stack%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">For a little while!
+organized: <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span> isn&rsquo;t going to change <span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._20._lecturelet-and-stack%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">For a little while!
 The details of this function will get more elaborate, and we&rsquo;ll actually wrap
 this function in a larger pipeline, but the overall signature and purpose of
 the function will remain unchanged.</span></span>, and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_instrs</code></span> will simply grow to
@@ -186,7 +186,7 @@ and <span class="emph">ensure</span> it later.</p><h3>4<tt>&nbsp;</tt><a name="(
 little fragment of assembly that we currently know, we have no notion of
 &ldquo;identifier names&rdquo;, and we certainly have no notion of &ldquo;environments&rdquo;.  Worse,
 we can see that a single register can&rsquo;t possibly be enough, since we may need
-to keep track of several names simultaneously.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._20._lecturelet-and-stack%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">To be fair, this language
+to keep track of several names simultaneously.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._21._lecturelet-and-stack%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">To be fair, this language
 is simple enough that we actually don&rsquo;t really need to; we could optimize it
 easily such that it never needs more than one.  But as such optimizations won&rsquo;t
 always work for us, we need to handle this case more generally.</span></span>  So how
@@ -221,7 +221,7 @@ region of memory would not have a unique interpretation, and our program would
 crash.  This implies that as we start using addresses within each region, one
 convenient way to ensure such a separation is to choose addresses from opposite
 ends.  Historically, the convention has been that the heap grows upwards from
-lower addresses, while the stack grows downward from higher addresses.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._21._lecturelet-and-stack%29%29" data-pltdoc="x">3</a></span></span><span class="FootnoteContent">This
+lower addresses, while the stack grows downward from higher addresses.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._22._lecturelet-and-stack%29%29" data-pltdoc="x">3</a></span></span><span class="FootnoteContent">This
 makes allocating and using arrays particularly easy, as the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span>
 element will simply be <span style="font-style: italic">i</span> words away from the starting address of the
 array.</span></span></p><p>The stack itself must conform to a particular structure, so that functions can
@@ -234,7 +234,7 @@ calls.  (Hence the appropriateness of the name &ldquo;stack&rdquo;: stack frames
 last-in-first-out discipline as functions call one another and return.)  When a
 function is called, it needs to be told where its stack frame begins.  Per the
 calling convention, this address is stored in the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> register (short for
-&ldquo;stack pointer&rdquo;)<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._22._lecturelet-and-stack%29%29" data-pltdoc="x">4</a></span></span><span class="FootnoteContent">This is a simplification.  We&rsquo;ll see the fuller rules
+&ldquo;stack pointer&rdquo;)<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._23._lecturelet-and-stack%29%29" data-pltdoc="x">4</a></span></span><span class="FootnoteContent">This is a simplification.  We&rsquo;ll see the fuller rules
 soon.</span></span>.  Addresses <span class="emph">lower</span> than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> are free for use; addresses
 <span class="emph">greater</span> than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> are already used and should not be tampered
 with:</p><p><p class="center"><img style="vertical-align: 3.0px; margin: -3px -3px -3px -3px;" src="pict_17.png" alt="image" width="430.26953125" height="336.599609375"/></p></p><h3>5<tt>&nbsp;</tt><a name="(part._.Allocating_identifiers_on_the_stack)"></a>Allocating identifiers on the stack</h3><p><p>The description above lets us refine our compilation challenge: we have an
@@ -311,7 +311,7 @@ in let c =    let b = add1(a)   /* [a --&gt; 1] */
            in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
 in  add1(c)               /* [c --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>Only the last line differs, but it is typical of what this algorithm can
 achieve.  Let&rsquo;s work through the examples above to see their intended compiled
-assembly forms.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._23._lecturelet-and-stack%29%29" data-pltdoc="x">5</a></span></span><span class="FootnoteContent">Note that we do not care at all, right now, about
+assembly forms.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._24._lecturelet-and-stack%29%29" data-pltdoc="x">5</a></span></span><span class="FootnoteContent">Note that we do not care at all, right now, about
 inefficient assembly.  There are clearly a lot of wasted instructions that move
 a value out of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> only to move it right back again.  We&rsquo;ll consider
 cleaning these up in a later, more general-purpose compiler pass.</span></span>  Each
@@ -411,17 +411,17 @@ errors):
 }</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Here we clone the environment when we compile the
 sub-expression. What are alternative approaches we could use to
 managing the environment that don&rsquo;t use as much copying?</p></blockquote><h4>6.2<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h4><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Complete this compiler, and test that it works on all these and any
-other examples you can throw at it.</p></blockquote><a name="(part._(gentag._18._lecturelet-and-stack))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._19._lecturelet-and-stack))"></a>1</span></span>For a little while!
+other examples you can throw at it.</p></blockquote><a name="(part._(gentag._19._lecturelet-and-stack))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._20._lecturelet-and-stack))"></a>1</span></span>For a little while!
 The details of this function will get more elaborate, and we&rsquo;ll actually wrap
 this function in a larger pipeline, but the overall signature and purpose of
-the function will remain unchanged.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._20._lecturelet-and-stack))"></a>2</span></span>To be fair, this language
+the function will remain unchanged.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._21._lecturelet-and-stack))"></a>2</span></span>To be fair, this language
 is simple enough that we actually don&rsquo;t really need to; we could optimize it
 easily such that it never needs more than one.  But as such optimizations won&rsquo;t
-always work for us, we need to handle this case more generally.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._21._lecturelet-and-stack))"></a>3</span></span>This
+always work for us, we need to handle this case more generally.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._22._lecturelet-and-stack))"></a>3</span></span>This
 makes allocating and using arrays particularly easy, as the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span>
 element will simply be <span style="font-style: italic">i</span> words away from the starting address of the
-array.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._22._lecturelet-and-stack))"></a>4</span></span>This is a simplification.  We&rsquo;ll see the fuller rules
-soon.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._23._lecturelet-and-stack))"></a>5</span></span>Note that we do not care at all, right now, about
+array.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._23._lecturelet-and-stack))"></a>4</span></span>This is a simplification.  We&rsquo;ll see the fuller rules
+soon.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._24._lecturelet-and-stack))"></a>5</span></span>Note that we do not care at all, right now, about
 inefficient assembly.  There are clearly a lot of wasted instructions that move
 a value out of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> only to move it right back again.  We&rsquo;ll consider
 cleaning these up in a later, more general-purpose compiler pass.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
