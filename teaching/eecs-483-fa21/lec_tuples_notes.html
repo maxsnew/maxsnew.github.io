@@ -1,0 +1,227 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 10: Tuples and Memory Allocation</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 10:</span> Tuples and Memory Allocation</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Computing_with_arbitrary-sized_data%29" class="tocviewlink" data-pltdoc="x">Computing with arbitrary-<wbr></wbr>sized data</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._pairs._pairs%29" class="tocviewlink" data-pltdoc="x">Adding pairs to our language</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._tuples._tuples%29" class="tocviewlink" data-pltdoc="x">Generalizing to arrays</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 10:</span> Tuples and Memory Allocation</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Computing_with_arbitrary-sized_data%29" class="tocsubseclink" data-pltdoc="x">Computing with arbitrary-<wbr></wbr>sized data</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._pairs._pairs%29" class="tocsubseclink" data-pltdoc="x">Adding pairs to our language</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Syntax_and_examples%29" class="tocsubseclink" data-pltdoc="x">Syntax and examples</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Representing_pairs%29" class="tocsubseclink" data-pltdoc="x">Representing pairs</a></td></tr><tr><td><span class="tocsublinknumber">2.2.1<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Introducing_pointers%29" class="tocsubseclink" data-pltdoc="x">Introducing pointers</a></td></tr><tr><td><span class="tocsublinknumber">2.2.2<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Tagging_pair_values%29" class="tocsubseclink" data-pltdoc="x">Tagging pair values</a></td></tr><tr><td><span class="tocsublinknumber">2.2.3<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Allocating_space_on_the_heap%29" class="tocsubseclink" data-pltdoc="x">Allocating space on the heap</a></td></tr><tr><td><span class="tocsublinknumber">2.3<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Sequentialization%29" class="tocsubseclink" data-pltdoc="x">Sequentialization</a></td></tr><tr><td><span class="tocsublinknumber">2.4<tt>&nbsp;</tt></span><a href="#%28part._pairs._.Compiling_pairs_and_pair_accesses%29" class="tocsubseclink" data-pltdoc="x">Compiling pairs and pair accesses</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._tuples._tuples%29" class="tocsubseclink" data-pltdoc="x">Generalizing to arrays</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._tuples._.Syntax_and_examples%29" class="tocsubseclink" data-pltdoc="x">Syntax and examples</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._tuples._.Representing_arrays%29" class="tocsubseclink" data-pltdoc="x">Representing arrays</a></td></tr><tr><td><span class="tocsublinknumber">3.3<tt>&nbsp;</tt></span><a href="#%28part._tuples._.A.N.F_transformations%29" class="tocsubseclink" data-pltdoc="x">ANF transformations</a></td></tr><tr><td><span class="tocsublinknumber">3.4<tt>&nbsp;</tt></span><a href="#%28part._tuples._.Compiling_tuples_and_tuple_accesses%29" class="tocsubseclink" data-pltdoc="x">Compiling tuples and tuple accesses</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 10:</span> Tuples and Memory Allocation</h2><h3>1<tt>&nbsp;</tt><a name="(part._.Computing_with_arbitrary-sized_data)"></a>Computing with arbitrary-sized data</h3><p>So far, our compiler supports a language with arbitrarily complex arithmetic
+and logical expressions, function definitions, and function applications.
+However, our only <span class="emph">values</span> are two primitives: integers and booleans.
+To make our language more fully-featured, we need the ability to handle
+structured, arbitrarily sized data.</p><p><p>At a high level, we know that there are three kinds of composite data:
+</p><ul><li><p>Enumerated data types, with a finite set of distinct values</p></li><li><p>Structured data types, comprised of a finite set of pieces (either named
+as in structures, or positional as in arrays), where each piece is itself a
+value</p></li><li><p>Potentially-recursive union data, with a finite set of distinct
+categories of values, where each category of value could itself be structured,
+and where the pieces of those structures could themselves be union data.</p></li></ul></p><p>The first kind of composite data really only manifests itself in
+the type system, where we need to be able to say, &ldquo;These values are part of
+this enumeration, while those values are not.&rdquo;  Since enumerated data
+is merely a finite set of constants, we can simulate them merely by using some
+distinct set of integers.</p><p>Since union data is essentially an enumeration of structured data, if we had
+the ability to create structured data types, then we could encode union data
+types by adding a field to each value identifying which variant of the union
+this value belongs to.</p><p>But structured data does not admit such a simple encoding.  It requires the
+ability to group several values into one, and use that compound thing as a
+value: it should be created by some expressions, used by others, and passed to
+and returned from functions.  In other words, structured data is a
+fundamentally new thing in our language.</p><p>We can consider various kinds of structured data such as records with named fields (as
+in Rust/C/C++ <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">struct</code></span>). But the simplest form of structured data is the humble <span class="emph">pair</span>,
+and its bigger cousin the <span class="emph">array</span>.</p><p><p>Standard reminder: Every time we enhance our source language, we need to
+consider several things:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition of them</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new
+forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><h3>2<tt>&nbsp;</tt><a name="(part._pairs._pairs)"></a>Adding pairs to our language</h3><h4>2.1<tt>&nbsp;</tt><a name="(part._pairs._.Syntax_and_examples)"></a>Syntax and examples</h4><p>We&rsquo;ll write pairs as</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._pairs._(bnf-prod._(pair-intro._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span><span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class=""><a href="#%28elem._pairs._%28bnf-prod._%28pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._pairs._%28bnf-prod._%28pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">]</span></p></blockquote><p>For example, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[4, 5]</code></span> is a pair consisting of two numbers.  The
+flexibility of our grammar, though, allows us to nest pairs inside one another,
+as in <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[3, [true || false, false]]</code></span> or <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[[[1, 2], 3], 4 + 5]</code></span>,
+or any other combination we might attempt.  However, in order to use our
+pairs, we need to be able to access their components.  We&rsquo;ll do so with two new
+primitive operators</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._pairs._(bnf-prod._(pair-elim._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span><span class="bnf-meta"> | </span><span class="bnf-lit">fst</span> <span class=""><a href="#%28elem._pairs._%28bnf-prod._%28pair-elim._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span><span class="bnf-meta"> | </span><span class="bnf-lit">snd</span> <span class=""><a href="#%28elem._pairs._%28bnf-prod._%28pair-elim._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span></p></blockquote><p>The intended semantics are that these two primitives project out the first or
+second components of the pairs: <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fst [3, 4] == 3</code></span> and
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">snd [4, [true,5]] == [true, 5]</code></span>.</p><p>We can add these expression forms to our AST easily enough, modelling the new
+accessors as unary primitives:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp&lt;Ann&gt; { ...
+  | Pair(Box&lt;Exp&lt;Ann&gt;&gt;, Box&lt;Exp&lt;Ann&gt;&gt;, Ann),
+}
+enum Prim1 { ... Fst, Snd
+}</code></pre></div></div></p><h4>2.2<tt>&nbsp;</tt><a name="(part._pairs._.Representing_pairs)"></a>Representing pairs</h4><p>Introducing pairs into our language is a much more invasive change than it
+might appear.  For the first time, we have values in our language that are too
+big to fit into a register&#8212;<wbr></wbr>after all, each component of a pair filled a
+register on its own!  So where can we put them?  One natural thought might be
+simply to put the two halves of the pair adjacent to each other in two
+consecutive stack slots, and perhaps some careful bookkeeping might remember
+that those two slots &ldquo;go together&rdquo;.  But this fails for several reasons:</p><ul><li><p>If we want to be able to use pairs as arguments to functions, we&rsquo;d have
+to communicate to the callee that some of its arguments aren&rsquo;t uniformly sized,
+so its initial environment can&rsquo;t simply map the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span> argument to
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP + 8 * (i + 2)</code></span>.  Perhaps we could convey this information via static
+types, but it certainly would complicate passing pairs to runtime functions
+like <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>!  This starts to break the calling convention, which
+breaks interoperability and therefore is not something to be done lightly.</p></li><li><p>If we want to be able to return pairs from functions, we have to figure
+out how to so without using <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span> as the entirety of our answer.  Again
+this breaks the calling convention, and so we should reconsider.</p></li><li><p>If we want to nest pairs inside each other, as in our examples above,
+then we immediately fail: In <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[[1, 2], 3]</code></span>, there simply is no way to
+put both <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">1</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">2</code></span> at consecutive stack slots (because
+they&rsquo;re part of a pair), and also put that entire pair and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">3</code></span> at
+consecutive stack slots &#8212;<wbr></wbr> we need at least three slots!</p></li></ul><p>Instead, we&rsquo;re going to have to look elsewhere to store our pairs: we&rsquo;re going
+to use the <span class="emph">heap</span>.</p><h5>2.2.1<tt>&nbsp;</tt><a name="(part._pairs._.Introducing_pointers)"></a>Introducing pointers</h5><p>The heap is another region of memory, at numerically-smaller addresses than our
+stack, where we can potentially allocate space for whatever values we want.
+We&rsquo;ll defer for a moment how exactly to do that, but suppose that we can.  Then
+for each pair we have to evaluate, we can request space for two consecutive
+words of memory, and store the two halves of the pair in those two words.
+Crucially for us, the <span class="emph">address</span> of (the first of) those two words is
+unique: no other pair will exist at that exact address.  And, even better, one
+address is small enough to fit into a register.  We can use this address
+<span class="emph">as</span> the representation of our pairs: it is small enough to pass into and
+out of functions, and small enough to be placed into the components of another
+pair.  By adding this indirection, we&rsquo;ve solved all three of the failings above.</p><h5>2.2.2<tt>&nbsp;</tt><a name="(part._pairs._.Tagging_pair_values)"></a>Tagging pair values</h5><p>Of course, now that we have a new kind of value, we need a tag to go with it,
+to distinguish pairs from booleans or integers.  We have three tags
+remaining, so we can arbitrarily choose one of them, say <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">0x1</code></span>, to mark our
+pointers as pairs.  This seems risky, though &#8212;<wbr></wbr> unlike integers and booleans,
+whose representations we could choose for our own convenience, memory addresses
+are interpreted by the computer, so we can&rsquo;t capriciously change bits in them!
+However, we only need three bits, which means if we can ensure that our values
+always end with three <span class="emph">known</span> bits, then we can carefully replace our tag
+bits with those three known bits <span class="emph">before</span> asking the computer to
+reinterpret our value as a pointer.  (Note carefully the emphasis in wording
+here: a given 64-bit quantity is a value in our language while it is tagged,
+and becomes interpretable as a pointer when we replace the tag bits with
+whatever those bits should have been.)</p><p>The easiest set of known bits to work with is <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0b000</code></span>.  Can we ensure that
+every memory address we allocate always ends in three zero bits?  Yes!  &ldquo;Ends
+with three zero bits&rdquo; is the same thing as saying &ldquo;multiple of 8&rdquo;
+Conveniently, our pairs are two words wide, which means they&rsquo;re exactly 16 bytes
+long.  <span class="emph">If</span> we can ensure that every allocation we make is aligned to an
+8-byte boundary, then all our addresses will end in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x000</code></span>, which means we
+are free to use those three bits for whatever tag we need.</p><h5>2.2.3<tt>&nbsp;</tt><a name="(part._pairs._.Allocating_space_on_the_heap)"></a>Allocating space on the heap</h5><p>Where can we actually obtain memory from? We will use Rust&rsquo;s memory
+allocation to obtain a big buffer of space to use, and we&rsquo;ll
+manipulate that buffer directly from our assembly. (See below for how
+Rust might actually get itself started.)</p><p>Here is one possible strategy for handling memory; there are many others.
+Let&rsquo;s devote one register, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span>, to always store a pointer to the next
+available heap location.  Then &ldquo;allocating a pair&rdquo; amounts to storing two
+values into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[R15]</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[R15 + 8]</code></span>, and then incrementing
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> by 16.  (We&rsquo;ll ignore out-of-memory errors and garbage collection, for
+now.)  Once again, if <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> started off as a multiple of 8, then after this
+process it remains a multiple of 8, so our alignment invariant still holds.</p><p>All that remains is to initialize <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> appropriately, which
+requires collaboration between <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>.  We
+need to allocate a buffer of memory in Rust as a global array of words
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">[u64]</code></span>, and then pass that pointer in to our code.  In other
+words, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span> now really is a function that takes
+in arguments&#8212;<wbr></wbr>in this case, the &ldquo;start of the heap&rdquo;.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">static mut HEAP: [u64; 100000] = [0; 100000];
+
+#[link(name = "compiled_code", kind = "static")]
+extern "C" {
+    #[link_name = "\x01start_here"]
+    fn start_here(heap *mut u64) -&gt; SnakeVal;
+}
+
+fn main() {
+    let output = unsafe { compiled_code(HEAP.as_mut_ptr()) } ;
+    let _ = print_snake_val(output);
+}</code></pre></div></div></p><p>Note here that we are turning an arryay <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">HEAP</code></span> into a <span class="emph">raw
+pointer</span> to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">u64</code></span> which is the type of unsafe pointer you are
+used to from C/C++, as opposed to the smart pointers like
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;,Box</code></span>, etc.</p><p>On the callee side, in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>, we need to store this
+provided address into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span>, but we first need to ensure that it
+is a multiple of 8. This is actually guaranteed by the Rust compiler,
+but in case you are curious, if we didn&rsquo;t know the pointer was aligned
+we would we need to round the address <span class="emph">up</span> to the nearest
+multiple of 8 (because rounding down might give us an unallocated
+address).  The easiest way to achive this is to add <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">7</code></span> to the
+address, then round down to the nearest multiple of 8.  Recall from
+<a href="lec_function-calls_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 7:</span> Checking for errors and calling functions</a> that in the 64-bit C calling convention first
+six arguments to a function are passed in registers, and
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span> is being called from <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span>.  So we
+can find the value of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">HEAP</code></span> in register <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here:
+  ...                              ;; basic function prologue as usual
+  move R15, RDI                    ;; Load R15 with the passed-in pointer
+  add R15, 7                       ;; \ add 7 to get above the next multiple of 8
+  mov temp_reg, 0xfffffffffffffff8 ;; | load a scratch register with the necessary mask
+  and R15, 0xfffffff8              ;; / and then round back down.
+  ...</code></pre></div></div></p><p>The indirection through <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_reg</code></span> is necessary once again because of the
+limitation on 64-bit literals in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">and</code></span> instructions.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>For this particular sequence of instructions, what register could we
+use for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_reg</code></span>, and why?  (Hint: it needs to be a register whose value
+is never needed again, since we&rsquo;d overwrite its value...)</p></blockquote><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What small changes would be needed to ensure <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> has a 16-byte
+aignment?  Speculate on any advantages or disadvantages such a choice might
+give us.</p></blockquote><h4>2.3<tt>&nbsp;</tt><a name="(part._pairs._.Sequentialization)"></a>Sequentialization</h4><p>Given that evaluating a pair actually performs a memory allocation, we
+cannot treat pairs as immediate values: the value simply isn&rsquo;t
+immediately ready. Instead all immediate values representing pairs
+will have to be variables that are bound to the result of an
+allocation.</p><p>This leads to a simple design:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum SeqExp&lt;Ann&gt; {
+  ...
+  Pair(ImmExp, ImmExp, Ann),
+}</code></pre></div></div></p><p>We force the two components of the pair to be immediate, so that the only
+computational step happening here is the memory allocation itself.</p><h4>2.4<tt>&nbsp;</tt><a name="(part._pairs._.Compiling_pairs_and_pair_accesses)"></a>Compiling pairs and pair accesses</h4><p>We now have all the tools we need to generate code for all our pair-related
+expressions.  To construct a pair,</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">... assume the two parts of the pair are already evaluated ...
+mov [R15],     &lt;first part of pair&gt;
+mov [R15 + 8], &lt;second part of pair&gt;
+mov RAX, R15   ;; Start creating the pair value itself
+add RAX, 0x1   ;; tag the pair
+add R15, 16    ;; bump the heap pointer</code></pre></div></div></p><p>The order of execution here is important: we <span class="emph">must</span> fully evaluate the two
+parts of the pair prior to creating the pair, or else the evaluation of each
+component might modify <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span>, leading to non-consecutive memory addresses
+for our pair.  Fortunately, our sequentialization conversion ensured this for us.  Next we
+must save the <span class="emph">current</span> value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> as our result <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>, so
+that we can tag it correctly.</p><p>To access the first element of a pair,</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, &lt;the pair value&gt;
+&lt;check that RAX is indeed a pair&gt;
+sub RAX, 0x1       ;; untag it
+mov RAX, [RAX + 0] ;; treat RAX as a pointer, and get its first word</code></pre></div></div></p><p>Accessing the second element uses <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, [RAX + 8]</code></span> instead.</p><h3>3<tt>&nbsp;</tt><a name="(part._tuples._tuples)"></a>Generalizing to arrays</h3><p>Arrays are simply longer pairs.  We could consider representing tuples
+as a linked-list of pairs, but that would be quite inefficient.
+Instead, we&rsquo;ll generalize everything above that hard-coded &ldquo;two
+elements&rdquo; to become a list of elements.  This has some consequences
+for our representation, but it mostly goes through smoothly.</p><h4>3.1<tt>&nbsp;</tt><a name="(part._tuples._.Syntax_and_examples)"></a>Syntax and examples</h4><p>We&rsquo;ll write arrays as</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._tuples._(bnf-prod._(tuple-intro._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span><span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class="bnf-lit">]</span><span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class=""><a href="#%28elem._tuples._%28bnf-prod._%28tuple-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class="bnf-lit bnf-unknown">...</span> <span class=""><a href="#%28elem._tuples._%28bnf-prod._%28tuple-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">]</span></p></blockquote><p>An array can have zero or more fields, as in <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[3, 4]</code></span>,
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[]</code></span>, or <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[true, false, 5]</code></span>.  Accessing elements
+of an array can&rsquo;t be restricted to two unary primitive operators now,
+because we don&rsquo;t know in advance how large our arrays will be.
+Instead, we&rsquo;ll add a more general expression</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._tuples._(bnf-prod._(tuple-elim._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span><span class="bnf-meta"> | </span><span class=""><a href="#%28elem._tuples._%28bnf-prod._%28tuple-elim._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">[</span> <span class=""><a href="#%28elem._tuples._%28bnf-prod._%28tuple-elim._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">]</span></p></blockquote><p>Here, the expression <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e[i]</code></span> evaluates to the ith item of a
+array using 0-indexing.</p><p>We&rsquo;ll represent arrays and array accesses as</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp
+  | Array(Vec&lt;Exp&lt;Ann&gt;&gt;, Ann),
+  | Index{ array: Box&lt;Exp&lt;Ann&gt;&gt;, index: Box&lt;Exp&lt;Ann&gt;&gt;, ann: Ann }</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>What are the various errors that could arise from these expressions?</p></blockquote><p><p>Simply working through our pipeline:
+</p><ul><li><p>It should be a dynamic error to index into something that isn&rsquo;t an array.</p></li><li><p>It should be a dynamic error to index into an array using a value that isn&rsquo;t an integer</p></li><li><p>It should be a dynamic error to access an out-of-bounds index,
+either below 0 or greater than or equal to the length of the array.</p></li></ul></p><h4>3.2<tt>&nbsp;</tt><a name="(part._tuples._.Representing_arrays)"></a>Representing arrays</h4><p>We can&rsquo;t merely store all the items of the array consecutively in memory; we
+need to know how many items there are.  Accordingly, we&rsquo;ll add a <span class="emph">header
+word</span> at the beginning of our tuple in memory, that will store the size of the
+array:</p><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="506.0" height="59.96875"/></p><p>Note carefully that the first word is an actual integer; it is not an encoded
+value in our language.</p><p>Since each component of the tuple is an 8-byte word, as long as our
+initial heap pointer <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span> is 8-byte aligned, allocating a new
+array will remain 8-byte aligned.</p><p>Again, we need to tag our array values, just as we did above for pairs.  Since
+tuples generalize pairs, the simplest approach is to eliminate pairs as a
+special case, and just use arrays everywhere &#8212;<wbr></wbr> and then reuse the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x1</code></span>
+tag to now mean arrays.  It&rsquo;s important to note that we could use both
+representations in our compiler &#8212;<wbr></wbr> but if we use two distinct representations,
+we need to use two different tag values to distinguish them!</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What are the possible tradeoffs of using just one representation for
+all arrays, vs using two representations for pairs and arrays separately?</p></blockquote><h4>3.3<tt>&nbsp;</tt><a name="(part._tuples._.A.N.F_transformations)"></a>ANF transformations</h4><p>We simply generalize:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">enum SeqExp&lt;Ann&gt; =
+  ...
+  | Array(Vec&lt;ImmExp&gt;, Ann)
+  | Index { array: ImmExp, index: ImmExp, ann: Ann }</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Complete the sequentialization transformation for
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Array</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Index</code></span>.</p></blockquote><h4>3.4<tt>&nbsp;</tt><a name="(part._tuples._.Compiling_tuples_and_tuple_accesses)"></a>Compiling tuples and tuple accesses</h4><p>Again we generalize, assuming that all parts of the tuple have been evaluated
+(as ensured by ANFing).</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">... assume the parts of the tuple are already evaluated ...
+mov [R15 + 0],     n   ;; the size of the tuple
+mov [R15 + 8 * 1], &lt;first part of tuple&gt;
+mov [R15 + 8 * 2], &lt;second part of tuple&gt;
+...
+mov [R15 + 8 * n], &lt;last part of tuple&gt;
+mov RAX, R15           ;; Start creating the tuple value itself
+add RAX, 0x1           ;; tag the tuple
+add R15, 8 * (n + 1)   ;; bump the heap pointer
+add R15, (0 or 8)      ;; realign the heap pointer if needed</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Implement this in <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span>.</p></blockquote><p>To implement a tuple access, again we generalize, being careful to account for
+the header word:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, &lt;the tuple value&gt;
+&lt;check that RAX is indeed a tuple&gt;
+sub RAX, 1                 ;; untag it
+mov R14, &lt;the index value&gt;
+&lt;check that R14 is indeed an integer&gt;
+sar R14, 1                   ;; untag it
+cmp R14, 0                   ;; \ make sure the index
+jl  index_too_low            ;; / is non-negative
+cmp R14, [RAX]                 ;; \ make sure the index is
+jge index_too_high           ;; / within the size of the tuple
+mov RAX, [RAX + 8 * R14 + 8] ;; treat RAX as a pointer, and get its nth word</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Implement this in <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span>.</p></blockquote><a name="(part._(gentag._8._lecturetuples))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
