@@ -1,0 +1,125 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 7: Hundred-pacer: Register Allocation</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 7:</span> Hundred-<wbr></wbr>pacer:<span class="mywbr"> &nbsp;</span> Register Allocation</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Analysis%29" class="tocviewlink" data-pltdoc="x">Analysis</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Graph_.Coloring%29" class="tocviewlink" data-pltdoc="x">Graph Coloring</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Using_our_.Register_.Allocator%29" class="tocviewlink" data-pltdoc="x">Using our Register Allocator</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Recommended_.T.O.D.O_.List%29" class="tocviewlink" data-pltdoc="x">Recommended TODO List</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">7&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 7:</span> Hundred-<wbr></wbr>pacer:<span class="mywbr"> &nbsp;</span> Register Allocation</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Analysis%29" class="tocsubseclink" data-pltdoc="x">Analysis</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Graph_.Coloring%29" class="tocsubseclink" data-pltdoc="x">Graph Coloring</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Using_our_.Register_.Allocator%29" class="tocsubseclink" data-pltdoc="x">Using our Register Allocator</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Recommended_.T.O.D.O_.List%29" class="tocsubseclink" data-pltdoc="x">Recommended TODO List</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">7<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 7:</span> Hundred-pacer: Register Allocation</h2><p><h4 class="due">Due: Thu 11/18 at 9pm</h4></p><p><span class="emph">The popular name &#8220;hundred pacer&#8221; refers to a local belief that,
+after being bitten, the victim will only be able to walk 100 steps
+before dying. Incorporating register allocation should allow your
+compiled code to complete its paces faster than before</span></p><p><span class="emph">In this assignment, you&rsquo;ll be implementing the most important
+optimization for the compiler: register allocation.</span></p><p>We won&rsquo;t be adding any new language features this week, so the
+language we are implementing is still diamondback. However, you will
+now use registers for local variables wherever possible, rather than
+our stack-based allocation scheme we&rsquo;ve been using so far.</p><p>We break the assignment down into three parts. First, we need to
+analyze the code to determine which variables cannot be stored in the
+same register. Second, we use Chaitin&rsquo;s graph coloring algorithm to
+assign registers (or spilled stack slots) to all variables. Finally,
+we need to change our code generation to account for our register
+allocation scheme, rather than storing all variables on the stack.</p><h3>1<tt>&nbsp;</tt><a name="(part._.Analysis)"></a>Analysis</h3><p>First need to figure out which variables conflict with each other. We
+break this down into <span class="emph">liveness analysis</span>, which determines when a
+variable&rsquo;s value is needed and <span class="emph">conflict analysis</span> which
+determines which variables are live at the same time with possibly
+different values.</p><p>We implement liveness analysis as a compiler pass, annotating all
+expressions with the free variables live at that point. It has the
+following type</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn liveness&lt;Ann&gt;(e: &amp;SeqExp&lt;Ann&gt;, params: &amp;HashSet&lt;String&gt;, live_out: HashSet&lt;String&gt;) -&gt; SeqExp&lt;HashSet&lt;String&gt;&gt; {
+}</code></pre></div></div></p><p>The parameter set <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">params</code></span> are the parameters in the current
+function body. You need this information because you should not treat
+these parameters as part of your liveness analysis since parameters
+are passed into fixed slots on the stack. Next, <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">live_out</code></span> is the
+set of variables whose values are needed after running the expression
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">e</code></span>. The output of this function is an expression with the same
+structure as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">e</code></span> but with each sub-expression annotated with the
+variables that are live at that point. So for example, if the input expression were</p><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 3 in f(x, y, a)</code></span></p><p>where <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span> is a parameter and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is not, then
+your liveness function would return the expression annotated as
+follows given an empty <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">live_out</code></span> set:</p><p><span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let { var: "x",
+      bound_exp: Num(3),
+      body: Call("f", [Var("x"),Var("y"), Var("a")], {"x", "y"})
+      ann: {"y"}
+    }</code></span></p><p>The inner <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span> has both <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live because both
+values are used as arguments. <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">a</code></span> is not live since it is a
+parameter. The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let</code></span> outer only has <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live in it because
+the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> is defined in the letside.</p><p>We implement this as a compiler pass because we can use this liveness
+information later to optimize how many registers we save.</p><p>Next, given our liveness analysis, we go through and determine what
+the <span class="emph">conflicts</span> are. This generates a graph that will be the
+input to our graph coloring function.
+The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">conflicts</code></span> function has the following type.
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn conflicts&lt;Ann&gt;(e: &amp;SeqExp&lt;(HashSet&lt;String&gt;, Ann)&gt;) -&gt; Graph&lt;String&gt;</code></pre></div></div>
+It takes as input an expression that is annotated with two things: the
+set of live variables and some other annotation <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Ann</code></span> that you
+will ignore here (it is used to pass unique numbers later).</p><p>The output of the conflicts function is a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Graph&lt;String&gt;</code></span>
+representing the conflicts between variables.  The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Graph</code></span>
+datatype is provided in the <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">graph.rs</code></span> module, and represents an
+undirected graph. Each method is documented with a brief
+description. Note that other than <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Graph::new()</code></span>, these are all
+methods on a graph, so for instance to insert a vertex <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">v</code></span> into a
+graph <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">g</code></span> using the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">insert_vertex</code></span> method, you invoke the
+method as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">g.insert_vertex(v)</code></span>.</p><p>Make sure you insert all let-bound variables into the graph you
+produce so that they are all assigned a register, even if they have no
+conflicts. To ensure that you don&rsquo;t put any parameters in your output
+graph, add the variables into your output when you see them bound by a
+let, rather than when they are used.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Graph_.Coloring)"></a>Graph Coloring</h3><p>Now that we have our conflict graph, we attempt to assign each vertex
+a "color", i.e., register. We implement this with the following
+signature:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn allocate_registers(conflicts: Graph&lt;String&gt;, all_registers: &amp;[Reg]) -&gt; HashMap&lt;String, VarLocation&gt;</code></pre></div></div></p><p>You are given the register interference graph and a slice of registers
+to be used in register allocation and you should return a HashMap
+mapping the variables in the input graph to a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">VarLocation</code></span>,
+which is either a register <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">VarLocation::Reg(r)</code></span> or a stack
+offset <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">VarLocation::Spill(i)</code></span>.</p><p>We parameterize the graph coloring algorithm by which registers we are
+using so that we can test spilling more easily by passing in fewer
+registers. You may find this useful for incrementally implementing
+your use of registers as well<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._1._assignmenthundred-pacer%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">For instance you might first
+use no registers, then use only caller-save registers and finally both
+caller-save and callee-save registers</span></span>.</p><p><p>Ultimately you should use the registers in
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">GENERAL_PURPOSE_REGISTERS</code></span> which include all registers except
+for the following which we have reserved for some other use:
+</p><ul><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>: the return register</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r13-14</code></span>: a scratch registers</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r15</code></span>: the heap pointer</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rbp</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>: the frame and stack pointers</p></li></ul></p><h3>3<tt>&nbsp;</tt><a name="(part._.Using_our_.Register_.Allocator)"></a>Using our Register Allocator</h3><p>To show you when to call the conflict analysis and register allocator,
+we have provided stub functions <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_fun</code></span> and
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_main</code></span>, as well as putting the liveness analysis in the
+compiler pipeline.</p><p>Once we have a register/spill assignment for all of the variables
+in each function body, we need to update our code generation to use
+the new assignment.
+This means changing several parts of the compiler.</p><ul><li><p>First, a minor change is that your code generation function
+takes in an expression annotated by both liveness information and a
+unique name. You will need to change your code that generates unique
+names appropriately.</p></li><li><p>When we generate let bindings and variables, we should use the
+given registers rather than the old stack-based
+allocation. Furthermore, depending on how you set up your stack
+frame, you may need to account for how many callee-save registers
+you save either when accessing parameters or when accessing spilled
+variables.</p></li><li><p>In the preamble of our function bodies we will need to ensure we
+are saving any callee-save registers that we use, and restoring
+their values in our function epilogue and in our tail call code.
+It is always safe to save all of them, but it is less
+memory-intensive to only save those that we actually use. Also, our
+code for allocating space for our stack frame should take into
+account how many spilled variables we have, rather than our old
+method of counting the depth of variable bindings. As always, be
+careful to get the alignment right!</p></li><li><p>For (non-tail) function calls, we will need to ensure we are
+saving any caller-save registers whose values we need after the
+call returns. It is always safe to save all of them, but to be more
+efficient you can use the liveness information annotated on the
+expressions</p></li></ul><h3>4<tt>&nbsp;</tt><a name="(part._.Recommended_.T.O.D.O_.List)"></a>Recommended TODO List</h3><p>Here&rsquo;s an order in which you could consider tackling the implementation:</p><ol><li><p>Fill in liveness and conflicts with stub implementations and
+implement a register allocator that spills all variables it is
+given. Then update your code generation to get your old tests
+passing.</p></li><li><p>Implement liveness</p></li><li><p>Implement conflict analysis.</p></li><li><p>Implement the graph coloring algorithm</p></li><li><p>Re-run your end-to-end tests but with an empty set of registers.</p></li><li><p>Implement saving of (used) callee-save registers. Re-run your end-to-end tests but with only callee-save registers</p></li><li><p>Implement appropriate saving of caller-save registers. Re-run your end-to-end tests now with all (non-reserved) registers</p></li></ol><h3>5<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p>your <code>compile.rs</code> and <code>asm.rs</code></p></li><li><p>the other src/*.rs files in the starter code</p></li><li><p>any additional modules you saw fit to write</p></li><li><p>your <code>runtime/stub.rs</code></p></li><li><p>the Cargo.toml</p></li><li><p>integration tests (<code>tests/examples.rs</code>)</p></li><li><p>your test input programs (<code>examples/*</code> files)</p></li></ul><h3>6<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>This assignment will be solely autograded. There are three kinds of tests:
+</p><ul><li><p>Liveness/Conflict analysis tests to test the soundness and precision of your analyses</p></li><li><p>Graph coloring tests that ensure you always give valid
+register/spill assignments and don&rsquo;t spill excessively</p></li><li><p>End-to-end tests to determine that you&rsquo;ve incorporated your
+register allocation successfully with your code.</p></li></ul></p><p>We will not be grading your test coverage, but you may find it useful,
+especially using your extensive existing test suite to stress test
+your implementation.</p><h3>7<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p>
+Please submit your homework to gradescope by the above deadline.</p><a name="(part._(gentag._0._assignmenthundred-pacer))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._1._assignmenthundred-pacer))"></a>1</span></span>For instance you might first
+use no registers, then use only caller-save registers and finally both
+caller-save and callee-save registers</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
