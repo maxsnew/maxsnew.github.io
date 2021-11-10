@@ -89,7 +89,9 @@ for the following which we have reserved for some other use:
 </p><ul><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>: the return register</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r13-14</code></span>: a scratch registers</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r15</code></span>: the heap pointer</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rbp</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>: the frame and stack pointers</p></li></ul></p><h3>3<tt>&nbsp;</tt><a name="(part._.Using_our_.Register_.Allocator)"></a>Using our Register Allocator</h3><p>To show you when to call the conflict analysis and register allocator,
 we have provided stub functions <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_fun</code></span> and
 <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_main</code></span>, as well as putting the liveness analysis in the
-compiler pipeline.</p><p>Once we have a register/spill assignment for all of the variables
+compiler pipeline. Additionally, we have added a new pass
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">uniquify_names</code></span> before the liveness pass that ensures all
+variable names are unique.</p><p>Once we have a register/spill assignment for all of the variables
 in each function body, we need to update our code generation to use
 the new assignment.
 This means changing several parts of the compiler.</p><ul><li><p>First, a minor change is that your code generation function
