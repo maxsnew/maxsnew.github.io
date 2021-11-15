@@ -53,7 +53,10 @@ follows given an empty <span title="Rust" class="sourceCode"><code data-lang="te
     }</code></pre></div></div></p><p>The inner <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span> has both <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live because both
 values are used as arguments. <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">a</code></span> is not live since it is a
 parameter. The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let</code></span> outer only has <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live in it because
-the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> is defined in the letside.</p><p>We implement this as a compiler pass because we can use this liveness
+the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> is defined in the letside.</p><p>The liveness function returns a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqExp&lt;HashSet&lt;String&gt;&gt;</code></span>, an
+expression annotated with its liveness information. To extract the
+liveness information for an expression you can use the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">.ann()</code></span>
+method implemented in <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">syntax.rs</code></span>.</p><p>We implement this as a compiler pass because we can use this liveness
 information later to optimize how many registers we save.</p><p>Next, given our liveness analysis, we go through and determine what
 the <span class="emph">conflicts</span> are. This generates a graph that will be the
 input to our graph coloring function.

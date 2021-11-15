@@ -1,0 +1,9 @@
+let y_intercept = 3,
+    slope = 2,
+    pt    = 4,
+    line =
+    lambda x:
+      slope * x + y_intercept
+in
+
+line(pt)
