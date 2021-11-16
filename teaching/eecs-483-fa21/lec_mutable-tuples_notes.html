@@ -1,0 +1,170 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 11: Mutating Tuples and Desugaring</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 11:</span> Mutating Tuples and Desugaring</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Computing_with_mutable_data%29" class="tocviewlink" data-pltdoc="x">Computing with mutable data</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Mutating_pairs_in_our_language%29" class="tocviewlink" data-pltdoc="x">Mutating pairs in our language</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Ergonomics_in_.Programming_with_.Arrays%29" class="tocviewlink" data-pltdoc="x">Ergonomics in Programming with Arrays</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 11:</span> Mutating Tuples and Desugaring</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Computing_with_mutable_data%29" class="tocsubseclink" data-pltdoc="x">Computing with mutable data</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Mutating_pairs_in_our_language%29" class="tocsubseclink" data-pltdoc="x">Mutating pairs in our language</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Syntax_and_examples%29" class="tocsubseclink" data-pltdoc="x">Syntax and examples</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._.Compilation%29" class="tocsubseclink" data-pltdoc="x">Compilation</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Ergonomics_in_.Programming_with_.Arrays%29" class="tocsubseclink" data-pltdoc="x">Ergonomics in Programming with Arrays</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Semicolon%29" class="tocsubseclink" data-pltdoc="x">Semicolon</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Programming_with_.Structured__.Recursive_.Data%29" class="tocsubseclink" data-pltdoc="x">Programming with Structured, Recursive Data</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 11:</span> Mutating Tuples and Desugaring</h2><h3>1<tt>&nbsp;</tt><a name="(part._.Computing_with_mutable_data)"></a>Computing with mutable data</h3><p><p>Standard reminder: Every time we enhance our source language, we need to
+consider several things:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition of them</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new
+forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><h3>2<tt>&nbsp;</tt><a name="(part._.Mutating_pairs_in_our_language)"></a>Mutating pairs in our language</h3><h4>2.1<tt>&nbsp;</tt><a name="(part._.Syntax_and_examples)"></a>Syntax and examples</h4><p>We&rsquo;ll write pairs as</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(mut-pair-intro._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">]</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">fst</span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span><span class="bnf-meta"> | </span><span class="bnf-lit">snd</span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">set-fst</span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span><span class="bnf-meta"> | </span><span class="bnf-lit">set-snd</span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28mut-pair-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span></p></blockquote><p><a href="lec_tuples_notes.html" data-pltdoc="x">As before</a>, the first expression creates a pair, and the
+next two access the first or second elements of that pair.  The two new
+expression forms allow us to modify the first or second item of the pair given
+by the first subexpression, and set it to the value of the second
+subexpression.  We need to decide on what these expressions will return; let&rsquo;s
+choose to make them return the tuple itself.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = [4, 5] in set-fst x 10             # ==&gt; [10, 5]
+let y = [3, 2] in set-fst (set-snd y 8) 6  # ==&gt; [6, 8]</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Flesh out the semantics of these two new expressions.  What new
+error conditions might there be?</p></blockquote><p>We can add these expression forms to our AST easily enough.  This time, the new
+expressions will be binary primitives:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp&lt;Ann&gt; { ...
+  Pair(Box&lt;Exp&lt;Ann&gt;&gt;, Box&lt;Exp&lt;Ann&gt;&gt;, Ann)
+}
+enum Prim1 = ... | Fst | Snd
+enum Prim2 = ... | Setfst | Setsnd</code></pre></div></div></p><h4>2.2<tt>&nbsp;</tt><a name="(part._.Compilation)"></a>Compilation</h4><p>Given our representation of pairs (from <a href="lec_tuples_notes.html#%28part._pairs._pairs%29" data-pltdoc="x">Adding pairs to our language</a>), it&rsquo;s
+relatively straightforward to compile these two new primitives.  We&rsquo;ll focus on
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">set-fst</code></span>; the other is nearly identical.  We first compile both
+subexpressions, and load them into two registers <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDX</code></span>.  We
+ensure that the first argument is a pair by checking its tag, and if so then we
+untag the value by subtracting the tag.  Now the content of the pair begins at
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RAX]</code></span>, and the first item of the pair is located at offset zero from
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>: we simply move the second value into that location.  However, our
+intended semantics is to return the pair value, which means we need to restore
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span> to point to the pair: we must tag the value again.</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, &lt;the pair&gt;
+mov RDX, &lt;the new first value&gt;
+mov RCX, RAX           ;; \
+and RCX, 0x7           ;; | check to ensure
+cmp RCX, 0x1           ;; | RAX is a pair
+jne not_a_pair         ;; /
+sub RAX, 0x1           ;; untag the value into a raw pointer
+mov [RAX + 8 * 0], RDX ;; perform the mutation
+add RAX, 0x1           ;; tag the pointer back into a value</code></pre></div></div></p><p>To compile <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">set-snd</code></span>, we do the same thing except use an offset
+address of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RAX + 8 * 1]</code></span>.</p><p>Supporting arbitrary length arrays is a straightforward extension.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Ergonomics_in_.Programming_with_.Arrays)"></a>Ergonomics in Programming with Arrays</h3><p>There are a few more additions we would like to make to our language to make</p><h4>3.1<tt>&nbsp;</tt><a name="(part._.Semicolon)"></a>Semicolon</h4><p>Now that we have mutation, we need to reconsider the ergonomics of our
+language.  It&rsquo;s rare that assigning to a field of a tuple should be the only
+thing we want to compute: we likely want to mutate a field and keep going with
+our computation.  These mutations therefore fit better into our language as
+<span class="emph">statements</span> to be executed for their side-effects, rather than as
+expressions to be evaluated for their answer.  To achieve this, we might want
+to express the <span class="emph">sequencing</span> of multiple expressions, such that our program
+evaluates them all in order, but only returns the final result.  We can add
+such concrete syntax easily:</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(seq-intro._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span><span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28seq-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">;</span> <span class=""><a href="#%28elem._%28bnf-prod._%28seq-intro._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span></p></blockquote><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>How might we implement support for this feature?  Which phases of
+the compiler necessarily change, and which could we avoid changing?</p></blockquote><p>We&rsquo;ll start by adding an <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">ESeq</code></span> constructor to our expressions.  We
+have two options for how to proceed from here. We could all of our
+compiler passes down to code generation to compile this new semicolon
+form, but it seems like wasted effort, since intuitively,</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1 ; e2</code></pre></div></div></p><p>should mean the same thing as</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let DONT_CARE = e1 in e2</code></pre></div></div></p><p>Rather than create an explicit expression form, perhaps we could reuse the
+existing <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let</code></span> form and use our intuitive definition as the actual
+definition.</p><p>We could implement this by adding a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"desugar"</code></span> pass in our
+compiler somewhere that removes the "syntax sugar" from the language,
+in this case creating a (guaranteed unique) name in place of
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">DONT_CARE</code></span> above.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Where should this pass go?</p></blockquote><h4>3.2<tt>&nbsp;</tt><a name="(part._.Programming_with_.Structured__.Recursive_.Data)"></a>Programming with Structured, Recursive Data</h4><p>Now that we have arrays in our language we can work with interesting
+structure data. As a simple example, our language is rich enough to
+write an interpreter. Let&rsquo;s implement an interpreter for our adder
+language (minus the let bindings). In Rust we represented an AST as an
+enum:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum AdderExp {
+  Num(i64),
+  Prim1(Prim1, Box&lt;AdderExp&gt;)
+}
+
+enum Prim1 {
+  Add1,
+  Sub1,
+}</code></pre></div></div></p><p>We now can encode these ASTs fairly easily as values in our Snake
+language. First, we can encode Prim1 as certain numbers or
+booleans. Let&rsquo;s say <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> represents <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> and
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">false</code></span> represents <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span>.  How can we can encode
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">AdderExp</code></span> trees? We need to first distinguish which case we are
+in, and then also encode the arguments of that case. We can implement
+these using arrays. An <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">AdderExp</code></span> will be represented as an pair,
+with the first element of the array indicating which branch we are in,
+say <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> indicates <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Num</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">false</code></span>
+indicates <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim1</code></span>. Then the second component contains another
+array with the contents of the constructor, so <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Num(3)</code></span> ends up
+being represented as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[true, [3]]</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim1(Sub1,
+Num(5))</code></span> will be represented as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[false, [false, [true, [5]]]]</code></span>.</p><p>With support for recursive functions, we can even write an interpreter
+for this language, just as we did in an early homework assignmnet.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def interp(exp):
+  let tag = exp[0]
+  let components = exp[1] in
+  if tag:
+    components[0]
+  else:
+    let op = components[0], sub_exp = components[1] in
+    let val = interp(sub_exp) in
+    if op:
+      val + 1
+    else:
+      val - 1
+end</code></pre></div></div></p><p>This is quite a bit uglier to read than the interpreter we wrote in
+Rust, since we have to work directly with the encoding of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum</code></span>s
+rather than using pattern-matching. Let&rsquo;s add a simple form of pattern
+matching to our language: destructuring arrays in let-bindings. We
+could write the above interpreter as</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def interp(exp):
+  let [tag, components] = exp in
+  if tag:
+    let [num] = components in num
+  else:
+    let [op, sub_exp] = components in
+    let val = interp(sub_exp) in
+    if op:
+      val + 1
+    else:
+      val - 1
+end</code></pre></div></div></p><p>We could add this to our AST by changing <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let</code></span> to have either a
+variable or a complex array-destructuring expression:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp&lt;Ann&gt; {
+    ...
+    Let {
+        bindings: Vec&lt;(BindExp&lt;Ann&gt;, Exp&lt;Ann&gt;)&gt;,
+        body: Box&lt;Exp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+}
+
+enum BindExp&lt;Ann&gt; {
+    Var(String, Ann),
+    Arr(Vec&lt;BindExp&lt;Ann&gt;&gt;, Ann),
+}</code></pre></div></div></p><p>Note that this design naturally allows for nested bindings, so we can have
+complex destructurings like <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [[a, b], c] = [[0, 1],
+false]</code></span>.</p><p>Similar to the semi-colon sequencing operation, we are left with a
+question of whether to implement this by carrying it all the way
+through to code generation or desugaring it to other forms. Desugaring
+sounds easier in principle, but we need to be carefuli in our
+design. Let&rsquo;s consider an isolated example.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [x, y, z] = e in
+x + y * z</code></pre></div></div></p><p>We could first try desugaring this to</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = e[0], y = e[1], z = e[2] in
+x + y * z</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>There is a problem with this desugaring! What is it?</p></blockquote><p>We need to think about what the intended semantics of a destructuring
+let is. If the expression <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> were <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print(0)</code></span> then
+this desugaring would print three times! We could get similar issues
+if <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> manipulated the heap.</p><p>To stay consistent with our prior semantics of let bindings, let&rsquo;s say
+that <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> should only be evaluated once. Then we could
+desugar it as:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let tmp = e
+let x = tmp[0], y = tmp[1], z = tmp[2] in
+x + y * z</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>There is a problem with this desugaring! What is it?</p></blockquote><p>We have another subtle semantic question. In this desugaring, we
+simply project out the first three elements of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span>, so the
+destructuring would run as long as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> has at least three
+elements. This would be confusing as the syntax <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [x, y,
+z] = e</code></span> suggests that the <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x,y,z</code></span> are the entirety of the
+array.</p><p>If we want to desugar this form, we need some kind of assertion about
+the size of the array:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let tmp = e, DONT_CARE = assert_has_size(tmp, 3), x = tmp[0], y = tmp[1], z = tmp[2] in
+x + y * z</code></pre></div></div></p><p>We don&rsquo;t need to add this <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">assert_has_size</code></span> to our
+programmer-facing syntax, instead we could add this solely as an
+internal compiler form that checks if an expression is an array of
+given size. This gives us a best of both worlds approach: most of the
+semantics is taken care of by our desugaring, but for the new part
+(checking the size) we add a new form for just the small part of code
+generation that we need to add to support our intended semantics.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Now that we have recursive, mutable data, write a few examples of
+programs that do something interesting, like sorting a list in place, or
+building a binary tree, etc.  Rejoice in your newfound mastery over simple
+programs!  What features should we add to our language next?</p></blockquote><a name="(part._(gentag._10._lecturemutable-tuples))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
