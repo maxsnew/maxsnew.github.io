@@ -93,8 +93,9 @@ with the first element of the array indicating which branch we are in,
 say <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> indicates <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Num</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">false</code></span>
 indicates <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim1</code></span>. Then the second component contains another
 array with the contents of the constructor, so <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Num(3)</code></span> ends up
-being represented as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[true, [3]]</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim1(Sub1,
-Num(5))</code></span> will be represented as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[false, [false, [true, [5]]]]</code></span>.</p><p>With support for recursive functions, we can even write an interpreter
+being represented as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[true, [3]]</code></span> and
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim1(Sub1, Num(5))</code></span> will be represented as
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[false, [false, [true, [5]]]]</code></span>.</p><p>With support for recursive functions, we can even write an interpreter
 for this language, just as we did in an early homework assignmnet.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def interp(exp):
   let tag = exp[0]
   let components = exp[1] in
@@ -137,8 +138,7 @@ enum BindExp&lt;Ann&gt; {
     Var(String, Ann),
     Arr(Vec&lt;BindExp&lt;Ann&gt;&gt;, Ann),
 }</code></pre></div></div></p><p>Note that this design naturally allows for nested bindings, so we can have
-complex destructurings like <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [[a, b], c] = [[0, 1],
-false]</code></span>.</p><p>Similar to the semi-colon sequencing operation, we are left with a
+complex destructurings like <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [[a, b], c] = [[0, 1], false]</code></span>.</p><p>Similar to the semi-colon sequencing operation, we are left with a
 question of whether to implement this by carrying it all the way
 through to code generation or desugaring it to other forms. Desugaring
 sounds easier in principle, but we need to be carefuli in our
@@ -149,15 +149,24 @@ let is. If the expression <span title="Egg-eater" class="sourceCode"><code data-
 this desugaring would print three times! We could get similar issues
 if <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> manipulated the heap.</p><p>To stay consistent with our prior semantics of let bindings, let&rsquo;s say
 that <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> should only be evaluated once. Then we could
-desugar it as:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let tmp = e
-let x = tmp[0], y = tmp[1], z = tmp[2] in
+desugar it as:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let tmp = e,
+    x = tmp[0],
+    y = tmp[1],
+    z = tmp[2] in
 x + y * z</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>There is a problem with this desugaring! What is it?</p></blockquote><p>We have another subtle semantic question. In this desugaring, we
 simply project out the first three elements of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span>, so the
 destructuring would run as long as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> has at least three
-elements. This would be confusing as the syntax <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [x, y,
-z] = e</code></span> suggests that the <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x,y,z</code></span> are the entirety of the
-array.</p><p>If we want to desugar this form, we need some kind of assertion about
-the size of the array:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let tmp = e, DONT_CARE = assert_has_size(tmp, 3), x = tmp[0], y = tmp[1], z = tmp[2] in
+elements. This would be confusing as the syntax
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [x, y, z] = e</code></span> suggests that the
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x,y,z</code></span> are the entirety of the array. Instead the natural semantics
+would be for there to be a runtime error if the length of the array doesn&rsquo;t match the
+number of variables we bind.
+Then, if we want to desugar this form, we need some kind of assertion
+about the size of the array:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let tmp = e,
+    DONT_CARE = assert_has_size(tmp, 3),
+    x = tmp[0],
+    y = tmp[1],
+    z = tmp[2] in
 x + y * z</code></pre></div></div></p><p>We don&rsquo;t need to add this <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">assert_has_size</code></span> to our
 programmer-facing syntax, instead we could add this solely as an
 internal compiler form that checks if an expression is an array of
