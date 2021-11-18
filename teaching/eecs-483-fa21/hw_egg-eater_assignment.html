@@ -1,0 +1,253 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 8: Egg-eater: Arrays</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 8:</span> Egg-<wbr></wbr>eater:<span class="mywbr"> &nbsp;</span> Arrays</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Language_and_.Requirements%29" class="tocviewlink" data-pltdoc="x">Language and Requirements</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Syntax_.Additions_and_.Semantics%29" class="tocviewlink" data-pltdoc="x">Syntax Additions and Semantics</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Desugaring_away_unnecessary_complexity%29" class="tocviewlink" data-pltdoc="x">Desugaring away unnecessary complexity</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Semantics_and_.Representation_of_.Arrays%29" class="tocviewlink" data-pltdoc="x">Semantics and Representation of Arrays</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Recommended_.T.O.D.O_.List%29" class="tocviewlink" data-pltdoc="x">Recommended TODO List</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">7&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">8&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 8:</span> Egg-<wbr></wbr>eater:<span class="mywbr"> &nbsp;</span> Arrays</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Language_and_.Requirements%29" class="tocsubseclink" data-pltdoc="x">Language and Requirements</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Syntax_.Additions_and_.Semantics%29" class="tocsubseclink" data-pltdoc="x">Syntax Additions and Semantics</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Desugaring_away_unnecessary_complexity%29" class="tocsubseclink" data-pltdoc="x">Desugaring away unnecessary complexity</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Semantics_and_.Representation_of_.Arrays%29" class="tocsubseclink" data-pltdoc="x">Semantics and Representation of Arrays</a></td></tr><tr><td><span class="tocsublinknumber">4.1<tt>&nbsp;</tt></span><a href="#%28part._.Array_.Heap_.Layout%29" class="tocsubseclink" data-pltdoc="x">Array Heap Layout</a></td></tr><tr><td><span class="tocsublinknumber">4.2<tt>&nbsp;</tt></span><a href="#%28part._.Accessing_.Array_.Contents%29" class="tocsubseclink" data-pltdoc="x">Accessing Array Contents</a></td></tr><tr><td><span class="tocsublinknumber">4.3<tt>&nbsp;</tt></span><a href="#%28part._.General_.Heap_.Layout%29" class="tocsubseclink" data-pltdoc="x">General Heap Layout</a></td></tr><tr><td><span class="tocsublinknumber">4.4<tt>&nbsp;</tt></span><a href="#%28part._.Interaction_with_.Existing_.Features%29" class="tocsubseclink" data-pltdoc="x">Interaction with Existing Features</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Recommended_.T.O.D.O_.List%29" class="tocsubseclink" data-pltdoc="x">Recommended TODO List</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">7<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">8<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 8:</span> Egg-eater: Arrays</h2><p><h4 class="due">Due: Tue 11/30 at 9pm</h4>
+<p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://gitlab.com/eecs-483/starter-code/egg-eater"/></code></p></p><p><span class="emph">In this assignment you&rsquo;ll extend to implement mutable arrays,
+which are sort like eggs lain in the heap, if you don&rsquo;t think about it too much...</span></p><h3>1<tt>&nbsp;</tt><a name="(part._.Language_and_.Requirements)"></a>Language and Requirements</h3><p><p>Egg-eater starts with the same semantics as Diamondback, and adds support for
+</p><ul><li><p>array expressions: creating values, accessing components, and mutating
+components</p></li><li><p>sequencing of expressions</p></li><li><p>richer binding syntax</p></li></ul><p>The runtime system must add support for
+</p><ul><li><p>Allocating values on the heap</p></li><li><p>Printing array values</p></li><li><p>Comparing array values for structural equality</p></li></ul></p><p>This is a large assignment, and its pieces are tightly interconnected.  Read
+through the whole assignment below carefully, then take note of the recommended
+TODO list at the bottom for a suggested order to tackle these pieces.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Syntax_.Additions_and_.Semantics)"></a>Syntax Additions and Semantics</h3><p>The main addition in Egg-eater is <span class="emph">array expressions</span>, along with
+accessor expressions for getting or setting the contents of arrays, a
+unary primitive for checking if a value is an array, and a unary
+primitive for getting the length of an array.  Array expressions are a
+series of <span class="emph">zero or more</span> comma-separated expressions enclosed in
+(square) brackets.  An array access expression is one expression
+followed by another enclosed in square brakcets, which expresses which
+field to be accessed.  <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">isarray</code></span> is a primitive (like
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">isnum</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">isbool</code></span>) that checks if a value is an
+array. Finally, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">length</code></span> is a primitive that produces the
+length of an array.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Eggeater._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">let</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._binds%29%29%29" data-pltdoc="x">&#8249;binds&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._array%29%29%29" data-pltdoc="x">&#8249;array&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">[</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">]</span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">[</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">]</span> <span class="bnf-lit">:=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">;</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">isarray</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">length</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(.Eggeater._exprs)))"></a><span class="bnf-rule">&#8249;exprs&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Eggeater._array)))"></a><span class="bnf-rule">&#8249;array&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class="bnf-lit">]</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span> <span class="bnf-lit">]</span>
+<a name="(elem._(bnf-prod._(.Eggeater._destruct)))"></a><span class="bnf-rule">&#8249;destruct&#8250;</span><span class="bnf-meta">:</span> 
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+                  <span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class="bnf-lit">]</span>
+                  <span class="bnf-meta"> | </span><span class="bnf-lit">[</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._destructs%29%29%29" data-pltdoc="x">&#8249;destructs&#8250;</a></span> <span class="bnf-lit">]</span>
+<a name="(elem._(bnf-prod._(.Eggeater._destructs)))"></a><span class="bnf-rule">&#8249;destructs&#8250;</span><span class="bnf-meta">:</span> 
+                    <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._destruct%29%29%29" data-pltdoc="x">&#8249;destruct&#8250;</a></span>
+                    <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._destructs%29%29%29" data-pltdoc="x">&#8249;destructs&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._destruct%29%29%29" data-pltdoc="x">&#8249;destruct&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Eggeater._binds)))"></a><span class="bnf-rule">&#8249;binds&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._destruct%29%29%29" data-pltdoc="x">&#8249;destruct&#8250;</a></span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._destruct%29%29%29" data-pltdoc="x">&#8249;destruct&#8250;</a></span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Eggeater._binds%29%29%29" data-pltdoc="x">&#8249;binds&#8250;</a></span></p></blockquote><p>For example, we can create three arrays and access their fields:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let unit = [] in
+let one = [1] in
+let three = [3, 4, 5] in
+three[0]</code></pre></div></div></p><p>An array-set expression evaluates both arguments, updates the array at the
+appropriate index, and returns the entire tuple value as its result. We can
+therefore chain array-set expressions together, and write</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let three = [0, 0, 0] in
+((three[0] := 1)[1]  := 2)[2] := 3
+
+let pair = [0, 0] in
+pair[0] := (three[1] := 10)</code></pre></div></div>
+After running this, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">three</code></span> will be <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[1,10,3]</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">pair</code></span> will be <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[three, 0]</code></span></p><p>All of the same errors possible in array-get are possible in array-set
+and you should print a message that includes the same relevant string.</p><p>We can also actively <span class="emph">destructure</span> arrays when we bind them:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let t = [3, [[4, true], 5]] in
+let [x, [y, z]] = t
+x + y[0] + z</code></pre></div></div>
+In this example <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is bound to <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">3</code></span>, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>
+is bound to <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[4, true]</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> is bound to
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span>.</p><p>Your <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">check_prog</code></span> function should ensure that
+all variables in the same destructing let are distinct and raise a
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">DuplicateBinding</code></span> error otherwise.</p><p>In the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> datatype, these are represented as:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp&lt;Ann&gt; {
+  ...
+    Array(Vec&lt;Exp&lt;Ann&gt;&gt;, Ann),
+    ArraySet {
+        array: Box&lt;Exp&lt;Ann&gt;&gt;,
+        index: Box&lt;Exp&lt;Ann&gt;&gt;,
+        new_value: Box&lt;Exp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+
+    Semicolon {
+        e1: Box&lt;Exp&lt;Ann&gt;&gt;,
+        e2: Box&lt;Exp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+    AssertSize(Box&lt;Exp&lt;Ann&gt;&gt;, usize, Ann),
+}
+enum Prim1 {
+  ...
+    IsArray,
+    Length,
+}
+enum Prim2 {
+  ...
+  ArrayGet,
+}</code></pre></div></div></p><p>This includes an additional form which is purely internal to the
+compiler: <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">AssertSize</code></span>, which asserts that an array has a given
+length. This is used in the compilation of destructuring let.</p><p>In Sequential form, these expressions are represented as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqExp</code></span>s, with <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ImmExp</code></span>
+components:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum SeqExp&lt;Ann&gt; {
+  ...
+    AssertSize(ImmExp, usize, Ann),
+    Array(Vec&lt;ImmExp&gt;, Ann),
+    ArraySet {
+        array: ImmExp,
+        index: ImmExp,
+        new_value: ImmExp,
+        ann: Ann,
+    },
+}</code></pre></div></div></p><p>Note that these expressions are all <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqExp</code></span>s, and not
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ImmExp</code></span>s &ndash; the allocation of an array counts as a &ldquo;step&rdquo; of execution,
+and so they are not themselves already values.</p><p>To make the bindings work in our AST, we need to enhance our representation of
+binding positions:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum BindExp&lt;Ann&gt; {
+    Var(String, Ann),
+    Arr(Vec&lt;BindExp&lt;Ann&gt;&gt;, Ann),
+}
+
+enum Exp&lt;Ann&gt; {
+    ...
+    Let {
+        bindings: Vec&lt;(BindExp&lt;Ann&gt;, Exp&lt;Ann&gt;)&gt;,
+        body: Box&lt;Exp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+}</code></pre></div></div></p><p>Let-bindings now can take an arbitrary, deeply-structured binding, rather than
+just simple names.  Further, because we have mutation of arrays, these act more
+like statements than expressions, and so we may need to sequence multiple
+expressions together.  Further still, sequencing of expressions acts just like
+let-binding the first expression and then ignoring its result, before executing
+the second expression.  In other words, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1 ; e2</code></span> means the same
+thing as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let DONT_CARE = e1 in e2</code></span> where <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">DONT_CARE</code></span> is a variable distinct from all others in the program.</p><p>To keep things simple, we will only allow these new binding forms in
+let bindings and not in function parameters.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Desugaring_away_unnecessary_complexity)"></a>Desugaring away unnecessary complexity</h3><p>The introduction of destructuring let-bindings and sequencing
+make the rest of compliation complicated.  sequentialization, stack-slot allocation, and
+compilation all are affected.  We can translate this mess away, though, and
+avoid dealing with it further.</p><p><span style="font-weight: bold">Nested let-bindings:</span> Given a binding</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let [b1, b2, ..., bn] = e in body</code></pre></div></div></p><p>we can replace this entire expression with the simpler but more verbose</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let temp_name1 = e,
+    DONT_CARE = assertSize(e, n)
+    b1 = temp_name1[0],
+    b2 = temp_name1[1],
+    ...,
+    bn = temp_name1[n-1]
+in body</code></pre></div></div></p><p>where <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">assertSize</code></span> is pseudo-syntax for our internal
+assertSize form that ensures that the array has the given length.
+(Note that the <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(n-1)</code></span> in the last binding is <span class="emph">not</span> a literal subtraction
+expression, but a compile-time constant literal integer, deduced solely from
+the length of the original binding expression.)</p><p><span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">length(e)</code></span> should evaluate its argument and return its
+length if it is an array. If the input is not an array it should
+display an error with the message <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"length called with
+non-array"</code></span>.</p><p><span style="font-weight: bold">Sequences:</span>
+You should implement a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">desugar</code></span> phase of the compiler, which runs somewhere
+early in the pipeline and which makes subsequent phases easier, by implementing
+the translations described in this section.</p><p>Think carefully about (1) <span class="emph">when</span> to desguar
+relative to the other phases in the compiler, and (2) what <span class="emph">syntactic
+invariants</span> each phase of your compiler expects.  You may want to enforce those
+invariants by <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">panic!</code></span>ing if they&rsquo;re violated.</p><h3>4<tt>&nbsp;</tt><a name="(part._.Semantics_and_.Representation_of_.Arrays)"></a>Semantics and Representation of Arrays</h3><h4>4.1<tt>&nbsp;</tt><a name="(part._.Array_.Heap_.Layout)"></a>Array Heap Layout</h4><p>Array expressions should evaluate their sub-expressions in order from left to
+right, and store the resulting values on the heap.  We discussed several
+possible representations in class for laying out arrays on the heap; the one
+you should use for this assignment is:</p><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="506.0" height="59.96875"/></p><p>That is, one word is used to store the <span class="emph">count</span> of the number of elements in the
+array, and the subsequent words are used to store the values themselves.  Note
+that the count is an actual integer; it is not an encoded Egg-eater integer value.</p><p>An <span class="emph">array value</span> is stored in variables and registers as the address of the
+first word in the array&rsquo;s memory, but with an additional <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">1</code></span> added to the value
+to act as a tag.  So, for example, if the start address of the above memory
+were <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x0adadad0</code></span>, the array value would be <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x0adadad1</code></span>.  With this change, we
+extend the set of tag bits to the following:</p><ul><li><p>Numbers: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0</code></span> in the least significant bit</p></li><li><p>Booleans: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">111</code></span> in the three least significant bits</p></li><li><p>Arrays: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">001</code></span> in the three least significant bits</p></li></ul><p>Visualized differently, the value layout is:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Bit pattern</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Value type</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xWWWWWWW[bbb0]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>Number</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xFFFFFFF[1111]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>True</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x7FFFFFF[1111]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>False</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xWWWWWWW[b001]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>Tuple</p></td></tr></table></p><p>Where <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">W</code></span> is a &ldquo;wildcard&rdquo; 16-bit nibble and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">b</code></span> is a &ldquo;wildcard&rdquo; bit.</p><h4>4.2<tt>&nbsp;</tt><a name="(part._.Accessing_.Array_.Contents)"></a>Accessing Array Contents</h4><p>In an <span class="emph">array access</span> expression, like</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let t = [6, 7, 8, 9] in t[1]</code></pre></div></div></p><p>The behavior should be:</p><ol><li><p>Evaluate the expression in array position (before the brackets), then the
+index expression (the one inside the brackets).</p></li><li><p>Check that the array position&rsquo;s value is actually an array, and signal an
+error containing <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"indexed into non-array"</code></span> if not.</p></li><li><p>Check that the indexing expression is a number. Signal an error containing <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"index not a number"</code></span> if not.</p></li><li><p>Check that the index number is a valid index for the array value &#8212;<wbr></wbr> that
+is, it is between <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0</code></span> and the stored number of elements in the array minus
+one.  Signal an error containing <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"index out of bounds"</code></span></p></li><li><p>Evaluate to the array element at the specified index.</p></li></ol><p>You <span class="emph">can</span> do this with just <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, but it causes some
+pain. Feel free to use as scratch registers <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r13</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r14</code></span> as
+needed (for example saving the index in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r14</code></span> and using <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>
+to store the address of the tuple).  This can save a number of
+instructions.  Note that we will generate code that doesn&rsquo;t need to
+use <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r13</code></span> or <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r14</code></span> beyond the extent of this one expression,
+so there is no need to worry about saving or restoring the old value
+from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r14</code></span> except in the compilation of the main expression.</p><p>You also may want to use an extended syntax for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> in order to combine these
+values for lookup.  For example, this kind of arithmetic is allowed inside
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> instructions:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, [rax + r14 * 8 + 8]</code></pre></div></div></p><p>This would access the memory at the location of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, offset by
+the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r14 * 8 + 8</code></span>.  So if the value in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r14</code></span> were,
+say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">2</code></span>, this may be part of a scheme for accessing the second
+element of a tuple. To aid in this we have generalized the
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">MemRef</code></span> type to allow for these dynamically computed offsets:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">struct MemRef {
+    reg: Reg,
+    offset: Offset,
+}
+
+enum Offset {
+    Constant(i32),
+    Computed { // reg * factor + constant
+        reg: Reg,
+        factor: i32,
+        constant: i32,
+    },
+}</code></pre></div></div></p><p>Neither <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R14</code></span> nor anything beyond the typical
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Offset::Constant</code></span> is <span class="emph">required</span> to make this work, but you
+may find it simpler to compile using these.</p><h4>4.3<tt>&nbsp;</tt><a name="(part._.General_.Heap_.Layout)"></a>General Heap Layout</h4><p>The register <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r15</code></span> has been designated as the heap pointer.  The
+provided <code>stub.rs</code> has a large global <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">HEAP</code></span> array and
+passes a pointer to the resulting address as an argument to
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>.  The support code provided fetches this value (as a
+traditional argument), and stores it in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span>.  It is up to your
+code to ensure that the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">R15</code></span> is always the address of
+the next block of free space (in increasing address order) in the
+provided block of memory.</p><h4>4.4<tt>&nbsp;</tt><a name="(part._.Interaction_with_.Existing_.Features)"></a>Interaction with Existing Features</h4><p>Any time we add a new feature to a language, we need to consider its
+interactions with all the existing features.  In the case of Egg-eater, that
+means considering:</p><ul><li><p>If expressions</p></li><li><p>Function calls and definitions</p></li><li><p>Tuples in binary and unary operators</p></li><li><p>Let bindings</p></li><li><p>Typing rules</p></li></ul><p>We&rsquo;ll take them one at a time.</p><ul><li><p><span style="font-weight: bold">If expressions</span>:  Since we&rsquo;ve decided to only allow booleans in
+conditional position, we simply need to make sure our existing checks for
+boolean-tagged values in if continue to work for tuples.</p></li><li><p><span style="font-weight: bold">Function calls and definitions</span>:  Tuple values behave just like other
+values when passed to and returned from functions &#8212;<wbr></wbr> the tuple value is just
+a (tagged) address that takes up a single word.</p></li><li><p><span style="font-weight: bold">Tuples in let bindings</span>:  As with function calls and returns, tuple values
+take up a single word and act just like other values in let bindings.</p></li><li><p><span style="font-weight: bold">Tuples in binary operators</span>:  The arithmetic expressions should
+continue to only allow numbers, and signal errors on tuple values.  There is
+one binary operator that doesn&rsquo;t check its types, however: <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">==</code></span>.  We need to
+decide what the behavior of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">==</code></span> is on two tuple values.  Note that we have a
+(rather important) choice here.  Clearly, this program should evaluate to
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let t = [4, 5] in t == t</code></pre></div></div></p><p>However, we need to decide if</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[4,5] == [4,5]</code></pre></div></div></p><p>should evaluate to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">true</code></span> or <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">false</code></span>.  That is, do we check
+if the array <span class="emph">addresses</span> are the same to determine equality, or
+if the array <span class="emph">contents</span> are the same.  For this assignment, to
+get some practice traversing the heap, we will take the latter
+approach, which requires a traversal of the arrays.
+Rather than write this in assembly, you should make a new
+function in <code>stub.rs</code> to help you. Your implementation does not
+need to be robust in the presence of cycles in the heap or
+overflowing the Rust stack.</p><p>To help you working with raw bytes in Rust, we have provided a
+function <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">load_snake_array</code></span> that takes a pointer to an array in
+the heap and "parses" it into a struct consisting of a size and a
+pointer to the first element of the array. You can then access the
+other elements of the array by using the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">.add(n)</code></span> method on
+pointers. You will need to use <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">unsafe</code></span> code to implement this,
+of course.</p></li><li><p><span style="font-weight: bold">Tuples in unary operators</span>: The behavior of the unary operators is
+straightforward, with the exception that we need to implement <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span> for
+tuples.  We could just print the address, but that would be somewhat
+unsatisfying.  Instead, we should recursively print the tuple contents, so
+that the program</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print([4, [true, 3]])</code></pre></div></div></p><p>actually prints the string <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"[4, [true, 3]]"</code></span>.  This will require some
+additional work with pointers in <code>stub.rs</code>.  A useful hint is to create a
+recursive helper function for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">sprint_snake_val</code></span> that traverses the nested structure
+of tuples and prints single values.  Again, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span> should
+work properly for all acyclic tuples of reasonable depth, but does not have
+to be robust in the presence of cycles or overflowing the Rust stack.</p></li></ul><h3>5<tt>&nbsp;</tt><a name="(part._.Recommended_.T.O.D.O_.List)"></a>Recommended TODO List</h3><ol><li><p>To start, get your compiler pipeline working on your old test
+cases by putting <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">panic!</code></span> in any spot that uses a new feature
+such as an array or a complex <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>.</p></li><li><p>Extend your sequentialization function to handle the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Array</code></span>, <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ArraySet</code></span> cases.
+These should be similar to the cases you&rsquo;ve implemented before.</p></li><li><p>Get array creation and access/set working for arrays containing two elements,
+testing as you go.  This is very similar to the pairs code from lecture.</p></li><li><p>Implement the new the unary operators to handle arrays appropriately and update old primitives if necessary to accomodate arrays (it may
+be useful to make version of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">==</code></span> that simply print the address and compare addresses before implementing the full version). Test as you go.</p></li><li><p>Make tuple creation and access/set work for tuples of any size.  Test as you go.</p></li><li><p>Tackle <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span> for tuples if you haven&rsquo;t already.  Test as you go.</p></li><li><p>Tackle <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">==</code></span> for tuples as a function in Rust.  Test as
+you go. Implementing print first should help</p></li><li><p>Try implementing an interesting test cases using lists, binary
+trees or another interesting recursive datatypes in Egg-eater. Include one of
+these examples as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">interesting.egg</code></span> in the
+<code>examples/</code> directory.</p></li></ol><h3>6<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p>your <code>compile.rs</code> and <code>asm.rs</code></p></li><li><p>the other src/*.rs files in the starter code</p></li><li><p>any additional modules you saw fit to write</p></li><li><p>your <code>runtime/stub.rs</code></p></li><li><p>the Cargo.toml</p></li><li><p>integration tests (<code>tests/examples.rs</code>)</p></li><li><p>your test input programs (<code>examples/*.egg</code> files)</p></li></ul><p><span style="font-weight: bold">Again, please ensure <code>cargo</code> builds your code properly.
+The autograder will give you an automatic 0 if they cannot compile your code!</span></p><h3>7<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>For this assignment, you will be graded on
+</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the comprehensiveness of your test coverage</p></li></ul></p><h3>8<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to gradescope by the above deadline.</p><a name="(part._(gentag._0._assignmentegg-eater))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
