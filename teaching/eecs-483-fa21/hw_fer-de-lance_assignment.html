@@ -1,0 +1,184 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 9: Fer-de-lance: Anonymous, first-class functions</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 9:</span> Fer-<wbr></wbr>de-<wbr></wbr>lance:<span class="mywbr"> &nbsp;</span> Anonymous, first-<wbr></wbr>class functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Language%29" class="tocviewlink" data-pltdoc="x">Language</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Implementation%29" class="tocviewlink" data-pltdoc="x">Implementation</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Recommended_.T.O.D.O_.List%29" class="tocviewlink" data-pltdoc="x">Recommended TODO List</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 9:</span> Fer-<wbr></wbr>de-<wbr></wbr>lance:<span class="mywbr"> &nbsp;</span> Anonymous, first-<wbr></wbr>class functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Language%29" class="tocsubseclink" data-pltdoc="x">Language</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Syntax%29" class="tocsubseclink" data-pltdoc="x">Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Implementation%29" class="tocsubseclink" data-pltdoc="x">Implementation</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Memory_.Layout_and_.Function_.Values%29" class="tocsubseclink" data-pltdoc="x">Memory Layout and Function Values</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._.Computing_and_.Storing_.Free_.Variables%29" class="tocsubseclink" data-pltdoc="x">Computing and Storing Free Variables</a></td></tr><tr><td><span class="tocsublinknumber">2.3<tt>&nbsp;</tt></span><a href="#%28part._.Restoring_.Saved_.Variables%29" class="tocsubseclink" data-pltdoc="x">Restoring Saved Variables</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Recommended_.T.O.D.O_.List%29" class="tocsubseclink" data-pltdoc="x">Recommended TODO List</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.0</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 9:</span> Fer-de-lance: Anonymous, first-class functions</h2><p><h4 class="due">Due: Wed 12/15 at 9pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://gitlab.com/eecs-483/starter-code/fer-de-lance"/></code></p></p><p><span class="emph">For this final compiler addition you&rsquo;ll implement Functions Defined by
+Lambdas.<a href="https://upload.wikimedia.org/wikipedia/commons/5/51/Bothrops_asper_-_Tortuguero1.jpg">Click here for scary snake picture!</a></span></p><p>There is relatively little starter code this time. Note that register
+allocation is optional for this assignment.</p><p>(At the time of release, the gradescope autograder isn&rsquo;t up yet, but will be by sometime Friday 12/03).</p><h3>1<tt>&nbsp;</tt><a name="(part._.Language)"></a>Language</h3><h4>1.1<tt>&nbsp;</tt><a name="(part._.Syntax)"></a>Syntax</h4><p><p>Fer-de-lance starts with the same semantics as Egg-eater, and makes four significant changes:
+</p><ul><li><p>It adds the notion of a lambda expression for creating anonymous function values.</p></li><li><p>The function-position in an application expression may now be any expression, not just an identifier.</p></li><li><p>Support for mutually recursive function definitions has been removed.</p></li><li><p>The old function definition syntax can now be used to define recursive functions anywhere inside an expression.</p></li></ul></p><p>Before all function definitions had to be at the top level, but now we can write things like</p><p><span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 3 in
+def f(y):
+  x * y
+end
+x + f(x)</code></span></p><p>This means we no longer have a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prog</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> distinction,
+we&rsquo;re back to only dealing with <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span>.</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">pub enum Exp&lt;Ann&gt; {
+    Call(Box&lt;Exp&lt;Ann&gt;&gt;, Vec&lt;Exp&lt;Ann&gt;&gt;, Ann),
+    Lambda {
+        params: Vec&lt;String&gt;,
+        body: Box&lt;Exp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+    RecLambda {
+        name: String,
+        params: Vec&lt;String&gt;,
+        body: Box&lt;Exp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+}
+pub enum SeqExp&lt;Ann&gt; {
+    Call(ImmExp, Vec&lt;ImmExp&gt;, Ann),
+    Lambda {
+        params: Vec&lt;String&gt;,
+        body: Box&lt;SeqExp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+    RecLambda {
+        name: String,
+        params: Vec&lt;String&gt;,
+        body: Box&lt;SeqExp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+}</code></pre></div></div></p><p>The concrete syntax of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda</code></span> expressions requires that you
+write <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">end</code></span> after the body, similar to the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def</code></span> syntax:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let add = (lambda x, y: x + y) in
+add(5, 6)</code></pre></div></div></p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Semantics)"></a>Semantics</h4><p>Functions should behave just as if they followed a substitution-based
+semantics.  This means that when a function is constructed, the program should
+store any variables that they reference that aren&rsquo;t part of the argument list,
+for use when the function is called.  This naturally matches the semantics of
+function values in languages like Rust and Python.</p><p>There are several updates to errors as a result of adding first-class functions:</p><ul><li><p>There is no longer a well-formedness error for an arity mismatch.  It is a
+runtime error (that should report "wrong number of arguments", at least).</p></li><li><p>The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ValueUsedAsFunction</code></span> error is no longer a static error. If you call something that is not a function, it should report an error at runtime including the string "called a non-function"</p></li><li><p>The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">DuplicateFunName</code></span>, and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">UndefinedFunction</code></span> errors are removed and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunctionUsedAsValue</code></span> errors are no longer used.</p></li><li><p>There should still be a (well-formedness) check for duplicate argument names,
+but there is, naturally, no longer a check for duplicate function
+declarations.  (This will be covered by the normal shadowing check for
+repeated bindings of a name.)</p></li></ul><h3>2<tt>&nbsp;</tt><a name="(part._.Implementation)"></a>Implementation</h3><h4>2.1<tt>&nbsp;</tt><a name="(part._.Memory_.Layout_and_.Function_.Values)"></a>Memory Layout and Function Values</h4><p>Functions are stored in memory with the following layout:</p><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="806.0" height="36.0"/></p><p>For example, in this program:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 10 in
+let y = 12 in
+let f = lambda z: x + y + z end in
+f(5)</code></pre></div></div></p><p>The memory layout of the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda</code></span> would be:</p><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="606.0" height="46.0"/></p><p>There is one argument (<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span>), so <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">1</code></span> is stored for arity.  There are two free
+variables&#8212;<wbr></wbr><span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>&#8212;<wbr></wbr>so the corresponding values are stored in contiguous
+addresses (<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">20</code></span> to represent 10 and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">24</code></span> to represent 12).
+<span class="emph">It is your choice</span> whether to store the arity and the number of free variables as raw
+numbers or as Fer-de-lance numbers (i.e. as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">1</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">2</code></span> or as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">2</code></span>
+and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">4</code></span>) &#8212;<wbr></wbr> but make sure you are consistent when you use them.</p><p>Function <span class="emph">values</span> are stored in variables and registers as the address
+of the first word in the function&rsquo;s memory, but with an additional <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x3</code></span>
+(<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0b011</code></span> in binary) added to the value to act as a tag.</p><p>The value layout is now:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Bit pattern</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Value type</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xWWWWWWW[www0]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>Number</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xFFFFFFF[1111]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>True</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x7FFFFFF[1111]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>False</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xWWWWWWW[w001]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>Tuple</p></td></tr><tr><td><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0xWWWWWWW[w011]</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p>Function</p></td></tr></table></p><h4>2.2<tt>&nbsp;</tt><a name="(part._.Computing_and_.Storing_.Free_.Variables)"></a>Computing and Storing Free Variables</h4><p>An important part of saving function values is figuring out the set of
+variables that need to be stored, and storing them on the heap.  Our compiler
+needs to generate code to store all of the <span class="emph">free</span> variables in a function &#8212;<wbr></wbr>
+all the variables that are used but not defined by an argument or let binding
+inside the function.  So, for example, <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is free and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is not in:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda y: x + y end</code></pre></div></div></p><p>In this next expression, <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> is free, but <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> are not, because <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is
+bound by the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span> expression.</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda y: let x = 10 in x + y + z</code></pre></div></div></p><p>Note that if these examples were the whole program, well-formedness would
+signal an error that these variables are unbound.  However, these expressions
+could appear as sub-expressions in other programs, for example:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 10 in
+let f = lambda y: x + y end in
+f(10)</code></pre></div></div></p><p>In this program, <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is not unbound &#8212;<wbr></wbr> it has a binding in the first branch of
+the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>.  However, relative to the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda</code></span> expression, it is <span class="emph">free</span>, since
+there is no binding for it within the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda</code></span>&#8217;s arguments or body.</p><p>You will need to design and write a function <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">free_vars</code></span> that takes a
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqExp</code></span> and returns the set of free variables.
+For example, this might have the type
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn free_vars&lt;Ann&gt;(e: &amp;SeqExp&lt;Ann&gt;) -&gt; Vec&lt;String&gt;</code></pre></div></div></p><p>You may consider passing in the current parameters as an extra
+argument, and you may need to write one or more helper functions that
+keep track of an environment.  Then <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">free_vars</code></span> can be used when
+compiling <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Lambda</code></span> to fetch the values from the surrounding
+environment, and store them on the heap.  In the example of heap
+layout above, the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">free_vars</code></span> function should return <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">["x",
+"y"]</code></span>, and that information can be used to perform the necessary
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> instructions.  Note that you really want to return a
+<span class="emph">set</span>, with no duplicates.  You may want to use <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">HashSet</code></span>
+for this.</p><p>This means that the generated code for a <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda</code></span> will look much
+like it did before, but with an extra step to move the stored
+variables:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  jmp after1
+temp_closure_1:
+  &lt;code for body of closure&gt;
+after1:
+  mov [R15 + 0], temp_closure_1
+  mov [R15 + 4], &lt;arity&gt;
+  mov [R15 + 8], &lt;number of closed variables&gt;
+  mov [R15 + 12], &lt;var1&gt;
+  ... and so on for each variable to store
+  mov RAX, R15
+  add RAX, 5
+  add R15, &lt;heap offset amount&gt;</code></pre></div></div></p><h4>2.3<tt>&nbsp;</tt><a name="(part._.Restoring_.Saved_.Variables)"></a>Restoring Saved Variables</h4><p>The description above outlines how to <span class="emph">store</span> the free variables of a function.
+They also need to be <span class="emph">restored</span> when the function is called, so that each time
+the function is called, they can be accessed.</p><p>In this assignment I suggest you treat the stored variables as if they
+were a special kind of <span class="emph">local variable</span>, and store them in the
+appropriate register or stack slot at the beginning of each function
+call. So each function body will have an additional part of the
+prelude that restores the variables, and their uses will be compiled
+just as local variables are.  This lets you re-use much of our
+infrastructure for local variables.</p><p>The outline of work here is:</p><ul><li><p>At the top of the function, get a reference to the address at which the
+function&rsquo;s stored variables are in memory</p></li><li><p>Add instructions to the prelude of each function that restore the stored
+variables onto the stack/register, given this address</p></li><li><p>Assuming this stack layout, compile the function&rsquo;s body in an environment
+that will look up all variables, whether stored, arguments, or let-bound, in
+the correct location</p></li></ul><p>The second and third points are straightforward applications of ideas we&rsquo;ve
+seen already &#8212;<wbr></wbr> copying appropriate values from the heap into the stack, and
+using the environment to make variable references look at the right locations
+on the stack.</p><p>The first point requires a little more design work.  If we try to fill in the
+body of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_closure_1</code></span> above, we immediately run into the issue of where we
+should find the stored values in memory.  We&rsquo;d like some way to, say, move the
+address of the function value into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span> so we could start copying values onto
+the stack:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_closure_1:
+  &lt;usual prelude&gt;
+  mov RAX, &lt;function value?&gt;
+
+  mov R14, [RAX + 21]  ;; NOTE: why 21?
+  mov [RBP - 16], R14
+  mov R14, [RAX + 29]  ;; NOTE: why 29?
+  mov [RBP - 24], R14
+  ... and so on ...</code></pre></div></div></p><p>But how do we get access to the function value?  The list of instructions for
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_closure_1</code></span> may be run for many different instantiations of the function,
+so they can&rsquo;t all look in the same place.</p><p>To solve this, we are going to augment the <span class="emph">calling convention</span> in Fer-de-lance
+to pass along the function value when calling a function.  That is, we will
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> one extra time after pushing all the arguments, and add on the function
+value itself from the caller.  So, for example, in a call like:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(4, 5)</code></pre></div></div></p><p>We would generate code for the caller like:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, [RBP-8]   ;; (or wherever the variable f happens to be)
+&lt;code to check that RAX is tagged 0b011, and has arity 2&gt;
+push 8
+push 10
+push RAX           ;; BE CAREFUL that this is still the tagged value
+mov RAX, [RAX] ;; the address of the code pointer for the function value
+call RAX           ;; call the function
+add RSP, 24        ;; since we pushed two arguments and the function value, adjust RSP by three slots</code></pre></div></div></p><p>To support jumping and adding to locations stored in a register, all
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Jmp</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span> <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Instr</code></span>s now take a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">JmpArg</code></span> that
+can be a label or a register.</p><p>(<span style="font-weight: bold">Note:</span> Be careful when implementing tail-calls to functions now, since
+their arity is now one less than the number of stack slots actually needed...)</p><p>Now the function value is available on the stack, accessible just as the first argument
+argument (e.g. with <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RBP + n]</code></span>), so we can use that in the prelude for
+copying all the saved variables out of the closure and into their more typical
+local-variable stack slots:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_closure_1:
+  &lt;usual prelude&gt;
+  mov RAX, [RBP + n] ; load the closure into rax
+
+  mov R14, [RAX + 21]
+  mov [RBP - 16], R14
+  mov R14, [RAX + 29]
+  mov [RBP - 24], R14
+  ... and so on ...</code></pre></div></div></p><p>In recursive functions, you should just be able to treat the function
+itself as the first parameter. To avoid code duplication, you might
+want to desugar <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Lambda</code></span> into <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">RecLambda</code></span> with a function
+name you know won&rsquo;t occur.</p><p>For printing function values, you can simply print <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">function</code></span> or
+you can print out the address and the values of the free
+variables. For (dis-)equality checking, functions are not equal to
+things with different tags, and equality of functions is unspecified,
+one choice is pointer equality and another is to always return false,
+since it is impossible to tell if two functions have the same
+behavior.</p><h3>3<tt>&nbsp;</tt><a name="(part._.Recommended_.T.O.D.O_.List)"></a>Recommended TODO List</h3><ul><li><p>Move over code from past assignments and/or lecture code to get the basics going.
+There is intentionally less support code this time to put less structure on
+how errors are reported, etc.  Note that the initial
+state of the tests will not run even simple programs until you get things
+started.</p></li><li><p>Implement sequentialize for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Lambda</code></span>, <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">RecLambda</code></span>. </p></li><li><p>Implement the compilation of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Lambda</code></span>, <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">RecLambda</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span>, ignoring stored variables.
+You&rsquo;ll deal with storing and checking the arity and code pointer, and
+generating and jumping over the instructions for a function.  Test as you go.</p></li><li><p>Implement <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">freevars</code></span>, testing as you go.</p></li><li><p>If doing register allocation, update your liveness and conflict
+functions to account for functions with free variables. You should
+ensure that all free variables in a lambda are considered
+conflicting.</p></li><li><p>Implement storing and restoring of variables in the compilation of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Lambda</code></span>, <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">RecLambda</code></span>, and
+and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span></p></li></ul><h3>4<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p>your <code>compile.rs</code> and <code>asm.rs</code></p></li><li><p>the other src/*.rs files in the starter code</p></li><li><p>any additional modules you saw fit to write</p></li><li><p>your <code>runtime/stub.rs</code></p></li><li><p>the Cargo.toml</p></li><li><p>integration tests (<code>tests/examples.rs</code>)</p></li><li><p>your test input programs (<code>examples/*.egg</code> files)</p></li></ul><h3>5<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>For this assignment, you will be graded on
+</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the comprehensiveness of your test coverage</p></li></ul></p><h3>6<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to gradescope by the above deadline.</p><a name="(part._(gentag._0._assignmentfer-de-lance))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
