@@ -102,9 +102,9 @@ temp_closure_1:
   &lt;code for body of closure&gt;
 after1:
   mov [R15 + 0], temp_closure_1
-  mov [R15 + 4], &lt;arity&gt;
-  mov [R15 + 8], &lt;number of closed variables&gt;
-  mov [R15 + 12], &lt;var1&gt;
+  mov [R15 + 8], &lt;arity&gt;
+  mov [R15 + 16], &lt;number of captured free variables&gt;
+  mov [R15 + 24], &lt;var1&gt;
   ... and so on for each variable to store
   mov RAX, R15
   add RAX, 5
