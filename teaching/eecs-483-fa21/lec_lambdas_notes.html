@@ -367,7 +367,7 @@ environment for the lambda to <span class="emph">actually</span> be</p><p><div c
 a    ==&gt; [RBP + 24]
 x    ==&gt; [RBP - 8]
 z    ==&gt; [RBP - 16]</code></pre></div></div></p><p>We&rsquo;ll need to compile the lambda&rsquo;s body with this environment, and with an
-initial stack slot of <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">3</code></span>, so that we bind <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">temp1</code></span> to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RBP - 12]</code></span>.
+initial stack slot of <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">3</code></span>, so that we bind <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">temp1</code></span> to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RBP - 24]</code></span>.
 The compiled code of our innermost lambda will be:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">    inner_lambda:
       ;; prologue
       push RBP
