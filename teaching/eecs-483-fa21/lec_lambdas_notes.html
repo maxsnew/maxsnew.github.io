@@ -434,13 +434,13 @@ additional work.  This work takes place <span class="emph">in the environment fo
     ... everything above ...
   foo_end:
   ;; start filling in the closure information
-  mov [R15 + 0 ], 4            ;; arity
-  mov [R15 + 8 ], foo          ;; code pointer
+  mov [R15 + 0 ], foo          ;; code pointer
+  mov [R15 + 8 ], 4            ;; arity
   mov [R15 + 16], 0            ;; # of free variables
   ;; start creating the closure value
   mov RAX, R15                 ;; \ create the closure
   add RAX, 0x5                 ;; /
-  add R15, 32                  ;; update heap pointer, keeping 16-byte alignment
+  add R15, 24                  ;; update heap pointer
   ;; now RAX contains a proper closure value</code></pre></div></div></p><p>All this code lives inside the compiled body of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">start_here</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
   ;; prologue
   push RBP
