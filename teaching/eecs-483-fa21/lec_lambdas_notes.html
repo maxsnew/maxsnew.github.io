@@ -156,7 +156,7 @@ have a technique for storing multiple pieces of data as a single value:
 tuples.  So our second candidate for &ldquo;the value of a function&rdquo; is a tuple
 containing the function&rsquo;s arity and start address.  This isn&rsquo;t quite right
 either, since we wouldn&rsquo;t then be able to distinguish actual tuples from
-&ldquo;tuples-that-are-functions&rdquo;.</p><p>So we choose a new tag value, say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x5</code></span>, distinct from the ones used so
+&ldquo;tuples-that-are-functions&rdquo;.</p><p>So we choose a new tag value, say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x3</code></span>, distinct from the ones used so
 far, to mark these function values.  Even better: we now have free rein to
 separate and optimize the representation for functions, rather than hew
 completely to the tuple layout.  As one immediate consequence: we don&rsquo;t need to
@@ -166,8 +166,8 @@ header word where the tuple length used to be: since we&rsquo;ll have a tag to t
 us &ldquo;this is a function value, not a tuple&rdquo;, we won&rsquo;t misinterpret the header
 word by mistake.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Revise the compiled code of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> to assume it gets one
 of the new tuple-like values.</p></blockquote><p>The pseudocode for calling a higher-order function like this is roughly:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, &lt;the function tuple&gt;  ;; load the intended function
-&lt;check-tag RAX, 0x5&gt;           ;; ensure it has the right tag
-sub RAX, 5                     ;; untag the value
+&lt;check-tag RAX, 0x3&gt;           ;; ensure it has the right tag
+sub RAX, 3                     ;; untag the value
 &lt;check-arity [RAX + 8], num-args&gt;  ;; the second word at stores the arity
 &lt;push all the args&gt;            ;; set up the stack
 call [RAX]                     ;; the first word stores the function address
@@ -206,7 +206,7 @@ incr(5)</code></pre></div></div></p><p>Our compiled output will look something l
     ret
 
   mov RAX, R15   ;; allocate a function tuple
-  or RAX, 0x5    ;; tag it as a function tuple
+  or RAX, 0x3    ;; tag it as a function tuple
   mov [R15+0], incr ;; store the function pointer
   mov [R15+8], 1 ;; set the arity of the function
   add R15, 8
@@ -214,8 +214,8 @@ incr(5)</code></pre></div></div></p><p>Our compiled output will look something l
   mov [RBP- 8], RAX ;; let incr = ...
 
   mov RAX, [RBP- 8]
-  &lt;check that RAX is tagged 0x5&gt;
-  sub RAX, 5
+  &lt;check that RAX is tagged 0x3&gt;
+  sub RAX, 0x3
   &lt;check that RAX expects 1 argument&gt;
   push 10
   call [RAX]
@@ -305,7 +305,7 @@ applyToFive_end:
   mov RAX, [RBP-8]  ;; load five
   mov [R15+24], RAX ;; store it in the closure
   mov RAX, R15 ;; start allocating a closure
-  add RAX, 0x5 ;; tag it as a closure
+  add RAX, 0x3 ;; tag it as a closure
 
   mov [RBP-8], RAX ;; let applyToFive = ...
   ...</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>This example shows only a single closed-over variable.  What
@@ -375,7 +375,7 @@ The compiled code of our innermost lambda will be:</p><p><div class="sourceCodeW
       ;; unpack the closure
       sub RSP, 16         ;; reserve space on the stack for closed-over vars
       mov R14, [RBP + 16] ;; \ load the self argument
-      sub R14, 0x5        ;; / and untag it
+      sub R14, 0x3        ;; / and untag it
       mov RAX, [R14 + 24] ;; \ load x from closure
       mov [RBP - 8], RAX  ;; / into its correct stack slot
       mov RAX, [R14 + 16] ;; \ load z from closure
@@ -408,7 +408,7 @@ This work takes place <span class="emph">in the environment for <span title="Fer
     mov [R15 + 32], RAX          ;; / into closure
     ;; start creating the closure value
     mov RAX, R15                 ;; \ create the closure
-    add RAX, 0x5                 ;; /
+    add RAX, 0x3                 ;; /
     add R15, 48                  ;; update heap pointer, keeping 16-byte alignment
     ;; now RAX contains a proper closure value</code></pre></div></div></p><p>All this code lives inside the compiled body of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  foo:
     ;; prologue
@@ -439,7 +439,7 @@ additional work.  This work takes place <span class="emph">in the environment fo
   mov [R15 + 16], 0            ;; # of free variables
   ;; start creating the closure value
   mov RAX, R15                 ;; \ create the closure
-  add RAX, 0x5                 ;; /
+  add RAX, 0x3                 ;; /
   add R15, 24                  ;; update heap pointer
   ;; now RAX contains a proper closure value</code></pre></div></div></p><p>All this code lives inside the compiled body of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">start_here</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
   ;; prologue
@@ -453,9 +453,9 @@ additional work.  This work takes place <span class="emph">in the environment fo
   mov RAX, [RBP - 8]
   mov R14, RAX              ;; load up the value
   and R14, 0x7              ;; mask off the non-tag bits
-  cmp R14, 0x5              ;; \ check for desired tag
+  cmp R14, 0x3              ;; \ check for desired tag
   jne error_not_closure     ;; /
-  sub RAX, 0x5              ;; untag
+  sub RAX, 0x3              ;; untag
   cmp [RAX + 8, 8]          ;; \ check arity
   jne error_wrong_arity     ;; /
   push 0x8                  ;; \
@@ -469,9 +469,9 @@ additional work.  This work takes place <span class="emph">in the environment fo
   ;; start calling temp2(5)
   mov R14, RAX              ;; load up the value
   and R14, 0x7              ;; mask off the non-tag bits
-  cmp R14, 0x5              ;; \ check for desired tag
+  cmp R14, 0x3              ;; \ check for desired tag
   jne error_not_closure     ;; /
-  sub RAX, 0x5              ;; untag
+  sub RAX, 0x3              ;; untag
   cmp [RAX + 8, 8]          ;; \ check arity
   jne error_wrong_arity     ;; /
   push 0x10                 ;; push argument
