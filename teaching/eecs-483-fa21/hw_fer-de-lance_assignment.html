@@ -107,7 +107,7 @@ after1:
   mov [R15 + 24], &lt;var1&gt;
   ... and so on for each variable to store
   mov RAX, R15
-  add RAX, 5
+  add RAX, 3
   add R15, &lt;heap offset amount&gt;</code></pre></div></div></p><h4>2.3<tt>&nbsp;</tt><a name="(part._.Restoring_.Saved_.Variables)"></a>Restoring Saved Variables</h4><p>The description above outlines how to <span class="emph">store</span> the free variables of a function.
 They also need to be <span class="emph">restored</span> when the function is called, so that each time
 the function is called, they can be accessed.</p><p>In this assignment I suggest you treat the stored variables as if they
