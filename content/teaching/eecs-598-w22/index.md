@@ -1,3 +1,7 @@
+---
+title: Category Theory
+---
+
 # EECS 598: Category Theory for Computer Scientists
 - Lecture: Tuesday & Thursday, 9:30-11:30, 2153 G.G. Brown Laboratories
 - Instructor: Max S. New
