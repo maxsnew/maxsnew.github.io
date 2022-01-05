@@ -71,6 +71,8 @@ site = do
       route idRoute
       compile copyFileCompiler
 
+    match "teaching/eecs-598-w22/index.md" $ textPost classTemplate
+
     -- match "ps/src/Main.purs" $ do
     --   route   $ constRoute "js/hubway.js"
     --   compile $ psCompiler
@@ -78,6 +80,8 @@ site = do
 blogPostTemplate = "templates/blog-post.html"
 defaultTemplate = "templates/default.html"
 pubsTemplate = "templates/publications.html"
+classTemplate = "templates/class.html"
+
         
 -- Configuration
 conf :: Configuration
