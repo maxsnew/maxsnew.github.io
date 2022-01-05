@@ -1,15 +1,15 @@
 # EECS 598: Category Theory for Computer Scientists
 - Lecture: Tuesday & Thursday, 9:30-11:30, 2153 G.G. Brown Laboratories
-
 - Instructor: Max S. New
 - Office: Beyster 4640
 - uniqname: maxsnew
+- [Office Hours][q]: Monday & Wednesday 4-5:30pm, remote
 - [Canvas][canvas]
 
-This course is an introduction to category theory for computer
-scientists. Category theory is a branch of algebra that studies
-structures abstracting function composition. This field of abstract
-mathematics has found many uses in the theory of programming
+This graduate-level course is an introduction to category theory for
+computer scientists. Category theory is a branch of algebra that
+studies structures abstracting function composition. This field of
+abstract mathematics has found many uses in the theory of programming
 languages, especially typed functional programming and design and
 implementation of proof assistants. Our goal in this course is to get
 a basic understanding of category theory sufficient to understand
@@ -22,6 +22,12 @@ The primary text is Steve Awodey’s Category Theory, 2nd Edition.
 We will also use as supplementary material, the freely available texts
 [Category Theory in Context by Emily Riehl][ctc] and [Categorical
 Logic from a Categorical Point of View by Michael Shulman][clcpov].
+
+## Office Hours
+
+Office hours will be held twice weekly, on Mondays and Wednesdays from
+4-5:30pm. For the time being, these will be remote office hours. You
+should use the [queuing system][q] to access office hours.
 
 ## Evaluation
 
@@ -95,6 +101,7 @@ assigned readings *prior to* lecture.
 | Tue Apr 19   | Linear Logic                                          | TBD                                       |           |
 
 
+[q]: https://oh.eecs.umich.edu/courses/eecs598
 [ctc]: https://math.jhu.edu/~eriehl/context.pdf
 [clcpov]: https://mikeshulman.github.io/catlog/catlog.pdf
 [canvas]: https://umich.instructure.com/courses/493039
