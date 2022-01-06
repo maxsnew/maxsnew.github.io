@@ -1,0 +1,189 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 1: Rust warmup, part 2: trees</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 1:</span> Rust warmup, part 2:<span class="mywbr"> &nbsp;</span> trees</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Evaluating_arithmetic%29" class="tocviewlink" data-pltdoc="x">Evaluating arithmetic</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Parsing_.Parenthesized_expressions%29" class="tocviewlink" data-pltdoc="x">Parsing Parenthesized expressions</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Grading_standards%29" class="tocviewlink" data-pltdoc="x">Grading standards</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 1:</span> Rust warmup, part 2:<span class="mywbr"> &nbsp;</span> trees</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Evaluating_arithmetic%29" class="tocsubseclink" data-pltdoc="x">Evaluating arithmetic</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Parsing_.Parenthesized_expressions%29" class="tocsubseclink" data-pltdoc="x">Parsing Parenthesized expressions</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Grading_standards%29" class="tocsubseclink" data-pltdoc="x">Grading standards</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr><tr><td><span class="tocsublinknumber">4.1<tt>&nbsp;</tt></span><a href="#%28part._.Deliverables%29" class="tocsubseclink" data-pltdoc="x">Deliverables</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.2</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 1:</span> Rust warmup, part 2: trees</h2><p><h4 class="due">Due: Thu 09/09 at 08:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://gitlab.com/eecs-483/starter-code/warmup-2"/></code></p></p><p>Almost every assignment we work on in this course will involve
+transforming sequential- or tree-shaped data from one form to another.
+In this assignment, you will be working with traversing a tree and
+producing results, and traversing a sequence and producing a tree.</p><h3>1<tt>&nbsp;</tt><a name="(part._.Evaluating_arithmetic)"></a>Evaluating arithmetic</h3><p>Let&rsquo;s define a data type for describing simple arithmetic expressions:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub enum Arith {
+    Plus(Box&lt;Arith&gt;, Box&lt;Arith&gt;),
+    Times(Box&lt;Arith&gt;, Box&lt;Arith&gt;),
+    Variable(String),
+    Num(i32),
+}</code></pre></div></div></p><p><p>It should be mnemonically apparent what each case ought to represent.  Note
+that there is no notion of a &ldquo;parentheses expression&rdquo;: the parenthesization is
+implicit in the tree structure.  For example,
+</p><table cellspacing="0" cellpadding="0" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>"Math" syntax</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">arith</code></span></p></td></tr><tr><td><p><code>3 * (4 + 5)</code></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Times(Num(3), Plus(Num(4), Num(5)))</code></span></p></td></tr><tr><td><p><code>(3 * 4) + 5</code></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Plus(Times(Num(3), Num(4)), Num(5))</code></span></p></td></tr></table></p><p>This is a miniature language, and we reasonably want to do typical
+things with it: evaluate it and get an answer, or print it back out as
+text.  Evaluation is straightforward, except for handling variables:
+we need some sort of <span class="emph">environment</span> to look up their values. We
+will use a fairly simple type for environments: <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;[(&amp;str, i32)]</code></span>,
+i.e., a sequence of pairs of strings and associated values.</p><div class="hw"><ol><li><p>In the starter file <code>arith.rs</code>, we have given you the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Arith</code></span> data
+type, and a type for environments.  Implement the five functions in that file:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">/* Looks up the given variable name in the given environment */
+fn get(env: &amp;[(&amp;str, i32)], x: &amp;str) -&gt; Option&lt;i32&gt;
+
+/* Evaluates the given expression in the given environment */
+fn evaluate(t: &amp;Arith, vars: &amp;[(&amp;str, i32)]) -&gt; Result&lt;i32, String&gt;
+
+/* Neatly prints the given expression as a string */
+fn pretty(t: &amp;Arith) -&gt; String</code></pre></div></div></p></li><li><p>Be sure to thoroughly test your functions in the associated testing submodules.
+Think carefully about how to test them, and be sure
+to check for sneaky edge cases: get used to thinking about that <span class="emph">now</span>,
+while the languages are still small, so that it becomes second-nature when
+the languages get bigger!</p></li></ol></div><p>The comments in the starter code include more precise instructions so
+read them carefully.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Parsing_.Parenthesized_expressions)"></a>Parsing Parenthesized expressions</h3><p>In this part, you will be working on obtaining a tree of data from a
+string input: in other words, you will be <span class="emph">parsing</span> the data.
+Generally speaking, manually parsing an arbitrary language is tedious,
+so we will be working with a particularly simple language instead:
+S-expressions as used in the Lisp/Scheme family of languages.</p><p>An S-expression is either an <span class="emph">atom</span> or a parenthesized list of 0
+or more S-expressions separated by spaces (EPSILON denotes the empty
+string). An atom is either an (unsigned) number, a boolean or an
+(ASCII) alphabetic string besides true/false</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Sexp._sexp)))"></a><span class="bnf-rule">&#8249;sexp&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._atom%29%29%29" data-pltdoc="x">&#8249;atom&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp_seq%29%29%29" data-pltdoc="x">&#8249;sexp_seq&#8250;</a></span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(.Sexp._sexp_seq)))"></a><span class="bnf-rule">&#8249;sexp_seq&#8250;</span><span class="bnf-meta">:</span> 
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">EPSILON</span>
+                  <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp_seq%29%29%29" data-pltdoc="x">&#8249;sexp_seq&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Sexp._sexp%29%29%29" data-pltdoc="x">&#8249;sexp&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Sexp._atom)))"></a><span class="bnf-rule">&#8249;atom&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">true</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">false</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">ALPHABETICSTRING</span></p></blockquote><p>Here are some examples of S-expressions</p><p><div class="sourceCodeWrapper"><span data-label="Scheme" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="scheme" class="sourceCode"><code data-lang="scheme" class="sourceCode">5
+
+iamanatom
+
+true
+
+()
+
+((((()))) () ((a)))
+
+(define (fac x)
+  (if (zero x)
+      1
+      (times x (fac (sub x 1)))))</code></pre></div></div></p><p>This may look ugly for a programmer to use but for our purposes it has
+the advantage of being relatively easy to parse: essentially we just
+need to make sure the parentheses are matched.</p><p>The first step in parsing a file is <span class="emph">lexing</span> or
+<span class="emph">tokenizing</span>, that is, a function</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tokenize(&amp;str) -&gt; Vec&lt;Token&gt;</code></pre></div></div></p><p>You can think of this as breaking up the string into its component words and
+punctuation marks. The starter file you are given contains a definition of this
+function, and a definition of the token type, but those definitions are slightly
+more intricate than above.  When you make a mistake while a program in almost any
+language, the compiler will give you an error message that contains the location
+of the error in the source.  Accordingly, we need to define</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">struct Span {
+    start_line: u32,
+    end_line: u32,  // exclusive
+    start_col: u32,
+    end_col: u32    // exclusive
+}</code></pre></div></div></p><p>And our tokenizer will actually have the type
+<span class="NoteBox"><span class="NoteContent">The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">(Token, Span)</code></span> is a tuple type, which is a particularly simple kind of struct</span></span>:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tokenize(&amp;str) -&gt; Vec&lt;(Token, Span)&gt;</code></pre></div></div></p><p>When we define tokens, we have a choice of how to represent the
+symbols, which can be arbitrary alphanumeric strings besides true and
+false. Should we use an owned, heap-allocated <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">String</code></span> or a slice
+of the input string <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;str</code></span>? There is a tradeoff here: using
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;str</code></span> will take up less memory in the tokens, but require that
+we keep the original input string alive while we are using the
+tokens. On the other hand, using <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">String</code></span> will require more
+memory to store the tokens, but the original string can be deleted. It
+seems sensible to say that since tokens are short-lived, we should
+represent them as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;str</code></span> since this only requires we keep the
+original string in memory during tokenization. For our AST however we
+will use <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">String</code></span> because (1) once we have fully parsed the input
+into an AST and performed some analyses we no longer need it the input
+in memory and (2) we may rename the variables in a later compiler
+pass.</p><p>This leads to the following definition of Tokens:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Token&lt;'input&gt; {
+    LParen,
+    RParen,
+    Sym(&amp;'input str),
+    Int(u32),
+    Bool(bool)
+}</code></pre></div></div>
+Using <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;str</code></span> in our Tokens requires us to explicitly annotate our
+token with the lifetime of those strings. I call this lifetime
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">'input</code></span> to remind us that it is the lifetime of the original
+input program string.</p><p>Note that the above signature for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tokenize</code></span> works even though
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Token&lt;'input&gt;</code></span> is parameterized by a lifetime. This is because
+there is only one lifetime in the input, and so Rust&rsquo;s rules of
+<span class="emph">lifetime elision</span> insert the implicit lifetimes for us. An
+equivalent signature would be:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode"> tokenize&lt;'input&gt;(&amp;'input str) -&gt; Vec&lt;Token&lt;'input&gt;&gt; </code></pre></div></div></p><p>The lifetime of the input string slice is
+the same as the lifetime in <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Tok&lt;'input&gt;</code></span> because symbol tokens
+contain are slices of the input. You can read more about Rust&rsquo;s
+lifetime elision rules
+<a href="https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html#lifetime-elision">here</a>.</p><p>The starter file also gives you a type definition of s-expressions. As
+mentioned before, we will use <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">String</code></span> to represent the
+variables. Additionally, while with tokens we kept the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Span</code></span> in
+a separate type, for S-expressions, we would like to know where in the
+source each of the sub-expressions was as well for later error
+messages. So we could include with each constructor a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Span</code></span>
+argument. Instead we will be slightly more general and allow an
+<span class="emph">arbitrary</span> type of "annotations" on each constructor. So
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Sexp&lt;Ann&gt;</code></span> is an s-expression with annotations of type
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Ann</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Atom {
+    Sym(String),
+    Int(i32),
+    Bool(bool)
+}
+enum Sexp&lt;Ann&gt; {
+    Atom(Atom, Ann),
+    Nest(Vec&lt;Sexp&lt;T&gt;&gt;, Ann)
+}</code></pre></div></div></p><p>For parsing we will produce <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Sexp&lt;Span&gt;</code></span> but later passes of the
+compiler will be able to fill this in with other useful datatypes.</p><div class="hw"><ol start="3"><li><p>Define a function
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">parse_tokens(&amp;[(Token, Span)]) -&gt; Result&lt;Vec&lt;Sexp&lt;Span&gt;&gt;, String&gt;</code></pre></div></div>
+that parses a given sequence of tokens with position information
+into a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Result</code></span>: either it successfully parses a sequence of s-expressions from
+the token list, or else it should produce an error message explaining the error...and
+referencing the location at which the error occurred. For example:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">parse_tokens(&amp;tokenize("(a b)").unwrap()) ==&gt;
+  Ok([Nest([Atom(Sym("a"), Span { start_line: 0, start_col: 1, end_line: 1, end_col: 2 }),
+           Atom(Sym("b"), Span { start_line: 0, start_col: 3, end_line: 1, end_col: 4 })],
+          Span { start_line: 0, start_col: 0, end_line: 1, end_col: 5 })])
+
+parse_tokens(&amp;tokenize("a b").unwrap())   ===&gt;
+  Ok([SExp::Atom(Atom::Sym(String::from("a")), Span{ start_line: 0, start_col: 0, end_line: 1, end_col: 1}),
+      SExp::Atom(Atom::Sym(String::from("b")), Span{ start_line: 0, start_col: 2, end_line: 1, end_col: 3})])
+
+parse_tokens(&amp;tokenize("(a (b true) 3)").unwrap()) ==&gt;
+  Ok([Nest([Atom(Sym("a"), Span { start_line: 0, start_col: 1, end_line: 1, end_col: 2 }),
+            Nest([Atom(Sym("b"), Span { start_line: 0, start_col: 4, end_line: 1, end_col: 5 }),
+                  Atom(Bool(true), Span { start_line: 0, start_col: 6, end_line: 1, end_col: 10 })],
+                 Span { start_line: 0, start_col: 3, end_line: 1, end_col: 11 }),
+            Atom(Int(3), Span { start_line: 0, start_col: 12, end_line: 1, end_col: 13 })],
+           Span { start_line: 0, start_col: 0, end_line: 1, end_col: 14 })])
+
+parse_tokens(&amp;tokenize("(a (b c").unwrap())  ==&gt; Err("Left paren '(' at line 0, column 3 never matched")
+
+parse_tokens(&amp;tokenize("true) 3)").unwrap()) ==&gt; Err("Unmatched right paren ')' on line 0, column 4")</code></pre></div></div></p></li><li><p>Test your parser carefully.</p></li></ol></div><p><span class="emph">Hint:</span> the signature above is not general enough to be sufficient to parse
+s-expressions, and you&rsquo;ll need one or more helper functions.  First consider
+what a plausible &ldquo;subtask&rdquo; might be, to make progress on producing a
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Vec&lt;Sexp&lt;Span&gt;&gt;</code></span>.  Next, consider the data definition for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Sexp</code></span>
+carefully, and look very carefully at the second example above: at the point
+just after the token <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">true</code></span> and before the following RPAREN, how might you
+describe your intermediate state?  What have you built up so far, what are you
+in the process of building, and what is left over?</p><p><span class="emph">Hint:</span> you can and should solve this problem by looking at only
+one token at a time.  Trying to &ldquo;look ahead&rdquo; in the list is pretty
+much guaranteed not to work, so you need to use some other technique
+to match up left and right parentheses.  One mnemonic I was shown a
+long time ago: to check if an s-expression is balanced, mentally start
+a running count at zero, scan across the expression from left to
+right, increment the count at each left parenthesis, and decrement it
+at each right parenthesis.  If the count is zero at the end, and never
+became negative, then you&rsquo;ve got a correctly-matched s-expression.
+How might you carry the idea of this across into your code?  (You
+don&rsquo;t necessarily need to maintain an actual <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">int</code></span> counter;
+you&rsquo;re implicitly maintaining the call stack...)</p><h3>3<tt>&nbsp;</tt><a name="(part._.Grading_standards)"></a>Grading standards</h3><p>For this assignment, you will be graded on</p><ul><li><p>whether your code compiles,</p></li><li><p>whether your code implements the specification (functional correctness),</p></li><li><p>whether you thoroughly test every method that you write, and</p></li><li><p>how readable your code is (indented well, commented well, etc).</p></li></ul><h3>4<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><h4>4.1<tt>&nbsp;</tt><a name="(part._.Deliverables)"></a>Deliverables</h4><p>Your submission should include all the provided files; you should not need to
+create any new ones.</p><p>To submit on gradescope, zip the files</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ zip submission.zip Cargo.toml src/lib.rs src/tokenize.rs src/sexp.rs src/arith.rs</code></pre></div></div></p><p>and submit that zip.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>

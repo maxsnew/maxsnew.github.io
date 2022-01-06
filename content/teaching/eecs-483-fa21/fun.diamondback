@@ -1,0 +1,11 @@
+def zero_to_n(n):
+  let cond = n == 0 in
+  if cond:
+    0
+  else:
+    let m = n - 1 in
+    let rec = zero_to_n(m) in
+    n + rec
+end
+
+zero_to_n(10)
