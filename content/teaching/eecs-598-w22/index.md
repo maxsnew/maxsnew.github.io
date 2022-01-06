@@ -9,6 +9,7 @@ title: Category Theory
 - uniqname: maxsnew
 - [Office Hours][q]: Monday & Wednesday 4-5:30pm, remote
 - [Canvas][canvas]
+- [Piazza][piazza]
 
 This graduate-level course is an introduction to category theory for
 computer scientists. Category theory is a branch of algebra that
@@ -71,41 +72,41 @@ Below is a tentative schedule of topics and associated readings for
 the semester. Besides the first lecture, you are expected to read the
 assigned readings *prior to* lecture.
 
-
-| Meeting Date | Topic                                                 | Assigned Readings                         | HW        |
-|:------------:|:-----------------------------------------------------:|:-----------------------------------------:|-----------|
-| Thu, Jan 6   | Course Overview, what is Category theory?             | Awodey Ch 1.1-1.3, Riehl Examples         |           |
-| Tue, Jan 11  | More Examples of Categories                           | Awodey Ch 1.4                             |           |
-| Thu, Jan 13  | Isomorphisms and Constructing Categories              | Awodey Ch 1.5-1.6                         | PS 1 out  |
-| Tue, Jan 18  | Free Categories as Syntax                             | Awodey Ch 1.7, Shulman Ch. 0, Ch. 1.1-1.2 |           |
-| Thu, Jan 20  | Epimorphisms/monomorphisms, Initial/Terminal          | Awodey Ch 2.1-2.3                         | PS 2 out  |
-| Tue, Jan 25  | Initial/Terminal Objects, Products                    | Awodey Ch 2.4-2.7,                        |           |
-| Thu, Jan 27  | Duality                                               | Awodey Ch 3                               | PS 3 out  |
-| Tue Feb 1    | Syntax for Free Categories with X                     | Shulman Ch 1.4-1.6                        |           |
-| Thu, Feb 3   | Pullbacks                                             | Awodey Ch 5.1-3                           | PS 4 out  |
-| Tue Feb 8    | Limits and Colimits                                   | Awodey Ch 5.4-5.6                         |           |
-| Thu Feb 10   | Exponentials                                          | Awodey Ch 6.1-6.2                         | PS 5 out  |
-| Thu Feb 10   | Cartesian Closed Categories in CS                     | Awodey Ch 6.3-6.6                         |           |
-| Tue Feb 15   | Cartesian Multicategories                             | Shulman Ch 2                              | PS 6 out  |
-| Thu Feb 17   | Category of Categories                                | Awodey Ch 7.1-7.2                         |           |
-| Tue Feb 22   | Natural Transformations                               | Awodey Ch 7.4-7.5                         |           |
-| Thu Feb 24   | Functor Categories, Monoidal Categories               | Awodey Ch 7.7-7.8                         |           |
-| Tue Mar 8    | Equivalence of Categories                             | Awodey Ch 7.9-7.10                        | PS 7 out  |
-| Thu Mar 10   | Presheaves                                            | Awodey 8.1-8.4                            |           |
-| Tue Mar 15   | Yoneda Lemma                                          | Awodey 8.3-8.4                            |           |
-| Thu, Mar 17  | Higher-order Logic                                    | Awodey 8.8                                | PS 8 out  |
-| Tue, Mar 22  | Adjunctions                                           | Awodey 9.1-9.2                            |           |
-| Thu Mar 24   | Examples of Adjunctions                               | Awodey 9.3-9.5                            |           |
-| Tue Mar 29   | Right Adjoints preserve limits                        | Awodey 9.6                                | PS 9 out  |
-| Thu Mar 31   | Monads                                                | Awodey 10.1-10.2                          |           |
-| Tue, Apr 5   | Algebras of Monads                                    | Awodey 10.3-10.4                          |           |
-| Thu, Apr 7   | Monads in Programming                                 | TBD                                       | PS 10 out |
-| Thu Apr 12   | Inductive/Coinductive Types as Initial/Final Algebras | TBD                                       |           |
-| Thu Apr 14   | Call-by-push-value                                    | TBD                                       |           |
-| Tue Apr 19   | Linear Logic                                          | TBD                                       |           |
+| Meeting Date | Topic                                                 | Assigned Readings                                 | HW        |
+|:------------:|:-----------------------------------------------------:|:-------------------------------------------------:|-----------|
+| Thu, Jan 6   | Course Overview, what is Category theory?             | Awodey Ch 1.1-1.3, Riehl Examples 1.1.3 and 1.1.4 |           |
+| Tue, Jan 11  | More Examples of Categories                           | Awodey Ch 1.4, Riehl Examples 1.3.2               |           |
+| Thu, Jan 13  | Isomorphisms and Constructing Categories              | Awodey Ch 1.5-1.6                                 | PS 1 out  |
+| Tue, Jan 18  | Free Categories as Syntax                             | Awodey Ch 1.7, Shulman Ch. 0, Ch. 1.1-1.2         |           |
+| Thu, Jan 20  | Epimorphisms/monomorphisms, Initial/Terminal          | Awodey Ch 2.1-2.3                                 | PS 2 out  |
+| Tue, Jan 25  | Initial/Terminal Objects, Products                    | Awodey Ch 2.4-2.7,                                |           |
+| Thu, Jan 27  | Duality                                               | Awodey Ch 3                                       | PS 3 out  |
+| Tue Feb 1    | Syntax for Free Categories with X                     | Shulman Ch 1.4-1.6                                |           |
+| Thu, Feb 3   | Pullbacks                                             | Awodey Ch 5.1-3                                   | PS 4 out  |
+| Tue Feb 8    | Limits and Colimits                                   | Awodey Ch 5.4-5.6                                 |           |
+| Thu Feb 10   | Exponentials                                          | Awodey Ch 6.1-6.2                                 | PS 5 out  |
+| Thu Feb 10   | Cartesian Closed Categories in CS                     | Awodey Ch 6.3-6.6                                 |           |
+| Tue Feb 15   | Cartesian Multicategories                             | Shulman Ch 2                                      | PS 6 out  |
+| Thu Feb 17   | Category of Categories                                | Awodey Ch 7.1-7.2                                 |           |
+| Tue Feb 22   | Natural Transformations                               | Awodey Ch 7.4-7.5                                 |           |
+| Thu Feb 24   | Functor Categories, Monoidal Categories               | Awodey Ch 7.7-7.8                                 |           |
+| Tue Mar 8    | Equivalence of Categories                             | Awodey Ch 7.9-7.10                                | PS 7 out  |
+| Thu Mar 10   | Presheaves                                            | Awodey 8.1-8.4                                    |           |
+| Tue Mar 15   | Yoneda Lemma                                          | Awodey 8.3-8.4                                    |           |
+| Thu, Mar 17  | Higher-order Logic                                    | Awodey 8.8                                        | PS 8 out  |
+| Tue, Mar 22  | Adjunctions                                           | Awodey 9.1-9.2                                    |           |
+| Thu Mar 24   | Examples of Adjunctions                               | Awodey 9.3-9.5                                    |           |
+| Tue Mar 29   | Right Adjoints preserve limits                        | Awodey 9.6                                        | PS 9 out  |
+| Thu Mar 31   | Monads                                                | Awodey 10.1-10.2                                  |           |
+| Tue, Apr 5   | Algebras of Monads                                    | Awodey 10.3-10.4                                  |           |
+| Thu, Apr 7   | Monads in Programming                                 | TBD                                               | PS 10 out |
+| Thu Apr 12   | Inductive/Coinductive Types as Initial/Final Algebras | TBD                                               |           |
+| Thu Apr 14   | Call-by-push-value                                    | TBD                                               |           |
+| Tue Apr 19   | Linear Logic                                          | TBD                                               |           |
 
 
 [q]: https://oh.eecs.umich.edu/courses/eecs598
 [ctc]: https://math.jhu.edu/~eriehl/context.pdf
 [clcpov]: https://mikeshulman.github.io/catlog/catlog.pdf
 [canvas]: https://umich.instructure.com/courses/493039
+[piazza]: https://piazza.com/umich/winter2022/eecs598006 
