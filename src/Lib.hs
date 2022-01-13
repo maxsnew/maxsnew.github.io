@@ -43,7 +43,7 @@ site = do
       route   idRoute
       compile compressCssCompiler
 
-    forM_ ["docs/*", "img/*"] $ \p -> 
+    forM_ ["docs/*", "img/*", "teaching/*/docs/*"] $ \p -> 
       match p rawOut
   
     match "templates/*" $ compile templateCompiler

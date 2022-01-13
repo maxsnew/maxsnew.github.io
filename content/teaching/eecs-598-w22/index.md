@@ -76,7 +76,7 @@ assigned readings *prior to* lecture.
 |:------------:|:-----------------------------------------------------:|:-------------------------------------------------:|-----------|
 | Thu, Jan 6   | Course Overview, what is Category theory?             | Awodey Ch 1.1-1.3, Riehl Examples 1.1.3 and 1.1.4 |           |
 | Tue, Jan 11  | More Examples of Categories                           | Awodey Ch 1.4, Riehl Examples 1.3.2               |           |
-| Thu, Jan 13  | Isomorphisms and Constructing Categories              | Awodey Ch 1.5-1.6                                 | PS 1 out  |
+| Thu, Jan 13  | Isomorphisms and Constructing Categories              | Awodey Ch 1.5-1.6                                 | [PS 1 out][ps1]  |
 | Tue, Jan 18  | Free Categories as Syntax                             | Awodey Ch 1.7, Shulman Ch. 0, Ch. 1.1-1.2         |           |
 | Thu, Jan 20  | Epimorphisms/monomorphisms, Initial/Terminal          | Awodey Ch 2.1-2.3                                 | PS 2 out  |
 | Tue, Jan 25  | Initial/Terminal Objects, Products                    | Awodey Ch 2.4-2.7,                                |           |
@@ -110,3 +110,4 @@ assigned readings *prior to* lecture.
 [clcpov]: https://mikeshulman.github.io/catlog/catlog.pdf
 [canvas]: https://umich.instructure.com/courses/493039
 [piazza]: https://piazza.com/umich/winter2022/eecs598006 
+[ps1]: /teaching/eecs-598-w22/docs/problem-set-1.pdf
