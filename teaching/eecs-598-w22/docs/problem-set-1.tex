@@ -56,11 +56,13 @@
 
 \newcommand{\skipp}{\textrm{skip}}
 \newcommand{\Set}{\textrm{Set}}
+\newcommand{\Cat}{\textrm{Cat}}
 \newcommand{\Cayley}{\textrm{Cayley}}
 \newcommand{\Preds}{\mathcal{P}}
 \newcommand{\triple}[3]{\{#1\}{#2}\{#3\}}
 \newcommand{\Triple}{\textrm{Triple}}
 \newcommand{\Analyse}{\textrm{Analyse}}
+\newcommand{\command}{\textrm{command}}
 
 \title{Problem Set 1}
 \date{January 13, 2022}
@@ -158,19 +160,36 @@ and https://tikzcd.yichuanshen.de/ .
 
   \item And satisfying the ``entailment rule'': if $\triple{P}{s}{Q}$
     and $\triple{Q}{s'}{R}$ then
-    \[ \triple{P}{s;s'}{Q} \]
+    \[ \triple{P}{s;s'}{R} \]
   \end{enumerate}
 
-  Show that Hoare logics over a monoid $M$ are in bijection with
+  Show that Hoare logics over a monoid $M$ are ``essentially the same'' as
   faithful functors with codomain $M$ (viewed as a one-object
   category).
   \begin{enumerate}
   \item First, for any Hoare logic $(\Preds, T)$ over $M$ define a category
-    $\Triple(\Preds,T)$ with a faithful functor $\textrm{command} :
+    $\Triple(\Preds,T)$ with a faithful functor $\command :
     \Triple(\Preds, T) \to M$.
   \item Next, for any category $C$ and faithful functor $F : C \to M$,
     define a Hoare logic $\Analyse(C,F)$ over $M$.
-  \item Prove that $\Triple$ and $\Analyse$ are mutually inverse.
+  \item Define a category of Hoare logics as follows. The objects are
+    Hoare logics, and a morphism from $(\Preds, T)$ to $(\Preds', T')$
+    consists of
+    \begin{enumerate}
+    \item A function $\phi : \Preds \to \Preds'$
+    \item Such that if $\triple{P}s{Q}$ then $\triple{\phi(P)}s{\phi{Q}}$
+    \end{enumerate}
+
+    Composition is given by composition of the underlying functions,
+    and identity is the identity function.
+
+    Show that for any Hoare logic $(\Preds, T)$ over $M$,
+    $\Analyse(\Triple(\Preds, T), \command)$ is isomorphic to $(\Preds, T)$ in
+    this category of Hoare logics.
+
+  \item Show that for any category $C$ and faithful functor $F : C \to
+    M$, $\Triple(\Analyse(C, F), \command)$ is isomorphic to $(C, F)$
+    in the slice category $\Cat/M$.
   \end{enumerate}
 \end{problem}
 
