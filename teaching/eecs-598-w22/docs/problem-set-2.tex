@@ -1,0 +1,205 @@
+\documentclass[12pt]{article}
+
+%AMS-TeX packages
+\usepackage{amssymb,amsmath,amsthm} 
+%geometry (sets margin) and other useful packages
+\usepackage[margin=1.25in]{geometry}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{graphicx,ctable,booktabs}
+
+\usepackage[sort&compress,square,comma,authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+%
+%Redefining sections as problems
+%
+\makeatletter
+\newenvironment{problem}{\@startsection
+       {section}
+       {1}
+       {-.2em}
+       {-3.5ex plus -1ex minus -.2ex}
+       {2.3ex plus .2ex}
+       {\pagebreak[3]%forces pagebreak when space is small; use \eject for better results
+       \large\bf\noindent{Problem }
+       }
+       }
+       {%\vspace{1ex}\begin{center} \rule{0.3\linewidth}{.3pt}\end{center}}
+       \begin{center}\large\bf \ldots\ldots\ldots\end{center}}
+\makeatother
+
+
+%
+%Fancy-header package to modify header/page numbering 
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\addtolength{\headwidth}{\marginparsep} %these change header-rule width
+%\addtolength{\headwidth}{\marginparwidth}
+\lhead{Problem \thesection}
+\chead{} 
+\rhead{\thepage} 
+\lfoot{\small\scshape EECS 598: Category Theory} 
+\cfoot{} 
+\rfoot{\footnotesize PS 1} 
+\renewcommand{\headrulewidth}{.3pt} 
+\renewcommand{\footrulewidth}{.3pt}
+\setlength\voffset{-0.25in}
+\setlength\textheight{648pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%Contents of problem set
+%
+
+\begin{document}
+
+\newcommand{\skipp}{\textrm{skip}}
+\newcommand{\Set}{\textrm{Set}}
+\newcommand{\Cat}{\textrm{Cat}}
+\newcommand{\Cayley}{\textrm{Cayley}}
+\newcommand{\Preds}{\mathcal{P}}
+\newcommand{\triple}[3]{\{#1\}{#2}\{#3\}}
+\newcommand{\Triple}{\textrm{Triple}}
+\newcommand{\Analyse}{\textrm{Analyse}}
+\newcommand{\command}{\textrm{command}}
+
+\newcommand{\id}{\textrm{id}}
+
+\title{Problem Set 2}
+\date{January 20, 2022}
+\maketitle
+
+Homework is due midnight before next Thursday's class.
+
+Note that you may submit your solutions jointly with a partner on
+Canvas.
+
+%% assignments will be presented in class. Turn in your homework on
+%% Canvas. You may work alone or in groups of two. I highly encourage you
+%% to write your solution in LaTeX. The LaTeX packages tikz and tikz-cd
+%% are useful for typesetting commutative diagrams, and there are WYSIWYG
+%% editors online that produce LaTeX code such as https://q.uiver.app/
+%% and https://tikzcd.yichuanshen.de/ .
+
+\thispagestyle{empty}
+
+\begin{problem}{}
+  Awodey Section 1.9, Exercise 11, part b\footnote{Part a is
+  recommended as well, but will not be graded since the solution is in
+  the back of the book}.
+\end{problem}
+
+\begin{problem}{}
+  %% \begin{enumerate}
+  %% \item Show that $K(C)$ is a category with composition given by
+  %%   composition in the original category $C$ (what are the identity
+  %%   morphisms?).
+  %% \item Show that every idempotent splits in $K(C)$
+  %% %% \item Show that $K(C)$ has the following UMP.
+  %% \end{enumerate}
+  
+  This problem is inspired by \citet{scott1980relating}.
+
+  Software contracts \citep{ff02} are used for runtime
+  assertions in untyped programming languages or when a type system is
+  not sophisticated enough to describe the desired invariant.
+
+  A simple\footnote{in practice, a bit too general, but a good
+  starting point} model of a contract in a category is an
+  \emph{idempotent}. An idempotent in a category $C$ is simply an
+  endomorphism:
+  \[ c : A \to A \]
+  That is equal to its composition with itself
+  \[ c \circ c = c \]
+
+  We think of the idempotent $c$ as a (partial) function that coerces
+  everything to conform to some property. It is idempotent because
+  once something is coerced, it already has the desired property.
+
+  For instance the values of a simple first-order dynamically typed
+  language supporting integers and booleans might be modeled by a
+  universal set of tagged values:
+  \[ D = \{ (0, b) | b \in \{ \textrm{true}, \textrm{false}\}\} \cup \{ (1, n) | n \in \mathbb Z \} \]
+  and functions in the language as \emph{partial} functions, with
+  undefinedness used to model errors and infinite loops.
+
+  Then a contract $\textrm{int} : D \rightharpoonup D$ for integers
+  could be defined as
+  \[ \textrm{int}((1,n)) = (1, n) \]
+  and undefined on other values. Clearly this is idempotent.
+
+  We would like to think of an idempotent as presenting an object
+  itself, the ``invariants'' of the idempotent, i.e., those that
+  ``satisfy the contract''. In $\Set$ we could define the invariants
+  of an idempotent $c$ on $A$ as $\{ x \in A | c(x) = x \}$. We
+  generalize this idea to a general category as follows.
+
+  We say an idempotent $c$ on $A$ is \emph{split} if there exists an
+  object $I$ and a \emph{section-retraction} pair
+  \[ s : I \to A \]
+  \[ r : A \to I \]
+  that is, $r \circ s = \id$, that splits the idempotent in that $s
+  \circ r = c$.
+
+  Note that for any section/retraction pair $s, r$, the composite $s
+  \circ r$ is an idempotent (exercise!). We can then ask if in a
+  particular category every idempotent splits. For instance, in $\Set$
+  every idempotent splits, using the set of invariants of the
+  idempotent. However, clearly not every category has this property.
+  
+  For any category $C$, we can construct a category $K(C)$, called the
+  \emph{Karoubi envelope} (sometimes called the \emph{Cauchy
+  completion}) that extends $C$ with the splittings of all
+  idempotents.
+
+  Define the Karoubi envelope $K(C)$ as follows.
+  \begin{enumerate}
+  \item Objects are pairs $(A, c)$ of an object in $C$ and an idempotent $c$ on $A$.
+  \item A morphism from $(A, c)$ to $(B, d)$ is a morphism $f : A \to B$ satisfying
+    \[ d \circ f \circ c = f \]
+  \end{enumerate}
+
+  If we think of an idempotent as a contract, this provides us with a
+  category where ``types are contracts''.
+
+  First, complete the definition of the category $K(C)$:
+  \begin{enumerate}
+  \item Show that composition in $K(C)$ can be given by composition in
+    $C$, i.e., that the composition interacts properly with the
+    idempotents\footnote{Hint: It may be helpful to prove that the
+    condition $d \circ f \circ c = f$ is equivalent to $d \circ f = f
+    = f \circ c$ first.}.
+  \item Define the identity morphisms and show they are identities
+    with respect to composition in $K(C)$.
+  \end{enumerate}
+
+  Show that $K(C)$ is the ``idempotent splitting completion'' of $C$:
+  \begin{enumerate}
+  \item Show that every idempotent in $K(C)$ splits.
+  \item Define a functor $\eta : C \to K(C)$.
+  \item Show that for any category $D$ where every idempotent splits,
+    any functor $F : C \to D$ can be extended to a functor $\hat F :
+    K(C) \to D$ satisfying:
+
+    \[ % https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBoBGAXVJADcBDAGwFcYkQBhEAX1PU1z5CKcqWLU6TVuwDSACg4BKHnxAZseAkVEAmCQxZtEIACI8JMKAHN4RUADMAThAC2SMiBwQkOmgenGAGIqDs5uiB5eSKKShuwAOvEwOPQhIE6u0TRRiL6xASCJABb0OAAEwdyU3EA
+    \begin{tikzcd}
+      & K(C) \arrow[dd, "\hat F"] \\
+      C \arrow[rd, "F"] \arrow[ru, "\eta"] &                           \\
+      & D                        
+    \end{tikzcd} \]
+
+    You do not need to show this functor is unique\footnote{because it
+    is only ``unique up to isomorphism'', something we have not yet
+    defined}.
+
+    For the logically-inclined, note that constructing $\hat F$ will
+    use the axiom of choice.
+  \end{enumerate}
+
+\end{problem}
+
+\bibliography{cats}
+\end{document}
