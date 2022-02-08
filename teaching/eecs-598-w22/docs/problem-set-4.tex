@@ -1,0 +1,329 @@
+\documentclass[12pt]{article}
+
+%AMS-TeX packages
+\usepackage{amssymb,amsmath,amsthm} 
+%geometry (sets margin) and other useful packages
+\usepackage[margin=1.25in]{geometry}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{graphicx,ctable,booktabs}
+\usepackage{mathpartir}
+
+\usepackage[sort&compress,square,comma,authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+%
+%Redefining sections as problems
+%
+\makeatletter
+\newenvironment{problem}{\@startsection
+       {section}
+       {1}
+       {-.2em}
+       {-3.5ex plus -1ex minus -.2ex}
+       {2.3ex plus .2ex}
+       {\pagebreak[3]%forces pagebreak when space is small; use \eject for better results
+       \large\bf\noindent{Problem }
+       }
+       }
+       {%\vspace{1ex}\begin{center} \rule{0.3\linewidth}{.3pt}\end{center}}
+       \begin{center}\large\bf \ldots\ldots\ldots\end{center}}
+\makeatother
+
+
+%
+%Fancy-header package to modify header/page numbering 
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\addtolength{\headwidth}{\marginparsep} %these change header-rule width
+%\addtolength{\headwidth}{\marginparwidth}
+\lhead{Problem \thesection}
+\chead{} 
+\rhead{\thepage} 
+\lfoot{\small\scshape EECS 598: Category Theory} 
+\cfoot{} 
+\rfoot{\footnotesize PS 1} 
+\renewcommand{\headrulewidth}{.3pt} 
+\renewcommand{\footrulewidth}{.3pt}
+\setlength\voffset{-0.25in}
+\setlength\textheight{648pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%Contents of problem set
+%
+
+\begin{document}
+
+\newcommand{\skipp}{\textrm{skip}}
+\newcommand{\boxprod}{\mathop{\square}}
+\newcommand{\Set}{\textrm{Set}}
+\newcommand{\Cat}{\textrm{Cat}}
+\newcommand{\Cayley}{\textrm{Cayley}}
+\newcommand{\Preds}{\mathcal{P}}
+\newcommand{\triple}[3]{\{#1\}{#2}\{#3\}}
+\newcommand{\Triple}{\textrm{Triple}}
+\newcommand{\Analyse}{\textrm{Analyse}}
+\newcommand{\command}{\textrm{command}}
+
+\newcommand{\id}{\textrm{id}}
+
+\newcommand{\isatype}{\,\,\textrm{type}}
+\newcommand{\matchZero}{\textrm{match}_0}
+\newcommand{\matchSum}[3]{\textrm{match}_+ {#1}\{{#2}\}\{{#3}\}}
+
+\title{Problem Set 4}
+\date{February 7, 2022}
+\maketitle
+
+Homework is due the midnight before class on the 17th.
+%
+If you want to volunteer to present this problem, e-mail me.
+
+Both problems involve the free bi-cartesian category (BiCC) generated
+from an empty graph. We present this in full here for reference.
+
+First, the types
+\begin{mathpar}
+  \inferrule{}{1 \isatype}
+  
+  \inferrule{A \isatype \and B \isatype}{A \times B \isatype}
+
+  \inferrule{}{0 \isatype}
+
+  \inferrule{A \isatype \and B \isatype}{A + B \isatype}
+\end{mathpar}
+
+Next, the terms
+\begin{mathpar}
+  \inferrule
+  {}
+  {x : A\vdash () : 1}
+
+  \inferrule
+  {x:A \vdash t_1 : B_1 \and
+   x:A \vdash t_2 : B_2
+  }
+  {x:A \vdash (t_1,t_2) : B_1 \times B_2 }
+
+  \inferrule
+  {x:A \vdash t : B_1 \times B_2}
+  {x:A \vdash \pi_1 t : B_1}
+
+  \inferrule
+  {x:A \vdash t : B_1 \times B_2}
+  {x:A \vdash \pi_2 t : B_2}
+
+  \inferrule
+  {}
+  {x:0 \vdash \matchZero x : A }
+
+  \inferrule
+  {x : A \vdash t : A_1 + A_2 \and
+   x_1:A_1 \vdash t_1 : B \and
+   x_2:A_2 \vdash t_2 : B
+  }
+  {x:A \vdash \matchSum t {\sigma_1 x_1. t_1}{\sigma_2 x_2. t_2} : B}
+
+  \inferrule
+  {x:A \vdash t : B_1}
+  {x:A \vdash \sigma_1 t : B_1 + B_2}
+
+  \inferrule
+  {x:A \vdash t : B_2}
+  {x:A \vdash \sigma_2 t : B_1 + B_2}
+\end{mathpar}
+
+And the definition of substitution $t[s/x]$ by induction on $t$:
+\begin{align*}
+  x[s/x] &= s\\
+  ()[s/x] &= ()\\
+  (t_1,t_2)[s/x] &= (t_1[s/x], t_2[s/x])\\
+  (\pi_i t)[s/x] &= \pi_i t[s/x]\\
+  (\matchZero t)[s/x] &= \matchZero {t[s/x]}\\
+  (\matchSum t {\sigma_1 x_1. u_1}{\sigma_2 x_2. u_2})[s/x]  &= \matchSum {t[s/x]} {\sigma_1 x_1. u_1}{\sigma_2 x_2. u_2}\\
+  (\sigma_i t)[s/x] &= \sigma_i t[s/x]\\
+\end{align*}
+
+And finally the equational theory. Note that we implicitly assume in
+any equality $s = t$ that both are well-typed with the same typing.
+\begin{mathpar}
+  \inferrule
+  {}
+  {t = t}
+
+  \inferrule
+  {s = t}
+  {t = s}
+
+  \inferrule
+  {s = t \and t = u}
+  {s = u}
+
+  \inferrule
+  {t = t'}
+  {\pi_i t = \pi_i t'}
+
+  \inferrule
+  {t_1 = t_1' \and t_2 = t_2'}
+  {(t_1,t_2) = (t_1', t_2')}
+
+  \inferrule
+  {t = t'}
+  {\sigma_i t = \sigma_i t'}
+
+  \inferrule
+  {t = t' \and s_1 = s_1' \and s_2 = s_2'}
+  {\matchSum t {\sigma_1 x_1. s_1}{\sigma_2 x_2. s_2} = \matchSum {t'} {\sigma_1 x_1. s_1'}{\sigma_2 x_2. s_2'}}
+
+  \inferrule
+  {x:A \vdash t : 1}
+  {t = ()}
+  
+  \pi_i(t_1,t_2) = t_i
+
+  \inferrule
+  {x:A \vdash t : B_1 \times B_2}
+  {t = (\pi_1 t, \pi_2 t)}
+
+  \inferrule
+  {x:A \vdash s : 0 \and y: 0 \vdash t : B}
+  {t[s/y] = \matchZero s}
+
+  \matchSum {\sigma_i t}{\sigma_1 x_1. s_1}{\sigma_2 x_2. s_2} = s_i[t/x_i]
+  
+  \inferrule
+  {x:A \vdash s : A_1 + A_2 \and
+   y: A_1 + A_2 \vdash t : B}
+  {t[s/x] = \matchSum s {\sigma_1 x_1. t[\sigma_1x_1/y]}{\sigma_2 x_2. t[\sigma_2x_2/y]}}
+\end{mathpar}
+
+In class we showed that this presents a category FreeBiCC that is
+initial in the category of bi-cartesian categories and bi-cartesian
+functors, i.e., functors that preserve bi-cartesian structure.
+
+\begin{problem}{Duality}
+  Notice that every type in the free BiCC has a dual: products are
+  dual to coproducts and terminal objects are dual to initial objects.
+
+  To demonstrate this duality, define an \emph{op} translation from
+  the free BiCC to its opposite as follows.
+  \begin{enumerate}
+  \item Define a translation $A^{op}$ for each type.
+  \item Define a translation $t^{op}$ on terms such that if
+    \[ x : A \vdash t : B \]
+    then
+    \[ k: B^{op} \vdash t^{op} A^{op} \]
+  \item Show that the translation is an involution: $(A^{op})^{op} = A$
+    and for any $t$, $(t^{op})^{op} = t$ in the equational theory. Are
+    there any $t$ such that $(t^{op})^{op}$ is not syntactically
+    identical to $t$? If so, provide an example.
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}{Logical Relations}
+  We can interpret the terms of the free Bi-cartesian category on an
+  empty graph as a very simple programming language or formal logic.
+
+  As a logic, we interpet $0$ as falsehood, $+$ as disjunction, $1$ as
+  trivial truth and $\times$ as conjunction. To be a useful logic, we
+  should verify that there is no proof of false. Of course, there are
+  proofs such as
+  \[ x : 0 \times (1 + 1) \vdash \pi_1 x : 0 \]
+  but we would like that there is no proof of false from a trivial
+  assumption, i.e., there is no proof
+  \[ x:1 \vdash t : 0 \]
+  This property is called \emph{consistency} of a logic.
+
+  To be a useful programming language\footnote{or \emph{constructive}
+  logic}, we should verify that we can \emph{evaluate} programs down
+  to a result. Since we added no facilities for effects or recursion,
+  all programs should run to some kind of value in finite time. To be
+  concrete, we should prove that any program of type $1 + 1$ evaluates
+  to $\sigma_1()$ or $\sigma_2()$, which we can think of as a
+  boolean. The specification for our evaluator is that it should
+  respect our notion of $\beta\eta$ equality, so $t$ should evaluate
+  to $\sigma_1()$ if and only if $t = \sigma_1()$ in our equational
+  theory. Of course, there are terms of type $1 + 1$ that are not
+  equal to $\sigma_1()$ or $\sigma_2()$, such as
+  \[ x : 1 + 1 \vdash x : 1 + 1 \]
+  instead we should restrict to programs that only take a trivial
+  input. So we want to show that terms of the form:
+  \[ x : 1 \vdash t : 1 + 1 \]
+  Are all equal to $\sigma_1()$ or $\sigma_2()$.  A programming
+  languages that satisfies this or a similar property is called
+  \emph{normalizing}.
+
+  We should also make sure that our programming language specification
+  is not trivial. In particular, since we did not add facilities for
+  non-determinism, we should verify that if a program evaluates to
+  $\sigma_1()$, then it cannot also evaluate to $\sigma_2()$. That is,
+  we should show that $\sigma_1() \neq \sigma_2()$.
+
+  \begin{itemize}
+  \item Show that the terms $x : 1 \vdash \sigma_1() : 1 + 1$ and
+    $x:1\vdash \sigma_2() : 1 + 1$ in the free BiCC on the empty graph
+    are not equal. Hint: use the UMP of the free BiCC to construct a
+    functor $F$ from the free BiCC to another category where
+    $F(\sigma_1()) \neq F(\sigma_2())$.
+  \end{itemize}
+
+  Showing consistency/normalization for a calculus can be
+  difficult. One of the most robust proof techniques for proving this
+  is called the method of \emph{logical relations}. Let's use the
+  method of logical relations to prove consistency and normalization
+  of the free BiCC.
+
+  The method of logical relations in this case is centered on a
+  category we call \emph{LR} defined as folows:
+  \begin{enumerate}
+  \item The objects of LR are pairs $(A, P)$ of a type $A$ in the free
+    BiCC and a subset of the terms of type $A$ with trivial input: $P
+    \subseteq \{ t \,|\, x:1 \vdash t : A \}$
+  \item A morphism from $(A, P)$ to $(B, Q)$ is a term $y : A \vdash s
+    : B$ such that for any $t \in P$, $s[t/y] \in B$.
+  \end{enumerate}
+
+  We will then show that LR is itself a bi-cartesian category with the
+  following definitions of the objects involved:
+  \begin{enumerate}
+  \item The initial object is $(0, \emptyset)$
+  \item The coproduct of $(A, P)$ and $(B, Q)$ is $(A + B, R_+)$ where $R_+$ is
+    \[ \{ u \,|\, (\exists t \in P.~ u = \sigma_1 t) \vee (\exists t \in Q.~ u = \sigma_2 t) \} \]
+  \item The terminal object is $(1, \top)$ where $\top = \{ t \,|\,
+    x:1 \vdash t : 1 \}$.
+  \item The product of $(A, P)$ and $(B, Q)$ is $(A \times B, R_\times)$ where $R_\times$ is
+    \[ \{ u \,|\, (x : 1 \vdash u : A \times B) \wedge \pi_1 u \in P \wedge \pi_2 u \in Q \} \]
+  \end{enumerate}
+
+  Now, prove consistency and normalization for BiCC as follows:
+  \begin{enumerate}
+  \item Define identity and composition in LR, and prove it forms a
+    category.
+  \item Show that the definitions above give LR the structure of a
+    bi-cartesian category, and that the ``forgetful'' functor $U :
+    \textrm{LR} \to \textrm{FreeBiCC}$ preserves the bi-cartesian
+    structure, i.e., it takes products to products, projections to
+    projections, etc.
+  \item Conclude using the UMP of the free bi-cartesian category that
+    there is a functor from $s : \textrm{FreeBiCC} \to \textrm{LR}$
+    that preserves bi-cartesian structure and is a section of $U$,
+    that is:
+    \[U \circ s = \textrm{id}_{FreeBiCC}\]
+
+  \item Prove as a corollary that
+    \begin{enumerate}
+    \item BiCC is consistent: there is no term $x : 1 \vdash t : 0$ 
+    \item BiCC is normalizing: any term $x : 1 \vdash t : 1 + 1$ is
+      equal to $\sigma_1()$ or $\sigma_2()$ in the equational theory.
+    \end{enumerate}
+  \end{enumerate}
+\end{problem}
+
+\thispagestyle{empty}
+
+
+\bibliography{cats}
+\end{document}
