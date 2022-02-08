@@ -83,7 +83,7 @@ assigned readings *prior to* lecture.
 | Thu, Jan 27  | Products                                  |                                                   | [PS 3 out][ps3], [PS3 LaTeX][latex3] |
 | Tue Feb 1    | Duality, Initial Objects                  | Awodey Ch 3.1-3.2                                 |                                      |
 | Thu Feb 3    | Syntax for Free Categories with X         | Shulman Ch 1.4-1.6                                |                                      |
-| Tue Feb 8    | (Co-)Equalizers                           | Awodey Ch 3.3                                     | PS 4 out                             |
+| Tue Feb 8    | (Co-)Equalizers                           | Awodey Ch 3.3                                     | [PS 4 out][ps4], [PS4 LaTeX][latex4] |
 | Thu, Feb 10  | Subobjects & Pullbacks                    | Awodey Ch 5.1-3                                   |                                      |
 | Tue Feb 15   | Limits and Colimits                       | Awodey Ch 5.4-5.6                                 |                                      |
 | Thu Feb 17   | Exponentials                              | Awodey Ch 6.1-6.2                                 | PS 5 out                             |
@@ -120,3 +120,5 @@ assigned readings *prior to* lecture.
 [latex2]: /teaching/eecs-598-w22/docs/problem-set-2.tex
 [ps3]: /teaching/eecs-598-w22/docs/problem-set-3.pdf
 [latex3]: /teaching/eecs-598-w22/docs/problem-set-3.tex
+[ps4]: /teaching/eecs-598-w22/docs/problem-set-4.pdf
+[latex4]: /teaching/eecs-598-w22/docs/problem-set-4.tex
