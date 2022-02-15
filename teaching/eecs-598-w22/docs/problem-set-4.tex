@@ -16,6 +16,7 @@
 %Redefining sections as problems
 %
 \makeatletter
+\newtheorem{lemma}{Lemma}
 \newenvironment{problem}{\@startsection
        {section}
        {1}
@@ -78,7 +79,7 @@
 \date{February 7, 2022}
 \maketitle
 
-Homework is due the midnight before class on the 17th.
+Homework is due the midnight before class on the 22nd.
 %
 If you want to volunteer to present this problem, e-mail me.
 
@@ -100,6 +101,10 @@ Next, the terms
 \begin{mathpar}
   \inferrule
   {}
+  {x:A\vdash x:A}
+
+  \inferrule
+  {}
   {x : A\vdash () : 1}
 
   \inferrule
@@ -117,8 +122,8 @@ Next, the terms
   {x:A \vdash \pi_2 t : B_2}
 
   \inferrule
-  {}
-  {x:0 \vdash \matchZero x : A }
+  {x:A \vdash t : 0}
+  {x:A \vdash \matchZero t : B }
 
   \inferrule
   {x : A \vdash t : A_1 + A_2 \and
@@ -197,12 +202,48 @@ any equality $s = t$ that both are well-typed with the same typing.
   \inferrule
   {x:A \vdash s : A_1 + A_2 \and
    y: A_1 + A_2 \vdash t : B}
-  {t[s/x] = \matchSum s {\sigma_1 x_1. t[\sigma_1x_1/y]}{\sigma_2 x_2. t[\sigma_2x_2/y]}}
+  {t[s/y] = \matchSum s {\sigma_1 x_1. t[\sigma_1x_1/y]}{\sigma_2 x_2. t[\sigma_2x_2/y]}}
 \end{mathpar}
 
-In class we showed that this presents a category FreeBiCC that is
-initial in the category of bi-cartesian categories and bi-cartesian
-functors, i.e., functors that preserve bi-cartesian structure.
+Feel free to use the following lemma in your proofs below.
+\begin{lemma}
+  If $x:A \vdash t : B$ and $x:A \vdash t' : B$ and $y:C \vdash u : A$ and $y:C \vdash u' : A$,
+  then if $t = t'$ is derivable and $u = u'$ is derivable then
+  \[ t[u/x] = t'[u'/x] \]
+  is derivable.  
+\end{lemma}
+
+In class we showed that this presents a category FreeBiCC that is the
+free bi-cartesian category on the empty graph. When we specialize this
+theorem to the \emph{empty} graph, we get a simpler formulation of the
+UMP: the FreeBiCC on the empty graph is initial in the category of
+bi-cartesian categories and bi-cartesian functors, i.e., functors that
+preserve bi-cartesian structure.
+%
+\begin{lemma}[UMP of Free BiCC]
+  The syntax of the free bi-cartesian category defines a category
+  FreeBiCC that is an initial object in the category of bi-cartesian
+  categories and bi-cartesian functors.
+\end{lemma}
+\begin{proof}
+  Let $\mathcal C$ be a bi-cartesian category. To construct a map from
+  FreeBiCC to $\mathcal C$, by the UMP of FreeBiCC as the free
+  bi-cartesian category generated from the empty graph, it is
+  sufficient to define a graph homomorphism $i : \emptyset \to U(\mathcal
+  C)$. Then $\hat \i : \textrm{FreeBiCC} \to \mathcal C$ is
+  \begin{enumerate}
+  \item a functor that preserves products, coproducts, initial and
+    terminal object, along with pairing, projection, co-pairing,
+    injection.
+  \item The unique functor satisfying $U\hat \i \circ \eta = i$ where
+    $\eta : \emptyset \to U(\textrm{FreeBiCC})$ is a fixed graph
+    homomorphism.
+  \end{enumerate}
+  But note that since the empty graph is the initial object in the
+  category of graphs, this uniqueness condition is satisfied by any
+  functor preserving bi-cartesian structure, and so $\hat \i$ is the
+  unique arrow from $\textrm{FreeBiCC}$ to $\mathcal C$.
+\end{proof}
 
 \begin{problem}{Duality}
   Notice that every type in the free BiCC has a dual: products are
@@ -215,7 +256,7 @@ functors, i.e., functors that preserve bi-cartesian structure.
   \item Define a translation $t^{op}$ on terms such that if
     \[ x : A \vdash t : B \]
     then
-    \[ k: B^{op} \vdash t^{op} A^{op} \]
+    \[ k: B^{op} \vdash t^{op} : A^{op} \]
   \item Show that the translation is an involution: $(A^{op})^{op} = A$
     and for any $t$, $(t^{op})^{op} = t$ in the equational theory. Are
     there any $t$ such that $(t^{op})^{op}$ is not syntactically
@@ -283,7 +324,7 @@ functors, i.e., functors that preserve bi-cartesian structure.
     BiCC and a subset of the terms of type $A$ with trivial input: $P
     \subseteq \{ t \,|\, x:1 \vdash t : A \}$
   \item A morphism from $(A, P)$ to $(B, Q)$ is a term $y : A \vdash s
-    : B$ such that for any $t \in P$, $s[t/y] \in B$.
+    : B$ such that for any $t \in P$, $s[t/y] \in Q$.
   \end{enumerate}
 
   We will then show that LR is itself a bi-cartesian category with the
