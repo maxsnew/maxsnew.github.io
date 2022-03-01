@@ -2,14 +2,14 @@
 title: Max S. New
 ---
 
-<div><img src="/img/max_new.jpg" id="selfportrait"></img></div>
+<div><img src="/img/max_new2.jpg" id="selfportrait"></img></div>
 
 I am a computer scientist working on the foundations of programming
-languages. Currently, I am an assistant professor in CSE at the
-[University of Michigan][umich], part of our [MPLSE][mplse] research
-community. *I am currently recruiting new graduate students at the
-University of Michigan*. If you are interested, feel free to e-mail
-me to discuss.
+languages. I am an assistant professor in Computer Science &
+Engineering at the [University of Michigan][umich], part of our
+[MPLSE][mplse] research community. *I am currently recruiting new
+graduate students at the University of Michigan*. If you are
+interested, feel free to e-mail me to discuss.
 
 My research utilizes mathematical techniques to help in design,
 analysis and implementation of programming languages. I am recently
@@ -21,6 +21,11 @@ Prior to my current position, I completed a postdoc at Wesleyan
 University with [Dan Licata][dan]. I completed my PhD at Northeastern
 University in Fall 2020 [Amal Ahmed][amal].
 
+## Students
+
+- [Eric Giovannini][ericg], PhD Student (FA2021-)
+
+[ericg]: http://www-personal.umich.edu/~ericgio/index.html
 [amal]: http://www.ccs.neu.edu/home/amal/
 [robby]: http://www.eecs.northwestern.edu/~robby/
 [dan]: https://dlicata.wescreates.wesleyan.edu/

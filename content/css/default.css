@@ -120,6 +120,6 @@ button:focus {
 
 img#selfportrait {
   float: right;
-  margin: 0 0 0 100px;
-
+  margin: 0 0 0 50px;
+  width: 300px;
 }
