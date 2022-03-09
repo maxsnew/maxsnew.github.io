@@ -1,0 +1,176 @@
+\documentclass[12pt]{article}
+
+%AMS-TeX packages
+\usepackage{amssymb,amsmath,amsthm} 
+%geometry (sets margin) and other useful packages
+\usepackage[margin=1.25in]{geometry}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{graphicx,ctable,booktabs}
+\usepackage{mathpartir}
+
+\usepackage[sort&compress,square,comma,authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+%
+%Redefining sections as problems
+%
+\makeatletter
+\newtheorem{lemma}{Lemma}
+\newenvironment{problem}{\@startsection
+       {section}
+       {1}
+       {-.2em}
+       {-3.5ex plus -1ex minus -.2ex}
+       {2.3ex plus .2ex}
+       {\pagebreak[3]%forces pagebreak when space is small; use \eject for better results
+       \large\bf\noindent{Problem }
+       }
+       }
+       {%\vspace{1ex}\begin{center} \rule{0.3\linewidth}{.3pt}\end{center}}
+       \begin{center}\large\bf \ldots\ldots\ldots\end{center}}
+\makeatother
+
+
+%
+%Fancy-header package to modify header/page numbering 
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\addtolength{\headwidth}{\marginparsep} %these change header-rule width
+%\addtolength{\headwidth}{\marginparwidth}
+\lhead{Problem \thesection}
+\chead{} 
+\rhead{\thepage} 
+\lfoot{\small\scshape EECS 598: Category Theory} 
+\cfoot{} 
+\rfoot{\footnotesize PS 1} 
+\renewcommand{\headrulewidth}{.3pt} 
+\renewcommand{\footrulewidth}{.3pt}
+\setlength\voffset{-0.25in}
+\setlength\textheight{648pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%Contents of problem set
+%
+
+\begin{document}
+
+\newcommand{\skipp}{\textrm{skip}}
+\newcommand{\boxprod}{\mathop{\square}}
+\newcommand{\Set}{\textrm{Set}}
+\newcommand{\Cat}{\textrm{Cat}}
+\newcommand{\Cayley}{\textrm{Cayley}}
+\newcommand{\Preds}{\mathcal{P}}
+\newcommand{\triple}[3]{\{#1\}{#2}\{#3\}}
+\newcommand{\Triple}{\textrm{Triple}}
+\newcommand{\Analyse}{\textrm{Analyse}}
+\newcommand{\command}{\textrm{command}}
+
+\newcommand{\id}{\textrm{id}}
+
+\newcommand{\isatype}{\,\,\textrm{type}}
+\newcommand{\matchZero}{\textrm{match}_0}
+\newcommand{\matchSum}[3]{\textrm{match}_+ {#1}\{{#2}\}\{{#3}\}}
+
+\title{Problem Set 5}
+\date{Mar 9, 2022}
+\maketitle
+
+Homework is due the midnight before class on March 17.
+
+For these two problems, you are asked to construct morphisms in a
+cartesian closed category and prove they satisfy certain
+properties. To construct a morphism $A \to B$, you can either
+\begin{enumerate}
+\item Use the abstract category operations in Awodey such as
+  $\epsilon, \tilde f, \pi_i, (f,g)$ etc.
+\item Define a term $x : A \vdash t : B$ in the simple type theory
+  described in Section 2.8 of Shulman. Then you need to also
+  appropriately interpret composition as substitution, etc. In
+  Shulman, the term syntax is on page 135 $\beta\eta$ equations for
+  $0,+,1,\times$ are on page 114 and $\beta\eta$ for $\Rightarrow$ are
+  on page 139.
+\end{enumerate}
+
+\begin{problem}{Algebra of Exponentials}
+  At this point we have developed quite the ``algebra'' of objects in
+  cartesian closed categories: in addition to addition $A + B, 0$ and
+  multiplication $A \times B, 1$ we have now added exponentiation
+  $B^A$.
+
+  In a cartesian closed category, many of the familiar rules of
+  arithmetic with exponentiation are valid if we represent equality as
+  \emph{isomorphism}:
+  \begin{mathpar}
+    C^{A \times B} \cong (C^{A})^B\and
+    C^{1} \cong C\\
+    C^{A + B} \cong C^{A}\times C^B\and
+    C^{0} \cong 1\and
+  \end{mathpar}
+
+  \begin{enumerate}
+  \item For each of the above isomorphisms $A \cong B$, construct
+    morphisms $\textrm{to}:A \to B$ and $\textrm{fro}:B \to A$ that are valid in an arbitrary
+    cartesian closed category.
+  \item Prove that the morphisms you defined for $C^{A+B} \cong C^A
+    \times C^B$ are an isomorphism, that is $\textrm{to} \circ
+    \textrm{fro} = \id_B$ and $\textrm{fro} \circ \textrm{to} =
+    \id_A$. You do not need to prove the others form an
+    isomorphism\footnote{but it will be impossible to construct
+    morphisms of the given type that \emph{aren't} isomorphisms!}
+  \end{enumerate}
+\end{problem}
+
+\begin{problem}{Lawvere's Fixed Point Theorem and Recursive Functions}
+  There are various ``diagonalization arguments'' employed in logic,
+  set theory and computer science such as the proofs of G\"odel's
+  incompleteness theorem, Cantor's theorem and Turing/Rice's theorem
+  to prove that some construction is impossible.
+
+  F. William Lawvere showed that we can abstract over the reasoning in
+  these different proofs by proving a \emph{fixed point} theorem that
+  is valid in an arbitrary cartesian closed category.  We will prove
+  the following slightly simplified version of \emph{Lawvere's Fixed
+  Point Theorem}.
+
+  Let $X, D$ be objects in a cartesian closed category. If there is a
+  section-retraction pair $(s : D^X \to X, r : X \to D^X)$ then there
+  is a morphism $\textrm{fix} : D^D \to D$ that is a \emph{fixed point
+  combinator} in that for any $f : \Gamma \to D^D$ and $t : \Gamma \to
+  D$
+  \[ \epsilon\circ( \textrm{fix} \circ f, t) =
+     \epsilon\circ(f, \epsilon\circ( \textrm{fix} \circ f, t)) \]
+
+  In type theoretic notation, this is a term
+  \[ f: (D \Rightarrow D) \vdash \textrm{fix}(f) : D \]
+  satisfying
+  \[ f:(D\Rightarrow D) \vdash \textrm{fix}(f) = f(\textrm{fix}(f)) : D \]
+
+  \begin{enumerate}
+  \item Instantiate the theorem to the category of sets with $D =
+    \{\textrm{true}, \textrm{false} \}$ and $X$ an arbitrary set to
+    prove \emph{Cantor's theorem}: there is no surjective function
+    from $X$ to its power set $\mathcal P(X)$.
+
+  \item Given the section-retraction pair $(s,r)$, construct
+    $\textrm{fix}$ and prove it is a fixed point combinator.
+  \end{enumerate}
+
+  This theorem is not just for proving contradictions! You may
+  recognize $\textrm{fix}$ as a typed version of the Y-combinator,
+  which can be used to encode recursion in programming languages.
+
+  As an example, given a base type $N$ for natural numbers and
+  function symbols $\textrm{sub1} : N \to 1 + N$\footnote{returning
+  $\sigma_1()$ if the input is $0$} and $\textrm{times} : N, N \to N$
+  and $\textrm{one} : \cdot \to N$, we can use our fixpoint combinator
+  to implement a factorial function:
+  \[ \textrm{fix}(\lambda \textrm{fac}.\lambda n. \matchSum{(\textrm{sub1}(n))}{\sigma_1x_1. \textrm{one}}{ \sigma_2 m. \textrm{times}(n,m)} \]
+\end{problem}
+\thispagestyle{empty}
+
+\bibliography{cats}
+\end{document}
