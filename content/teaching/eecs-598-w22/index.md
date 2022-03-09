@@ -7,7 +7,7 @@ title: Category Theory
 - Instructor: Max S. New
 - Office: Beyster 4640
 - uniqname: maxsnew
-- [Office Hours][q]: Monday & Wednesday 4-5:30pm, remote
+- [Office Hours][q]: Monday & Wednesday 4-5:30pm, remote and Beyster 4640
 - [Canvas][canvas]
 - [Piazza][piazza]
 
@@ -31,8 +31,9 @@ Logic from a Categorical Point of View by Michael Shulman][clcpov].
 ## Office Hours
 
 Office hours will be held twice weekly, on Mondays and Wednesdays from
-4-5:30pm. For the time being, these will be remote office hours. You
-should use the [queuing system][q] to access office hours.
+4-5:30pm. Unless otherwise specified, these will be hybrid remote and
+in-person in my office at Beyster 4640. Either way, you should use
+the [queuing system][q].
 
 ## Evaluation
 
@@ -86,14 +87,14 @@ assigned readings *prior to* lecture.
 | Tue Feb 8    | (Co-)Equalizers                           | Awodey Ch 3.3                                     | [PS 4 out][ps4], [PS4 LaTeX][latex4] |
 | Thu, Feb 10  | Subobjects & Pullbacks                    | Awodey Ch 5.1-3                                   |                                      |
 | Tue Feb 15   | Limits and Colimits                       | Awodey Ch 5.4-5.6                                 |                                      |
-| Thu Feb 17   | Exponentials                              | Awodey Ch 6.1-6.2                                 | PS 5 out                             |
+| Thu Feb 17   | Exponentials                              | Awodey Ch 6.1-6.2                                 |                                      |
 | Tue Feb 22   | Cartesian Closed Categories in CS         | Awodey Ch 6.3-6.6                                 |                                      |
 | Thu Feb 24   | Cartesian Multicategories                 | Shulman Ch 2                                      |                                      |
-| Tue Mar 8    | Category of Categories                    | Awodey Ch 7.1-7.2                                 | PS 6 out                             |
+| Tue Mar 8    | Category of Categories                    | Awodey Ch 7.1-7.2                                 | [PS 5 out][ps5], [PS5 LaTeX][latex5]                             |
 | Thu Mar 10   | Natural Transformations                   | Awodey Ch 7.4-7.5                                 |                                      |
-| Tue Mar 15   | Functor Categories, Monoidal Categories   | Awodey Ch 7.7-7.8                                 |                                      |
-| Thu Mar 17   | Equivalence of Categories                 | Awodey Ch 7.9-7.10                                | PS 7 out                             |
-| Tue Mar 22   | Presheaves                                | Awodey 8.1-8.4                                    |                                      |
+| Tue Mar 15   | Functor Categories, Monoidal Categories   | Awodey Ch 7.7-7.8                                 | PS 6 out                             |
+| Thu Mar 17   | Equivalence of Categories                 | Awodey Ch 7.9-7.10                                |                                      |
+| Tue Mar 22   | Presheaves                                | Awodey 8.1-8.4                                    | PS 7 out                             |
 | Thu Mar 24   | Yoneda Lemma                              | Awodey 8.3-8.4                                    |                                      |
 | Tue Mar 29   | Higher-order Logic                        | Awodey 8.8                                        | PS 8 out                             |
 | Thu, Mar 31  | Adjunctions                               | Awodey 9.1-9.2                                    |                                      |
@@ -122,3 +123,5 @@ assigned readings *prior to* lecture.
 [latex3]: /teaching/eecs-598-w22/docs/problem-set-3.tex
 [ps4]: /teaching/eecs-598-w22/docs/problem-set-4.pdf
 [latex4]: /teaching/eecs-598-w22/docs/problem-set-4.tex
+[ps5]: /teaching/eecs-598-w22/docs/problem-set-5.pdf
+[latex5]: /teaching/eecs-598-w22/docs/problem-set-5.tex
