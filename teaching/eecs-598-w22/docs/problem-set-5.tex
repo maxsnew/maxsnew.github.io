@@ -139,15 +139,13 @@ properties. To construct a morphism $A \to B$, you can either
   Let $X, D$ be objects in a cartesian closed category. If there is a
   section-retraction pair $(s : D^X \to X, r : X \to D^X)$ then there
   is a morphism $\textrm{fix} : D^D \to D$ that is a \emph{fixed point
-  combinator} in that for any $f : \Gamma \to D^D$ and $t : \Gamma \to
-  D$
-  \[ \epsilon\circ( \textrm{fix} \circ f, t) =
-     \epsilon\circ(f, \epsilon\circ( \textrm{fix} \circ f, t)) \]
+  combinator} in that for any $f : \Gamma \to D^D$,
+  \[ \textrm{fix} \circ f = \epsilon\circ(f, \textrm{fix} \circ f) \]
 
   In type theoretic notation, this is a term
   \[ f: (D \Rightarrow D) \vdash \textrm{fix}(f) : D \]
   satisfying
-  \[ f:(D\Rightarrow D) \vdash \textrm{fix}(f) = f(\textrm{fix}(f)) : D \]
+  \[ \textrm{fix}(f) = f(\textrm{fix}(f)) \]
 
   \begin{enumerate}
   \item Instantiate the theorem to the category of sets with $D =
@@ -164,11 +162,10 @@ properties. To construct a morphism $A \to B$, you can either
   which can be used to encode recursion in programming languages.
 
   As an example, given a base type $N$ for natural numbers and
-  function symbols $\textrm{sub1} : N \to 1 + N$\footnote{returning
-  $\sigma_1()$ if the input is $0$} and $\textrm{times} : N, N \to N$
+  function symbols\footnote{We interpret \textrm{sub1}(n) as returning $\sigma_1()$ if $n=0$ and otherwise $\sigma_2(n - 1)$} $\textrm{sub1} : N \to 1 + N$ and $\textrm{times} : N, N \to N$
   and $\textrm{one} : \cdot \to N$, we can use our fixpoint combinator
   to implement a factorial function:
-  \[ \textrm{fix}(\lambda \textrm{fac}.\lambda n. \matchSum{(\textrm{sub1}(n))}{\sigma_1x_1. \textrm{one}}{ \sigma_2 m. \textrm{times}(n,m)} \]
+  \[ \textrm{fix}(\lambda \textrm{fac}.\lambda n. \matchSum{(\textrm{sub1}(n))}{\sigma_1x_1. \textrm{one}}{ \sigma_2 m. \textrm{times}(n,\textrm{fac}\,m)} \]
 \end{problem}
 \thispagestyle{empty}
 
