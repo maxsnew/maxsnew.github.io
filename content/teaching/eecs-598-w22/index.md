@@ -90,17 +90,17 @@ assigned readings *prior to* lecture.
 | Thu Feb 17   | Exponentials                              | Awodey Ch 6.1-6.2                                 |                                      |
 | Tue Feb 22   | Cartesian Closed Categories in CS         | Awodey Ch 6.3-6.6                                 |                                      |
 | Thu Feb 24   | Cartesian Multicategories                 | Shulman Ch 2                                      |                                      |
-| Tue Mar 8    | Category of Categories                    | Awodey Ch 7.1-7.2                                 | [PS 5 out][ps5], [PS5 LaTeX][latex5]                             |
+| Tue Mar 8    | Category of Categories                    | Awodey Ch 7.1-7.2                                 | [PS 5 out][ps5], [PS5 LaTeX][latex5] |
 | Thu Mar 10   | Natural Transformations                   | Awodey Ch 7.4-7.5                                 |                                      |
-| Tue Mar 15   | Functor Categories, Monoidal Categories   | Awodey Ch 7.7-7.8                                 | PS 6 out                             |
-| Thu Mar 17   | Equivalence of Categories                 | Awodey Ch 7.9-7.10                                |                                      |
-| Tue Mar 22   | Presheaves                                | Awodey 8.1-8.4                                    | PS 7 out                             |
+| Tue Mar 15   | Functor Categories, Monoidal Categories   | Awodey Ch 7.7-7.8                                 |                                      |
+| Thu Mar 17   | Equivalence of Categories                 | Awodey Ch 7.9-7.10                                | [PS 6 out][ps6], [PS6 LaTeX][latex6] |
+| Tue Mar 22   | Presheaves                                | Awodey 8.1-8.4                                    |                                      |
 | Thu Mar 24   | Yoneda Lemma                              | Awodey 8.3-8.4                                    |                                      |
-| Tue Mar 29   | Higher-order Logic                        | Awodey 8.8                                        | PS 8 out                             |
+| Tue Mar 29   | Higher-order Logic                        | Awodey 8.8                                        | PS 7 out                             |
 | Thu, Mar 31  | Adjunctions                               | Awodey 9.1-9.2                                    |                                      |
-| Tue Apr 5    | Examples of Adjunctions                   | Awodey 9.3-9.5                                    |                                      |
-| Thu Apr 7    | Right Adjoints preserve limits            | Awodey 9.6                                        | PS 9 out                             |
-| Tue Apr 12   | Monads                                    | Awodey 10.1-10.2                                  |                                      |
+| Tue Apr 5    | Examples of Adjunctions                   | Awodey 9.3-9.5                                    | PS 8 out                             |
+| Thu Apr 7    | Right Adjoints preserve limits            | Awodey 9.6                                        |                                      |
+| Tue Apr 12   | Monads                                    | Awodey 10.1-10.2                                  | PS 9 out                             |
 | Thu Apr 14   | Algebras of Monads                        | Awodey 10.3-10.4                                  |                                      |
 | Tue Apr 19   | Monads in Programming                     | TBD                                               | PS 10 out                            |
 
@@ -125,3 +125,5 @@ assigned readings *prior to* lecture.
 [latex4]: /teaching/eecs-598-w22/docs/problem-set-4.tex
 [ps5]: /teaching/eecs-598-w22/docs/problem-set-5.pdf
 [latex5]: /teaching/eecs-598-w22/docs/problem-set-5.tex
+[ps6]: /teaching/eecs-598-w22/docs/problem-set-6.pdf
+[latex6]: /teaching/eecs-598-w22/docs/problem-set-6.tex
