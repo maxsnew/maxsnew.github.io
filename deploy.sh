@@ -7,5 +7,5 @@ stack build \
     && cp -a _site/. . \
     && git add -A \
     && git commit -m "Site updated: $(date)" \
-    # && git push origin master \
-    # && git checkout src
+    && git push origin master \
+    && git checkout src
