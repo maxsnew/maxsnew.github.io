@@ -1,0 +1,160 @@
+\documentclass[12pt]{article}
+
+%AMS-TeX packages
+\usepackage{amssymb,amsmath,amsthm} 
+%geometry (sets margin) and other useful packages
+\usepackage[margin=1.25in]{geometry}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{graphicx,ctable,booktabs}
+\usepackage{mathpartir,tipa}
+
+\usepackage[sort&compress,square,comma,authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+%
+%Redefining sections as problems
+%
+\makeatletter
+\newtheorem{lemma}{Lemma}
+\newenvironment{problem}{\@startsection
+       {section}
+       {1}
+       {-.2em}
+       {-3.5ex plus -1ex minus -.2ex}
+       {2.3ex plus .2ex}
+       {\pagebreak[3]%forces pagebreak when space is small; use \eject for better results
+       \large\bf\noindent{Problem }
+       }
+       }
+       {%\vspace{1ex}\begin{center} \rule{0.3\linewidth}{.3pt}\end{center}}
+       \begin{center}\large\bf \ldots\ldots\ldots\end{center}}
+\makeatother
+
+
+%
+%Fancy-header package to modify header/page numbering 
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+%\addtolength{\headwidth}{\marginparsep} %these change header-rule width
+%\addtolength{\headwidth}{\marginparwidth}
+\lhead{Problem \thesection}
+\chead{} 
+\rhead{\thepage} 
+\lfoot{\small\scshape EECS 598: Category Theory} 
+\cfoot{} 
+\rfoot{\footnotesize PS 1} 
+\renewcommand{\headrulewidth}{.3pt} 
+\renewcommand{\footrulewidth}{.3pt}
+\setlength\voffset{-0.25in}
+\setlength\textheight{648pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%Contents of problem set
+%
+
+\begin{document}
+
+\newcommand{\skipp}{\textrm{skip}}
+\newcommand{\boxprod}{\mathop{\square}}
+\newcommand{\Set}{\textrm{Set}}
+\newcommand{\Cat}{\textrm{Cat}}
+\newcommand{\Ob}{\textrm{Ob}}
+\newcommand{\Cayley}{\textrm{Cayley}}
+\newcommand{\Preds}{\mathcal{P}}
+\newcommand{\triple}[3]{\{#1\}{#2}\{#3\}}
+\newcommand{\Triple}{\textrm{Triple}}
+\newcommand{\Analyse}{\textrm{Analyse}}
+\newcommand{\command}{\textrm{command}}
+
+\newcommand{\id}{\textrm{id}}
+\newcommand{\cat}{\mathbb}
+\newcommand{\esh}{\text{\textesh}}
+
+
+\newcommand{\isatype}{\,\,\textrm{type}}
+\newcommand{\matchZero}{\textrm{match}_0}
+\newcommand{\matchSum}[3]{\textrm{match}_+ {#1}\{{#2}\}\{{#3}\}}
+
+\newcommand{\Yo}{\textrm{Y}}
+
+\title{Problem Set 7}
+\date{April 9, 2022}
+\maketitle
+
+Homework is due the midnight before class on April 14.
+
+If you haven't yet presented a homework in class, email me to setup
+eith an in-class presentation or a presentation outside of class.
+
+\begin{problem}{Examples of Representables}
+  The yoneda embedding $\Yo : \cat C \to \Set^{\cat C^o}$ takes an
+  object $A \in \cat C$ to the representable presheaf $\lambda X. \cat
+  C_1(X,A)$. In a precise sense, all presheaves are constructed by
+  gluing together the representable presheaves (Awodey Proposition
+  8.11).
+
+  Let's consider what the representable presheaves look
+  like in some categories of presheaves that are familiar mathematical
+  objects.
+
+  \begin{enumerate}
+  \item Let $\mathcal G$ be the category
+    \[% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiVpAF9T1Nd9CUARnJVajFm1YdRMKAHN4RUADMAThAC2SMiBwQkwkACMYYKEgDMO+s1aIQCLivVbEOvQeomzSALRXqGwl7HBBqBjoTBgAFXjwCNlUsOQALUOkOIA
+    \begin{tikzcd}
+      v \arrow[r, "s", bend left] \arrow[r, "t"', bend right] & e
+    \end{tikzcd}\]
+    Then $\Set^{\mathcal G^o}$ is equivalent to the category of
+    \emph{multigraphs}, i.e., pairs of a set $V$ of vertices, $E$ of
+    edges such that each edge has a source and target vertex.
+
+    Describe for each object $a \in \mathcal G$ what the multigraph
+    $\Yo a$ is. Describe for each object $a \in \mathcal G$ and
+    multigraph $X$ what a homomorphism $\Yo a \to X$ is.
+
+  \item Let $\mathcal M$ be a one-object category, i.e., a
+    monoid. Then $\Set^{\mathcal M^o}$ is equivalent to the category
+    of \emph{$\mathcal M$-actions}\footnote{If $\mathcal M$ is a group
+    this is equivalently a group action}. We write the identity
+    element of $\mathcal M$ as $\epsilon$ and the multiplication as $m
+    \cdot m'$.
+
+    An $\mathcal M$-action is a set
+    $X$ equipped with a ``multiplication'' operation $\times :
+    \mathcal M \times X \to X$ satisfying (for any $m, m_1,m_2 \in
+    \mathcal M$, and $x \in X$):
+    \[ \epsilon \cdot x = x \]
+    \[ m_1 \times (m_2 \times x) = (m_1 \cdot m_2) \times x \]
+
+    An \emph{equivariant map} $\phi : X \to Y$ between $\mathcal
+    M$-actions is a function on the underlying sets satisfying
+    \[ \phi(m \times x) = m \times \phi(x) \]
+
+    Let $*$ be the object of $\mathcal M$ viewed as a one object
+    category. Describe what the $\mathcal M$-action $\Yo *$ is, and
+    describe what an equivariant map $\Yo * \to X$ is.
+
+  \item Let $I$ be a set, viewed as a category with only identity
+    arrows. Then $\Set^{I^o} = \Set^I$ is equivalent to the category
+    of \emph{families indexed by $I$}, i.e., $\{X_i \in \Set \}_{i \in
+      I}$. A morphism of families $\{ X_i \}_{i \in I} \to \{Y_i\}_{i
+      \in I}$ is a family $\{f_i : X_i \to Y_i\}_{i \in I}$.
+
+    For each $i\in I$, describe what family $\Yo i$ is and what the
+    morphisms $\Yo i \to \{X_i \}_{i\in I}$.
+  \end{enumerate}
+
+  \textbf{Hint: to describe the morphisms, use the Yoneda lemma!}
+\end{problem}
+
+\begin{problem}{A String of Adjoints}
+  Awodey Chapter 9, Problem 7.
+\end{problem}
+
+\thispagestyle{empty}
+
+\bibliography{cats}
+\end{document}
