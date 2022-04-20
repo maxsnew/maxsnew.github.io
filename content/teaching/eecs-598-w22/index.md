@@ -100,7 +100,7 @@ assigned readings *prior to* lecture.
 | Thu, Mar 31  | Adjunctions                               | Awodey 9.1-9.2                                    |                                      |
 | Tue Apr 12   | Adjoints and Limits, Monads I             | Awodey 9.6                                        | [PS 7 out][ps7], [PS7 LaTeX][latex7] |
 | Thu Apr 14   | Monads II                                 | [Moggi][moggi]                                    |                                      |
-| Tue Apr 19   | Category Theory in Haskell                | [Wadler][wadler]                                  | PS 8 out                             |
+| Tue Apr 19   | Category Theory in Haskell                | [Wadler][wadler]                                  | [PS 8 out][ps8], [PS8 LaTeX][latex8]                             |
 
 
 <!-- | Thu Apr 12   | Inductive/Coinductive Types as Initial/Final Algebras | TBD                                               |                                      | -->
@@ -127,5 +127,7 @@ assigned readings *prior to* lecture.
 [latex6]: /teaching/eecs-598-w22/docs/problem-set-6.tex
 [ps7]: /teaching/eecs-598-w22/docs/problem-set-7.pdf
 [latex7]: /teaching/eecs-598-w22/docs/problem-set-7.tex
+[ps8]: /teaching/eecs-598-w22/docs/problem-set-8.pdf
+[latex8]: /teaching/eecs-598-w22/docs/problem-set-8.tex
 [moggi]: /docs/moggi91.pdf
 [wadler]: /docs/wadler-monads.pdf
