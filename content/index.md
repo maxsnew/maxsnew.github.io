@@ -4,9 +4,20 @@ title: Max S. New
 
 <div><img src="/img/max_new2.jpg" id="selfportrait"></img></div>
 
-I am a computer scientist working on the foundations of programming
-languages. I am an assistant professor in Computer Science &
-Engineering at the [University of Michigan][umich], part of our
+## Address
+
+Room 4640\
+Bob and Betty Beyster Building\
+2260 Hayward Street\
+Ann Arbor, MI 48109
+
+maxsnew at umich.edu
+
+## About Me
+
+I am a computer scientist working on the mathematical foundations of
+programming languages. I am an assistant professor in Computer Science
+& Engineering at the [University of Michigan][umich], part of our
 [MPLSE][mplse] research community. *I am currently recruiting new
 graduate students at the University of Michigan*. If you are
 interested, feel free to e-mail me to discuss.
