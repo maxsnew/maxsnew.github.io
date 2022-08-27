@@ -1,0 +1,183 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 8: Defining functions</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Defining functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Function_.Definitions_and_.Calls%29" class="tocviewlink" data-pltdoc="x">Function Definitions and Calls</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Testing%29" class="tocviewlink" data-pltdoc="x">Testing</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Defining functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Function_.Definitions_and_.Calls%29" class="tocsubseclink" data-pltdoc="x">Function Definitions and Calls</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Concrete_syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Abstract_syntax_for_.Calls%29" class="tocsubseclink" data-pltdoc="x">Abstract syntax for Calls</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._.Making_the_call%29" class="tocsubseclink" data-pltdoc="x">Making the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span></a></td></tr><tr><td><span class="tocsublinknumber">1.4<tt>&nbsp;</tt></span><a href="#%28part._fundefs._.Defining_our_own_functions%29" class="tocsubseclink" data-pltdoc="x">Defining our own functions</a></td></tr><tr><td><span class="tocsublinknumber">1.5<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.6<tt>&nbsp;</tt></span><a href="#%28part._.Compilation%29" class="tocsubseclink" data-pltdoc="x">Compilation</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Testing%29" class="tocsubseclink" data-pltdoc="x">Testing</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.4</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 8:</span> Defining functions</h2><p>Last time we built up the infrastructure for calling functions in a manner
+that&rsquo;s compatible with the C calling convention, so that we could interact with
+functions defined in our <code>stub.rs</code> runtime.  This prompts the obvious
+generalization: can we expand our <span class="emph">source</span> language to include function
+calls too?  Could we expand it further to define our own functions?</p><h3>1<tt>&nbsp;</tt><a name="(part._.Function_.Definitions_and_.Calls)"></a>Function Definitions and Calls</h3><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><ol><li><p>Extend the source language with a new expression form for function definitions and calls</p></li><li><p>Give examples of functions we&rsquo;d like to provide, and examples of their use</p></li><li><p>Extend the abstract syntax and its semantics</p></li><li><p>Extend our transformations</p></li><li><p>Test the new expressions</p></li></ol></blockquote><h4>1.1<tt>&nbsp;</tt><a name="(part._.Concrete_syntax)"></a>Concrete syntax</h4><p> We&rsquo;ll start with concrete syntax. A
+function call is a new form of expression that starts with a function
+name and takes zero or more comma-separated expressions as arguments.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(funcalls._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28funcalls._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(funcalls._exprs)))"></a><span class="bnf-rule">&#8249;exprs&#8250;</span><span class="bnf-meta">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28funcalls._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span><span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28funcalls._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28funcalls._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span></p></blockquote><p>To account for function definitions, we need to really change our
+syntactic structure.  Our programs can&rsquo;t just be single expressions
+any longer: we add a sequence of top-level function definitions, too.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(fundefs._program)))"></a><span class="bnf-rule">&#8249;program&#8250;</span><span class="bnf-meta">:</span> 
+                <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._decls%29%29%29" data-pltdoc="x">&#8249;decls&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(fundefs._decls)))"></a><span class="bnf-rule">&#8249;decls&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._decl%29%29%29" data-pltdoc="x">&#8249;decl&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._decl%29%29%29" data-pltdoc="x">&#8249;decl&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._decls%29%29%29" data-pltdoc="x">&#8249;decls&#8250;</a></span>
+<a name="(elem._(bnf-prod._(fundefs._decl)))"></a><span class="bnf-rule">&#8249;decl&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">end</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(fundefs._ids)))"></a><span class="bnf-rule">&#8249;ids&#8250;</span><span class="bnf-meta">:</span> 
+        <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+        <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28fundefs._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span>
+<a name="(elem._(bnf-prod._(fundefs._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span></p></blockquote><p>A <a href="#%28elem._%28bnf-prod._%28fundefs._program%29%29%29" data-pltdoc="x">&#8249;program&#8250;</a> is now a list of zero or more function
+declarations, followed by a single expression that is the main result of the
+program.</p><p>For our examples, let&rsquo;s design <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max</code></span>, which takes two numeric arguments and
+returns the larger of the two.</p><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def max(x,y):
+  if x &gt;= y: x else: y
+end
+
+max(17,31)</code></span></p><p>should evaluate to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">31</code></span>.</p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Abstract_syntax_for_.Calls)"></a>Abstract syntax for Calls</h4><p>First, let&rsquo;s cover the calling side of the language.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What should the semantics of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(e1, e2, ..., en)</code></span> be?  How should
+we represent this in our <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> data definition?  What knock-on effects
+does it have for the transformation passes of our compiler?</p></blockquote><p>The first thing we might notice is that attempting to call an unknown function
+should be prohibited &#8212;<wbr></wbr> this is analogous to the scope-checking we already do
+for variable names, and should be done at the same time.  Indeed, we can
+generalize our scope-checking to a suite of <span class="emph">well-formedness</span> checks, that
+assert that the program we&rsquo;re compiling is &ldquo;put together right&rdquo;.  (These
+static checks include static type-checking, which we are not yet doing, and
+in fact many popular languages these days are focusing heavily on improving the
+precision and efficiency of their well-formedness checking as a way to improve
+programmer efficiency and correctness.)  Checking for undefined functions
+implies that we need something like an environment of known functions.  We
+don&rsquo;t yet know what that environment should contain, but at a minimum it needs
+to contain the names of the functions we support.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What other programmer mistakes should we try to catch with well-formedness
+checking?  What new mistakes are possible with function calls?</p></blockquote><p>What should happen if a programmer tries to call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(1)</code></span> or
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(1, 2, 3)</code></span>?  Certainly nothing good can happen at runtime if we
+allowed this to occur.  Fortunately, we can track enough information to prevent
+this at well-formedness time, too.  Our function environment should keep track
+of known function names and their arities.  Then we can check every function
+call expression and see whether it contains the correct number of actual
+arguments.</p><p><p>We need more examples:
+</p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Source</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Output</p></td></tr><tr><td><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(1)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Compile Error: expected 2 arguments, got 1</code></span></p></td></tr><tr><td><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max(1, 2, 3)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Compile Error: expected 2 arguments, got 3</code></span></p></td></tr><tr><td><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">unknown(1, 2)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Compile Error: unknown function 'unknown'</code></span></p></td></tr></table></p><p>To represent call expressions in our AST, we just need to keep track of the
+function name, the argument list, and any tag information:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">
+enum Exp&lt;Ann&gt; {
+  ...
+  Call(String, Vec&lt;Exp&lt;Ann&gt;&gt;, Ann),
+}</code></pre></div></div></p><p>We need to consider how our expression evaluates, which in turn means
+considering how it should normalize into sequential form.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What are the design choices here?</p></blockquote><p>Since <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::Call</code></span> expressions are compound, containing multiple subexpressions,
+they probably should normalize similar to how we normalize <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim2</code></span>
+expressions: the arguments should all be made immediate.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub enum SeqExp&lt;Ann&gt; {
+  ...
+  Call(String, Vec&lt;ImmExp&gt;, Ann),
+}</code></pre></div></div></p><p>We have at least two possible designs here, for how to normalize these
+expressions: we can choose a left-to-right or right-to-left evaluation order
+for the arguments.  For consistency with infix operators, we&rsquo;ll choose a
+left-to-right ordering.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What tiny example program, using only the expressions we have so
+far, would demonstrate the difference between these two orderings?</p></blockquote><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Extend sequentialization to handle <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::Call</code></span>.</p></blockquote><h4>1.3<tt>&nbsp;</tt><a name="(part._.Making_the_call)"></a>Making the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span></h4><p>Once we&rsquo;ve confirmed our program is well-formed, and subsequently ANFed it,
+what information do we need to retain in our compiler in order to finish the
+compilation?  Do we still need the function environment?  Not really!  Assuming
+that the function name is the same as label name that we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>, we don&rsquo;t
+need anything else but that name and the immediate arguments of the call.
+After that, we output the same calling code as when implementing <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">Print</code></span>
+above.  Remember to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> the arguments in <span class="emph">reverse order</span>, so that
+the first argument is closest to the top of the stack.</p><h4>1.4<tt>&nbsp;</tt><a name="(part._fundefs._.Defining_our_own_functions)"></a>Defining our own functions</h4><p>Now that our programs include function definitions and a main
+expression, our AST representation now grows to match:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub struct FunDecl&lt;E, Ann&gt; {
+    pub name: String,
+    pub parameters: Vec&lt;String&gt;,
+    pub body: E,
+    pub ann: Ann,
+}
+
+pub struct Prog&lt;E, Ann&gt; {
+    pub funs: Vec&lt;FunDecl&lt;E, Ann&gt;&gt;,
+    pub main: E,
+    pub ann: Ann,
+}</code></pre></div></div></p><p>Here we are abstract over annotations, as well as the type of
+expressions. This allows us to instantiate to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prog&lt;Exp&gt;</code></span> or
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prog&lt;SeqExp&gt;</code></span> to encode whether or not the expressions are in
+sequential form.</p><h4>1.5<tt>&nbsp;</tt><a name="(part._.Semantics)"></a>Semantics</h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What new semantic concerns do we have with providing our own
+definitions?</p></blockquote><p>As soon as we introduce a new form of definition into our language, we need to
+consider scoping concerns.  One possibility is to declare that earlier
+definitions can be used by later ones, but not vice versa.  This possibility is
+relatively easy to implement, but restrictive: it prevents us from having
+mutually-recursive functions.  Fortunately, because all our functions are
+statically defined, supporting mutual recursion is not all that difficult; the
+only complication is getting the well-formedness checks to work out correctly.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Do so.</p></blockquote><p>Additionally, the bodies of function definitions need to consider scope as
+well.</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def sum3(x, y, z):
+  a + b + c
+end
+
+x + 5</code></pre></div></div></p><p>This program refers to names that are not in scope: <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span>, <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c</code></span>
+are not in scope within <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sum3</code></span>, and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is not in scope outside of it.</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x): x end
+
+def f(y): y end
+
+f(3)</code></pre></div></div></p><p>Repeatedly defining functions of the same name should be problematic: which
+function is intended to be called?</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x, x): x end
+
+f(3, 4)</code></pre></div></div></p><p>Having multiple arguments of the same name should be problematic: which
+argument should be returned here?</p><h4>1.6<tt>&nbsp;</tt><a name="(part._.Compilation)"></a>Compilation</h4><p>As we mentioned in <a href="lec_function-calls_notes.html" data-pltdoc="x">Lecture 7</a>, a function body needs to
+actively participate in the call-stack in order to be usable.  To do that, it
+must (1) save the previous base pointer <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> onto the stack, (2) copy the
+current stack pointer <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>, and (3) reserve space for its
+local variables by decrementing <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>.  At the end of the function, it must
+undo those steps by (1) restoring <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> to its previous value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>,
+(2) popping the saved base-pointer value back into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>, and (3) returning
+to the caller.</p><ul><li><p>At the start of the function:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push RBP          ; save (previous, caller's) RBP on stack
+push ...          ; save other callee-save variables on stack
+mov RBP, RSP      ; make current RSP the new RBP
+sub RSP, 8*N      ; "allocate space" for N local variables (possibly with padding for alignment)</code></pre></div></div></p></li><li><p>At the end of the function</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RSP, RBP      ; restore value of RSP to that just before call
+                  ; now, value at [RSP] is caller's (saved) RBP
+pop ...           ; restore other callee-save variables on stack
+pop RBP           ; so: restore caller's RBP from stack [RSP]
+ret               ; return to caller</code></pre></div></div></p></li></ul><p><p>Between that prologue and epilogue, the body of the function basically is just
+a normal expression, whose value winds up in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span> as always.  However, the
+crucial difference is that the body of a function can use its arguments while
+evaluating&#8212;<wbr></wbr>that&rsquo;s the whole point of passing arguments to a function!  This
+is similar in spirit to handling let-bound variables: we just need to keep
+track of more mappings from names to stack locations.  However the details are
+quite different: rather than looking <span class="emph">above</span> <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> (i.e. stack address
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP - 8 * i</code></span> contains the <span type="math/tex" style="white-space: pre;" class="math-tex">\(i^{th}\)</span> local variable), we need to look
+<span class="emph">below</span> <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>, where the arguments were pushed by our caller.  There&rsquo;s
+a bit of a gap, though: at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span> itself is the <span class="emph">saved</span> caller&rsquo;s value
+of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>, and at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP + 8</code></span> is the return address of our function.  So
+</p><ul><li><p>In a stack-only calling convention, the zeroth argument to our function
+can be found at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP + 16</code></span>, and the <span type="math/tex" style="white-space: pre;" class="math-tex">\(i^{th}\)</span> argument can be found at
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP + 8 * (i + 2)</code></span>.</p></li><li><p>In the x64 calling convention, the first six arguments go in registers,
+the <span class="emph">seventh</span> argument can be found at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP + 16</code></span>, and the <span type="math/tex" style="white-space: pre;" class="math-tex">\((i +
+6)^{th}\)</span> argument can be found at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP + 8 * (i + 2)</code></span>.</p></li></ul></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Complete the remaining stages of the pipeline: enhance
+sequentialize to work over programs; generate valid assembly output
+for each of our functions using the calling convention we discussed
+last time; and write test programs to confirm that the scoping of
+functions works properly.  Can you support recursion?  Mutual
+recursion?</p></blockquote><h3>2<tt>&nbsp;</tt><a name="(part._.Testing)"></a>Testing</h3><p>Now that we have functions and builtins, especially ones that can produce
+output, we&rsquo;re gaining the ability to write non-trivial test programs.  At this
+point, it starts becoming more useful to write integration tests, namely entire
+programs in our language that we run through the entire compiler pipeline and
+execute.  Unit tests still have their place: it&rsquo;s very easy to make a tiny
+mistake somewhere in the compiler and produce bizarre or inexplicable output.
+Narrowing down the cause of the error is tricky, and requires careful attention
+to each stage of our pipeline.</p><p>Additionally, now that we&rsquo;re manipulating the stack in earnest, we
+should be particularly careful that we conform to the calling
+convention.  <span style="font-weight: bold"><a href="http://valgrind.org/">Valgrind</a></span> is a
+tool that&rsquo;s designed to help check such issues, though unfortunately
+no longer available on Mac OS X.  Once you&rsquo;ve compiled
+<code>output/foo.run</code> to produce an executable, executing
+<code>valgrind output/foo.run</code> will run your program within a
+sandboxed environment that can check for common mistakes in the
+calling convention.  A clean valgrind run will report no errors.
+Interpreting valgrind errors can be tricky, but a useful strategy (as
+always) is to minimize the input program until there&rsquo;s hardly anything
+left, and removing anything else seems to make the problem disappear.
+At that point, start diving into the compiler phases that influence
+that output, and write unit tests for them.</p><a name="(part._(gentag._17._lecturefunction-defs))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>

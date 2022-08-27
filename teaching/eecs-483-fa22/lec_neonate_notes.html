@@ -1,0 +1,167 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 2: A First Compiler -- Neonate + x86 Basics</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 2:</span> A First Compiler &ndash; Neonate +<span class="mywbr"> &nbsp;</span> x86 Basics</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Big_.Picture%29" class="tocviewlink" data-pltdoc="x">The Big Picture</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.The_.Wrapper%29" class="tocviewlink" data-pltdoc="x">The Wrapper</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Hello__x64%29" class="tocviewlink" data-pltdoc="x">Hello, x64</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Hello__nasm%29" class="tocviewlink" data-pltdoc="x">Hello, <code>nasm</code></a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Hello__.Compiler%29" class="tocviewlink" data-pltdoc="x">Hello, Compiler</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._x86-64_.Basics%29" class="tocviewlink" data-pltdoc="x">x86-<wbr></wbr>64 Basics</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 2:</span> A First Compiler &ndash; Neonate +<span class="mywbr"> &nbsp;</span> x86 Basics</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Big_.Picture%29" class="tocsubseclink" data-pltdoc="x">The Big Picture</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.The_.Wrapper%29" class="tocsubseclink" data-pltdoc="x">The Wrapper</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Hello__x64%29" class="tocsubseclink" data-pltdoc="x">Hello, x64</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Hello__nasm%29" class="tocsubseclink" data-pltdoc="x">Hello, <code>nasm</code></a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Hello__.Compiler%29" class="tocsubseclink" data-pltdoc="x">Hello, Compiler</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._x86-64_.Basics%29" class="tocsubseclink" data-pltdoc="x">x86-<wbr></wbr>64 Basics</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.4</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 2:</span> A First Compiler &ndash; Neonate + x86 Basics</h2><p>Today we&rsquo;re going to implement a compiler.  It will be called Neonate, because
+it&rsquo;s fun to name things and the name will fit a theme in future weeks.</p><p>It&rsquo;s not going to be terrifically useful, as it will only compile a very small
+language &#8212;<wbr></wbr> integers.  That is, it will take a user program (a number), and
+create an executable binary that prints the number.  There are no files in
+this repository because the point of the lab is for you to see how this is
+built up from scratch.  That way, you&rsquo;ll understand the infrastructure that
+future assignments&rsquo; support code will use.</p><h3>1<tt>&nbsp;</tt><a name="(part._.The_.Big_.Picture)"></a>The Big Picture</h3><p>The heart of each compiler we write will be a Rust program that takes an
+input program and generates assembly code.  That leaves open a few questions:</p><ul><li><p>How will the input program be handed to, and represented in, Rust?</p></li><li><p>How will the generated assembly code be run?</p></li></ul><p>Our answer to the first question is going to be simple for today: we&rsquo;ll expect
+that all programs are files containing a single integer, so there&rsquo;s little
+&#8220;front-end&#8221; for the compiler to consider.  Most of this lab is about the
+second question &#8212;<wbr></wbr> how we take our generated assembly and meaningfully run it
+while avoiding both (a) the feeling that there&rsquo;s too much magic going on,
+and (b) getting bogged down in system-level details that don&rsquo;t enlighten us
+about compilers.</p><h3>2<tt>&nbsp;</tt><a name="(part._.The_.Wrapper)"></a>The Wrapper</h3><p>(The idea here is directly taken from <a href="http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf">Abdulaziz
+Ghuloum</a>).</p><p>Our model for the code we generate is that it will start from a C-style
+function call.  This allows us to do a few things:</p><ul><li><p>We can use a Rust program as the wrapper around our code, which makes it
+somewhat more cross-platform than it would be otherwise</p></li><li><p>We can defer some details to our Rust wrapper that we want to skip or leave
+until later</p></li></ul><p>So, our wrapper will be a Rust program <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span> with a traditional main that calls a
+function that we will define with our generated code:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">#[link(name = "compiled_code")]
+extern "C" {
+    fn start_here() -&gt; i64;
+}
+
+fn main() {
+    let output = unsafe { start_here() };
+    println!("Assembly code returned: {}", output);
+}</code></pre></div></div></p><p><p>So right now, our compiled program had better return an integer, and
+our wrapper will handle printing it out for us. The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">extern</code></span>
+block tells the rust compiler that we are expecting
+</p><ul><li><p>in a library called "compiled_code" <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">#[link(name = "compiled_code")]</code></span>...</p></li><li><p>there will be some functions using the C-calling convention <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">extern "C"</code></span>...</p></li><li><p>specifically, one called "start_here" which expects no arguments and returns an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">i64</code></span>.</p></li></ul></p><p>The main function is mostly normal, except it uses an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">unsafe</code></span>
+block. Rust as a language was designed to have nice programming
+properties like memory safety, but when we call external libraries we
+implemented in assembly code, the compiler can no longer guarantee
+that <span class="emph">those</span> libraries respect Rust&rsquo;s invariants. So when we call
+external functions, we have to wrap them in an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">unsafe</code></span> block to
+tell the Rust compiler we are willing to accept the risks of stepping
+outside the nice guarantees of safe Rust. For this course, our
+compiler will never use unsafe code, but our runtime system will use
+it a great deal because it is interacting directly with our compiled
+assembly code.</p><p>If we try to compile <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span> now we get an error.</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ rustc stub.rs
+...
+  note: ld: library not found for -lcompiled_code</code></pre></div></div></p><p>This says that the linker couldn&rsquo;t find a library with the name
+"compiled_code". So let&rsquo;s implement one!</p><h3>3<tt>&nbsp;</tt><a name="(part._.Hello__x64)"></a>Hello, x64</h3><p><p>Our next goal is to:
+</p><ul><li><p>Write an assembly program that defines <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span></p></li><li><p>Link that program with <code>stub.rs</code> and create an executable</p></li></ul></p><p>In order to write assembly, we need to pick a syntax and an instruction set.
+We&rsquo;re going to generate 64-bit x64 assembly, and use the so-called Intel
+syntax (there&rsquo;s also an AT&amp;T syntax, for those curious), because
+<a href="http://www.cs.virginia.edu/~evans/cs216/guides/x86.html">I like a particular guide</a>
+that uses the Intel syntax, and because it works with the particular assembler
+we&rsquo;ll use.</p><p>Here&rsquo;s a very simple assembly program, matching the above constraints,
+that will act like a C function of no arguments and return a constant
+number (<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">37</code></span>) as the return value:<span class="NoteBox"><span class="NoteContent">For Mac OSX, you will need
+to write <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">_start_here</code></span> with an extra underscore</span></span></p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">        section .text
+        global start_here
+start_here:
+        mov rax, 37
+        ret</code></pre></div></div></p><p>The pieces mean, line by line:</p><ul><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text</code></span> &#8212;<wbr></wbr> Here comes some code, in text form!</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">global start_here</code></span> &#8212;<wbr></wbr> This assembly code defines a
+globally-accessible symbol called <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>.  This is what
+makes it so that when we generate an object file later, the linker will know
+what names come from where.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:</code></span> &#8212;<wbr></wbr> Here&rsquo;s where the code for this symbol starts.  If
+other code jumps to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>, this is where it begins.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, 37</code></span> &#8212;<wbr></wbr> Take the constant number 37 and put it in the register
+called <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>.  This register is the one that compiled C programs expect to
+find return values in, so we should put our &#8220;answer&#8221; there.</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span> &#8212;<wbr></wbr> Do mechanics related to managing the stack which we will talk about
+in much more detail later, then jump to wherever the caller of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span> left off.</p></li></ul><p>We can put this in a file called <code>compiled_code.s</code> (<code>.s</code> is a typical extension for
+assembly code), and then we just need to know how to assemble and link it with
+the main we wrote.</p><h3>4<tt>&nbsp;</tt><a name="(part._.Hello__nasm)"></a>Hello, <code>nasm</code></h3><p>We will be using a program called <a href="http://www.nasm.us/">nasm</a> as our
+assembler, because it works well across a few platforms, and is simple to use.
+The main way we will use it is to take assembly (<code>.s</code>) files and turn them
+into object (<code>.o</code>) files. The command we&rsquo;ll use to build with nasm (in Linux) is:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ nasm -f elf64 -o compiled_code.o compiled_code.s</code></pre></div></div></p><p>This creates a file called <code>compiled_code.o</code> in
+<a href="https://en.wikipedia.org/wiki/Executable_and_Linkable_Format">Executable and Linkable Format</a>.
+We won&rsquo;t go into detail about this binary structure.  For our
+purposes, it&rsquo;s simply a version of the assembly we wrote that our
+particular operating system understands.</p><p>If you are on OSX, you can use <code>-f macho64</code> rather than <code>-f
+elf64</code>, which will produce an OSX-compatible object file. If you are
+on Windows, you can try <code>-f win64</code> and share on Piazza if it
+works.</p><p>Next, to link with Rust code, we need to turn our object file into the
+type of file rustc expects for libraries. We will use a static library
+so that our assembled code is put directly into the executable
+file. On Mac and Linux this means producing an archive file
+<code>libcompiled_code.a</code> using the following command:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ar r libcompiled_code.a compiled_code.o</code></pre></div></div></p><p>Finally, we need to compile our rust file while informing the compiler
+to look for libraries in the current directory (<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">-L</code></span>):</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ rustc stub.rs -L .</code></pre></div></div></p><p>This builds an executable we can run
+<div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ ./our_code
+37</code></pre></div></div></p><h3>5<tt>&nbsp;</tt><a name="(part._.Hello__.Compiler)"></a>Hello, Compiler</h3><p>With this pipeline in place, the only step left is to write a Rust program
+that can generate assembly programs.  Then we can automate the process and get
+a pipeline from user program all the way to executable.</p><p>A very simple compiler might just take the name of a file, and output the
+compiled assembly code on standard output.  Let&rsquo;s try that; here&rsquo;s a simple
+<code>main.rs</code> that takes a file as a command line argument, expects it to
+contain a single integer on one line, and generates the corresponding assembly
+code:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type AST = i64;
+
+fn main() {
+    use std::fs;
+
+    let args: Vec&lt;String&gt; = std::env::args().collect(); // get the program arguments as a Vec&lt;String&gt;
+    let inp = fs::read_to_string(&amp;args[1]).unwrap();    // read arg[1] into a String
+    let num = parse(&amp;inp).unwrap();
+    print!("{}", compile(num));
+}
+
+fn parse(s: &amp;str) -&gt; Result&lt;AST, String&gt; {
+    match i64::from_str_radix(s.trim(), 10) { // .trim() removes leading and trailing whitespace
+        Ok(x) =&gt; Ok(x),
+        Err(e) =&gt; Err(e.to_string())
+    }
+}
+
+fn compile(n: AST) -&gt; String { // Add _ to the front of the label for Mac OS X
+    format!("\
+        section .text
+        global start_here
+start_here:
+        mov rax, {}
+        ret\n",
+    n)
+}</code></pre></div></div></p><p>Make a new cargo project and put this into <code>src/main.rs</code>, then
+create another file <code>2021.int</code> that contains just the number
+2021, then run:</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ cargo run 2021.int
+...
+        section .text
+        global start_here
+start_here:
+        mov rax, 2021
+        ret</code></pre></div></div></p><p>How exciting!  We can redirect the output to a file, and get an entire
+pipeline of compilation to work out (assuming <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span> is in
+the same directory):</p><p><div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">$ cargo run 2021.int &gt; 2021.s
+$ nasm -f elf64 -o 2021.o 2021.s
+$ ar r libcompiled_code.a 2021.o
+$ rustc stub.rs -L . -o 2021.run
+$ ./2021.run
+Assembly returned: 2021</code></pre></div></div></p><p>Then we can use Makefiles or custom scripts to pipe these all together.</p><p>Of course, this is &ldquo;just&rdquo; a bunch of boilerplate.  It got us to the point
+where we have a Rust program that&rsquo;s defining our translation from input
+program to assembly code.  Our input programs are pretty boring, so those will
+need to get more sophisticated, and correspondingly the function <code>compile</code>
+will need to become more impressive.  That&rsquo;s where our focus will be in the
+coming weeks.</p><h3>6<tt>&nbsp;</tt><a name="(part._x86-64_.Basics)"></a>x86-64 Basics</h3><p><p>x86-64 has 16 64-bit registers that all can hold a 64-bit value:
+</p><ul><li><p>rax</p></li><li><p>rcx</p></li><li><p>rdx</p></li><li><p>rbx</p></li><li><p>rsp</p></li><li><p>rbp</p></li><li><p>rsi</p></li><li><p>rdi</p></li><li><p>r8-r15</p></li></ul></p><p>We will learn more about them as we dive deeper into the stack and
+calling conventions, but for today, we just need to know that
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> is where return values go in the C calling convention we
+use to interface with Rust.</p><p>We also discussed two instructions in more depth: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> and
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>.  The basic semantics of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov x, y</code></span> are that it moves
+whatever is in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">y</code></span> to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">x</code></span>. x and y might be registers, memory
+references or immediates. Only the following 5 combinations make
+sense:</p><ul><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov reg, reg</code></span> move from a register to another register</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov reg, imm64</code></span> move a 64-bit integer value into a register</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov reg, mem</code></span> load from memory into a register</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov mem, reg</code></span> store the contents of a register at a memory location</p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov mem, imm32</code></span> store a 32-bit integer value at a memory location</p></li></ul><p>Note that in particular we cannot directly move from one memory
+location into another.</p><p>Next, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add x, y</code></span> acts like the <span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">+=</code></span> operation, its semantics is
+to put <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">x + y</code></span> in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">x</code></span>. The combinations allowed for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>
+are quite similar to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> with one notable exception:</p><ul><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add reg, reg</code></span></p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add reg, imm32</code></span> <span class="emph">add a 32-bit integer value to a register value</span></p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov reg, mem</code></span></p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov mem, reg</code></span></p></li><li><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov mem, imm32</code></span></p></li></ul><p><span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> only allows for a 32-bit integer immediate to be added to a
+register. In fact, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> is unique among the instructions we will
+use in that it allows for a full 64-bit immediate.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
