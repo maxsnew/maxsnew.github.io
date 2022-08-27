@@ -70,6 +70,9 @@ site = do
     match "teaching/eecs-483-fa21/*" $ do
       route idRoute
       compile copyFileCompiler
+    match "teaching/eecs-483-fa22/*" $ do
+      route idRoute
+      compile copyFileCompiler
 
     match "teaching/eecs-598-w22/index.md" $ textPost classTemplate
 
