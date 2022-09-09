@@ -29,6 +29,13 @@
     Preprint: http://janvitek.org/pubs/jfp18.pdf
     Official Link: https://www.cambridge.org/core/journals/journal-of-functional-programming/article/how-to-evaluate-the-performance-of-gradual-type-systems/DC765724C52A3A462F16C7FB3AD18697/share/a77b5d3395e8eb40f0312080e5bdc1c654632650
 
+- title: Relative Monads in Call-by-push-value as an Abstraction of Stack-Based Effects
+  authors: Max S. New
+  venue: HOPE 2022
+  abstract: True
+  links:
+    Extended Abstract: "docs/cbpv-relative-monads.pdf"
+
 - title: From Call-by-push-value to Stack-based TAL?
   authors: Max S. New
   venue: LOLA 2019
