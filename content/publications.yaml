@@ -35,6 +35,7 @@
   abstract: True
   links:
     Extended Abstract: "docs/cbpv-relative-monads.pdf"
+    slides: "docs/HOPE-2022-cbpv-relative-monads-slides.pdf"
 
 - title: From Call-by-push-value to Stack-based TAL?
   authors: Max S. New
