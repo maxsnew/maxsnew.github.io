@@ -134,6 +134,7 @@ psCompiler = do
 -- | Publications
 data Publication = Publication { pTitle :: Text
                                , pAuthors :: Text
+                               , pId :: Text
                                , pVenue :: Maybe Text
                                , pLinks :: Map Text Text
                                , pManuscript :: Bool
@@ -146,6 +147,7 @@ instance FromJSON Publication where
     Publication      <$>
     v .: "title"     <*>
     v .: "authors"   <*>
+    v .: "id"        <*>
     v .:? "venue"    <*>
     (withDefault mempty $ v .:? "links")      <*>
     (withDefault False  $ v .:? "manuscript") <*>
@@ -169,6 +171,7 @@ linkContext =  pField "url" snd
 
 pubContext :: Context Publication
 pubContext =  pField "title" pTitle
+           <> pField "id" pId
            <> pField "authors" pAuthors
            <> mField "venue" pVenue
            <> listFieldWith "links" linkContext (return . sequenceA . fmap (Map.toList . pLinks))

@@ -1,4 +1,5 @@
 - title: A Semantic Foundation for Sound Gradual Typing
+  id: thesis
   authors: Max S. New
   venue: PhD Thesis, Northeastern University, 2020
   links:
@@ -6,6 +7,7 @@
   manuscript: True
 
 - title: Call-by-name Gradual Type Theory
+  id: lmcs22
   authors: Max S. New, Daniel R. Licata
   venue: Logical Methods in Computer Science, Volume 16, Issue 1
   links:
@@ -14,6 +16,7 @@
   note: subsumes earlier conference paper of the same name published at FSCD
 
 - title: "Graduality and Parametricity: Together Again for the First Time"
+  id: popl20
   authors: Max S. New, Dustin Jamner, Amal Ahmed
   venue: POPL 2020
   links:
@@ -22,6 +25,7 @@
     Technical Appendix: http://www.ccs.neu.edu/home/amal/papers/gradparam-tr.pdf
 
 - title: How to evaluate the performance of gradual type systems
+  id: jfp19
   authors: Ben Greenman, Asumu Takikawa, Max S. New, Daniel Feltey,
            Robert Bruce Findler, Jan Vitek, Matthias Felleisen
   venue: Journal of Functional Programming, Volume 29, 2019
@@ -30,6 +34,7 @@
     Official Link: https://www.cambridge.org/core/journals/journal-of-functional-programming/article/how-to-evaluate-the-performance-of-gradual-type-systems/DC765724C52A3A462F16C7FB3AD18697/share/a77b5d3395e8eb40f0312080e5bdc1c654632650
 
 - title: Relative Monads in Call-by-push-value as an Abstraction of Stack-Based Effects
+  id: hope22
   authors: Max S. New
   venue: HOPE 2022
   abstract: True
@@ -38,6 +43,7 @@
     slides: "docs/HOPE-2022-cbpv-relative-monads-slides.pdf"
 
 - title: From Call-by-push-value to Stack-based TAL?
+  id: lola19
   authors: Max S. New
   venue: LOLA 2019
   abstract: True
@@ -45,12 +51,14 @@
     Extended Abstract: "docs/cbpv-stal-lola-2019.pdf"
 
 - title: Gradual Type Theory
+  id: popl19
   authors: Max S. New, Daniel R. Licata, Amal Ahmed
   venue: POPL 2019
   links:
     Official Link: https://dl.acm.org/citation.cfm?id=3290328
     Extended Version: https://arxiv.org/abs/1811.02440
 - title: Graduality from Embedding-Projection Pairs
+  id: icfp18
   authors: Max S. New, Amal Ahmed
   venue: ICFP 2018
   links:
@@ -59,6 +67,7 @@
     Conference Talk: "https://www.youtube.com/watch?v=0GmILGJ1yvA"
 
 - title: Call-by-name Gradual Type Theory
+  id: fscd18
   authors: Max S. New, Daniel R. Licata
   venue: FSCD 2018
   links:
@@ -66,6 +75,7 @@
   note: subsumed by journal article of the same name published in LMCS    
 
 - title: FabULous Interoperability for ML and a Linear Language
+  id: fossacs18
   authors: Gabriel Scherer, Max S. New, Nick Rioux and Amal Ahmed
   venue: FoSSaCS 2018
   links:
@@ -73,12 +83,14 @@
     Supplementary material: docs/fabul-supp.pdf
   
 - title: Fair enumeration combinators
+  id: jfp17
   authors: Max S. New, Burke Fetscher, Robert Bruce Findler, Jay McCarthy
   venue: Journal of Functional Programming, Volume 27, 2017
   links:
     Official Link: https://www.cambridge.org/core/journals/journal-of-functional-programming/article/fair-enumeration-combinators/CCEC7CBA286B2F792B073586EFCD6F3A
 
 - title: Fully Abstract Compilation via Universal Embedding
+  id: icfp16
   authors: Max S. New, William J. Bowman, Amal Ahmed
   venue: ICFP 2016
   links:
@@ -88,24 +100,28 @@
     Conference talk: "https://www.youtube.com/watch?v=Hylji4ezQHE"
 
 - title: "Oh Lord, Please Don't Let Contracts be Misunderstood (Functional Pearl)"
+  id: icfp16
   authors: Christos Dimoulas, Max S. New, Robert Bruce Findler, Matthias Felleisen
   venue: ICFP 2016
   links:
     Official Link: http://dl.acm.org/citation.cfm?id=2951930
 
 - title: A Coq Library For Internal Verification of Running-Times
+  id: flops16
   authors: Jay McCarthy, Burke Fetscher, Max New, Daniel Feltey, Robert Bruce Findler
   venue: FLOPS 2016
   links:
     Repository: https://github.com/rfindler/395-2013
 
 - title: Is Sound Gradual Typing Dead?
+  id: popl16
   authors: Asumu Takikawa, Daniel Feltey, Ben Greenman, Max S. New, Jan Vitek, Matthias Felleisen
   venue: POPL 2016
   links:
     Official Link: "http://dl.acm.org/citation.cfm?id=2837630"
 
 - title: Gradual Type Precision as Retraction
+  id: poplsrc17
   authors: Max S. New
   venue: POPL 2017 Student Research Competition
   links:
