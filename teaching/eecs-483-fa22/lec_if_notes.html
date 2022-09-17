@@ -169,10 +169,10 @@ maintaining our counter state along with how we actually implement the
 code generation. Additionally using a counter like this makes testing
 more brittle since the names generated would be dependent on when
 exactly we are incrementing the counter and so if we made small
-changes our tests would break even though there is no semantic change.</p><h5>1.4.3<tt>&nbsp;</tt><a name="(part._if._.Approach_2__.Tagging)"></a>Approach 2: Tagging</h5><p>In the last assignment, recall that our definition of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> was slightly
-more complicated than that presented above: it was parameterized by an
-arbitrary type, allowing us to stash any data we wanted at the nodes of our
-AST:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp&lt;Ann&gt; {
+changes our tests would break even though there is no semantic change.</p><h5>1.4.3<tt>&nbsp;</tt><a name="(part._if._.Approach_2__.Tagging)"></a>Approach 2: Tagging</h5><p>In the Adder assignment, the definition of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> is slightly more
+complicated than that presented above: it is parameterized by an
+arbitrary type, allowing us to stash any data we wanted at the nodes
+of our AST:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Exp&lt;Ann&gt; {
     Num(i64, Ann),
     Prim1(Prim1, Box&lt;Exp&lt;Ann&gt;&gt;, Ann),
     Var(String, Ann),
@@ -181,11 +181,12 @@ AST:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceL
           ann: Ann
         }
     If { cond: Box&lt;Exp&lt;Ann&gt;&gt;, thn: Box&lt;Exp&lt;Ann&gt;&gt;, els: Box&lt;Exp&lt;Ann&gt;&gt;, ann: Ann }
-}</code></pre></div></div></p><p>We originally used this flexibility to tag every expression with its
-source location information <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp&lt;Span&gt;</code></span>, so that we could give
-precisely-located error messages when scoping problems arose.  But
-this parameter is more flexible than that: we might consider walking
-the expression and giving every node a unique identifier:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type Tag = int
+}</code></pre></div></div></p><p>The adder compiler uses this flexibility to tag every expression with
+its source location information <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp&lt;Span&gt;</code></span>, so that we can give
+precisely-located error messages. But this parameter is more flexible
+than that: we might consider walking the expression and giving every
+node a unique identifier:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type Tag = u64;
+
 fn tag&lt;Ann&gt;(e: &amp;Exp&lt;Ann&gt;) -&gt; Exp&lt;Tag&gt; {
    tag_help(e, &amp;mut 0)
 }
@@ -195,7 +196,7 @@ fn tag_help&lt;Ann&gt;(e: &amp;Exp&lt;Ann&gt;, counter: &amp;mut Tag) -&gt; Exp&
     match e {
         Exp::Prim1(op, e, _) =&gt; Exp::Prim1(*op, Box::new(tag_help(e, counter)), cur_tag),
         ...
-        }
+    }
 }</code></pre></div></div></p><p>By doing this we separate the task of generating names from our other
 compilation tasks. It also makes other compiler passes easier to test
 as their dependence on generated names is now determined by the
