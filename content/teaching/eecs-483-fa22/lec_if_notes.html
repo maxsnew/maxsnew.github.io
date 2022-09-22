@@ -201,7 +201,7 @@ fn tag_help&lt;Ann&gt;(e: &amp;Exp&lt;Ann&gt;, counter: &amp;mut Tag) -&gt; Exp&
 compilation tasks. It also makes other compiler passes easier to test
 as their dependence on generated names is now determined by the
 annotations on the input.</p><h5>1.4.4<tt>&nbsp;</tt><a name="(part._if._.Putting_it_together__compiling_if-expressions)"></a>Putting it together: compiling if-expressions</h5><p>If we use our decorated <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp&lt;Tag&gt;</code></span> definition and our <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tag</code></span> function
-above, then compiling if-expressions becomes:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile_with_env&lt;'exp&gt;(e: &amp;'exp Expr&lt;Span&gt;, mut env: Vec&lt;(&amp;'exp str, i32)&gt;) -&gt; Result&lt;Vec&lt;Instr&gt;, CompileErr&gt; {
+above, then compiling if-expressions becomes:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile_with_env&lt;'exp&gt;(e: &amp;'exp Expr&lt;Tag&gt;, mut env: Vec&lt;(&amp;'exp str, i32)&gt;) -&gt; Result&lt;Vec&lt;Instr&gt;, CompileErr&gt; {
     match e {
         Exp::If { cond, thn, els, ann } =&gt; {
             let else_lab = format!("if_false#{}", ann);
