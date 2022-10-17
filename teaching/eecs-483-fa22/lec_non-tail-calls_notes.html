@@ -1,0 +1,172 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 9: Global Function Definitions and Non-tail Calls</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 9:</span> Global Function Definitions and Non-<wbr></wbr>tail Calls</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Non-.Tail_.Calls_and_the_.Stack%29" class="tocviewlink" data-pltdoc="x">Non-<wbr></wbr>Tail Calls and the Stack</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Local_.Function_.Definitions_and_.Lambda_.Lifting%29" class="tocviewlink" data-pltdoc="x">Local Function Definitions and Lambda Lifting</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 9:</span> Global Function Definitions and Non-<wbr></wbr>tail Calls</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Non-.Tail_.Calls_and_the_.Stack%29" class="tocsubseclink" data-pltdoc="x">Non-<wbr></wbr>Tail Calls and the Stack</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Snake_.Calling_.Convention_v0%29" class="tocsubseclink" data-pltdoc="x">Snake Calling Convention v0</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Local_.Function_.Definitions_and_.Lambda_.Lifting%29" class="tocsubseclink" data-pltdoc="x">Local Function Definitions and Lambda Lifting</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.6</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 9:</span> Global Function Definitions and Non-tail Calls</h2><p>We&rsquo;ve seen how to call into Rust code using the System V AMD64 calling
+convention, and we&rsquo;ve seen how code using only tail calls can be
+compiled directly to efficient assembly using only jumps. Today we
+will extend our source language to include non-tail calls, and we will
+introduce our own internal calling convention</p><h3>1<tt>&nbsp;</tt><a name="(part._.Non-.Tail_.Calls_and_the_.Stack)"></a>Non-Tail Calls and the Stack</h3><p>Tail calls were great because they could be compiled efficiently as a
+jump, but most calls in a program aren&rsquo;t that simple. In a tail call,
+we call another function and produce whatever value it produced,
+whereas in a non-tail call, we use some other function as a
+sub-procedure to produce some intermediate value that we then use for
+some other purpose. For instance consider the following program which
+for simplicity we&rsquo;ve already written in sequential form:</p><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def max(x,y):
+  let b = x &gt;= y in
+  if b: x else: y
+in
+let z = max(10, 4) in
+let q = max(3, 8) in
+z * q</code></span></p><p>Here we use <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max</code></span> as a convenient sub-procedure to compute
+the maximum of two numbers that we then use multiple times with
+different inputs in the main expression of our program. If we think
+about how we will compile these expressions something stands out. We
+store local variables and arguments on the stack, so <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span>
+and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">q</code></span> will be placed at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RSP - 8 * 1], [RSP - 8 *
+2]</code></span> respectively, but also in the body of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max</code></span> we place
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> using the same offsets: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RSP
+- 8 * 1], [RSP - 8 * 2]</code></span>. So if whenever we make a call we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp</code></span>
+into the code for <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">max</code></span>, won&rsquo;t our local variables be
+overwritten?</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>How can we ensure that the variables <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x,y</code></span> don&rsquo;t overwrite the values of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z,q</code></span>?</p></blockquote><p>Well notice that while the literal code for the address is the same,
+the address <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RSP - 8 * n]</code></span> is <span class="emph">relative to</span> the value of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span>. This is the difference betweeen a <span class="emph">local variable</span> and
+a <span class="emph">global variable</span>, which would have a fixed globally known
+address in memory. So to implement a function call, we need to teach
+our functions how to <span class="emph">share</span> the memory allocated to the
+process. If we recall what the stack looks like:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_4.png" alt="image" width="430.26953125" height="366.0"/></p></p><p>The stack pointer <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> points to the base of our current stack
+frame, which is our current return address. Below that (higher
+addresses) we have our caller&rsquo;s stack frames, which we are careful not
+to overwrite. In our stack frame we store our local variables, but
+above that we have free space. When we make a non-tail call, we will
+ensure that the base of the callee&rsquo;s stack frame is above all of our
+local variables, and so if the callee follows our stack protocol, it
+will be sure not to overwrite any of our stack frame. Additionally, we
+need to provide a new return address, which will be stored at the base
+of the callee&rsquo;s stack frame: an address back to <span class="emph">our</span> code so
+that when the callee returns the code after the call will execute.</p><p>So for example we can compile the above code as follows:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max:
+    ;; as previously
+start_here:
+    mov [RSP - 8 * 2], 20 ;; store the first argument (10)
+    mov [RSP - 8 * 3], 8  ;; store the second argument (4)
+    call max              ;; push return_addr_1 and jump to max
+return_addr_1:
+    mov [RSP - 8 * 1], RAX ;; store the result in z
+    mov [RSP - 8 * 3], 6   ;; store the first argument (3)
+    mov [RSP - 8 * 4], 16  ;; store the second argument (8)
+    sub RSP, 8             ;; move RSP so as not to overwrite our local variable z
+    call max
+return_addr_2:
+    add RSP, 8
+    mov [RSP - 8 * 2], RAX ;; store the result in q
+    mov RAX, [RSP - 8 * 1] ;; load z
+    add RAX, [RSP - 8 * 2] ;; multiply z * q
+    ret                    ;; return the result</code></pre></div></div></p><p>At the beginning of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>, the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> is pointing to the
+return address from our Rust <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span> function. We then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> the two arguments onto the stack and call <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max</code></span>, when we start executing <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max</code></span> the stack looks like</p><p>Let&rsquo;s step through what the stack looks like at each point.</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_5.png" alt="image" width="377.025390625" height="446.0"/></p></p><p>That is, the stack pointer is pointing to the new return address,
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">return_addr_1</code></span> that we just pushed, and the implementation of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max</code></span> can freely use the space above it. Then when <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max</code></span>
+returns, we will resume at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">return_addr_1</code></span>. Note that we don&rsquo;t
+actually need to include the labels <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">return_addr_1</code></span> and
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">return_addr_2</code></span> in the assembly program, the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>
+instruction will push the next address of the next instruction onto
+the stack even if it doesn&rsquo;t have a label. We are just including them
+to be explicit.</p><p>The second time we make a call to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max</code></span>, we need to make sure that
+when we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> we don&rsquo;t overwrite our new local variable
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span>, so before we subtract from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> so that when we
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>, the base of the callee&rsquo;s stack frame is entirely above the
+caller&rsquo;s stack frame. Then upon entry into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">max</code></span> the second time, the stack looks like this:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_6.png" alt="image" width="377.025390625" height="486.0"/></p></p><p>So this leads us to the general case for how to compile a non-tail
+call. Say we have M local variables and we are calling a function
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> with N arguments <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x0,x1,...</code></span>. Then before we start the call the stack looks like</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_7.png" alt="image" width="377.025390625" height="446.0"/></p></p><p>Then we should first <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> all of the arguments into the space
+above our stack frame:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_8.png" alt="image" width="377.025390625" height="646.0"/></p></p><p>Then we should <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span> from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> to put it at the right spot so
+that a <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> will push the return address to the right place:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_9.png" alt="image" width="377.025390625" height="646.0"/></p></p><p>And then we execute the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instruction, making sure to
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> back to RSP so it returns to its original place at the base
+of our stack frame. In code, this means a call should be compiled as
+follows:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [RSP - 8 * (M + 2 + 0)], arg[0]
+mov [RSP - 8 * (M + 2 + 1)], arg[1]
+...
+mov [RSP - 8 * (M + 2 + N - 1)], arg[N - 1]
+sub RSP, 8 * M
+call f
+add RSP, 8 * M</code></pre></div></div></p><h4>1.1<tt>&nbsp;</tt><a name="(part._.Snake_.Calling_.Convention_v0)"></a>Snake Calling Convention v0</h4><p>Let&rsquo;s codify this approach to compiling function calls into a more
+formal specification. We&rsquo;ll call this the Snake Calling Convention v0,
+as it&rsquo;s the way we will make internal function calls as opposed to the
+System V calling convention we use when calling into Rust.</p><p><p>To call a function with N variables:
+</p><ul><li><p>Upon entry, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> should be at an address divisible by <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">16</code></span> and point to the return address.</p></li><li><p>The arguments (each 64-bits) will be placed in order in decreasing addresses from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> with the first argument closest to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span></p></li><li><p>Stack space at higher addresses than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> belongs to the caller and so should be unchanged when returning.</p></li><li><p>To return, place the return value into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>, decrement <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> by 8 and jump to the caller&rsquo;s return address (this can be achieved by simply using <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span>)</p></li><li><p>The callee is free to use any other registers as they see fit (i.e., the caller must save the values if they need them).</p></li></ul></p><p>There are two parts of this calling convention we haven&rsquo;t covered:
+first the alignment (which is there to make calling into Rust code
+easier) and second, the registers. It essentially says we as the
+callee in the Snake calling convention never have to worry about
+overwriting registers. Once we start using registers we will need to
+be more careful about this.</p><p>The alignment part is trickier: we say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">upon entry</code></span> into a
+function, we want the address to be equal to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0</code></span> modulo
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">16</code></span>. Note that this is the <span class="emph">exact oppposite</span> of the
+alignment requirement for System V. While that might sound strange, it
+should actually make our lives easier: in the common case of a call
+into Rust that pushes no arguments (and saving no locals), we can just
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> the code directly. But when we do have to save locals, it
+means that we should be sure to</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>If we keep <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> at 0 modulo 16 in our Snake code, and
+Rust code must have <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP</code></span> equal to 8 modulo 16 upon entry to a
+function, then when we call from Snake to Rust should we round up our
+number of locals saved to the nearest <span class="emph">even</span> number or <span class="emph">odd</span>
+number?</p></blockquote><p>Also remember that while our internal function definitions are called
+only using the Snake calling convention, the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span> function
+is called using the System V calling convention, which is as mentioned
+above has exactly the wrong alignment. A simple way to do this is to
+add a "wrapper" around our main expression:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
+        call main
+        ret
+main:
+        ;; actual main expression</code></pre></div></div></p><p>This way we can compile our main expression as if it were a function
+with <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0</code></span> variables and use the same compilation strategy. This
+also has a negliegible effect on the runtime/space usage of our
+program.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Local_.Function_.Definitions_and_.Lambda_.Lifting)"></a>Local Function Definitions and Lambda Lifting</h3><p>The above strategy works fine for <span class="emph">top-level</span> function
+definitions, but consider what happens if we have a <span class="emph">local</span>
+function definition:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def multiply(x, y):
+  def mult_by_x(i):
+    if i == 0:
+      0
+    else:
+      x + mult_by_x(i - 1)
+  in
+  loop(y)
+in
+multiply(5, 3)</code></pre></div></div></p><p>This function multiplies two numbers <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> and
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> by repeated addition. It works by defining a recursive
+function <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">mult_by_x</code></span> that works by multiplying the fixed
+variable <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> to the argument <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">i</code></span>. Since the
+recursive call is not a tail call, the stack grows each time a
+recursive call is made, and so we cannot tell where <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>
+will be stored on the stack statically! We say that
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">mult_by_x</code></span> <span class="emph">captures</span> the variable <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>
+in its body. To implement this, we want to copy <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> into
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">mult_by_x</code></span>&rsquo;s stack frame on each call. The easiest way to
+do this is by a program transformation, which will transform all local
+function definitions into global ones:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def multiply(x, y):
+  mult_by_x(x, y)
+and
+def mult_by_x(x, i):
+ if i == 0:
+   0
+ else:
+   x + mult_by_x(x, i - 1)
+in
+multiply(5, 3)</code></pre></div></div></p><p>This process is called <span class="emph">lambda lifting</span> because local function
+definitions are often constructed using lambda-notation. So if we can
+do this transformation, we will be able to use the above
+implementation of non-tail calls. But there are a few pitfalls to
+lambda lifting that we discuss in class.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Implement non-tail calls for globally defined functions in diamondback.</p></blockquote><a name="(part._(gentag._8._lecturenon-tail-calls))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
