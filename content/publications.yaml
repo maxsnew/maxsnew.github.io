@@ -1,3 +1,10 @@
+- title: A formal type theory for formal category theory
+  id: virtual-equipments
+  authors: Max S. New and Daniel R. Licata
+  preprint: True
+  links:
+    preprint: docs/virtual-equipments.pdf
+
 - title: A Semantic Foundation for Sound Gradual Typing
   id: thesis
   authors: Max S. New
