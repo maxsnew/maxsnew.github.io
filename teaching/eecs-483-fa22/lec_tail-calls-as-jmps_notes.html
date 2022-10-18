@@ -329,20 +329,20 @@ call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake"
 So to compile the function call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5,true,13)</code></span>, we simply
 <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> the arguments to the appropriate place on the stack and then
 <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp</code></span> to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [RSP - 8 * 2], 10       ;; a = 5
-mov [RSP - 8 * 2], 0x7FF... ;; b = true
-mov [RSP - 8 * 3], 26       ;; c = 13
+mov [RSP - 8 * 3], 0x7FF... ;; b = true
+mov [RSP - 8 * 4], 26       ;; c = 13
 jmp f                       ;; tail call f</code></pre></div></div></p><p>This works for constants, but there is one tricky situation we should
 be careful of more generally. Consider the following seemingly
 innocuous change: change the call to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5, true, y)</code></span>. Then
 if we na\"ively try to compile it the same way something horribly
 wrong happens:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [RSP - 8 * 2], 10       ;; a = 5
-mov [RSP - 8 * 2], 0x7FF... ;; b = true
+mov [RSP - 8 * 3], 0x7FF... ;; b = true
 mov RAX, [RSP - 8 * 2]      ;; load y
-mov [RSP - 8 * 3], RAX      ;; c = y
+mov [RSP - 8 * 4], RAX      ;; c = y
 jmp f                       ;; tail call f</code></pre></div></div></p><p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What went horribly wrong?</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Try to fix it.</p></blockquote></p><p>Since a tail call re-uses the current stack frame in place, we
 overwrote the value of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> on the stack before we were
 able to use it as an argument! The effect is that the call is
-accidentally compiled as if it were <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5,true,true)</code></span>.</p><p>How can we avoid this happening? Well the easiest way is for our
+accidentally compiled as if it were <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5,true,5)</code></span>.</p><p>How can we avoid this happening? Well the easiest way is for our
 <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sequentialize</code></span> function to <span class="emph">always</span> generate new
 temporaries for the arguments, that way, whenever we load the
 arguments for the function call, they will always be stored at an
