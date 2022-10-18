@@ -138,7 +138,7 @@ we would we need to round the address <span class="emph">up</span> to the neares
 multiple of 8 (because rounding down might give us an unallocated
 address).  The easiest way to achive this is to add <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">7</code></span> to the
 address, then round down to the nearest multiple of 8.  Recall from
-Lecture function-calls that in the 64-bit C calling convention first
+<a href="lec_errors_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 7:</span> Checking for errors and calling Rust functions</a> that in the System V calling convention first
 six arguments to a function are passed in registers, and
 <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here</code></span> is being called from <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span>.  So we
 can find the value of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">HEAP</code></span> in register <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">our_code_starts_here:
