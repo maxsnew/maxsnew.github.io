@@ -4,6 +4,7 @@
   preprint: True
   links:
     preprint: docs/virtual-equipments.pdf
+    repo: https://github.com/maxsnew/virtual-equipments
 
 - title: A Semantic Foundation for Sound Gradual Typing
   id: thesis
@@ -46,8 +47,9 @@
   venue: HOPE 2022
   abstract: True
   links:
-    Extended Abstract: "docs/cbpv-relative-monads.pdf"
-    slides: "docs/HOPE-2022-cbpv-relative-monads-slides.pdf"
+    Extended Abstract: docs/cbpv-relative-monads.pdf
+    Talk: https://www.youtube.com/watch?v=ooj1vJRixEU&list=PLyrlk8Xaylp5hkSMipssQf3QKnj6Nrjg_
+    slides: docs/HOPE-2022-cbpv-relative-monads-slides.pdf
 
 - title: From Call-by-push-value to Stack-based TAL?
   id: lola19
@@ -55,7 +57,7 @@
   venue: LOLA 2019
   abstract: True
   links:
-    Extended Abstract: "docs/cbpv-stal-lola-2019.pdf"
+    Extended Abstract: docs/cbpv-stal-lola-2019.pdf
 
 - title: Gradual Type Theory
   id: popl19
@@ -71,7 +73,7 @@
   links:
     Official Link: https://dl.acm.org/citation.cfm?id=3236768
     Extended Version: https://arxiv.org/abs/1807.02786
-    Conference Talk: "https://www.youtube.com/watch?v=0GmILGJ1yvA"
+    Conference Talk: https://www.youtube.com/watch?v=0GmILGJ1yvA
 
 - title: Call-by-name Gradual Type Theory
   id: fscd18
