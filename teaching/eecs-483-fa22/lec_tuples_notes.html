@@ -190,7 +190,7 @@ array using 0-indexing.</p><p>We&rsquo;ll represent arrays and array accesses as
 either below 0 or greater than or equal to the length of the array.</p></li></ul></p><h4>3.2<tt>&nbsp;</tt><a name="(part._tuples._.Representing_arrays)"></a>Representing arrays</h4><p>We can&rsquo;t merely store all the items of the array consecutively in memory; we
 need to know how many items there are.  Accordingly, we&rsquo;ll add a <span class="emph">header
 word</span> at the beginning of our tuple in memory, that will store the size of the
-array:</p><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_3.png" alt="image" width="506.0" height="60.1328125"/></p><p>Note carefully that the first word is an actual integer; it is not an encoded
+array:</p><p><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="506.0" height="60.1328125"/></p><p>Note carefully that the first word is an actual integer; it is not an encoded
 value in our language.</p><p>Since each component of the tuple is an 8-byte word, as long as our
 initial heap pointer <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RDI</code></span> is 8-byte aligned, allocating a new
 array will remain 8-byte aligned.</p><p>Again, we need to tag our array values, just as we did above for pairs.  Since
@@ -223,4 +223,4 @@ cmp R14, 0                   ;; \ make sure the index
 jl  index_too_low            ;; / is non-negative
 cmp R14, [RAX]                 ;; \ make sure the index is
 jge index_too_high           ;; / within the size of the tuple
-mov RAX, [RAX + 8 * R14 + 8] ;; treat RAX as a pointer, and get its nth word</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Implement this in <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span>.</p></blockquote><a name="(part._(gentag._8._lecturetuples))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
+mov RAX, [RAX + 8 * R14 + 8] ;; treat RAX as a pointer, and get its nth word</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Implement this in <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_to_string</code></span>.</p></blockquote><a name="(part._(gentag._6._lecturetuples))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
