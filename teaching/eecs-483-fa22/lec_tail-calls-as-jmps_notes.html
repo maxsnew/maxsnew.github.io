@@ -185,8 +185,8 @@ in
 ...</code></span></p><p>When we compile this code we need to determine where all of the local
 variables go. For a first attempt we can extend our treatment of
 let-bound variables: <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span> goes in the first free stack slot
-<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RBP - 8 * 1]</code></span> and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> goes in the next <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RBP - 8
-* 2]</code></span>, and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c,d,x,y,z</code></span> go in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">3,4,5,6,7</code></span> respectively.</p><p>Other than that, the code generation for function definitions is
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RSP - 8 * 1]</code></span> and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> goes in the next <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RSP - 8 * 2]</code></span>,
+and <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c,d,x,y,z</code></span> go in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">3,4,5,6,7</code></span> respectively.</p><p>Other than that, the code generation for function definitions is
 straightforward: each function definition</p><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x,y,z):
   e
 end</code></span></p><p>can be simply compiled to a label followed by the code for the body</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">f:
@@ -319,7 +319,7 @@ in
 let y = x * 2 in
 let z = print(y) in
 f(5, true, 13)</code></span></p><p>Following our scheme for storing local variables, <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x, y</code></span>
-will be placed at <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[RBP - 8 * 1], [RBP - 8 * 2]</code></span>. When we
+will be placed at <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">[RSP - 8 * 1], [RSP - 8 * 2]</code></span>. When we
 call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5,true,13)</code></span>, we want to transfer control to the
 code where the body of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is implemented, but with the
 arguments <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a,b,c</code></span> having the correct values. So when we
@@ -331,7 +331,9 @@ So to compile the function call <span title="Diamondback" class="sourceCode"><co
 <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp</code></span> to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [RSP - 8 * 2], 10       ;; a = 5
 mov [RSP - 8 * 3], 0x7FF... ;; b = true
 mov [RSP - 8 * 4], 26       ;; c = 13
-jmp f                       ;; tail call f</code></pre></div></div></p><p>This works for constants, but there is one tricky situation we should
+jmp f                       ;; tail call f</code></pre></div></div></p><p>Note here that <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span> is at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP - 8 * 2</code></span> because
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> expects <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> to be at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RSP - 8 * 1</code></span>.
+This works for constants, but there is one tricky situation we should
 be careful of more generally. Consider the following seemingly
 innocuous change: change the call to <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5, true, y)</code></span>. Then
 if we na\"ively try to compile it the same way something horribly
