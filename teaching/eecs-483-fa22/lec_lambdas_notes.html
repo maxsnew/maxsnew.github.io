@@ -17,133 +17,116 @@
     imageFont: null,
     mtexFontInherit: true
   }
-});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-<wbr></wbr>class Functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.First-class_.Functions%29" class="tocviewlink" data-pltdoc="x">First-<wbr></wbr>class Functions</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Reminder__.How_are_functions_currently_compiled_%29" class="tocviewlink" data-pltdoc="x">Reminder:<span class="mywbr"> &nbsp;</span> How are functions <span class="emph">currently</span> compiled?</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.The_value_of_a_function_---_.Attempt__1%29" class="tocviewlink" data-pltdoc="x">The value of a function &#8212;<wbr></wbr> Attempt #1</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.The_measure_of_a_function_---_.Attempt__2%29" class="tocviewlink" data-pltdoc="x">The measure of a function &#8212;<wbr></wbr> Attempt #2</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.A_function_by_any_other_name_---_.Attempt__3%29" class="tocviewlink" data-pltdoc="x">A function by any other name &#8212;<wbr></wbr> Attempt #3</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part.__.Objects_in_mirror_may_be_closer_than_they_appear__---_.Attempt__4%29" class="tocviewlink" data-pltdoc="x">&ldquo;Objects in mirror may be closer than they appear&rdquo; &#8212;<wbr></wbr> Attempt #4</a></td></tr><tr><td align="right">7&nbsp;</td><td><a href="#%28part._.Implementing_the_new_compilation%29" class="tocviewlink" data-pltdoc="x">Implementing the new compilation</a></td></tr><tr><td align="right">8&nbsp;</td><td><a href="#%28part._.Recursion%29" class="tocviewlink" data-pltdoc="x">Recursion</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-<wbr></wbr>class Functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.First-class_.Functions%29" class="tocsubseclink" data-pltdoc="x">First-<wbr></wbr>class Functions</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Reminder__.How_are_functions_currently_compiled_%29" class="tocsubseclink" data-pltdoc="x">Reminder:<span class="mywbr"> &nbsp;</span> How are functions <span class="emph">currently</span> compiled?</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.The_value_of_a_function_---_.Attempt__1%29" class="tocsubseclink" data-pltdoc="x">The value of a function &#8212;<wbr></wbr> Attempt #1</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Passing_in_functions%29" class="tocsubseclink" data-pltdoc="x">Passing in functions</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Using_function_arguments%29" class="tocsubseclink" data-pltdoc="x">Using function arguments</a></td></tr><tr><td><span class="tocsublinknumber">3.3<tt>&nbsp;</tt></span><a href="#%28part._victory1%29" class="tocsubseclink" data-pltdoc="x">Victory!</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.The_measure_of_a_function_---_.Attempt__2%29" class="tocsubseclink" data-pltdoc="x">The measure of a function &#8212;<wbr></wbr> Attempt #2</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.A_function_by_any_other_name_---_.Attempt__3%29" class="tocsubseclink" data-pltdoc="x">A function by any other name &#8212;<wbr></wbr> Attempt #3</a></td></tr><tr><td><span class="tocsublinknumber">5.1<tt>&nbsp;</tt></span><a href="#%28part._.Making_it_work__.Sequentialization%29" class="tocsubseclink" data-pltdoc="x">Making it work:<span class="mywbr"> &nbsp;</span> Sequentialization</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part.__.Objects_in_mirror_may_be_closer_than_they_appear__---_.Attempt__4%29" class="tocsubseclink" data-pltdoc="x">&ldquo;Objects in mirror may be closer than they appear&rdquo; &#8212;<wbr></wbr> Attempt #4</a></td></tr><tr><td><span class="tocsublinknumber">6.1<tt>&nbsp;</tt></span><a href="#%28part._.Bound_and_free_variables%29" class="tocsubseclink" data-pltdoc="x">Bound and free variables</a></td></tr><tr><td><span class="tocsublinknumber">6.2<tt>&nbsp;</tt></span><a href="#%28part._.Computing_the_set_of_free_variables%29" class="tocsubseclink" data-pltdoc="x">Computing the set of free variables</a></td></tr><tr><td><span class="tocsublinknumber">6.3<tt>&nbsp;</tt></span><a href="#%28part._.Using_free_variables_properly__achieving_closure%29" class="tocsubseclink" data-pltdoc="x">Using free variables properly:<span class="mywbr"> &nbsp;</span> achieving closure</a></td></tr><tr><td><span class="tocsublinknumber">7<tt>&nbsp;</tt></span><a href="#%28part._.Implementing_the_new_compilation%29" class="tocsubseclink" data-pltdoc="x">Implementing the new compilation</a></td></tr><tr><td><span class="tocsublinknumber">7.1<tt>&nbsp;</tt></span><a href="#%28part._.Scope-checking%29" class="tocsubseclink" data-pltdoc="x">Scope-<wbr></wbr>checking</a></td></tr><tr><td><span class="tocsublinknumber">7.2<tt>&nbsp;</tt></span><a href="#%28part._.Compiling_function_bodies%29" class="tocsubseclink" data-pltdoc="x">Compiling function bodies</a></td></tr><tr><td><span class="tocsublinknumber">7.3<tt>&nbsp;</tt></span><a href="#%28part._.Compiling_function_calls%29" class="tocsubseclink" data-pltdoc="x">Compiling function calls</a></td></tr><tr><td><span class="tocsublinknumber">7.4<tt>&nbsp;</tt></span><a href="#%28part._.Revisiting_compiling_function_bodies%29" class="tocsubseclink" data-pltdoc="x">Revisiting compiling function bodies</a></td></tr><tr><td><span class="tocsublinknumber">7.5<tt>&nbsp;</tt></span><a href="#%28part._.Complete_worked_example%29" class="tocsubseclink" data-pltdoc="x">Complete worked example</a></td></tr><tr><td><span class="tocsublinknumber">8<tt>&nbsp;</tt></span><a href="#%28part._.Recursion%29" class="tocsubseclink" data-pltdoc="x">Recursion</a></td></tr><tr><td><span class="tocsublinknumber">8.1<tt>&nbsp;</tt></span><a href="#%28part._victory%29" class="tocsubseclink" data-pltdoc="x">Victory!</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.4</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 12:</span> First-class Functions</h2><h3>1<tt>&nbsp;</tt><a name="(part._.First-class_.Functions)"></a>First-class Functions</h3><p>In <a href="lec_function-defs_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Defining functions</a>, we introduced the ability for our programs to
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-<wbr></wbr>class Functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.First-class_.Functions%29" class="tocviewlink" data-pltdoc="x">First-<wbr></wbr>class Functions</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Reminder__.How_are_functions_currently_compiled_%29" class="tocviewlink" data-pltdoc="x">Reminder:<span class="mywbr"> &nbsp;</span> How are functions <span class="emph">currently</span> compiled?</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.The_value_of_a_function_---_.Attempt__1%29" class="tocviewlink" data-pltdoc="x">The value of a function &#8212;<wbr></wbr> Attempt #1</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.The_measure_of_a_function_---_.Attempt__2%29" class="tocviewlink" data-pltdoc="x">The measure of a function &#8212;<wbr></wbr> Attempt #2</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.A_function_by_any_other_name_---_.Attempt__3%29" class="tocviewlink" data-pltdoc="x">A function by any other name &#8212;<wbr></wbr> Attempt #3</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Recursion%29" class="tocviewlink" data-pltdoc="x">Recursion</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-<wbr></wbr>class Functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.First-class_.Functions%29" class="tocsubseclink" data-pltdoc="x">First-<wbr></wbr>class Functions</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Reminder__.How_are_functions_currently_compiled_%29" class="tocsubseclink" data-pltdoc="x">Reminder:<span class="mywbr"> &nbsp;</span> How are functions <span class="emph">currently</span> compiled?</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.The_value_of_a_function_---_.Attempt__1%29" class="tocsubseclink" data-pltdoc="x">The value of a function &#8212;<wbr></wbr> Attempt #1</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Passing_in_functions%29" class="tocsubseclink" data-pltdoc="x">Passing in functions</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Using_function_arguments%29" class="tocsubseclink" data-pltdoc="x">Using function arguments</a></td></tr><tr><td><span class="tocsublinknumber">3.3<tt>&nbsp;</tt></span><a href="#%28part._victory1%29" class="tocsubseclink" data-pltdoc="x">Victory!</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.The_measure_of_a_function_---_.Attempt__2%29" class="tocsubseclink" data-pltdoc="x">The measure of a function &#8212;<wbr></wbr> Attempt #2</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.A_function_by_any_other_name_---_.Attempt__3%29" class="tocsubseclink" data-pltdoc="x">A function by any other name &#8212;<wbr></wbr> Attempt #3</a></td></tr><tr><td><span class="tocsublinknumber">5.1<tt>&nbsp;</tt></span><a href="#%28part._.Compiling_make_closure_and_function_calls%29" class="tocsubseclink" data-pltdoc="x">Compiling make_<span class="mywbr"> &nbsp;</span>closure and function calls</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Recursion%29" class="tocsubseclink" data-pltdoc="x">Recursion</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.4</span></div><h2><a name="(part._)"></a><span class="LectureNum">Lecture 12:</span> First-class Functions</h2><h3>1<tt>&nbsp;</tt><a name="(part._.First-class_.Functions)"></a>First-class Functions</h3><p>In <a href="lec_tail-calls-as-jmps_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Local Function Definitions and Tail Calls</a> and <a href="lec_non-tail-calls_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 9:</span> Global Function Definitions and Non-tail Calls</a>, we introduced the ability for our programs to
 define functions that we could then call in other expressions in our program.
 Our programs were a sequence of function definitions, followed by one main
 expression.  This notion of a program was far more flexible than we had before,
 and lets us define many computations we simply could not previously do.  But it
 is distinctly unsatisfying: functions are <span class="emph">second-class</span> entities in our
-language, and can&rsquo;t be used the same way as other values in our programs.</p><p>We know from other courses, and possibly even from writing compilers in Rust, that
-<span class="emph">higher-order</span> functions &#8212;<wbr></wbr> functions whose arguments can be functions
-&#8212;<wbr></wbr> are very useful notions to have.  Let&rsquo;s consider the most trivial
-higher-order program:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
+language, and can&rsquo;t be used the same way as other values in our programs.</p><p>We know from other courses, and possibly even from using features like
+iterators in Rust, that <span class="emph">higher-order</span> functions &#8212;<wbr></wbr> functions
+whose arguments can be functions &#8212;<wbr></wbr> are very useful notions to have.
+Let&rsquo;s consider the most trivial higher-order program:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
   it(5)
-end
+in
 
 def incr(x):
   x + 1
-end
+in
 
-applyToFive(incr)</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What errors currently get reported for this program?</p></blockquote><p>Because <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is a parameter to the first function, our compiler will
-complain that <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is not defined as a function, when used as such on line
-2.  Additionally, because <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> is defined as a function, our compiler will
+applyToFive(incr)</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What errors currently get reported for this program?</p></blockquote><p>Because <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is a parameter to the first function, our compiler will
+complain that <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is not defined as a function, when used as such on line
+2.  Additionally, because <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> is defined as a function, our compiler will
 complain that it can&rsquo;t be used as a parameter on the last line.  We&rsquo;d like to
 be able to support this program, though, and others more sophisticated.  Doing
 so will bring in a number of challenges, whose solutions are detailed and all
 affect each other.  Let&rsquo;s build up to those programs, incrementally.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Reminder__.How_are_functions_currently_compiled_)"></a>Reminder: How are functions <span class="emph">currently</span> compiled?</h3><p>Let&rsquo;s simplify away the higher-order parts of the program above, and look just
-at a basic function definition.  The following program:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def incr(x):
+at a basic function definition.  The following program:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def incr(x):
   x + 1
 end
 
-incr(5)</code></pre></div></div></p><p>is compiled to:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">incr:
-  push RBP            ;; stack frame management
-  mov RBP, RSP
-
-  mov RAX, [RBP + 16] ;; get param
-  add RAX, 2          ;; add (encoded) 1 to it
-
-  mov RSP, RBP        ;; undo stack frame
-  pop RBP
-  ret                 ;; exit
+incr(5)</code></pre></div></div></p><p>is compiled to something like<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._7._lecturelambdas%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">ignoring tag checking and tail call elimination</span></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">incr:
+  mov RAX, [RSP - 8] ;; get param
+  add RAX, 2         ;; add (encoded) 1 to it
+  ret                ;; exit
 
 start_here:
-  push RBP            ;; stack frame management
-  mov RBP, RSP
-
-  push QWORD 10       ;; push (encoded) 5
+  mov [RSP - 16], 10  ;; pass 5 as an argument
   call incr           ;; call function
-  add RSP, 8          ;; remove arguments
 
-  mov RSP, RBP        ;; undo stack frame
-  pop RBP
   ret                 ;; exit</code></pre></div></div></p><p>This compilation is a pretty straightforward translation of the code we have.
 What can we do to start supporting higher-order functions?</p><h3>3<tt>&nbsp;</tt><a name="(part._.The_value_of_a_function_---_.Attempt__1)"></a>The value of a function &#8212;<wbr></wbr> Attempt #1</h3><h4>3.1<tt>&nbsp;</tt><a name="(part._.Passing_in_functions)"></a>Passing in functions</h4><p>Going back to the original motivating example, the first problem we encounter
-is seen in the first and last lines of code.</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
+is seen in the first and last lines of code.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
   it(5)
-end
+in
 
 def incr(x):
   x + 1
-end
+in
 
 applyToFive(incr)</code></pre></div></div></p><p>Functions receive values as their parameters, and function calls push values
 onto the stack.  So in order to &ldquo;pass a function in&rdquo; to another function, we
 need to answer the question, what is the <span class="emph">value</span> of a function?  In the
 assembly above, what could possibly be a candidate for the value of the
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> function?</p><p>A function, as a standalone entity, seems to just be the code that comprises
-its compiled body.  We can&rsquo;t conveniently talk about the entire chunk of code,
-though, but we don&rsquo;t actually need to.  We really only need to know the
-&ldquo;entrance&rdquo; to the function: if we can jump there, then the rest of the
-function will execute in order, automatically.  So one prime candidate for
-&ldquo;the value of a function&rdquo; is <span class="emph">the address of its first instruction.</span>
-Annoyingly, we don&rsquo;t know that address explicitly, but fortunately, the
-assembler helps us here: we can just use <span class="emph">the initial label</span> of the
-function, whose name we certainly do know.</p><p>In other words, we can compile the main expression of our program as:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
-  push RBP           ;; stack frame management
-  mov RBP, RSP
-
-  push incr          ;; push the start label of incr
-  call applyToFive   ;; call function
-  add RSP, 8         ;; remove arguments
-
-  mov RSP, RBP       ;; undo stack frame
-  pop RBP
-  ret                ;; exit</code></pre></div></div></p><p>This might seem quite bizarre: how can we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> a label onto the stack?
-Doesn&rsquo;t <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> require that we push a value &#8212;<wbr></wbr> either a constant, or a
-register&rsquo;s value, or some word of memory?  In fact it is no more and no less
-bizarre than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>ing a label in the first place: the assembler replaces
-those named labels with the actual addresses within the program, and so at
-runtime, they&rsquo;re simply normal <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">QWORD</code></span> values representing memory
-addresses.</p><h4>3.2<tt>&nbsp;</tt><a name="(part._.Using_function_arguments)"></a>Using function arguments</h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>The compiled code for <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> looks like this:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
-  push RBP            ;; stack frame management
-  mov RBP, RSP
-
-  mov RAX, [RBP + 16] ;; get the param
-  push ????           ;; push the argument to `it`
-  call ????           ;; call `it`
-  add RSP, 8          ;; remove arguments
-
-  mov RSP, RBP        ;; undo stack frame
-  pop RBP
-  ret                 ;; exit</code></pre></div></div></p><p>Fill in the questions to complete the compilation of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>.</p></blockquote><p>The parameter for <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is simply <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span>, so we push <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span> onto the stack,
-just as before.  The function to be called, however, isn&rsquo;t identified by its
-label: we already have its address, since it was passed in as the argument to
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>.  Accordingly, we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call RAX</code></span> in order to find and call our
-function.  Again, this generalizes the syntax of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instructions
-slightly just as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> was generalized: we can call an address given by a
-register, instead of just a constant.</p><h4>3.3<tt>&nbsp;</tt><a name="(part._victory1)"></a>Victory!</h4><p>We can now pass functions to functions!  Everything works exactly as intended.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Tweak the example program slightly, and cause it to break.  What
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> function?</p><p>A function, as a standalone entity, seems to just be the code that
+comprises its compiled body.  We can&rsquo;t conveniently talk about the
+entire chunk of code, though, but we don&rsquo;t actually need to.  We
+really only need to know the &ldquo;entrance&rdquo; to the function: if we can
+jump there, then the rest of the function will execute in order,
+automatically.  So one prime candidate for &ldquo;the value of a function&rdquo;
+is <span class="emph">the address of its first instruction.</span>  Annoyingly, we don&rsquo;t
+know that address explicitly, but fortunately, the assembler helps us
+here: we can just use <span class="emph">the initial label</span> of the function, whose
+name we certainly do know. This is basically what in C/C++ we would
+call a <span class="emph">function pointer</span>.</p><p>In other words, we can compile the main expression of our program as:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
+  mov RAX, incr        ;; load the address of incr into RAX
+  mov [RSP - 16], RAX  ;; pass the address of incr as an argument
+  call applyToFive     ;; call function
+  ret                ;; exit</code></pre></div></div></p><p>This might seem quite bizarre: how can we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> a label into a
+register?  Doesn&rsquo;t <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> require that we mov a value &#8212;<wbr></wbr> either a
+constant, or a register&rsquo;s value, or some word of memory?  In fact it
+is no more and no less bizarre than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>ing a label in the first
+place: the assembler replaces those named labels with the actual
+addresses within the program, and so at runtime, they&rsquo;re simply normal
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">QWORD</code></span> values representing memory addresses. Note that we can&rsquo;t
+do this in one expression <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [RSP - 16], incr</code></span> because the
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">incr</code></span> is a 64-bit address and x64 doesn&rsquo;t support <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>ing a
+64-bit literal into a memory location, so we need the intermediate
+register.</p><h4>3.2<tt>&nbsp;</tt><a name="(part._.Using_function_arguments)"></a>Using function arguments</h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>The compiled code for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> looks like this:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">applyToFive:
+  mov RAX, [RSP - 8] ;; get the param
+  mov ????           ;; pass the argument to `it`
+  call ????          ;; call `it`
+  ret                ;; exit</code></pre></div></div></p><p>Fill in the questions to complete the compilation of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>.</p></blockquote><p>The parameter for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is simply <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span>, so we pass
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span> as an argument on the stack, just as before.  The function to
+be called, however, isn&rsquo;t identified by its label: we already have its
+address, since it was passed in as the argument to
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>.  Accordingly, we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call RAX</code></span> in order to
+find and call our function.  Again, this generalizes the syntax of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instructions slightly just as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> was generalized:
+we can call an address given by a register, instead of just a
+constant.</p><h4>3.3<tt>&nbsp;</tt><a name="(part._victory1)"></a>Victory!</h4><p>We can now pass functions to functions!  Everything works exactly as intended.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Tweak the example program slightly, and cause it to break.  What
 haven&rsquo;t we covered yet?</p></blockquote><h3>4<tt>&nbsp;</tt><a name="(part._.The_measure_of_a_function_---_.Attempt__2)"></a>The measure of a function &#8212;<wbr></wbr> Attempt #2</h3><p>Just because we <span class="emph">use</span> a parameter as a function doesn&rsquo;t mean we actually
 passed a function in as an argument.  If we change our program to
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive(true)</code></span>, our program will attempt to apply <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> as a
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive(true)</code></span>, our program will attempt to apply <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> as a
 function, meaning it will try to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call 0xFFFFFFFFFFFFFFFF</code></span>, which isn&rsquo;t likely to
 be a valid address of a function.</p><p>As a second, related problem: suppose we get bored of merely incrementing values
-by one, and generalize our program slightly:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
+by one, and generalize our program slightly:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
   it(5)
-end
+in
 
 def add(x, y):
   x + y
-end
+in
 
-applyToFive(incr)</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What happens now?</p></blockquote><p>Let&rsquo;s examine the stack very carefully.  When our program starts, it pushes
-<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> onto the stack, then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>s <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">applyToFive</code></span>.  (The colors
-indicate which functions <span class="emph">control</span> the data on the stack, while the
-brackets along the side indicate which function <span class="emph">uses</span> the data on the
-stack; explaining why they don&rsquo;t quite align at function-argument positions.)</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="445.3619791666667" height="276.0"/></p></p><p>That function in turn pushes <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span> onto the stack, and calls <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">it</code></span>
-(i.e. the address currently stored in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RAX</code></span>):</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="445.3619791666667" height="336.0"/></p></p><p>But look at the bracketing for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>!  It needs two arguments, but
-receives only one.  So it adds <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span> (encoded as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span>) <span class="emph">to the saved
-<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">RBP</code></span>,</span> since as far as it knows that stack location is where its second
-parameter should be.</p><p>We had eliminated both of these problems before via well-formedness checking:
+applyToFive(add)</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What happens now?</p></blockquote><p>Let&rsquo;s examine the stack very carefully.  When our program starts, it moves
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> onto the stack, then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>s <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">applyToFive</code></span>:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="355.8580729166667" height="216.0"/></p></p><p>That function in turn moves <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span> onto the stack, and calls
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">it</code></span>, which in this case is <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add</code></span>:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_3.png" alt="image" width="355.8580729166667" height="256.0"/></p>
+<p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_4.png" alt="image" width="445.3619791666667" height="336.0"/></p></p><p>But look, since <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> has been called with only one argument, it
+will read from the free stack space in blue for its second
+argument. So it adds <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span> (encoded as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span>) <span class="emph">to an
+arbitrary unspecified value,</span> since as far as it knows that stack
+location is where its second parameter should be.</p><p>We had eliminated both of these problems before via well-formedness checking:
 our function-definition environment knew about every function and its arity,
 and we could check every function application to ensure that a well-known
 function was called, with the correct number of arguments were passed.  But now
@@ -156,353 +139,168 @@ have a technique for storing multiple pieces of data as a single value:
 tuples.  So our second candidate for &ldquo;the value of a function&rdquo; is a tuple
 containing the function&rsquo;s arity and start address.  This isn&rsquo;t quite right
 either, since we wouldn&rsquo;t then be able to distinguish actual tuples from
-&ldquo;tuples-that-are-functions&rdquo;.</p><p>So we choose a new tag value, say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x3</code></span>, distinct from the ones used so
-far, to mark these function values.  Even better: we now have free rein to
-separate and optimize the representation for functions, rather than hew
-completely to the tuple layout.  As one immediate consequence: we don&rsquo;t need to
-store the tuple length &#8212;<wbr></wbr> it&rsquo;s always 2, namely the function pointer and the
-function arity.  So we might as well instead store the function pointer in the
-header word where the tuple length used to be: since we&rsquo;ll have a tag to tell
-us &ldquo;this is a function value, not a tuple&rdquo;, we won&rsquo;t misinterpret the header
-word by mistake.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Revise the compiled code of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> to assume it gets one
+&ldquo;tuples-that-are-functions&rdquo;.</p><p>So we choose a new tag value, say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x3</code></span>, distinct from the ones
+used so far, to mark these function values.  Even better: we now have
+free rein to separate and optimize the representation for functions,
+rather than hew completely to the tuple layout.  As one immediate
+consequence: we don&rsquo;t need to store the tuple length &#8212;<wbr></wbr> it&rsquo;s always
+2, namely the arity and the function pointer. This is ok because we&rsquo;ll
+always know based on the tag whether to interpret the memory as a
+function or an array.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Revise the compiled code of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> to assume it gets one
 of the new tuple-like values.</p></blockquote><p>The pseudocode for calling a higher-order function like this is roughly:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, &lt;the function tuple&gt;  ;; load the intended function
 &lt;check-tag RAX, 0x3&gt;           ;; ensure it has the right tag
 sub RAX, 3                     ;; untag the value
-&lt;check-arity [RAX + 8], num-args&gt;  ;; the second word at stores the arity
+&lt;check-arity [RAX], num-args&gt;  ;; the second word at stores the arity
 &lt;push all the args&gt;            ;; set up the stack
-call [RAX]                     ;; the first word stores the function address
+call [RAX + 8]                 ;; the first word stores the function address
 add RSP, &lt;8 * num-args&gt;        ;; finish the call</code></pre></div></div></p><p>Now we just need to create these tuples.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Revise the compiled code above to allocate and tag a function value
-using this new scheme, instead of a bare function pointer.</p></blockquote><p>Even if we want to represent functions as these tuple-like values, <span class="emph">where</span>
-should we store such tuples?  We now have a disparity between &ldquo;normal&rdquo;
-function calls, where we know the name comes from a top-level declaration in
-the source program, and &ldquo;higher-order&rdquo; function calls, where the function to
-be called comes in as a parameter.</p><h3>5<tt>&nbsp;</tt><a name="(part._.A_function_by_any_other_name_---_.Attempt__3)"></a>A function by any other name &#8212;<wbr></wbr> Attempt #3</h3><p>The crux of the problem now is that some of our functions are &ldquo;real&rdquo;
-functions that were defined by <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def</code></span> and whose addresses and arities are
-known, whereas some function are &ldquo;passed-in&rdquo; functions that are represented
-as tuples.  Because of this distinction, we don&rsquo;t have any good, uniform way to
-handle compiling function calls.  In particular, we don&rsquo;t have an obvious place
-in our compilation to create those tuples.</p><p>What if we revise our language, to make functions be just another expression
-form, rather than a special top-level form?  We&rsquo;ve seen these in other
-languages: we call them <span class="emph">lambda expressions</span>, and they appear in pretty
-much all major languages:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Language</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Lambda syntax</p></td></tr><tr><td><p>Haskell</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Haskell" class="sourceCode"><code data-lang="text/x-haskell" class="sourceCode">\(x1,...,xn) -&gt; e</code></span></p></td></tr><tr><td><p>Ocaml</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">fun (x1,...,xn) -&gt; e</code></span></p></td></tr><tr><td><p>Javascript</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Javascript" class="sourceCode"><code data-lang="text/x-javascript" class="sourceCode">(x1,...,xn) =&gt; { return e; }</code></span></p></td></tr><tr><td><p>C++</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">[&amp;](x1,...,xn){ return e; }</code></span></p></td></tr><tr><td><p>Rust</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">|x1, x2,..., xn| e</code></span></p></td></tr></table></p><p>We can rewrite our initial example as</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let applyToFive = (lambda it: it(5) end) in
+using this new scheme, instead of a bare function pointer.</p></blockquote><h3>5<tt>&nbsp;</tt><a name="(part._.A_function_by_any_other_name_---_.Attempt__3)"></a>A function by any other name &#8212;<wbr></wbr> Attempt #3</h3><p>While everything above works fine for top-level, global function
+definitions, how do we extend it to our <span class="emph">local</span> function
+definitions?</p><p>To start, let&rsquo;s consider the simple case of non-recursive functions.
+If the function is not recursive, then we don&rsquo;t need our FunDefs form
+at all: instead we can use a literal notation for functions, the same
+way that we can write boolean, number and array literals. You may be
+familiar with these from other languages: we call them <span class="emph">lambda
+expressions</span>, and they appear in pretty much all modern major
+languages:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Language</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Lambda syntax</p></td></tr><tr><td><p>Javascript</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Javascript" class="sourceCode"><code data-lang="text/x-javascript" class="sourceCode">(x1,...,xn) =&gt; { return e; }</code></span></p></td></tr><tr><td><p>C++</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">[&amp;](x1,...,xn){ return e; }</code></span></p></td></tr><tr><td><p>Rust</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">|x1, x2,..., xn| e</code></span></p></td></tr><tr><td><p>Ocaml</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">fun (x1,...,xn) -&gt; e</code></span></p></td></tr></table></p><p>We can rewrite any program using only non-recursive functions using
+lambdas instead as follows:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let applyToFive = (lambda it: it(5) end) in
 let incr = (lambda x: x + 1 end) in
-applyToFive(incr)</code></pre></div></div></p><p>Now, all our functions are defined in the same manner as any other let-binding:
+applyToFive(incr)</code></pre></div></div></p><p>Then, all our functions are defined in the same manner as any other let-binding:
 they&rsquo;re just another expression, and we can simply produce the function values
-right then, storing them in let-bound variables as normal.  Let&rsquo;s try compiling
-a simplified version of this code:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let incr = lambda x: x + 1 end in
-incr(5)</code></pre></div></div></p><p>Our compiled output will look something like this:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
-  push RBP
-  mov RBP, RSP
-
-  incr:
-    push RBP
-    mov RSP, RBP
-
-    mov RAX, [RBP+8]
-    add RAX, 2
-
-    mov RSP, RBP
-    pop RBP
-    ret
-
-  mov RAX, R15   ;; allocate a function tuple
-  or RAX, 0x3    ;; tag it as a function tuple
-  mov [R15+0], incr ;; store the function pointer
-  mov [R15+8], 1 ;; set the arity of the function
-  add R15, 8
-
-  mov [RBP- 8], RAX ;; let incr = ...
-
-  mov RAX, [RBP- 8]
-  &lt;check that RAX is tagged 0x3&gt;
-  sub RAX, 0x3
-  &lt;check that RAX expects 1 argument&gt;
-  push 10
-  call [RAX]
-  add RSP, 8
-
-  move RSP, RBP
-  pop RBP
-  ret</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What&rsquo;s wrong with this code?</p></blockquote><p>Our program will start executing at <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here</code></span>, and flows
-straight into the code for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">incr</code></span>, even though it hasn&rsquo;t been <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>ed!
-We seem to have left out a crucial part of the semantics of functions: while a
-function is defined by its code, that code should <span class="emph">not</span> run until it&rsquo;s
-called: lambda-expressions are inert values.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What simple code-generation tweak can we use to fix this?</p></blockquote><p>On the one hand, the code shouldn&rsquo;t be run.  On the other, we have to emit the
-code somewhere.  There are two possible solutions here:</p><ul><li><p>We can transform our program even further, to somehow lift all the
-lambdas out from the innards of other functions so that we regain the &ldquo;every
-function lives at the top level&rdquo; structure of our old code.  This approach,
-called <span class="emph">lambda-lifting</span>, works well, but is overkill for our purposes for
-now.</p></li><li><p>Another is simply to label the end of the function, and just add a
-<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp end_label</code></span> instruction before the initial label.  We then bypass the
-code of the function when we&rsquo;re &ldquo;defining&rdquo; it, but when we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> it, we
-skip the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp</code></span> and start right at the first instruction of the code.</p></li></ul><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Compile the original example to assembly by hand.</p></blockquote><h4>5.1<tt>&nbsp;</tt><a name="(part._.Making_it_work__.Sequentialization)"></a>Making it work: Sequentialization</h4><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Define the sequentialize transformations for lambda expressions and
-function-applications.  Should lambdas be considered immediate, or
-just sequential expressions?  What about the various subexpressions of function-applications?</p></blockquote><h3>6<tt>&nbsp;</tt><a name="(part.__.Objects_in_mirror_may_be_closer_than_they_appear__---_.Attempt__4)"></a>&ldquo;Objects in mirror may be closer than they appear&rdquo; &#8212;<wbr></wbr> Attempt #4</h3><p>Our running example annoyingly hard-codes the increment operation.  Let&rsquo;s
-generalize:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let add = (lambda x: (lambda y: x + y end) end) in
-let applyToFive = (lambda it: it(5) end) in
-let incr = add(1) in
-let add5 = add(5) in
-(applyToFive(incr), applyToFive(add5))</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>What does this program produce?  What goes wrong here?  Draw the
-stack demonstrating the problem.</p></blockquote><p>Our representation of functions cannot distinguish <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> from <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add5</code></span>:
-they have the same arity, and point to the same function.  But they&rsquo;re clearly
-not the same function!  This is a problem of <span class="emph">scope</span>.  How can we
-distinguish these two functions?</p><h4>6.1<tt>&nbsp;</tt><a name="(part._.Bound_and_free_variables)"></a>Bound and free variables</h4><p>What does <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> actually evaluate to?  A function-tuple <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(&lt;code&gt;, 1)</code></span>
-where the code is the compiled form of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda y: x + y</code></span>.  How exactly does
-that expression get compiled?  When we compile the expression <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x + y</code></span>, we
-have an environment where <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is mapped to &ldquo;the first function parameter&rdquo;,
-<span class="emph">and so is <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span></span>.  In other words, this expression gets compiled to the
-same thing as <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y + y</code></span> &#8212;<wbr></wbr> which is certainly not the right thing!  This is
-similar to the problem we had a while ago, where we needed to allocate distinct
-stack slots for all local variables, but it is more insidious here: <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> and
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> really are the first function parameters of their respective functions,
-but <span class="emph">within</span> the inner lambda, those descriptions come into conflict.</p><p><p>Define a variable <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> as <span class="emph">bound within an expression <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span></span> if
-</p><ul><li><p><span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> appears on the left side of a let-binding, or</p></li><li><p><span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> is a lambda expression and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> appears as one of its
-parameters</p></li></ul></p><p>Define a variable to be <span class="emph">free</span> if it is not bound.  For instance, in</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = lambda m: let t = m in x + t end
-in x + y</code></pre></div></div></p><ul><li><p><span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is certainly free within the entire expression: there are no
-bindings for it at all.</p></li><li><p><span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is free within the lambda: its only binding appears outside that
-lambda</p></li><li><p>The uses of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">m</code></span> and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">t</code></span> are bound, by the lambda&rsquo;s parameter and by
-the inner let-binding, respectively.</p></li></ul><p>Now we can see the problem with our <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add5</code></span> and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> example: <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is
-free within the lambdas for those two functions, but our compiled code does not
-take that into account.  We can generalize this problem easily enough: our
-compilation of <span class="emph">all</span> free variables is broken.</p><h4>6.2<tt>&nbsp;</tt><a name="(part._.Computing_the_set_of_free_variables)"></a>Computing the set of free variables</h4><p>We need to know exactly which variables are free within an expression, if we
-want to compile them properly.  This can be subtle to get right: because of
-shadowing, not every identifier that&rsquo;s spelled the same way is in fact the same
-name.  (We saw this a few lectures ago when we discussed alpha-equivalence and the
-safe renaming of variables.)  It&rsquo;s easy to define code that appears right, but
-it&rsquo;s tricky to convince ourselves that the code in fact is correct.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Define a function <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">free_vars&lt;Ann&gt;(e: &amp;SeqExp&lt;Ann&gt;) -&gt; Vec&lt;String&gt;</code></span> that
-computes the set of free variables of a given expression.</p></blockquote><p>Now what?</p><h4>6.3<tt>&nbsp;</tt><a name="(part._.Using_free_variables_properly__achieving_closure)"></a>Using free variables properly: achieving closure</h4><p>We know from using lambdas in other languages what behavior we expect from
-them: their free variables ought to take on the values they had at the moment
-the lambda was evaluated, rather than the moment the lambda&rsquo;s code was
-called.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._3._lecturelambdas%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">Think carefully about what your intuition is here, when a free
-variable is <span class="emph">mutable</span>...</span></span>  We say that we want lambdas to <span class="emph">close
-over</span> their free variables, and we describe the value of a function as a
-<span class="emph">closure</span> (rather than the awkward &ldquo;function-tuple&rdquo; terminology we&rsquo;ve
-had so far).  To accomplish this, we clearly need to store the values of the
-free variables in a reliable location, so that the compiled function body can
-find them when needed...and so that distinct closures with the same code but
-different closed-over values can behave distinctly!  The natural place to store
-these values is in our tuple, after the function-pointer.  We might
-consider <span class="emph">also</span> storing the number of closed-over variables; we&rsquo;ll store
-that between the function-pointer and the closed-over values.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What language feature (that we may or may not have yet) might want
-to know how many closed-over variables are in our closure?</p></blockquote><p>This leads to our latest (and final?) representation choice for compiling
-first-class functions.</p><p>Let&rsquo;s work through a short example:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let five = 5 in
-let applyToFive = (lambda it: it(five) end) in
-let incr = (lambda x: x + 1 end) in
-applyToFive(incr)</code></pre></div></div></p><p>First, let&rsquo;s focus on the compilation of the let-binding of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>:
-our closure should be a 4-tuple <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">(code = applyToFive, arity = 1, size = 1, five = 5)</code></span>,
-where I&rsquo;ve labelled the components for clarity.</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  ...
-  mov RAX, 10
-  mov [RBP-8], RAX ;; let five = 5 in ...
-
-  jmp applyToFive_end
-applyToFive:
-  ...
-applyToFive_end:
-
-  mov [R15+0], applyToFive ;; set the code pointer
-  mov [R15+8], 1    ;; set the arity of the function
-  mov [R15+16], 1   ;; number of closed-over variables
-  mov RAX, [RBP-8]  ;; load five
-  mov [R15+24], RAX ;; store it in the closure
-  mov RAX, R15 ;; start allocating a closure
-  add RAX, 0x3 ;; tag it as a closure
-
-  mov [RBP-8], RAX ;; let applyToFive = ...
-  ...</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>This example shows only a single closed-over variable.  What
-ambiguity have we not addressed yet, for closing over multiple variables?</p></blockquote><h3>7<tt>&nbsp;</tt><a name="(part._.Implementing_the_new_compilation)"></a>Implementing the new compilation</h3><h4>7.1<tt>&nbsp;</tt><a name="(part._.Scope-checking)"></a>Scope-checking</h4><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>What should the new forms of well-formedness and scope checking
-actually do?  What needs to change?</p></blockquote><h4>7.2<tt>&nbsp;</tt><a name="(part._.Compiling_function_bodies)"></a>Compiling function bodies</h4><p>Now we just need to update the compilation of the function body itself, to look
-for closed-over variables in the correct places.  Let&rsquo;s agree to stash the
-variables in alphabetical order, so that we have a canonical representation for
-each closure.  We can codify this understanding by updating the environment we
-use when we compile a function body.  We have two options here:</p><ol><li><p>We can repeatedly access each free variable from the appropriate slot of
-the closure</p></li><li><p>We can unpack the closure as part of the function preamble, copying the
-values onto the stack or into registers as if they were let-bound variables, and offsetting our
-compilation of any local let-bound variables by enough slots to make room for
-these copies.</p></li></ol><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>What are some of the design tradeoffs of these two approaches?  Which
-phase of compilation is most directly affected?  Within that phase, which piece
-of bookkeeping is most affected?</p></blockquote><h4>7.3<tt>&nbsp;</tt><a name="(part._.Compiling_function_calls)"></a>Compiling function calls</h4><p>We need to change how we compile function applications, too, in order to make
-our compilation of closures work.  Let&rsquo;s agree to <span class="emph">change our calling
-signature</span>, such that the first argument to every function call is the closure
-itself.  In other words, the compilation of function calls will now look like:</p><ol><li><p>Retrieve the function value, and check that it&rsquo;s tagged as a closure.</p></li><li><p>Check that the arity matches the number of arguments being applied.</p></li><li><p>Push all the arguments..</p></li><li><p>Push the closure itself.</p></li><li><p>Call the code-label in the closure.</p></li><li><p>Pop the arguments and the closure.</p></li></ol><h4>7.4<tt>&nbsp;</tt><a name="(part._.Revisiting_compiling_function_bodies)"></a>Revisiting compiling function bodies</h4><p><p>Our function bodies will now be compiled as something like
-</p><ol><li><p>Compute the free-variables of the function, and sort them alphabetically.</p></li><li><p>Update the environment:</p><ul><li><p>All the arguments are now offset by one slot from our earlier compilation</p></li><li><p>All the free variables need to be mapped to registers or stack slots </p></li><li><p>The body must be compiled with a starting stack-index that accommodates
-those already-initialized local variable slots used for the free-variables</p></li></ul></li><li><p>Compile the body in the new environment</p></li><li><p>Produce compiled code that, after the stack management and before the
-body, reads the saved free-variables out of the closure (which is passed in as
-the first function parameter), and stores them in the reserved local variable
-slots or registers.</p></li><li><p>The closure itself is a heap-allocated tuple (code-pointer, arity, N,
-free-var1, ... free-varN).</p></li></ol></p><h4>7.5<tt>&nbsp;</tt><a name="(part._.Complete_worked_example)"></a>Complete worked example</h4><p>Let&rsquo;s try compiling the following program:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def foo(w, x, y, z):
-  (lambda a: a + x + z)
-end
-
-foo(1, 2, 3, 4)(5)</code></pre></div></div></p><p>After turning the <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def</code></span> into a lambda, and sequentializing, we get:</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let foo =
-  (lambda w, x, y, z:
-    (lambda a:
-      let temp1 = a + x in
-      temp1 + z
-    end)
-  end) in
-
-let temp2 = foo(1, 2, 3, 4) in
-temp2(5)</code></pre></div></div></p><p>Looking at the outermost program, we see two bindings (for <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span> and
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">temp2</code></span>), so we allocate stack slots for them, leading to an
-environment for code-generation of</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">foo   ==&gt; [RBP - 8]
-temp2 ==&gt; [RBP - 16]</code></pre></div></div></p><p>Within the lambda for <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span>, we initially see a code-generation environment
-containing just the four arguments.  But remember that we changed our calling
-convention, and there is now an implicit &ldquo;self&rdquo; argument as the very first
-argument:</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">self ==&gt; [RBP + 16]
-w    ==&gt; [RBP + 24]
-x    ==&gt; [RBP + 32]
-y    ==&gt; [RBP + 40]
-z    ==&gt; [RBP + 48]</code></pre></div></div></p><p>Within the innermost lambda, our code-generation environment is trickier.  For
-<span class="emph">scope checking</span> and <span class="emph">type checking</span>, we have the five names <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">w</code></span>,
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>, <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>, <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span> in scope.  Of those, the only free
-variables in the lambda are <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> and <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span>.  So our code-generation
-environment needs to include them, as well as the arguments of the lambda.  As
-a first draft, our environment will be</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">self ==&gt; [RBP + 16]
-a    ==&gt; [RBP + 24]
-x    ==&gt; [self + 24]
-z    ==&gt; [self + 32]</code></pre></div></div></p><p>Accessing <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> or <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> requires two memory lookups, first to load the
-closure and second to offset into it; this double-indirection is one reason why
-we choose to unpack the closure within our function body.  So we&rsquo;d like our
-environment for the lambda to <span class="emph">actually</span> be</p><p><div class="sourceCodeWrapper"><span data-label="OCaml" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-ocaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">self ==&gt; [RBP + 16]
-a    ==&gt; [RBP + 24]
-x    ==&gt; [RBP - 8]
-z    ==&gt; [RBP - 16]</code></pre></div></div></p><p>We&rsquo;ll need to compile the lambda&rsquo;s body with this environment, and with an
-initial stack slot of <span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">3</code></span>, so that we bind <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">temp1</code></span> to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[RBP - 24]</code></span>.
-The compiled code of our innermost lambda will be:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">    inner_lambda:
-      ;; prologue
-      push RBP
-      mov RBP, RSP
-      ;; unpack the closure
-      sub RSP, 16         ;; reserve space on the stack for closed-over vars
-      mov R14, [RBP + 16] ;; \ load the self argument
-      sub R14, 0x3        ;; / and untag it
-      mov RAX, [R14 + 24] ;; \ load x from closure
-      mov [RBP - 8], RAX  ;; / into its correct stack slot
-      mov RAX, [R14 + 16] ;; \ load z from closure
-      mov [RBP - 16], RAX ;; / into its correct stack slot
-      ;; actual function body
-      sub RSP, 8          ;; reserve space on the stack for locals
-      mov RAX, [RBP + 24] ;; \
-      add RAX, [RBP - 8]  ;; | let temp1 = a + x in ...
-      mov [RBP - 24], RAX ;; /
-      mov RAX, [RBP - 24] ;; \ temp1 + z
-      add RAX, [RBP - 16] ;; /
-      ;; epilogue
-      mov RSP, RBP
-      pop RBP
-      ret
-    inner_lambda_end:</code></pre></div></div></p><p>Note that this is <span class="emph">not</span> a closure yet!  It&rsquo;s merely the code of our
-lambda.  To generate a closure, we need to surround it by additional work.
-This work takes place <span class="emph">in the environment for <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">    ;; skip over the code for the lambda
-    jmp inner_lambda_end
-    inner_lambda:
-      ... everything above ...
-    inner_lambda_end:
-    ;; start filling in the closure information
-    mov [R15 + 0 ], inner_lambda ;; code pointer
-    mov [R15 + 8 ], 1            ;; arity
-    mov [R15 + 16], 2            ;; # of free variables
-    mov RAX, [RBP + 32]          ;; \ copy x from argument
-    mov [R15 + 24], RAX          ;; / into closure
-    mov RAX, [RBP + 40]          ;; \ copy z from argument
-    mov [R15 + 32], RAX          ;; / into closure
-    ;; start creating the closure value
-    mov RAX, R15                 ;; \ create the closure
-    add RAX, 0x3                 ;; /
-    add R15, 48                  ;; update heap pointer, keeping 16-byte alignment
-    ;; now RAX contains a proper closure value</code></pre></div></div></p><p>All this code lives inside the compiled body of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  foo:
-    ;; prologue
-    push RBP
-    mov RBP, RSP
-    ;; unpack the closure -- nothing to do here
-    ;; actual function body
-    ;; skip over the code for the lambda
-      ... everything above ...
-    ;; now RAX contains a proper closure value
-    ;; since the inner lambda is in tail position,
-    ;; RAX is our return value, so we're done.
-    ;; epilogue
-    mov RSP, RBP
-    pop RBP
-    ret
-  foo_end:</code></pre></div></div></p><p>Once again, note that this is <span class="emph">not</span> a closure yet!  It&rsquo;s merely the code
-of our <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span> lambda.  To generate a closure, we need to surround it by
-additional work.  This work takes place <span class="emph">in the environment for
-<span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">start_here</code></span></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">  ;; skip over the code for foo
-  jmp foo_end
-  foo:
-    ... everything above ...
-  foo_end:
-  ;; start filling in the closure information
-  mov [R15 + 0 ], foo          ;; code pointer
-  mov [R15 + 8 ], 4            ;; arity
-  mov [R15 + 16], 0            ;; # of free variables
-  ;; start creating the closure value
-  mov RAX, R15                 ;; \ create the closure
-  add RAX, 0x3                 ;; /
-  add R15, 24                  ;; update heap pointer
-  ;; now RAX contains a proper closure value</code></pre></div></div></p><p>All this code lives inside the compiled body of <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">start_here</code></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
-  ;; prologue
-  push RBP
-  mov RBP, RSP
-  ;; skip over the code for foo
-    ... everything above ...
-  ;; now RAX contains a proper closure value
-  mov [RBP - 8], RAX          ;; let foo = (lambda ...) in
-  ;; start calling foo(1, 2, 3, 4)
-  mov RAX, [RBP - 8]
-  mov R14, RAX              ;; load up the value
-  and R14, 0x7              ;; mask off the non-tag bits
-  cmp R14, 0x3              ;; \ check for desired tag
-  jne error_not_closure     ;; /
-  sub RAX, 0x3              ;; untag
-  cmp [RAX + 8, 8]          ;; \ check arity
-  jne error_wrong_arity     ;; /
-  push 0x8                  ;; \
-  push 0x6                  ;; | push arguments
-  push 0x4                  ;; |
-  push 0x2                  ;; /
-  push [RBP - 8]            ;; push closure itself
-  call [RAX]                ;; make the call
-  add RSP, 40               ;; pop arguments
-  mov [RBP - 16], RAX       ;; let temp2 = foo(1, 2, 3, 4) in ...
-  ;; start calling temp2(5)
-  mov R14, RAX              ;; load up the value
-  and R14, 0x7              ;; mask off the non-tag bits
-  cmp R14, 0x3              ;; \ check for desired tag
-  jne error_not_closure     ;; /
-  sub RAX, 0x3              ;; untag
-  cmp [RAX + 8, 8]          ;; \ check arity
-  jne error_wrong_arity     ;; /
-  push 0x10                 ;; push argument
-  push [RBP - 16]           ;; push closure itself
-  call [RAX + 0]            ;; make the call
-  pop 16                     ;; pop arguments
-  ;; epilogue
-  mov RSP, RBP
-  pop RBP
-  ret
-start_here_end:</code></pre></div></div></p><p>Note that we have to be a bit careful about <span title="Fer-de-lance" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">start_here</code></span>: if it
-gets compiled as if it were a closure, then when we call it from <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span> we
-have to be careful to pass itself in as the first argument:
-<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">starts_here(start_here, ... any further arguments)</code></span>.  Or,
-we could special-case it slightly, and not treat it as following the standard C
-calling convention rather than our revised closure-tolerant calling convention.</p><h3>8<tt>&nbsp;</tt><a name="(part._.Recursion)"></a>Recursion</h3><p>If we try even a simple recursive function &#8212;<wbr></wbr> something <span class="emph">that worked</span> with our
+right then, storing them in let-bound variables as normal.</p><p>Now let&rsquo;s consider what happens when we try to extend our lambda
+lifting procedure from diamondback to this new form on the following
+illustrative program:
+<div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let f =
+  if read_bool():
+    let seven = 7 in lambda x: x + seven end
+  else:
+    lambda y: y + 1
+in
+f(5)</code></pre></div></div></p><p>Here let&rsquo;s assume we have implemented a new built-in function
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">read_bool</code></span> that reads a boolean from stdin. Then we can&rsquo;t
+determine at compile time which branch of the <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">if</code></span> will be
+taken, depending on whether the user inputs <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> or
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">false</code></span>, we will either add seven or add one to 5. This
+program makes perfect sense, but notice that if we naively apply our
+lambda lifting, we run into a problem. Previously, we added each
+captured variable as an extra argument, so if we did the same thing
+here we would get the following, where we make up names for the
+anonymous lambda functions:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def lambda1(seven, x): x + seven and
+def lambda2(y): y + 1 in
+let f = if read_bool(): (let seven = 7 in lambda1) else: lambda2
+in
+f(5)</code></pre></div></div></p><p>But we run into a problem: now <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> takes two arguments
+but <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda2</code></span> takes one. Additionally, if
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">read_bool</code></span> returns <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> we will call
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> with only one argument, neglecting to "capture"
+seven in any meaningful sense. Before we would have solved this by
+adding <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">seven</code></span> to every place where <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> was
+called, but now that functions are values that isn&rsquo;t really
+possible. And anyway, this call to <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> would need to be
+applied to a different number of arguments when it calls
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> vs <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda2</code></span>. And if it seems like we
+might be able to solve this by a sufficiently advanced analysis,
+consider the fact that first class function values might be passed in
+as arguments so it is not feasible to statically detect which captured
+variables will be needed at each call site statically.</p><p>So instead, we will have to determine which extra arguments to pass
+<span class="emph">dynamically</span>, by including them as a third field in our function
+values. That is, our function values will now consist of an arity, a
+function pointer, and finally a (pointer to) an array of all the
+values captured by that function. This data structure is called a
+<span class="emph">closure</span> and we say it "closes over" the captured free
+variables. Then when we do lambda lifting, instead of adding each
+variable as an additional argument, we will package them up into an
+array, which we pass as a single argument. Then when we create a
+function value, we will pair up the function pointer and arity with an
+array of all the captured variables. We&rsquo;ll do this by augmenting our
+intermediate representation with a new form for creating closures,
+analogous to our form for creating arrays:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def lambda1(env, x): let seven = env[0] in x + seven and
+def lambda2(env, y): y + 1 in
+let f = if read_bool():
+          (let seven = 7 in make_closure(1, lambda1, [seven]))
+        else:
+          make_closure(1, lambda2, [])
+in
+f(5)</code></pre></div></div></p><p>So now the captured variables are all stored in the single environment
+parameter, and before we run the body, we project out all of the
+captured free variables. Also notice that <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5)</code></span> will need
+to be compiled differently as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is not a statically known
+function definition, but instead a dynamically determined closure
+value.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Augment your lambda lifting code to create make closures.</p></blockquote><h4>5.1<tt>&nbsp;</tt><a name="(part._.Compiling_make_closure_and_function_calls)"></a>Compiling make_closure and function calls</h4><p>Now that we have desugared away lambdas, we instead need to generate
+code to create closures at runtime. But we already know how to create
+heap-allocated values, we simply:</p><ol><li><p>Move the arity, function pointer and environment into the next three available slots in the heap</p></li><li><p>Increment the heap pointer by 8 * 3</p></li><li><p>Return the previous value of the heap pointer, tagged with our closure tag 0x3</p></li></ol><p>Correspondingly, we also need to change the way we implement function
+<span class="emph">calls</span>, but this will again be very similar to what we&rsquo;ve
+already done with function calls in diamondback combined with code for
+reading from the heap:</p><ol><li><p>Retrieve the function value, and check that it&rsquo;s tagged as a closure.</p></li><li><p>Check that the arity matches the number of arguments being applied.</p></li><li><p>Call the code-label as before, but where the environment is passed as an additional first argument.</p></li></ol><p>We can support both tail and non-tail calls in essentially the same
+way as before, the only difference is that the captured environment is
+always passed as the first argument and the address of the code we
+jump to is loaded from memory rather than a known static label.</p><h3>6<tt>&nbsp;</tt><a name="(part._.Recursion)"></a>Recursion</h3><p>If we try even a simple recursive function &#8212;<wbr></wbr> something <span class="emph">that worked</span> with our
 previous top-level function definitions &#8212;<wbr></wbr> we run into a problem.  Because we now
 only have let-bindings and anonymous lambdas, we have no way to refer to the
 function itself from within the function.  We&rsquo;ll get a scope error during
-well-formedness checking; such a program wouldn&rsquo;t even make it to compilation.</p><p><div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let fac = (lambda n:
+well-formedness checking; such a program wouldn&rsquo;t even make it to compilation.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let fac = (lambda n:
   if n &lt; 1: 1
   else: n * fac(n - 1)) # ERROR: fac is not in scope
-in fac(5)</code></pre></div></div></p><p>To accommodate this we&rsquo;ll keep our old syntax for function
-definitions, but now you can use it inside any expression. So you can write
-<div class="sourceCodeWrapper"><span data-label="Fer-de-lance" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let input = 5 in
-def fac(n):
-  if n &lt; 1: 1
-  else: n * fac(n - 1))
-end
-fac(input)</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend the compilation above to work for recursive functions.  Hint:
-the locations of free variables is going to change, to make room for something
-else.</p></blockquote><h4>8.1<tt>&nbsp;</tt><a name="(part._victory)"></a>Victory!</h4><p>We can now pass functions with free-variables to functions and to themselves!
-Everything works exactly as intended.</p><p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Break things, again.  (Hint: try larger programs...)</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Fix things, again.</p></blockquote></p><a name="(part._(gentag._2._lecturelambdas))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._3._lecturelambdas))"></a>1</span></span>Think carefully about what your intuition is here, when a free
-variable is <span class="emph">mutable</span>...</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
+in fac(5)</code></pre></div></div></p><p>To accommodate this we&rsquo;ll continue to support our old syntax for
+mutually recursive function definitions. But then we need to see how
+to extend our lambda lifting to support mutually recursive closures.
+There are many ways to implement this. Here is a fairly direct
+one. Alternatives include Landin&rsquo;s knot and the Y combinator.</p><p>Given a mutually recursive function definition,</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x1 = e1,
+    x2 = e2,
+    x3 = e3 in
+def f(x,y): e4
+and
+def g(a,b,c): e5
+in
+e6</code></pre></div></div></p><p>We need to lambda lift the function definitions, but also we need to
+create closures for each of the functions in the body of the code we
+leave behind, so the <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def</code></span>s will get replaced by
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>s where we use <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">make_closure</code></span>. Since all of
+the functions are defined simultaneously, they all close over the same
+environment, so we can create one environment and re-use it for each
+of the closures we construct:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(env, x, y):
+  let x1 = env[0],
+      x2 = env[1],
+      x3 = env[2]
+  in e4'
+and
+def g(env, a, b, c):
+  let x1 = env[0],
+      x2 = env[1],
+      x3 = env[2]
+  in e5'
+in
+let x1 = e1',
+    x2 = e2',
+    x3 = e3',
+    env = [x1, x2, x3],
+    f   = make_closure(2, f, env),
+    g   = make_closure(3, g, env),
+in
+e6</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>There is a bug in this translation! Can you find it?</p></blockquote><p>We can&rsquo;t forget that since <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> are
+mutually recursive, they can use each other as first-class values, so
+in the body of each function we should additionally create closures
+for all of the mutually defined functions:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(env, x, y):
+  let x1 = env[0],
+      x2 = env[1],
+      x3 = env[2],
+      f  = make_closure(2, f, env),
+      g  = make_closure(3, g, env),
+  in e4'
+and
+def g(env, a, b, c):
+  let x1 = env[0],
+      x2 = env[1],
+      x3 = env[2]
+      f  = make_closure(2, f, env),
+      g  = make_closure(3, g, env),
+  in e5'
+in
+let x1 = e1',
+    x2 = e2',
+    x3 = e3',
+    env = [x1, x2, x3],
+    f   = make_closure(2, f, env),
+    g   = make_closure(3, g, env),
+in
+e6</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend the compilation above to work for recursive functions</p></blockquote><a name="(part._(gentag._6._lecturelambdas))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._7._lecturelambdas))"></a>1</span></span>ignoring tag checking and tail call elimination</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
