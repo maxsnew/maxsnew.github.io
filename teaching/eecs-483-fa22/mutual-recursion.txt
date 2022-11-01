@@ -270,8 +270,9 @@ where Y is a function we can implement inside our language!
 
 
 Y = lambda f:
-      let w = lambda x: f(lambda v. x(x)(v)) end in
-      w(w)
+      let w = (lambda x: f(lambda v: x(x)(v) end) end)
+      in w(w)
+    end
 
 
 
@@ -286,13 +287,14 @@ Y = lambda f:
 
 How does this work?      
 
-let Y = lambda f: let w = lambda x: f(lambda v. x(x)(v)) end in w(w)
-let fact = Y(lambda fact: lambda x:
+let Y = lambda f: let w = (lambda x: f(lambda v: x(x)(v) end) end) in w(w) end,
+    fact = Y(lambda fact: lambda x:
   if x == 0:
     1
   else:
-    x * fact(x - 1))
+    x * fact(x - 1)
+  end end)
 in
-fact(5)
+fact(10)
 
 -- How is the performance of this operation? --
