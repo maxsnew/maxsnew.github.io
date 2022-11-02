@@ -235,7 +235,13 @@ longer has to change the <span title="Rust" class="sourceCode"><code data-lang="
 variables, as the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span> instruction will instead be compiled to
 pass the environment that is stored in the closure.
 See <a href="lec_lambdas_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-class Functions</a> for more details on the code generation.</p><p>As discussed in class, recursive function definitions can be handled
-in several different ways:</p><ul><li><p>You can construct a single environment and make closures with all of the different variables</p></li><li><p>You can use Landin&rsquo;s knot to desugar the recursion into a sequence of let-bindings of lambdas, where you store the functions in a mutable array</p></li><li><p>You can use the Y combinator to desugar the recursion into let-bindings where you call the Y combinator (or a mutually recursive version) on the lambdas</p></li></ul><p>Any of these will work, and you are free to choose what you are most
+in several different ways:</p><ul><li><p>You can construct a single environment and make closures with all of the different variables</p></li><li><p>You can use Landin&rsquo;s knot to desugar the recursion into a sequence of let-bindings of lambdas, where you store the functions in a mutable array</p></li></ul><p>Note: While all of the methods presented in class will work in the
+presence of a garbage collector, since we do not have one for our
+language, some of the implementations (the one presented in class on
+10/24 and the Y combinator) will eventually consume arbitrary
+memory. So please use either Landin&rsquo;s knot as presented in class on
+10/26 or see the corrected version of the technique shown in 10/24 in
+the updated notes <a href="lec_lambdas_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-class Functions</a>.</p><p>Any of these will work, and you are free to choose what you are most
 comfortable with implementing. The first is the most straightforward
 to fit in the existing pipeline, while the latter two would probably
 benefit from being implemented by a new desugaring pass. The benefit
