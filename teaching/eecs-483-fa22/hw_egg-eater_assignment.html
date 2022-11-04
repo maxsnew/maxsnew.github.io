@@ -223,7 +223,19 @@ check for correctly implementing printing of cyclic values like
 this, so you should likely put a bound on your initial print
 function or the autograder might take very long to run.</p><p>In the presence of a cyclic value you should print <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"&lt;loop&gt;"</code></span>
 where the first loop occurs. For instance the above cyclic list
-should be printed as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"[0, &lt;loop&gt;]"</code></span>.</p></li></ul><h4>3.5<tt>&nbsp;</tt><a name="(part._.Closures_and_.Recursive_.Function_.Definitions)"></a>Closures and Recursive Function Definitions</h4><p>To implement closures, we will adapt our lambda lifting phase to
+should be printed as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"[0, &lt;loop&gt;]"</code></span>.</p></li></ul><h4>3.5<tt>&nbsp;</tt><a name="(part._.Closures_and_.Recursive_.Function_.Definitions)"></a>Closures and Recursive Function Definitions</h4><p>First, we need to consider how static and dynamic error messages are
+affected by making functions first-class values.</p><ul><li><p>We no longer need a separate <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">UndefinedFunction</code></span> error, as
+functions will be in the same namespace as other values and so we will
+just use the general <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">UnboundVariable</code></span> error.</p></li><li><p>We no longer need a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunctionUsedAsValue</code></span> error, as
+functions can be used as values!</p></li><li><p>We will also no longer have a <span class="emph">static</span>
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ValueUsedAsFunction</code></span> error, but we need instead to have a
+dynamic error when a number, boolean or array is used as the function
+in a call. In this case, your code should error with a message that
+includes the string "called a non-function".</p></li><li><p>Similarly, we will no longer have a <span class="emph">static</span>
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunctionCalledWrongArity</code></span> message, as this check will be delayed
+to runtime. When a function is called with the wrong number of
+arguments at runtime, your code should raise an error which includes
+the string "wrong number of arguments".</p></li></ul><p>To implement closures, we will adapt our lambda lifting phase to
 desugar the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Lambda</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunDefs</code></span> forms to explicit closure
 construction <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">MakeClosure</code></span>. This is not as big of a change as it
 might at first appear: your lambda lifting code is already determining
