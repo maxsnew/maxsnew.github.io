@@ -46,14 +46,19 @@ set of variables whose values are needed after running the expression
 structure as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">e</code></span> but with each sub-expression annotated with the
 variables that are live at that point. So for example, if the input expression were</p><p><span title="egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 3 in f(x, y, a)</code></span></p><p>where <span title="egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span> is a parameter and <span title="egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is not, then
 your liveness function would return the expression annotated as
-follows given an empty <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">live_out</code></span> set:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let { var: "x",
-      bound_exp: Imm(Num(3), {"y"}),
-      body: Call("f", [Var("x"), Var("y"), Var("a")], {"x", "y"}),
-      ann: {"y"},
-    }</code></pre></div></div></p><p>The inner <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span> has both <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live because both
-values are used as arguments. <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">a</code></span> is not live since it is a
-parameter. The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let</code></span> outer only has <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live in it because
-the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> is defined in the letside.</p><p>The liveness function returns a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqExp&lt;HashSet&lt;String&gt;&gt;</code></span>, an
+follows given an empty <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">live_out</code></span> set:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let { ann: {"f, y"}, // Live variables *before* the Let is performed
+      var: "x",
+      bound_exp: Imm(Num(3), {"f, y"}),
+      body: CallClosure {
+        ann: {"f", "x", "y"} // Live variables *before* the Call is made
+        fun: Var("f"),
+        args: [Var("x"), Var("y"), Var("a")],
+      },
+    }</code></pre></div></div></p><p>The inner <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">CallClosure</code></span> has all of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">f</code></span>, <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> and
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live because <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">f</code></span> is used as the function and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span>
+and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> are used as arguments. <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">a</code></span> is not live since it is a
+parameter. The <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let</code></span> outer only has <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">f</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live in
+it because the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> is defined in the let.</p><p>The liveness function returns a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqExp&lt;HashSet&lt;String&gt;&gt;</code></span>, an
 expression annotated with its liveness information. To extract the
 liveness information for an expression you can use the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">.ann()</code></span>
 method implemented in <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">syntax.rs</code></span>.</p><p>We implement this as a compiler pass because we can use this liveness
@@ -80,7 +85,7 @@ impossible. However, you should make an effort to be somewhat
 precise. In particular, you will not receive full credit by just
 saying all variables conflict with each other. In particular your
 conflict analysis handles examples like the following one from
-lecture:</p><p><div class="sourceCodeWrapper"><span data-label="egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(a, b):
+lecture:</p><p><div class="sourceCodeWrapper"><span data-label="egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(h, a, b):
   let x = a + b in
   let y = x in
   h(x, y)
