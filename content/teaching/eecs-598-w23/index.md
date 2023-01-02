@@ -7,7 +7,7 @@ title: Category Theory
 - Instructor: [Max S. New][maxsnew]
 - Office: Beyster 4640
 - uniqname: maxsnew
-- Office Hours: TBD
+- Office Hours: Tuesdays 2-5pm or by appointment
 - [Canvas][canvas]
 - [Piazza][piazza]
 
@@ -119,4 +119,5 @@ an academic holiday).
 
 [maxsnew]: http://maxsnew.com
 [canvas]: https://umich.instructure.com/courses/574129
-
+[piazza]: https://piazza.com/???
+[signups]: https://gitlab.eecs.umich.edu/598-wi23/scribed-notes
