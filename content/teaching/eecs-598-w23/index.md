@@ -41,6 +41,12 @@ After completing this course, students should be able to
   theory on their own, especially in programming language research
   papers
 
+## Degree Requirements
+
+To see what degree requirements this course satisfies, see the
+spreadsheet on [this
+page][https://cse.engin.umich.edu/academics/course-information/special-topics-courses/].
+
 ## Evaluation
 
 There are four components of your grade:
@@ -90,38 +96,38 @@ an academic holiday).
 Readings are chosen to complement the lecture. All readings will be
 from freely available online sources.
 
-| Meeting Date | Topic                                                           | Readings | HW                    | Scribe |
-|:------------:|:---------------------------------------------------------------:|:--------:|-----------------------|--------|
-| Wed, Jan 04  | Course overview, Propositional Logic                            |          |                       | Max    |
-| Mon, Jan 09  | Models of Propositional Logic                                   |          | PS1 Released          |        |
-| Wed, Jan 11  | Typed Lambda Calculus: Syntax and Axiomatic Semantic            |          |                       |        |
-| Mon, Jan 16  | NO CLASS - MLK Day                                              |          |                       |        |
-| Wed, Jan 18  | NO CLASS - POPL                                                 |          |                       |        |
-| Mon, Jan 23  | Typed Lambda Calculus: Basic Denotational Semantics             |          | PS1 Due, PS2 Released |        |
-| Wed, Jan 25  | Categories, Functors                                            |          |                       |        |
-| Mon, Jan 30  | Predicators, Implicators, Natural Transformations               |          |                       |        |
-| Wed, Feb 01  | Universal Mapping Properties and Yoneda's Lemma                 |          | PS2 Due, PS3 Released |        |
-| Mon, Feb 06  | STLC and Cartesian Closed Categories                            |          |                       |        |
-| Wed, Feb 08  | Gluing/Logical Relations                                        |          |                       |        |
-| Mon, Feb 13  | Inductive Datatypes, Axiomatics                                 |          | PS3 Due, PS4 Released |        |
-| Wed, Feb 15  | Inductive Datatypes, Models                                     |          |                       |        |
-| Mon, Feb 20  | Evaluation Order and Computational Effects                      |          |                       |        |
-| Wed, Feb 22  | Concrete Models of Effects, Adjoint Functors                    |          | PS4 Due               |        |
-| Mon, Feb 27  | NO CLASS - SPRING BREAK                                         |          |                       |        |
-| Wed, Mar 01  | NO CLASS - SPRING BREAK                                         |          |                       |        |
-| Mon, Mar 06  | Monads and Algebras                                             |          | PS5 Released          |        |
-| Wed, Mar 08  | Call-by-push-value                                              |          |                       |        |
-| Mon, Mar 13  | Recursive programs and datatypes, fixed points, Lawvere's lemma |          |                       |        |
-| Wed, Mar 15  | Basic Domain Theory                                             |          | PS5 Due, PS6 Released |        |
-| Mon, Mar 20  | Solving Domain Equations                                        |          |                       |        |
-| Wed, Mar 22  | Guarded Domain Theory                                           |          |                       |        |
-| Mon, Mar 27  | Intuitionistic Linear Logic, Monoidal Categories                |          | PS6 Due, PS7 Released |        |
-| Wed, Mar 29  | Models of ILL                                                   |          |                       |        |
-| Mon, Apr 03  | Bunched Implications/Separation Logic                           |          |                       |        |
-| Wed, Apr 05  | Dependent Type Theory                                           |          | Ps7 Due, PS8 Released |        |
-| Mon, Apr 10  | Fibrations, Categories with Families                            |          |                       |        |
-| Wed, Apr 12  | Presheaf Models                                                 |          | PS8 Due               |        |
-| Mon, Apr 17  | Subobject Classifiers, Toposes                                  |          |                       |        |
+| Meeting Date | Topic                                                           | Readings                                  | HW                    | Scribe |
+|:------------:|:---------------------------------------------------------------:|:-----------------------------------------:|-----------------------|--------|
+| Wed, Jan 04  | Course overview, Propositional Logic                            | [Frank Pfenning notes][pfenning-prop-log] |                       | Max    |
+| Mon, Jan 09  | Models of Propositional Logic                                   |                                           | PS1 Released          |        |
+| Wed, Jan 11  | Typed Lambda Calculus: Syntax and Axiomatic Semantic            |                                           |                       |        |
+| Mon, Jan 16  | NO CLASS - MLK Day                                              |                                           |                       |        |
+| Wed, Jan 18  | NO CLASS - POPL                                                 |                                           |                       |        |
+| Mon, Jan 23  | Typed Lambda Calculus: Basic Denotational Semantics             |                                           | PS1 Due, PS2 Released |        |
+| Wed, Jan 25  | Categories, Functors                                            |                                           |                       |        |
+| Mon, Jan 30  | Predicators, Implicators, Natural Transformations               |                                           |                       |        |
+| Wed, Feb 01  | Universal Mapping Properties and Yoneda's Lemma                 |                                           | PS2 Due, PS3 Released |        |
+| Mon, Feb 06  | STLC and Cartesian Closed Categories                            |                                           |                       |        |
+| Wed, Feb 08  | Gluing/Logical Relations                                        |                                           |                       |        |
+| Mon, Feb 13  | Inductive Datatypes, Axiomatics                                 |                                           | PS3 Due, PS4 Released |        |
+| Wed, Feb 15  | Inductive Datatypes, Models                                     |                                           |                       |        |
+| Mon, Feb 20  | Evaluation Order and Computational Effects                      |                                           |                       |        |
+| Wed, Feb 22  | Concrete Models of Effects, Adjoint Functors                    |                                           | PS4 Due               |        |
+| Mon, Feb 27  | NO CLASS - SPRING BREAK                                         |                                           |                       |        |
+| Wed, Mar 01  | NO CLASS - SPRING BREAK                                         |                                           |                       |        |
+| Mon, Mar 06  | Monads and Algebras                                             |                                           | PS5 Released          |        |
+| Wed, Mar 08  | Call-by-push-value                                              |                                           |                       |        |
+| Mon, Mar 13  | Recursive programs and datatypes, fixed points, Lawvere's lemma |                                           |                       |        |
+| Wed, Mar 15  | Basic Domain Theory                                             |                                           | PS5 Due, PS6 Released |        |
+| Mon, Mar 20  | Solving Domain Equations                                        |                                           |                       |        |
+| Wed, Mar 22  | Guarded Domain Theory                                           |                                           |                       |        |
+| Mon, Mar 27  | Intuitionistic Linear Logic, Monoidal Categories                |                                           | PS6 Due, PS7 Released |        |
+| Wed, Mar 29  | Models of ILL                                                   |                                           |                       |        |
+| Mon, Apr 03  | Bunched Implications/Separation Logic                           |                                           |                       |        |
+| Wed, Apr 05  | Dependent Type Theory                                           |                                           | Ps7 Due, PS8 Released |        |
+| Mon, Apr 10  | Fibrations, Categories with Families                            |                                           |                       |        |
+| Wed, Apr 12  | Presheaf Models                                                 |                                           | PS8 Due               |        |
+| Mon, Apr 17  | Subobject Classifiers, Toposes                                  |                                           |                       |        |
 
 
 [maxsnew]: http://maxsnew.com
@@ -129,3 +135,6 @@ from freely available online sources.
 [piazza]: https://piazza.com/class/lcgj8zh7crs1ba/
 [signups]: https://gitlab.eecs.umich.edu/598-wi23/scribed-notes
 [leccap]: https://leccap.engin.umich.edu/leccap/site/z02eb2esrpaddy7cnwz
+
+[pfenning-prop-log]: http://www.cs.cmu.edu/~fp/courses/15317-f17/lectures/02-natded.pdf
+
