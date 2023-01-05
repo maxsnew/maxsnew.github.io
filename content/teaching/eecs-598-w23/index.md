@@ -50,6 +50,7 @@ page][https://cse.engin.umich.edu/academics/course-information/special-topics-co
 ## Evaluation
 
 There are four components of your grade:
+
 1. Problem Sets (70%)
 2. In-class presentation of solutions (10%): we will set aside class
    time to review the solutions to problem sets
