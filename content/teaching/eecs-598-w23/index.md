@@ -99,7 +99,7 @@ from freely available online sources.
 
 | Meeting Date | Topic                                                           | Readings                                  | HW                    | Scribe |
 |:------------:|:---------------------------------------------------------------:|:-----------------------------------------:|-----------------------|--------|
-| Wed, Jan 04  | Course overview, Propositional Logic                            | [Frank Pfenning notes][pfenning-prop-log] |                       | Max    |
+| Wed, Jan 04  | Course overview, Propositional Logic                            | [Frank Pfenning notes][pfenning-prop-log] |                       | [Max S. New][/teaching/eecs-598-w23/docs/01-04-notes.pdf]    |
 | Mon, Jan 09  | Models of Propositional Logic                                   |                                           | PS1 Released          |        |
 | Wed, Jan 11  | Typed Lambda Calculus: Syntax and Axiomatic Semantic            |                                           |                       |        |
 | Mon, Jan 16  | NO CLASS - MLK Day                                              |                                           |                       |        |
