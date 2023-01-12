@@ -44,8 +44,7 @@ After completing this course, students should be able to
 ## Degree Requirements
 
 To see what degree requirements this course satisfies, see the
-spreadsheet on [this
-page][https://cse.engin.umich.edu/academics/course-information/special-topics-courses/].
+spreadsheet on [this page](https://cse.engin.umich.edu/academics/course-information/special-topics-courses/).
 
 ## Evaluation
 
