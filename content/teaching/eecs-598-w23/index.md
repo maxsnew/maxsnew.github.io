@@ -100,8 +100,8 @@ from freely available online sources.
 | Meeting Date | Topic                                                            | Readings                                  | HW                    | Scribe                  |
 |:------------:|:----------------------------------------------------------------:|:-----------------------------------------:|-----------------------|-------------------------|
 | Wed, Jan 04  | Course overview, Propositional Logic                             | [Frank Pfenning notes][pfenning-prop-log] |                       | [Max S. New][notes0104] |
-| Mon, Jan 09  | Models of Propositional Logic                                    | [Crole Ch 1.1-1.4][Crole]                 | [PS1 Released][ps1]   | [Alan Yang][notes0109]                        |
-| Wed, Jan 11  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                           |                       |                         |
+| Mon, Jan 09  | Models of Propositional Logic                                    | [Crole Ch 1.1-1.4][Crole]                 | [PS1 Released][ps1]   | [Alan Yang][notes0109]  |
+| Wed, Jan 11  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                           |                       | [Zhemin Qu][notes0111]  |
 | Mon, Jan 16  | NO CLASS - MLK Day                                               |                                           |                       |                         |
 | Wed, Jan 18  | NO CLASS - POPL                                                  |                                           |                       |                         |
 | Mon, Jan 23  | Typed Lambda Calculus: Syntax and Axiomatic Semantics            | [Crole Ch 3.1-3.3, 4.1-4.3][Crole]        | PS1 Due, PS2 Released |                         |
@@ -142,6 +142,7 @@ from freely available online sources.
 
 [notes0104]: /teaching/eecs-598-w23/docs/01-04-notes.pdf
 [notes0109]: /teaching/eecs-598-w23/docs/01-09-notes.pdf
+[notes0111]: /teaching/eecs-598-w23/docs/01-11-notes.pdf
 
 [ps1]: /teaching/eecs-598-w23/docs/ps1.pdf
 
