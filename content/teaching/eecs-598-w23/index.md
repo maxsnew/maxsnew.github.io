@@ -105,11 +105,11 @@ from freely available online sources.
 | Mon, Jan 16  | NO CLASS - MLK Day                                               |                                           |                              |                          |
 | Wed, Jan 18  | NO CLASS - POPL                                                  |                                           |                              |                          |
 | Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole]                 | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123] |
-| Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                       |                              |                          |
-| Mon, Jan 30  | Categories, Functors                                             |                                           |                              |                          |
-| Wed, Feb 01  | Universal Mapping Properties and Yoneda's Lemma                  |                                           | PS2 Due, PS3 Released        |                          |
-| Mon, Feb 06  | Initiality of STT in Cartesian Closed Categories                 |                                           |                              |                          |
-| Wed, Feb 08  | Disjunction Property for STT                                     |                                           |                              |                          |
+| Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                       |                              | [Chris Jiang][notes0125] |
+| Mon, Jan 30  | Set-theoretic Semantics, Categories                              |                                           |                              |                          |
+| Wed, Feb 01  | Functors                                                         |                                           | PS2 Due, PS3 Released        |                          |
+| Mon, Feb 06  | Universal Properties                                             |                                           |                              |                          |
+| Wed, Feb 08  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                           |                              |                          |
 | Mon, Feb 13  | Inductive Datatypes, Axiomatics                                  |                                           | PS3 Due, PS4 Released        |                          |
 | Wed, Feb 15  | Inductive Datatypes, Models                                      |                                           |                              |                          |
 | Mon, Feb 20  | Evaluation Order and Computational Effects                       |                                           |                              |                          |
@@ -144,6 +144,16 @@ from freely available online sources.
 [notes0109]: /teaching/eecs-598-w23/docs/01-09-notes.pdf
 [notes0111]: /teaching/eecs-598-w23/docs/01-11-notes.pdf
 [notes0123]: /teaching/eecs-598-w23/docs/01-23-notes.pdf
+[notes0125]: /teaching/eecs-598-w23/docs/01-25-notes.pdf
+[notes0130]: /teaching/eecs-598-w23/docs/01-30-notes.pdf
+[notes0201]: /teaching/eecs-598-w23/docs/02-01-notes.pdf
+[notes0206]: /teaching/eecs-598-w23/docs/02-06-notes.pdf
+[notes0208]: /teaching/eecs-598-w23/docs/02-08-notes.pdf
+[notes0213]: /teaching/eecs-598-w23/docs/02-13-notes.pdf
+[notes0215]: /teaching/eecs-598-w23/docs/02-15-notes.pdf
+[notes0220]: /teaching/eecs-598-w23/docs/02-20-notes.pdf
+[notes0222]: /teaching/eecs-598-w23/docs/02-22-notes.pdf
+[notes0301]: /teaching/eecs-598-w23/docs/03-01-notes.pdf
 
 [ps1]: /teaching/eecs-598-w23/docs/ps1.pdf
 [ps2]: /teaching/eecs-598-w23/docs/ps2.pdf
