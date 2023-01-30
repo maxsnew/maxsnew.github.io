@@ -106,8 +106,8 @@ from freely available online sources.
 | Wed, Jan 18  | NO CLASS - POPL                                                  |                                                  |                              |                          |
 | Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT] | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123] |
 | Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                              |                              | [Chris Jiang][notes0125] |
-| Mon, Jan 30  | Set-theoretic Semantics, Categories                              |                                                  |                              |                          |
-| Wed, Feb 01  | Functors                                                         |                                                  | PS2 Due, PS3 Released        |                          |
+| Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                        |                              |                          |
+| Wed, Feb 01  | Functors, Natural Transformations                                | [Crole Ch 2.3-2.4][Crole]                        | PS2 Due, PS3 Released        |                          |
 | Mon, Feb 06  | Universal Properties                                             |                                                  |                              |                          |
 | Wed, Feb 08  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                  |                              |                          |
 | Mon, Feb 13  | Inductive Datatypes, Axiomatics                                  |                                                  | PS3 Due, PS4 Released        |                          |
