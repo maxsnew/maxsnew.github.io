@@ -107,28 +107,32 @@ from freely available online sources.
 | Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT] | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123] |
 | Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                              |                              | [Chris Jiang][notes0125] |
 | Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                        |                              |                          |
-| Wed, Feb 01  | Functors, Natural Transformations                                | [Crole Ch 2.3-2.4][Crole]                        | PS2 Due, PS3 Released        |                          |
+| Wed, Feb 01  | Functors, Natural Transformations                                | [Crole Ch 2.3-2.4][Crole]                        |                              |                          |
+| Fri, Feb 03  |                                                                  |                                                  | PS2 Due, PS3 Released        |                          |
 | Mon, Feb 06  | Universal Properties                                             |                                                  |                              |                          |
 | Wed, Feb 08  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                  |                              |                          |
 | Mon, Feb 13  | Inductive Datatypes, Axiomatics                                  |                                                  | PS3 Due, PS4 Released        |                          |
 | Wed, Feb 15  | Inductive Datatypes, Models                                      |                                                  |                              |                          |
 | Mon, Feb 20  | Evaluation Order and Computational Effects                       |                                                  |                              |                          |
-| Wed, Feb 22  | Concrete Models of Effects, Adjoint Functors                     |                                                  | PS4 Due                      |                          |
+| Wed, Feb 22  | Concrete Models of Effects, Adjoint Functors                     |                                                  |                              |                          |
+| Fri, Feb 05  |                                                                  |                                                  | PS4 Due                      |                          |
 | Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                  |                              |                          |
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                  |                              |                          |
 | Mon, Mar 06  | Monads and Algebras                                              |                                                  | PS5 Released                 |                          |
 | Wed, Mar 08  | Call-by-push-value                                               |                                                  |                              |                          |
 | Mon, Mar 13  | Recursive programs and datatypes, fixed points                   |                                                  |                              |                          |
-| Wed, Mar 15  | Basic Domain Theory                                              |                                                  | PS5 Due, PS6 Released        |                          |
+| Wed, Mar 15  | Basic Domain Theory                                              |                                                  |                              |                          |
+| Fri, Mar 17  |                                                                  |                                                  | PS5 Due, PS6 Released        |                          |
 | Mon, Mar 20  | Solving Domain Equations                                         |                                                  |                              |                          |
 | Wed, Mar 22  | Guarded Domain Theory                                            |                                                  |                              |                          |
 | Mon, Mar 27  | Intuitionistic Linear Logic, Monoidal Categories                 |                                                  | PS6 Due, PS7 Released        |                          |
 | Wed, Mar 29  | Models of ILL                                                    |                                                  |                              |                          |
 | Mon, Apr 03  | Bunched Implications/Separation Logic                            |                                                  |                              |                          |
-| Wed, Apr 05  | Dependent Type Theory                                            |                                                  | Ps7 Due, PS8 Released        |                          |
+| Wed, Apr 05  | Dependent Type Theory                                            |                                                  |                              |                          |
+| Fri, Apr 07  |                                                                  |                                                  | PS7 Due, PS8 Released        |                          |
 | Mon, Apr 10  | Fibrations, Categories with Families                             |                                                  |                              |                          |
-| Wed, Apr 12  | Presheaf Models                                                  |                                                  | PS8 Due                      |                          |
-| Mon, Apr 17  | Subobject Classifiers, Toposes                                   |                                                  |                              |                          |
+| Wed, Apr 12  | Presheaf Models                                                  |                                                  |                              |                          |
+| Mon, Apr 17  | Subobject Classifiers, Toposes                                   |                                                  | PS8 Due                      |                          |
 
 
 [maxsnew]: http://maxsnew.com
