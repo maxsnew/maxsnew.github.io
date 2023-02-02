@@ -6,7 +6,7 @@ title: Max S. New
 
 ## Address
 
-Room 4640\
+Room 4628\
 Bob and Betty Beyster Building\
 2260 Hayward Street\
 Ann Arbor, MI 48109

@@ -5,7 +5,7 @@ title: Category Theory
 # EECS 598 005: Category Theory for Computer Scientists
 - Lecture: Monday & Wednesday, 2:30-4:30pm, EECS 3427
 - Instructor: [Max S. New][maxsnew]
-- Office: Beyster 4640
+- Office: Beyster 4628
 - uniqname: maxsnew
 - Office Hours: Tuesdays 2-5pm or by appointment
 - [Canvas][canvas]
