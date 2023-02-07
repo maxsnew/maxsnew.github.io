@@ -107,9 +107,9 @@ from freely available online sources.
 | Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT]     | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123] |
 | Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                                  |                              | [Chris Jiang][notes0125] |
 | Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                            |                              | [Jonah Nan][notes0130]   |
-| Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              |                          |
+| Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              | [Han Jiang][notes0201]   |
 | Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                          |
-| Mon, Feb 06  | Functors, Natural Transformations                                | [Crole Ch 2.3-2.4][Crole], [Riehl Ch 1.3-1.4][Riehl] |                              |                          |
+| Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3-2.4][Crole], [Riehl Ch 1.3-1.4][Riehl] |                              |                          |
 | Wed, Feb 08  | Universal Properties I                                           |                                                      |                              |                          |
 | Mon, Feb 13  | Universal Properties II                                          |                                                      | PS3 Due, PS4 Released        |                          |
 | Wed, Feb 15  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                          |
