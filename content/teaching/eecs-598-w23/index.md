@@ -97,42 +97,42 @@ an academic holiday).
 Readings are chosen to complement the lecture. All readings will be
 from freely available online sources.
 
-| Meeting Date | Topic                                                            | Readings                                             | HW                           | Scribe                   |
-|:------------:|:----------------------------------------------------------------:|:----------------------------------------------------:|------------------------------|--------------------------|
-| Wed, Jan 04  | Course overview, Propositional Logic                             | [Frank Pfenning notes][pfenning-prop-log]            |                              | [Max S. New][notes0104]  |
-| Mon, Jan 09  | Models of Propositional Logic                                    | [Crole Ch 1.1-1.4][Crole]                            | [PS1 Released][ps1]          | [Alan Yang][notes0109]   |
-| Wed, Jan 11  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                      |                              | [Zhemin Qu][notes0111]   |
-| Mon, Jan 16  | NO CLASS - MLK Day                                               |                                                      |                              |                          |
-| Wed, Jan 18  | NO CLASS - POPL                                                  |                                                      |                              |                          |
-| Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT]     | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123] |
-| Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                                  |                              | [Chris Jiang][notes0125] |
-| Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                            |                              | [Jonah Nan][notes0130]   |
-| Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              | [Han Jiang][notes0201]   |
-| Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                          |
-| Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3-2.4][Crole], [Riehl Ch 1.3-1.4][Riehl] |                              |                          |
-| Wed, Feb 08  | Universal Properties I                                           |                                                      |                              |                          |
-| Mon, Feb 13  | Universal Properties II                                          |                                                      | PS3 Due, PS4 Released        |                          |
-| Wed, Feb 15  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                          |
-| Mon, Feb 20  | Inductive Datatypes I                                            |                                                      |                              |                          |
-| Wed, Feb 22  | Inductive Datatypes II                                           |                                                      |                              |                          |
-| Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                          |
-| Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                          |
-| Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                          |
-| Mon, Mar 06  | Evaluation Order and Computational Effects                       |                                                      | PS5 Released                 |                          |
-| Wed, Mar 08  | Monads and Algebras                                              |                                                      |                              |                          |
-| Mon, Mar 13  | Call-by-push-value                                               |                                                      |                              |                          |
-| Wed, Mar 15  | Recursive programs and datatypes, fixed points                   |                                                      |                              |                          |
-| Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                          |
-| Mon, Mar 20  | Basic Domain Theory                                              |                                                      |                              |                          |
-| Wed, Mar 22  | Guarded Domain Theory                                            |                                                      |                              |                          |
-| Mon, Mar 27  | Intuitionistic Linear Logic, Monoidal Categories                 |                                                      | PS6 Due, PS7 Released        |                          |
-| Wed, Mar 29  | Models of ILL                                                    |                                                      |                              |                          |
-| Mon, Apr 03  | Bunched Implications/Separation Logic                            |                                                      |                              |                          |
-| Wed, Apr 05  | Dependent Type Theory                                            |                                                      |                              |                          |
-| Fri, Apr 07  |                                                                  |                                                      | PS7 Due, PS8 Released        |                          |
-| Mon, Apr 10  | Fibrations, Categories with Families                             |                                                      |                              |                          |
-| Wed, Apr 12  | Presheaf Models                                                  |                                                      |                              |                          |
-| Mon, Apr 17  | Subobject Classifiers, Toposes                                   |                                                      | PS8 Due                      |                          |
+| Meeting Date | Topic                                                            | Readings                                             | HW                           | Scribe                    |
+|:------------:|:----------------------------------------------------------------:|:----------------------------------------------------:|------------------------------|---------------------------|
+| Wed, Jan 04  | Course overview, Propositional Logic                             | [Frank Pfenning notes][pfenning-prop-log]            |                              | [Max S. New][notes0104]   |
+| Mon, Jan 09  | Models of Propositional Logic                                    | [Crole Ch 1.1-1.4][Crole]                            | [PS1 Released][ps1]          | [Alan Yang][notes0109]    |
+| Wed, Jan 11  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                      |                              | [Zhemin Qu][notes0111]    |
+| Mon, Jan 16  | NO CLASS - MLK Day                                               |                                                      |                              |                           |
+| Wed, Jan 18  | NO CLASS - POPL                                                  |                                                      |                              |                           |
+| Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT]     | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123]  |
+| Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                                  |                              | [Chris Jiang][notes0125]  |
+| Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                            |                              | [Jonah Nan][notes0130]    |
+| Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              | [Han Jiang][notes0201]    |
+| Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                           |
+| Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206] |
+| Wed, Feb 08  | Natural Transformations, Universal Properties I                  | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              |                           |
+| Mon, Feb 13  | Universal Properties II                                          |                                                      | PS3 Due, PS4 Released        |                           |
+| Wed, Feb 15  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                           |
+| Mon, Feb 20  | Inductive Datatypes I                                            |                                                      |                              |                           |
+| Wed, Feb 22  | Inductive Datatypes II                                           |                                                      |                              |                           |
+| Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                           |
+| Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                           |
+| Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                           |
+| Mon, Mar 06  | Evaluation Order and Computational Effects                       |                                                      | PS5 Released                 |                           |
+| Wed, Mar 08  | Monads and Algebras                                              |                                                      |                              |                           |
+| Mon, Mar 13  | Call-by-push-value                                               |                                                      |                              |                           |
+| Wed, Mar 15  | Recursive programs and datatypes, fixed points                   |                                                      |                              |                           |
+| Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                           |
+| Mon, Mar 20  | Basic Domain Theory                                              |                                                      |                              |                           |
+| Wed, Mar 22  | Guarded Domain Theory                                            |                                                      |                              |                           |
+| Mon, Mar 27  | Intuitionistic Linear Logic, Monoidal Categories                 |                                                      | PS6 Due, PS7 Released        |                           |
+| Wed, Mar 29  | Models of ILL                                                    |                                                      |                              |                           |
+| Mon, Apr 03  | Bunched Implications/Separation Logic                            |                                                      |                              |                           |
+| Wed, Apr 05  | Dependent Type Theory                                            |                                                      |                              |                           |
+| Fri, Apr 07  |                                                                  |                                                      | PS7 Due, PS8 Released        |                           |
+| Mon, Apr 10  | Fibrations, Categories with Families                             |                                                      |                              |                           |
+| Wed, Apr 12  | Presheaf Models                                                  |                                                      |                              |                           |
+| Mon, Apr 17  | Subobject Classifiers, Toposes                                   |                                                      | PS8 Due                      |                           |
 
 
 [maxsnew]: http://maxsnew.com
