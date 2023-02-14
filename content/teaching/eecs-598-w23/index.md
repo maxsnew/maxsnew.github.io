@@ -111,7 +111,7 @@ from freely available online sources.
 | Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                              |
 | Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206]    |
 | Wed, Feb 08  | Natural Transformations, Universal Properties I                  | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208] |
-| Mon, Feb 13  | Universal Properties II                                          |                                                      | PS3 Due, PS4 Released        |                              |
+| Mon, Feb 13  | Universal Properties II                                          |                                                      | PS3 Due, [PS4 Released][ps4] |                              |
 | Wed, Feb 15  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                              |
 | Mon, Feb 20  | Inductive Datatypes I                                            |                                                      |                              |                              |
 | Wed, Feb 22  | Inductive Datatypes II                                           |                                                      |                              |                              |
