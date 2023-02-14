@@ -110,11 +110,11 @@ from freely available online sources.
 | Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              | [Han Jiang][notes0201]       |
 | Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                              |
 | Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206]    |
-| Wed, Feb 08  | Natural Transformations, Universal Properties I                  | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208] |
-| Mon, Feb 13  | Universal Properties II                                          |                                                      | PS3 Due, [PS4 Released][ps4] |                              |
-| Wed, Feb 15  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                              |
-| Mon, Feb 20  | Inductive Datatypes I                                            |                                                      |                              |                              |
-| Wed, Feb 22  | Inductive Datatypes II                                           |                                                      |                              |                              |
+| Wed, Feb 08  | Natural Transformations, Universal Properties I (Products)       | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208] |
+| Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            |                                                      | PS3 Due, [PS4 Released][ps4] |                              |
+| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    |                                                      |                              |                              |
+| Mon, Feb 20  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                              |
+| Wed, Feb 22  | Inductive Datatypes                                              |                                                      |                              |                              |
 | Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
 | Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
