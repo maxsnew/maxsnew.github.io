@@ -112,7 +112,7 @@ from freely available online sources.
 | Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206]    |
 | Wed, Feb 08  | Natural Transformations, Universal Properties I (Products)       | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208] |
 | Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            |                                                      | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]       |
-| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    |                                                      |                              |                              |
+| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    |                                                      |                              | [Shubh Agrawal][notes0215]   |
 | Mon, Feb 20  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                              |
 | Wed, Feb 22  | Inductive Datatypes                                              |                                                      |                              |                              |
 | Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
