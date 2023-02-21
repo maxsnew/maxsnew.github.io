@@ -111,29 +111,28 @@ from freely available online sources.
 | Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                              |
 | Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206]    |
 | Wed, Feb 08  | Natural Transformations, Universal Properties I (Products)       | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208] |
-| Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            |                                                      | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]       |
-| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    |                                                      |                              | [Shubh Agrawal][notes0215]   |
-| Mon, Feb 20  | Initiality of STT in biCCCs, Disjunction Property for STT        |                                                      |                              |                              |
-| Wed, Feb 22  | Inductive Datatypes                                              |                                                      |                              |                              |
+| Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            | [Riehl Ch. 2.1][Riehl]                               | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]       |
+| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    | [Riehl Ch. 2.2-2.3][Riehl]                           |                              | [Shubh Agrawal][notes0215]   |
+| Mon, Feb 20  | Categorical Models of STT I                                      | [Riehl Ch. 2.3-2.4][Riehl]                           |                              |                              |
+| Wed, Feb 22  | Categorical Models of STT II, Disjunction Property for STT       | [Crole Ch. 4][Crole]                                 |                              |                              |
 | Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
 | Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
-| Mon, Mar 06  | Evaluation Order and Computational Effects                       |                                                      | PS5 Released                 |                              |
-| Wed, Mar 08  | Monads and Algebras                                              |                                                      |                              |                              |
-| Mon, Mar 13  | Call-by-push-value                                               |                                                      |                              |                              |
-| Wed, Mar 15  | Recursive programs and datatypes, fixed points                   |                                                      |                              |                              |
+| Mon, Mar 06  | Inductive Datatypes                                              |                                                      | PS5 Released                 |                              |
+| Wed, Mar 08  | Limits and Colimits                                              |                                                      |                              |                              |
+| Mon, Mar 13  | Evaluation Order and Computational Effects                       |                                                      |                              |                              |
+| Wed, Mar 15  | Adjoint Functors and Monads points                               |                                                      |                              |                              |
 | Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                              |
-| Mon, Mar 20  | Basic Domain Theory                                              |                                                      |                              |                              |
-| Wed, Mar 22  | Guarded Domain Theory                                            |                                                      |                              |                              |
-| Mon, Mar 27  | Intuitionistic Linear Logic, Monoidal Categories                 |                                                      | PS6 Due, PS7 Released        |                              |
-| Wed, Mar 29  | Models of ILL                                                    |                                                      |                              |                              |
-| Mon, Apr 03  | Bunched Implications/Separation Logic                            |                                                      |                              |                              |
-| Wed, Apr 05  | Dependent Type Theory                                            |                                                      |                              |                              |
+| Mon, Mar 20  | Call-by-push-value                                               |                                                      |                              |                              |
+| Wed, Mar 22  | Semantics of Call-by-push-value                                  |                                                      |                              |                              |
+| Mon, Mar 27  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      | PS6 Due, PS7 Released        |                              |
+| Wed, Mar 29  | Domain Theory                                                    |                                                      |                              |                              |
+| Mon, Apr 03  | Guarded Domain Theory                                            |                                                      |                              |                              |
+| Wed, Apr 05  | Logical Relations for Effectful Programs                         |                                                      |                              |                              |
 | Fri, Apr 07  |                                                                  |                                                      | PS7 Due, PS8 Released        |                              |
-| Mon, Apr 10  | Fibrations, Categories with Families                             |                                                      |                              |                              |
-| Wed, Apr 12  | Presheaf Models                                                  |                                                      |                              |                              |
-| Mon, Apr 17  | Subobject Classifiers, Toposes                                   |                                                      | PS8 Due                      |                              |
-
+| Mon, Apr 10  | Predicate Logic                                                  |                                                      |                              |                              |
+| Wed, Apr 12  | Parametric Polymorphism                                          |                                                      |                              |                              |
+| Mon, Apr 17  | Parametricity                                                    |                                                      | PS8 Due                      |                              |
 
 [maxsnew]: http://maxsnew.com
 [canvas]: https://umich.instructure.com/courses/574129
