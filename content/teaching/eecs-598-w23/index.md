@@ -114,7 +114,7 @@ from freely available online sources.
 | Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            | [Riehl Ch. 2.1][Riehl]                               | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]       |
 | Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    | [Riehl Ch. 2.2-2.3][Riehl]                           |                              | [Shubh Agrawal][notes0215]   |
 | Mon, Feb 20  | C-T Structures I                                                 | [Riehl Ch. 2.3-2.4][Riehl]                           |                              | [Jigang Li][notes0220]       |
-| Wed, Feb 22  | C-T Structures II                                                | [Crole Ch. 4][Crole]                                 |                              |                              |
+| Wed, Feb 22  | C-T Structures II                                                | [Crole Ch. 4][Crole]                                 |                              | [Yuchen Jiang][notes0222]    |
 | Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
 | Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
@@ -158,6 +158,20 @@ from freely available online sources.
 [notes0220]: /teaching/eecs-598-w23/docs/02-20-notes.pdf
 [notes0222]: /teaching/eecs-598-w23/docs/02-22-notes.pdf
 [notes0301]: /teaching/eecs-598-w23/docs/03-01-notes.pdf
+[notes0306]: /teaching/eecs-598-w23/docs/03-06-notes.pdf
+[notes0308]: /teaching/eecs-598-w23/docs/03-08-notes.pdf
+[notes0313]: /teaching/eecs-598-w23/docs/03-13-notes.pdf
+[notes0315]: /teaching/eecs-598-w23/docs/03-15-notes.pdf
+[notes0320]: /teaching/eecs-598-w23/docs/03-20-notes.pdf
+[notes0322]: /teaching/eecs-598-w23/docs/03-22-notes.pdf
+[notes0327]: /teaching/eecs-598-w23/docs/03-27-notes.pdf
+[notes0329]: /teaching/eecs-598-w23/docs/03-29-notes.pdf
+[notes0403]: /teaching/eecs-598-w23/docs/04-03-notes.pdf
+[notes0405]: /teaching/eecs-598-w23/docs/04-05-notes.pdf
+[notes0410]: /teaching/eecs-598-w23/docs/04-10-notes.pdf
+[notes0412]: /teaching/eecs-598-w23/docs/04-12-notes.pdf
+[notes0417]: /teaching/eecs-598-w23/docs/04-17-notes.pdf
+
 
 [STT]: /teaching/eecs-598-w23/docs/stt-full-rules.pdf
 
