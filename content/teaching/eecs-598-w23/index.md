@@ -114,12 +114,12 @@ from freely available online sources.
 | Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            | [Riehl Ch. 2.1][Riehl]                               | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]       |
 | Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    | [Riehl Ch. 2.2-2.3][Riehl]                           |                              | [Shubh Agrawal][notes0215]   |
 | Mon, Feb 20  | C-T Structures I                                                 | [Riehl Ch. 2.3-2.4][Riehl]                           |                              | [Jigang Li][notes0220]       |
-| Wed, Feb 22  | C-T Structures II                                                | [Crole Ch. 4][Crole]                                 |                              | [Yuchen Jiang][notes0222]    |
+| Wed, Feb 22  | C-T Structures II                                                | [Crole Ch. 4.5-4.9][Crole]                           |                              | [Yuchen Jiang][notes0222]    |
 | Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
 | Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
-| Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   |                                                      | PS5 Released                 |                              |
-| Wed, Mar 08  | Logical Relations                                                |                                                      |                              |                              |
+| Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          |                              |
+| Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              |                              |
 | Mon, Mar 13  | Inductive Datatypes                                              |                                                      |                              |                              |
 | Wed, Mar 15  | Limits and Colimits                                              |                                                      |                              |                              |
 | Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                              |
