@@ -120,7 +120,7 @@ from freely available online sources.
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
 | Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          | [Jin Pan][notes0306]         |
 | Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              | [Benjamin Kelly][notes0308]  |
-| Mon, Mar 13  | Inductive Datatypes                                              |                                                      |                              |                              |
+| Mon, Mar 13  | Inductive Datatypes                                              | [Hutton JFP '99][Hutton99]                           |                              |                              |
 | Wed, Mar 15  | Limits and Colimits                                              |                                                      |                              |                              |
 | Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                              |
 | Mon, Mar 20  | Evaluation Order and Computational Effects                       |                                                      |                              |                              |
@@ -143,6 +143,7 @@ from freely available online sources.
 [pfenning-prop-log]: http://www.cs.cmu.edu/~fp/courses/15317-f17/lectures/02-natded.pdf
 [Crole]: https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707
 [Riehl]: https://math.jhu.edu/~eriehl/context.pdf
+[Hutton99]: https://www.cs.nott.ac.uk/~pszgmh/fold.pdf
 
 [notes0104]: /teaching/eecs-598-w23/docs/01-04-notes.pdf
 [notes0109]: /teaching/eecs-598-w23/docs/01-09-notes.pdf
