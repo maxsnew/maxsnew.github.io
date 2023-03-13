@@ -118,8 +118,8 @@ from freely available online sources.
 | Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
 | Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
-| Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          | [Jin Pan][notes0306]                             |
-| Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              |                              |
+| Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          | [Jin Pan][notes0306]         |
+| Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              | [Benjamin Kelly][notes0308]  |
 | Mon, Mar 13  | Inductive Datatypes                                              |                                                      |                              |                              |
 | Wed, Mar 15  | Limits and Colimits                                              |                                                      |                              |                              |
 | Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                              |
