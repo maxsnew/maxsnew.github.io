@@ -97,42 +97,42 @@ an academic holiday).
 Readings are chosen to complement the lecture. All readings will be
 from freely available online sources.
 
-| Meeting Date | Topic                                                            | Readings                                             | HW                           | Scribe                       |
-|:------------:|:----------------------------------------------------------------:|:----------------------------------------------------:|------------------------------|------------------------------|
-| Wed, Jan 04  | Course overview, Propositional Logic                             | [Frank Pfenning notes][pfenning-prop-log]            |                              | [Max S. New][notes0104]      |
-| Mon, Jan 09  | Models of Propositional Logic                                    | [Crole Ch 1.1-1.4][Crole]                            | [PS1 Released][ps1]          | [Alan Yang][notes0109]       |
-| Wed, Jan 11  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                      |                              | [Zhemin Qu][notes0111]       |
-| Mon, Jan 16  | NO CLASS - MLK Day                                               |                                                      |                              |                              |
-| Wed, Jan 18  | NO CLASS - POPL                                                  |                                                      |                              |                              |
-| Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT]     | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123]     |
-| Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                                  |                              | [Chris Jiang][notes0125]     |
-| Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                            |                              | [Jonah Nan][notes0130]       |
-| Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              | [Han Jiang][notes0201]       |
-| Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                              |
-| Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206]    |
-| Wed, Feb 08  | Natural Transformations, Universal Properties I (Products)       | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208] |
-| Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            | [Riehl Ch. 2.1][Riehl]                               | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]       |
-| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    | [Riehl Ch. 2.2-2.3][Riehl]                           |                              | [Shubh Agrawal][notes0215]   |
-| Mon, Feb 20  | C-T Structures I                                                 | [Riehl Ch. 2.3-2.4][Riehl]                           |                              | [Jigang Li][notes0220]       |
-| Wed, Feb 22  | C-T Structures II                                                | [Crole Ch. 4.5-4.9][Crole]                           |                              | [Yuchen Jiang][notes0222]    |
-| Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                              |
-| Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
-| Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                              |
-| Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          | [Jin Pan][notes0306]         |
-| Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              | [Benjamin Kelly][notes0308]  |
-| Mon, Mar 13  | Inductive Datatypes                                              | [Hutton JFP '99][Hutton99]                           |                              |                              |
-| Wed, Mar 15  | Limits and Colimits                                              |                                                      |                              |                              |
-| Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                              |
-| Mon, Mar 20  | Evaluation Order and Computational Effects                       |                                                      |                              |                              |
-| Wed, Mar 22  | Adjoint Functors and Monads                                      |                                                      |                              |                              |
-| Mon, Mar 27  | Call-by-push-value                                               |                                                      | PS6 Due, PS7 Released        |                              |
-| Wed, Mar 29  | Semantics of Call-by-push-value                                  |                                                      |                              |                              |
-| Mon, Apr 03  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      |                              |                              |
-| Wed, Apr 05  | Domain Theory                                                    |                                                      |                              |                              |
-| Fri, Apr 07  |                                                                  |                                                      | PS7 Due, PS8 Released        |                              |
-| Mon, Apr 10  | Guarded Domain Theory                                            |                                                      |                              |                              |
-| Wed, Apr 12  | Logical Relations for Effectful Programs                         |                                                      |                              |                              |
-| Mon, Apr 17  | Something Fun                                                    |                                                      | PS8 Due                      |                              |
+| Meeting Date | Topic                                                            | Readings                                             | HW                           | Scribe                         |
+|:------------:|:----------------------------------------------------------------:|:----------------------------------------------------:|------------------------------|--------------------------------|
+| Wed, Jan 04  | Course overview, Propositional Logic                             | [Frank Pfenning notes][pfenning-prop-log]            |                              | [Max S. New][notes0104]        |
+| Mon, Jan 09  | Models of Propositional Logic                                    | [Crole Ch 1.1-1.4][Crole]                            | [PS1 Released][ps1]          | [Alan Yang][notes0109]         |
+| Wed, Jan 11  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                      |                              | [Zhemin Qu][notes0111]         |
+| Mon, Jan 16  | NO CLASS - MLK Day                                               |                                                      |                              |                                |
+| Wed, Jan 18  | NO CLASS - POPL                                                  |                                                      |                              |                                |
+| Mon, Jan 23  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT]     | PS1 Due, [PS2 Released][ps2] | [Yanjun Chen][notes0123]       |
+| Wed, Jan 25  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                                  |                              | [Chris Jiang][notes0125]       |
+| Mon, Jan 30  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                            |                              | [Jonah Nan][notes0130]         |
+| Wed, Feb 01  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              | [Han Jiang][notes0201]         |
+| Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                                |
+| Mon, Feb 06  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              | [Wen Plotnick][notes0206]      |
+| Wed, Feb 08  | Natural Transformations, Universal Properties I (Products)       | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              | [Steven Schaefer][notes0208]   |
+| Mon, Feb 13  | Universal Properties II, Exponentials and Predicators            | [Riehl Ch. 2.1][Riehl]                               | PS3 Due, [PS4 Released][ps4] | [Runze Xue][notes0213]         |
+| Wed, Feb 15  | Universal Properties III, Representability and Yoneda's Lemma    | [Riehl Ch. 2.2-2.3][Riehl]                           |                              | [Shubh Agrawal][notes0215]     |
+| Mon, Feb 20  | C-T Structures I                                                 | [Riehl Ch. 2.3-2.4][Riehl]                           |                              | [Jigang Li][notes0220]         |
+| Wed, Feb 22  | C-T Structures II                                                | [Crole Ch. 4.5-4.9][Crole]                           |                              | [Yuchen Jiang][notes0222]      |
+| Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                                |
+| Mon, Feb 27  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                                |
+| Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                                |
+| Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          | [Jin Pan][notes0306]           |
+| Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              | [Benjamin Kelly][notes0308]    |
+| Mon, Mar 13  | More LR/Natural Numbers Objects                                  | [Hutton JFP '99][Hutton99]                           |                              | [Pranav Srinivasan][notes0316] |
+| Wed, Mar 15  | Inductive Datatypes                                              | [McBride POPL '08][McBride08]                        |                              |                                |
+| Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                                |
+| Mon, Mar 20  | Evaluation Order and Computational Effects                       |                                                      |                              |                                |
+| Wed, Mar 22  | Adjoint Functors and Monads                                      |                                                      |                              |                                |
+| Mon, Mar 27  | Call-by-push-value                                               |                                                      | PS6 Due, PS7 Released        |                                |
+| Wed, Mar 29  | Semantics of Call-by-push-value                                  |                                                      |                              |                                |
+| Mon, Apr 03  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      |                              |                                |
+| Wed, Apr 05  | Domain Theory                                                    |                                                      |                              |                                |
+| Fri, Apr 07  |                                                                  |                                                      | PS7 Due, PS8 Released        |                                |
+| Mon, Apr 10  | Guarded Domain Theory                                            |                                                      |                              |                                |
+| Wed, Apr 12  | Logical Relations for Effectful Programs                         |                                                      |                              |                                |
+| Mon, Apr 17  | Something Fun                                                    |                                                      | PS8 Due                      |                                |
 
 [maxsnew]: http://maxsnew.com
 [canvas]: https://umich.instructure.com/courses/574129
@@ -144,6 +144,7 @@ from freely available online sources.
 [Crole]: https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707
 [Riehl]: https://math.jhu.edu/~eriehl/context.pdf
 [Hutton99]: https://www.cs.nott.ac.uk/~pszgmh/fold.pdf
+[McBride08]: https://dl.acm.org/doi/pdf/10.1145/1328897.1328474
 
 [notes0104]: /teaching/eecs-598-w23/docs/01-04-notes.pdf
 [notes0109]: /teaching/eecs-598-w23/docs/01-09-notes.pdf
