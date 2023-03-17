@@ -120,8 +120,8 @@ from freely available online sources.
 | Wed, Mar 01  | NO CLASS - SPRING BREAK                                          |                                                      |                              |                                |
 | Mon, Mar 06  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          | [Jin Pan][notes0306]           |
 | Wed, Mar 08  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              | [Benjamin Kelly][notes0308]    |
-| Mon, Mar 13  | More LR/Natural Numbers Objects                                  | [Hutton JFP '99][Hutton99]                           |                              | [Pranav Srinivasan][notes0316] |
-| Wed, Mar 15  | Inductive Datatypes                                              | [McBride POPL '08][McBride08]                        |                              |                                |
+| Mon, Mar 13  | More LR/Natural Numbers Objects                                  | [Hutton JFP '99][Hutton99]                           |                              | [Pranav Srinivasan][notes0313] |
+| Wed, Mar 15  | Inductive Datatypes                                              | [McBride POPL '08][McBride08]                        |                              | [Kevin Wang][notes0315]        |
 | Fri, Mar 17  |                                                                  |                                                      | PS5 Due, PS6 Released        |                                |
 | Mon, Mar 20  | Evaluation Order and Computational Effects                       |                                                      |                              |                                |
 | Wed, Mar 22  | Adjoint Functors and Monads                                      |                                                      |                              |                                |
