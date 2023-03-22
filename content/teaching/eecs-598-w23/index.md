@@ -123,14 +123,14 @@ from freely available online sources.
 | Mon, Mar 13  | More LR/Natural Numbers Objects                                  | [Hutton JFP '99][Hutton99]                           |                              | [Pranav Srinivasan][notes0313] |
 | Wed, Mar 15  | Inductive Datatypes                                              | [McBride POPL '08][McBride08]                        |                              | [Kevin Wang][notes0315]        |
 | Mon, Mar 20  | Evaluation Order and Computational Effects                       | [Levy Chapter 1][Levy]                               | PS5 Due, [PS6 Released][ps6] |                                |
-| Wed, Mar 22  | Adjoint Functors and Equivalence of Categories                   |                                                      |                              |                                |
-| Mon, Mar 27  | Adjunctions and Monads                                           |                                                      |                              |                                |
-| Wed, Mar 29  | Call-by-push-value: A calculus for adjunctions                   |                                                      |                              |                                |
+| Wed, Mar 22  | Equivalence of Categories                                        | [Riehl Ch 1.5][Riehl]                                |                              |                                |
+| Mon, Mar 27  | Adjoint Functors                                                 | [Riehl Ch 4.1-4.3][Riehl]                            |                              |                                |
+| Wed, Mar 29  | Call-by-push-value: A calculus for adjunctions                   | [Levy Chapter 2][Levy]                               |                              |                                |
 | Fri, Mar 31  |                                                                  |                                                      | PS6 Due, PS7 Released        |                                |
-| Mon, Apr 03  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      |                              |                                |
-| Wed, Apr 05  | Domain Theory                                                    |                                                      |                              |                                |
+| Mon, Apr 03  | Models and Gluing for CBPV                                       |                                                      |                              |                                |
+| Wed, Apr 05  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      |                              |                                |
 | Mon, Apr 10  | Guarded Domain Theory                                            |                                                      | PS7 Due, PS8 Released        |                                |
-| Wed, Apr 12  | Logical Relations for Effectful Programs                         |                                                      |                              |                                |
+| Wed, Apr 12  | Models and Gluing for General Recursion                          |                                                      |                              |                                |
 | Mon, Apr 17  | Something Fun                                                    |                                                      |                              |                                |
 | Fri, Apr 21  |                                                                  |                                                      | PS8 Due                      |                                |
 
