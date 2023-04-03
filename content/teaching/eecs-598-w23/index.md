@@ -124,8 +124,8 @@ from freely available online sources.
 | Wed, Mar 15  | Inductive Datatypes                                              | [McBride POPL '08][McBride08]                        |                              | [Kevin Wang][notes0315]        |
 | Mon, Mar 20  | Evaluation Order and Computational Effects                       | [Levy Chapter 1][Levy]                               | PS5 Due, [PS6 Released][ps6] | [Michael Xi][notes0320]        |
 | Wed, Mar 22  | Equivalence of Categories                                        | [Riehl Ch 1.5][Riehl]                                |                              | [Daiwen Zhang][notes0322]      |
-| Mon, Mar 27  | Adjoint Functors                                                 | [Riehl Ch 4.1-4.3][Riehl]                            |                              |                                |
-| Wed, Mar 29  | More Adjoint Functors                                            | [Levy Chapter 2][Levy]                               |                              |                                |
+| Mon, Mar 27  | Adjoint Functors                                                 | [Riehl Ch 4.1-4.3][Riehl]                            |                              | [Jonathan Moore][notes0327]    |
+| Wed, Mar 29  | More Adjoint Functors                                            | [Levy Chapter 2][Levy]                               |                              | [Owen Goebel][notes0329]       |
 | Fri, Mar 31  |                                                                  |                                                      | PS6 Due, [PS7 Released][ps7] |                                |
 | Mon, Apr 03  | Call-by-push-value                                               |                                                      |                              |                                |
 | Wed, Apr 05  | Call-by-push-value II                                            |                                                      |                              |                                |
