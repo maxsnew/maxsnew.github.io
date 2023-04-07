@@ -127,8 +127,8 @@ from freely available online sources.
 | Mon, Mar 27  | Adjoint Functors                                                 | [Riehl Ch 4.1-4.3][Riehl]                            |                              | [Jonathan Moore][notes0327]    |
 | Wed, Mar 29  | More Adjoint Functors                                            | [Levy Chapter 2][Levy]                               |                              | [Owen Goebel][notes0329]       |
 | Fri, Mar 31  |                                                                  |                                                      | PS6 Due, [PS7 Released][ps7] |                                |
-| Mon, Apr 03  | Call-by-push-value                                               |                                                      |                              |                                |
-| Wed, Apr 05  | Call-by-push-value II                                            |                                                      |                              |                                |
+| Mon, Apr 03  | Call-by-push-value                                               |                                                      |                              | [Eric Zhao][notes0403]         |
+| Wed, Apr 05  | Call-by-push-value II                                            |                                                      |                              | [Elanor Tang][notes0405]       |
 | Mon, Apr 10  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      | PS7 Due, PS8 Released        |                                |
 | Wed, Apr 12  | Models of General Recursion                                      |                                                      |                              |                                |
 | Mon, Apr 17  | Something Fun                                                    |                                                      |                              |                                |
