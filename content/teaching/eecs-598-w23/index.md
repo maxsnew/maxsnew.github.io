@@ -129,9 +129,9 @@ from freely available online sources.
 | Fri, Mar 31  |                                                                  |                                                      | PS6 Due, [PS7 Released][ps7] |                                |
 | Mon, Apr 03  | Call-by-push-value                                               |                                                      |                              | [Eric Zhao][notes0403]         |
 | Wed, Apr 05  | Call-by-push-value II                                            |                                                      |                              | [Elanor Tang][notes0405]       |
-| Mon, Apr 10  | Recursive programs and datatypes, Untyped Lambda Calculus        |                                                      | PS7 Due, PS8 Released        |                                |
-| Wed, Apr 12  | Models of General Recursion                                      |                                                      |                              |                                |
-| Mon, Apr 17  | Something Fun                                                    |                                                      |                              |                                |
+| Mon, Apr 10  | Effects in CBPV                                                  |                                                      | PS7 Due, [PS8 Released][ps8] |                                |
+| Wed, Apr 12  | Models of CBPV                                                   |                                                      |                              |                                |
+| Mon, Apr 17  | Review and Conclusions                                           |                                                      |                              |                                |
 | Fri, Apr 21  |                                                                  |                                                      | PS8 Due                      |                                |
 
 [maxsnew]: http://maxsnew.com
