@@ -130,7 +130,7 @@ from freely available online sources.
 | Mon, Apr 03  | Call-by-push-value                                               |                                                      |                              | [Eric Zhao][notes0403]         |
 | Wed, Apr 05  | Call-by-push-value II                                            |                                                      |                              | [Elanor Tang][notes0405]       |
 | Mon, Apr 10  | Effects in CBPV                                                  |                                                      | PS7 Due, [PS8 Released][ps8] |                                |
-| Wed, Apr 12  | Models of CBPV                                                   |                                                      |                              | [Matthew Wang][notes0410]      |
+| Wed, Apr 12  | Models of CBPV                                                   |                                                      |                              | [Matt Wang][notes0410]      |
 | Mon, Apr 17  | Review and Conclusions                                           |                                                      |                              | [Darren Fitzgerald][notes0412] |
 | Fri, Apr 21  |                                                                  |                                                      | PS8 Due                      | [Matthew Nomura][notes0417]                               |
 
