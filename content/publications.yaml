@@ -1,4 +1,3 @@
-
 - title: Gradual Typing for Effect Handlers
   id: greff
   authors: Max S. New and Eric Giovannini and Daniel R. Licata
@@ -9,9 +8,9 @@
 - title: A formal type theory for formal category theory
   id: virtual-equipments
   authors: Max S. New and Daniel R. Licata
-  preprint: True
+  venue: FoSSaCS 2023
   links:
-    preprint: docs/virtual-equipments.pdf
+    official-link: https://link.springer.com/chapter/10.1007/978-3-031-30829-1_6
     repo: https://github.com/maxsnew/virtual-equipments
 
 - title: A Semantic Foundation for Sound Gradual Typing
