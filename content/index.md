@@ -18,9 +18,7 @@ maxsnew at umich.edu
 I am a computer scientist working on the mathematical foundations of
 programming languages. I am an assistant professor in Computer Science
 & Engineering at the [University of Michigan][umich], part of our
-[MPLSE][mplse] research community. *I am currently recruiting new
-graduate students at the University of Michigan*. If you are
-interested, feel free to e-mail me to discuss.
+[MPLSE][mplse] research community.
 
 My research utilizes mathematical techniques to help in design,
 analysis and implementation of programming languages. I am recently
