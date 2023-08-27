@@ -1,0 +1,14 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Installing Windows Subsystem for Linux</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._windows%29" class="tocsubseclink" data-pltdoc="x">Installing Windows Subsystem for Linux</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.8</span></div><h2><a name="(part._windows)"></a>Installing Windows Subsystem for Linux</h2><p>Due to calling-convention differences across different platforms, code
+compiled for Windows will not work on Linux and vice-versa. I have
+decided to use Linux for grading, so Windows users should have some
+version of Linux available for testing their compilers.  Fortunately
+it is now very easy to install a lightweight Linux distribution using
+the Windows subystem for Linux (WSL). The first couple of homework
+assignments will be platform independent but after that you will need
+access to a Linux distribution for testing purposes, so I recommend
+you set this up sooner rather than later. I will also provide
+instructions for Mac users to write cross-platform code, so if you
+have access to Mac that should suffice.</p><p>Here are instructions to get a working Linux distribution in Windows
+10.</p><ul><li><p>Install WSL following the <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">official instructions</a>.</p></li><li><p>Install one of the Linux distributions widely available. I will give instructions that I have confirmed work on Ubuntu 20.04 LTS</p></li><li><p>Install nasm and a working compiler by running <div class="sourceCodeWrapper"><span data-label="Shell" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-sh" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">sudo apt install nasm build-essential</code></pre></div></div></p></li><li><p>Install <a href="https://www.rust-lang.org/tools/install">Rust</a></p></li></ul><p>If these instructions do not work for you or you have any questions,
+please post on Piazza.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
