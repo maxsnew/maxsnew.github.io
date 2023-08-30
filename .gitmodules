@@ -6,4 +6,4 @@
 	url = git@gitlab.eecs.umich.edu:483-fa22/private/website.git
 [submodule "src/483-fa23"]
 	path = src/483-fa23
-	url = /Users/maxsnew/teaching/483-fa23/website
+	url = git@gitlab.eecs.umich.edu:483-fa23/private/website.git
