@@ -1,9 +1,9 @@
 - title: Gradual Typing for Effect Handlers
   id: greff
   authors: Max S. New and Eric Giovannini and Daniel R. Licata
-  preprint: True
+  venue: OOPSLA 2023
   links:
-    preprint: docs/greff-draft.pdf
+    Extended Version: docs/greff-extended.pdf
 
 - title: A formal type theory for formal category theory
   id: virtual-equipments
