@@ -53,7 +53,7 @@ enum Exp {
     Id(String),
 }
 
-fn lookup(s: &String, v: &Vec<(String, i64)>) -> Result<i64, String> {
+fn lookup(s: &String, v: &[(String, i64)]) -> Result<i64, String> {
     for (id, val) in v.iter().rev() {
         if id == s {
             return Ok(*val);
@@ -94,8 +94,7 @@ fn interpret(e: &Exp, mut v: Vec<(String, i64)>) -> Result<i64, String> {
 
         // Let statements
         Exp::Let(id, e, e_bod) => {
-            let res = interpret(e, v.clone()); // note the call to clone!
-            let n = res.unwrap();
+            let n = interpret(e, v.clone())?; // note the call to clone!
             v.push((id.clone(), n)); // note the call to clone!
             interpret(e_bod, v)
         }
