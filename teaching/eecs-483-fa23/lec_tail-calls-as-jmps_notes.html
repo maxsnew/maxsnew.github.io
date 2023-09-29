@@ -28,7 +28,7 @@ and the <span class="emph">heap</span> to give us access to unbounded memory. To
 will start this journey towards Turing-completeness by adding function
 definitions and a restricted form of calls that can be compiled
 directly to jumps. This increases the power of our language to that of
-finite-state automata<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._9._lecturetail-calls-as-jmps%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">Note that technically to implement
+finite-state automata<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._10._lecturetail-calls-as-jmps%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">Note that technically to implement
 finite-state automata we would need somethink like a
 <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">readBool()</code></span> or <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">readInt()</code></span> built-in that
 reads the next character from the input string so that we could take
@@ -375,7 +375,7 @@ this case, the variable <span title="Diamondback" class="sourceCode"><code data-
 store the value for <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c</code></span>, but at that point it is ok
 because we no longer need its value.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>We could have avoided this problem by loading the arguments
 in a different order (i.e., loading the third argument first). Can you come up with an example program where this is not possible?</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Come up with an algorithm that minimizes the total number of
-extra temporaries needed to perform a tail call.</p></blockquote><a name="(part._(gentag._8._lecturetail-calls-as-jmps))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._9._lecturetail-calls-as-jmps))"></a>1</span></span>Note that technically to implement
+extra temporaries needed to perform a tail call.</p></blockquote><a name="(part._(gentag._9._lecturetail-calls-as-jmps))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._10._lecturetail-calls-as-jmps))"></a>1</span></span>Note that technically to implement
 finite-state automata we would need somethink like a
 <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">readBool()</code></span> or <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">readInt()</code></span> built-in that
 reads the next character from the input string so that we could take
