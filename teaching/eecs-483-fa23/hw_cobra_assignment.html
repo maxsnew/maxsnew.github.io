@@ -158,9 +158,9 @@ sure your stack integrity is good before and after calls.</p></li></ol><p>Be sur
 typically cause errors on Mac, but does on Linux and in particular on
 the autograder servers so if you are getting errors you can&rsquo;t
 replicate on Mac, make sure to think about alignment. One way to
-harden your code to <span class="emph">force</span> stack alignment is at any point
-before you do a <span class="emph">call</span> using the Sys V AMD64 ABI insert the
-following code:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">test RSP, 0xF
+harden your code to <span class="emph">force</span> stack misalignment to error is at any
+point before you use the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instruction for a call into Rust to
+insert the following code:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">test RSP, 0xF
 jnz mis_aligned</code></pre></div></div></p><p>Where <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mis_aligned</code></span> is a label to some code that calls your
 <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">snake_error</code></span> function (fixing the stack alignment first!) to
 report a stack alignment error.</p><h3>5<tt>&nbsp;</tt><a name="(part._.Running_main)"></a>Running main</h3><p>Running your own programs is the same as with Boa, except you&rsquo;ll give them
