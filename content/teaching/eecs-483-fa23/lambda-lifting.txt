@@ -1,17 +1,27 @@
 * Announcements
 
-Next homework will be out this weekend, another 2-week assignment.
+Next homework will be out this Friday, another 2-week assignment
+covering function definitions and calls/tail calls.
 
 
 
 
-Next week we have Fall break on Monday-Tuesday. No office hours for
-me, IA/GSI will announce if they are moving theirs.
+
+
+
+Next week we have Fall break on Monday-Tuesday. I will still hold my
+Tuesday office hours.
+
+After Fall break: I will be away for a conference a week. Cancel one
+lecture and one will be guest lecture by GSI Steven. Dates TBA.
 
 
 
 
-Today: more depth on Lambda Lifting, which we covered too quickly before.
+
+
+
+Today: Deep dive on lambda lifting.
 
 
 
@@ -211,30 +221,38 @@ def f(a,b,c):
   def g(z):
     def h(i,j,k):
       if i == a:
-        g(z,b,q(k))
+        g(z,b,q(k)) * 3
       else:
         17
     in
-    h(i,j,q(3)))
+    h(i,j,q(3))) + 4
   and
   def q(r):
     x - r
   in
-  g(c * x)
+  g(c * x) - 7
 in 
 f(x, 14, 7)
 
 and turn it into something flattened:
 
+
+
+
+
+
+
+
+
 def f(x, a, b, c):
-  g(c * x)
+  g(c * x) - 7
 and
 def g(a,b,z):
-  h(a, i, j, q(x, 3))
+  h(a, i, j, q(x, 3)) + 4
 and
 def h(a, i, j, k):
   if i == a:
-    g(a, z, b, (q(x, k)))
+    g(a, z, b, q(x, k)) * 3
   else:
     17
 and
@@ -243,7 +261,7 @@ def q(x, r):
 in
 f(x, x, 14, 7)
 
-where we have added extra arguments whereever necessary.
+where we have added extra arguments wherever necessary.
 
 
 
@@ -266,6 +284,7 @@ We can break the lifting process into two stages:
 2. Lift the local function definitions to the top level
 
 I.e., for our example above:
+
 
 def mult(x, y):
   def loop(i):
@@ -346,6 +365,11 @@ to each function?
 Consider two things:
 1. Correctness (most important)
 2. Efficiency
+
+
+
+
+
 
 -- Class discussion ---
 
@@ -476,6 +500,23 @@ def f(a,b):
     g()
 in
 f(0,1)
+
+
+    
+
+
+def f(a,b):
+    def g(b):
+        b + h(a)
+    and
+    def h(a):
+        a
+    in
+    g(b)
+in
+f(0,1)
+
+
 
 
 def f(a,b):
@@ -666,6 +707,54 @@ bug(!)
 
 
 def f(a,b):
+    def g():
+        let a' = 3 in
+        (b * a') + h()
+    and
+    def h():
+        a
+    in
+    g()
+in
+f(0,1)
+
+
+
+def f(a,b):
+    def g():
+        let a = 3 in
+        (b * a) + h()
+    and
+    def h():
+        a
+    in
+    g()
+in
+f(0,1)
+
+
+
+
+
+
+def f(a,b):
+    def g(a, b):
+        let a = 3 in
+        (b * a) + h(a)
+    and
+    def h(a):
+        a
+    in
+    g(a,b)
+in
+f(0,1)
+
+
+
+
+
+
+def f(a,b):
     def g(a,b):
       let a = 42 in
       b + h(a,b)
@@ -694,6 +783,17 @@ f(0,1)
 
 
 
+def f(a#0,b#0):
+    def g(a#2,b#2):
+      let a#1 = 42 in
+      b#2 + h(a#2)
+    and
+    def h(a#3):
+        a#3
+    in
+    g(a#0,b#0)
+in
+f(0,1)
 
 
 
@@ -740,7 +840,8 @@ f(1,2,3)
 
 The lifting is straightforward to implement once we've done this right?
 
--- Challenge: come up with an example program that would break if we simply lift the functions to the top level --
+-- Challenge: come up with an example program that would break if we
+simply lift the functions to the top level --
 
 
 
@@ -796,6 +897,15 @@ Shadowing is the culprit again(!)
 
 
 
+
+
+
+
+
+
+
+
+
 * Our Savior: Unique Identifiers
 
 Shadowing is completely reasonable for the source language syntax, but
@@ -836,15 +946,37 @@ different there.
 
 
 
-How? Of course we'll use our handy tagging pass to give us some unique
-ids, then we can just append them to the names.
+How? Of course we can use a tagging pass to give us some unique ids,
+then we can just append them to the names.
 
 
 
-Side benefit: once all names are uniq, you don't need to use linear
-environments as your data structure, and can instead reliably use
-HashMaps.
 
+
+Algorithm for renaming:
+
+1. Recursively descend into the term, keeping track of a mapping from
+   Old variable names to new variable names
+2. When you reach a variable *declaration* (def/let)
+   - generate a new name for each of the newly introduced variables,
+     associate the old name to then new name in the environment in
+     sub-expressions where it is bound.
+
+3. When you reach a variable *use* (var/funcall)
+   - lookup the old name in the current environment and replace it
+     with the newly generated one.
+
+
+
+
+
+Step through this example on the board:
+let x = 5 in
+let x = x + 1 in
+x
+
+
+     
 
 
 
@@ -865,5 +997,102 @@ HashMaps.
 * Updated Compiler Pipeline
 
 
-Source Program ---[ Parsing ] --> AST ---[ check_prog ]--> well-scoped AST --[ unique names ]--> well-scoped with unique names --[ lambda lift ]--> (AST, FunDefs) --[ sequentialize ]--> (SeqAST, SeqFunDefs) --[ codegen ]--> ASM
+Source Program
 
+---[ Parsing ] -->
+
+AST
+
+---[ check_prog ]-->
+
+well-scoped AST
+
+--[ unique names ]-->
+
+well-scoped with unique names
+
+--[ lambda lift ]-->
+
+(AST, FunDefs)
+
+--[ sequentialize ]-->
+
+(SeqAST, SeqFunDefs)
+
+--[ codegen ]-->
+
+ASM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* Downsides of Lambda Lifting
+
+def mult(x, y):
+  def loop(i, acc):
+    if i == 0:
+      acc
+    else:
+      loop(i - 1, y + acc)
+  in
+  loop(x, 0)
+in
+
+mult(5, 3)
+
+
+
+
+becomes
+
+
+
+def loop(y, i, acc):
+  if i == 0:
+    acc
+  else:
+    loop(y, i - 1, y + acc)
+and
+def mult(x,y):
+  loop(y, x, 0)
+in
+
+mult(5, 3)
+
+
+We have *lost* information here:
+1. In the original program mult and loop share the variable y.
+   And so the variable will be stored in the same location throughout.
+
+2. In the lifted program, mult and loop have unrelated argument
+   lists. y happens to be the first argument to loop and the second
+   argument to mult.
+
+   - in our simple stack-based allocation, this means they will
+     *certainly* be assigned different locations, so we will mov y on
+     the stack
+
+   - if we do a more complex register-based allocation scheme we can
+     figure out using a program analysis that the two variables *can*
+     be stored in the same place, but it will be hard in general to
+     ensure that they will.
+
+Compromise:
+
+1. Lambda lifting only for *true non-tail calls*
+2. Tail called functions stay nested
