@@ -17,7 +17,7 @@
     imageFont: null,
     mtexFontInherit: true
   }
-});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 4:</span> Diamondback:<span class="mywbr"> &nbsp;</span> Defining functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Diamondback_.Language%29" class="tocviewlink" data-pltdoc="x">The Diamondback Language</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Running_main%29" class="tocviewlink" data-pltdoc="x">Running main</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 4:</span> Diamondback:<span class="mywbr"> &nbsp;</span> Defining functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Diamondback_.Language%29" class="tocsubseclink" data-pltdoc="x">The Diamondback Language</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Concrete_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Abstract_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Abstract Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.4<tt>&nbsp;</tt></span><a href="#%28part._.Middle-.End%29" class="tocsubseclink" data-pltdoc="x">Middle-<wbr></wbr>End</a></td></tr><tr><td><span class="tocsublinknumber">1.5<tt>&nbsp;</tt></span><a href="#%28part._.Backend%29" class="tocsubseclink" data-pltdoc="x">Backend</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Running_main%29" class="tocsubseclink" data-pltdoc="x">Running main</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.8</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 4:</span> Diamondback: Defining functions</h2><p><h4 class="due">Due: Sun 10/30 at 11:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://gitlab.eecs.umich.edu/483-fa22/starter-code/diamondback"/></code></p></p><p><span class="emph">In this assignment, you&rsquo;ll implement a compiler for a small
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 4:</span> Diamondback:<span class="mywbr"> &nbsp;</span> Defining functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Diamondback_.Language%29" class="tocviewlink" data-pltdoc="x">The Diamondback Language</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Running_main%29" class="tocviewlink" data-pltdoc="x">Running main</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 4:</span> Diamondback:<span class="mywbr"> &nbsp;</span> Defining functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Diamondback_.Language%29" class="tocsubseclink" data-pltdoc="x">The Diamondback Language</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Concrete_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Abstract_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Abstract Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.4<tt>&nbsp;</tt></span><a href="#%28part._.Middle-.End%29" class="tocsubseclink" data-pltdoc="x">Middle-<wbr></wbr>End</a></td></tr><tr><td><span class="tocsublinknumber">1.4.1<tt>&nbsp;</tt></span><a href="#%28part._.Which_functions_to_lambda_lift_%29" class="tocsubseclink" data-pltdoc="x">Which functions to lambda lift?</a></td></tr><tr><td><span class="tocsublinknumber">1.5<tt>&nbsp;</tt></span><a href="#%28part._.Backend%29" class="tocsubseclink" data-pltdoc="x">Backend</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Running_main%29" class="tocsubseclink" data-pltdoc="x">Running main</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.10</span></div><h2><a name="(part._)"></a><span class="AssignmentNum">Assignment 4:</span> Diamondback: Defining functions</h2><p><h4 class="due">Due: Sun 10/30 at 11:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://gitlab.eecs.umich.edu/483-fa23/starter-code/diamondback"/></code></p></p><p><span class="emph">In this assignment, you&rsquo;ll implement a compiler for a small
 language with local functions declarations and function calls, that can
 communicate with functions written in Rust. You&rsquo;ll also add some
 static well-formedness checks to the compiler.</span></p><p><span class="emph">As for the project acronym, so far our greatest minds have come up with</span></p><ul><li><p><span style="font-weight: bold">D</span>esigning an</p></li><li><p><span style="font-weight: bold">I</span>ntel <span style="font-weight: bold">A</span>rchitecture</p></li><li><p><span style="font-weight: bold">MO</span>stly dynamic</p></li><li><p><span style="font-weight: bold">N</span>ested-expression</p></li><li><p>(<span style="font-weight: bold">D</span>iamondback supports recursion)</p></li><li><p><span style="font-weight: bold">B</span>oolean-tagged</p></li><li><p><span style="font-weight: bold">A</span>rithmetic-supporting</p></li><li><p><span style="font-weight: bold">C</span>ompiler.</p></li><li><p>...<span style="font-weight: bold">K</span>?</p></li></ul><p><a href="https://upload.wikimedia.org/wikipedia/commons/d/d4/Crotalus_ruber_02.jpg">Click here for scary snake picture!</a></p><h3>1<tt>&nbsp;</tt><a name="(part._.The_.Diamondback_.Language)"></a>The Diamondback Language</h3><p>As usual, we have concrete and abstract syntaxes, along with a specification
@@ -64,11 +64,10 @@ expression.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a nam
                   <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
                   <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Diamondback._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span></p></blockquote><p>The other addition is <span class="emph">function applications</span>, which are written
 <code><span class="bnf-lit bnf-unknown">IDENTIFIER</span>(<a href="#%28elem._%28bnf-prod._%28.Diamondback._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a>)</code>, for
-example <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(1, 2, 3)</code></span>.  This is the syntax for a <span class="emph">call</span> to a function.</p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Abstract_.Syntax)"></a>Abstract Syntax</h4><p>In this assignment, we add two new cases to our <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> AST, one
-for (mutually recursive sequences of) local function definitions and
-one for function calls. Since we will also need to use function
-definitions in our sequentialized code, we make a type <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunDecl</code></span>
-that is <span class="emph">generic</span> in the type of expressions.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub struct FunDecl&lt;E, Ann&gt; {
+example <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(1, 2, 3)</code></span>.  This is the syntax for a <span class="emph">call</span> to a function.</p><h4>1.2<tt>&nbsp;</tt><a name="(part._.Abstract_.Syntax)"></a>Abstract Syntax</h4><p>In this assignment, we add four new cases to our <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp</code></span> AST. Two of them correspond directly to concrete syntax features:</p><ul><li><p>one for mutually recursive sequences of local function definitions</p></li><li><p>one for function calls</p></li></ul><p>The other two are never produced by the parser and instead will be
+produced by your own intermediate passes like lambda lifting:</p><ul><li><p>one for tail calls to <span class="emph">local</span> function definitions</p></li><li><p>one for (tail and non-tail) calls to <span class="emph">global</span> function definitions</p></li></ul><p>Since we will also need to use function definitions in our
+sequentialized code, we make a type <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunDecl</code></span> that is
+<span class="emph">generic</span> in the underlying type of expressions.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub struct FunDecl&lt;E, Ann&gt; {
     pub name: String,
     pub parameters: Vec&lt;String&gt;,
     pub body: E,
@@ -82,15 +81,36 @@ pub enum Exp&lt;Ann&gt; {
         ann: Ann,
     },
     Call(String, Vec&lt;Exp&lt;Ann&gt;&gt;, Ann),
-}</code></pre></div></div></p><p>Our lambda lifting pass will separate the input program into two
-pieces: a sequence of top level definitions and a single main
-expression to be run. So our sequential form has calls, in which
+    InternalTailCall(String, Vec&lt;Exp&lt;Ann&gt;&gt;, Ann),
+    ExternalCall {
+        fun_name: String,
+        args: Vec&lt;Exp&lt;Ann&gt;&gt;,
+        is_tail: bool,
+        ann: Ann,
+    },
+}</code></pre></div></div></p><p><p>You will implement a lambda lifting pass that will separate the input
+program into two pieces:
+</p><ul><li><p>a sequence of global function definitions</p></li><li><p>and a single main expression to be run.</p></li></ul><p>Additionally your pass will change <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::Call</code></span> expressions into
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::InternalTailCall</code></span> or <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::ExternalCall</code></span> as
+appropriate.</p></p><p>So our sequential form has calls, in which
 arguments are required to be immediate, but no local function
 definitions. Instead, we have a new type of sequential form programs
 <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SeqProg</code></span> that packages the functions and main expression into a
 struct.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub enum SeqExp&lt;Ann&gt; {
     ... // same as before
-    Call(String, Vec&lt;ImmExp&gt;, Ann),
+    FunDefs {
+        decls: Vec&lt;FunDecl&lt;SeqExp&lt;Ann&gt;, Ann&gt;&gt;,
+        body: Box&lt;SeqExp&lt;Ann&gt;&gt;,
+        ann: Ann,
+    },
+    InternalTailCall(String, Vec&lt;ImmExp&gt;, Ann),
+    ExternalCall {
+        fun_name: String,
+        args: Vec&lt;ImmExp&lt;Ann&gt;&gt;,
+        is_tail: bool,
+        ann: Ann,
+
+    }
 }
 
 pub struct SeqProg&lt;Ann&gt; {
@@ -116,19 +136,84 @@ and arity, report a <span title="Rust" class="sourceCode"><code data-lang="text/
 overloading if you wish, but it probably won&rsquo;t be allowed in future
 assignments</p></li><li><p>If a numeric constant is too large, report an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Overflow</code></span> error</p></li></ul><p>Again, these errors should stop the program from compiling, in your
 <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">check_prog</code></span> function, <span class="emph">not</span> happen at runtime.</p><h4>1.4<tt>&nbsp;</tt><a name="(part._.Middle-.End)"></a>Middle-End</h4><p>Once the code passes the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">check_prog</code></span> function, we need to do a
-few transformations before we&rsquo;re ready for code generation.</p><ul><li><p>First, rename all functions and variables with unique names, to simplify later passes</p></li><li><p>Then, add all captured free variables as extra arguments and lift function definitions to the top-level</p></li><li><p>Finally, sequentialize the main expression and all function definitions</p></li></ul><p>For details on lambda lifting, see the corresponding lecture.</p><p>To help you get started, we&rsquo;ve given you some stubs and code for
-plugging these passes together. As usual, you are free to change the
-types of any function you use internally, just don&rsquo;t change the types
-of anything that is <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub</code></span>.</p><h4>1.5<tt>&nbsp;</tt><a name="(part._.Backend)"></a>Backend</h4><p>The file <code>asm.rs</code> gives you all the assembly instructions you should
-need, though you&rsquo;re free to add your own new instructions if you want.</p><p>There are a few new pieces to the implementation:</p><p>When Diamondback functions call other Diamondback functions, you
-should use the snake calling convention as described in the lecture
-notes on function calls. For primitives like <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>,
-obviously, you&rsquo;ll need to continue to follow the
+few transformations before we&rsquo;re ready for code generation.</p><ul><li><p>First, rename all functions and variables with unique names, to simplify later passes</p></li><li><p>Then, determine which functions can stay as local function definitions and which need to be lifted to global definitions.</p></li><li><p>Then, lift the functions identified in the previous analysis to the top-level, and translate <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::Call</code></span> nodes to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::InternalTailCall</code></span> or <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Exp::ExternalCall</code></span> nodes</p></li><li><p>Finally, sequentialize the main expression and the bodies of the global function definitions</p></li></ul><p>To help you get started, we&rsquo;ve given you some stubs and code for
+plugging these passes together. As usual, you do not have to follow
+this exact code, you are free to change the types of any function you
+use internally, just don&rsquo;t change the types of anything that is
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub</code></span>.</p><h5>1.4.1<tt>&nbsp;</tt><a name="(part._.Which_functions_to_lambda_lift_)"></a>Which functions to lambda lift?</h5><p>Not all functions need to be lifted to the top level. For instance in
+the following program, every call is a tail call:
+<div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 5
+def loop(i,acc):
+  if i == 0:
+    acc
+  else:
+    loop(i - 1, acc + x)
+end
+loop(x,0)</code></pre></div></div></p><p>Therefore for this program, lambda lifting will produce no global
+function definitions, and leave the definition of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">loop</code></span>
+to be local. All that needs to be done is to make explicit that the
+calls are all implemented as internal tail calls:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 5
+def loop(i,acc):
+  if i == 0:
+    acc
+  else:
+    internal_tail_call(loop; [i - 1, acc + x])
+end
+internal_tail_call(loop; [x,0])</code></pre></div></div></p><p>On the other hand, in the following function, <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> is
+called twice, once in a non-tail position and once in tail position:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 5 in
+def g(y):
+  y * x
+end
+let a = g(7) + 4 in
+g(a)</code></pre></div></div></p><p>Since <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> is called at least once in a non-tail position we lift it
+to a global function definition. Your lambda lifting function should
+lift this to a top level function definition where the local variable
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is "captured" by <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> and added as an extra
+argument.</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def g(x,y):
+  y * x
+end</code></pre></div></div></p><p>And the main expression becomes
+<div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let a = external_call{ fun_name: g, args: [x, 7], is_tail: false } + 4 in
+external_call { fun_name: g, args: [x, a], is_tail: true }</code></pre></div></div></p><p>But note that in addition to capturing variables, function definitions
+can also capture other function definitions:
+<div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 5 in
+def f(z):
+  z * x
+end
+def g(y):
+  f(y + 1)
+end
+g(7) + 4</code></pre></div></div></p><p>There are several valid ways to lambda lift this function. The easiest
+to implement correctly is to lift both <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and
+<span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> to globals:
+<div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x,z):
+  z * x
+and
+def g(x,y):
+  f(y + 1)
+end</code></pre></div></div></p><p>This method generalizes to a sub-obtimal but simple strategy: lift any
+function that is ever called in a non-tail position, and lift any
+local function definition that is in scope of another that is
+lifted. A refinement of this would be to only lift functions that are
+<span class="emph">live</span> in functions that are lifted, but this would require a
+more sophisticated analysis.</p><p>A cleverer compilation would copy the definition of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>
+into a local definition in the body of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span>:
+<div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def g(x,y):
+  def f(z):
+    z * x
+  end
+  f(y + 1)
+end</code></pre></div></div></p><p>If you try to implement this cleverer transformation, be careful that
+it doesn&rsquo;t lead to an exponential blowup in the number of local
+function definitions in the final program.</p><h4>1.5<tt>&nbsp;</tt><a name="(part._.Backend)"></a>Backend</h4><p>The file <code>asm.rs</code> gives you all the assembly instructions you should
+need, though you&rsquo;re free to add your own new instructions if you want.</p><p>There are a few new pieces to the implementation:</p><p>For calling primitives like <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>, obviously, you&rsquo;ll
+need to continue to follow the
 <a href="https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64">System
-V AMD ABI</a>.</p><p>Stack alignment is trickier this time because we are calling our own
+V AMD ABI</a>.</p><p><p>There are three different types of internal function calls, which are implemented slightly differently:
+</p><ul><li><p>Local function calls: Implemented as described in <a href="lec_tail-calls-as-jmps_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Local Function Definitions and Tail Calls</a>. In particular note that when implementing a local tail call <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(a,b,c)</code></span>, the placement of the argument <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> will depend on how many variables are in scope where <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is defined. See the end of those notes for an example.</p></li><li><p>Global tail calls: Similar to local function calls, except the first argument will always be at <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">RSP - 8</code></span></p></li><li><p>Global non-tail calls: As described in <a href="lec_non-tail-calls_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 9:</span> Global Function Definitions and Non-tail Calls</a>.</p></li></ul></p><p>Stack alignment is trickier this time because we are calling our own
 functions as well and so incorrect alignment might cancel itself out
-to make some tests pass.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Running_main)"></a>Running main</h3><p>Running your own programs is the same as with Cobra, except you&rsquo;ll
+to make some tests pass. You might consider adding dynamic alignment
+checks to help track down mis-alignment bugs.</p><h3>2<tt>&nbsp;</tt><a name="(part._.Running_main)"></a>Running main</h3><p>Running your own programs is the same as with Cobra, except you&rsquo;ll
 give them the <code>.diamond</code> file extension.</p><h3>3<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables</h3><ul><li><p>your <code>compile.rs</code> and <code>asm.rs</code></p></li><li><p>the other src/*.rs files in the starter code</p></li><li><p>any additional modules you saw fit to write</p></li><li><p>your <code>runtime/stub.rs</code></p></li><li><p>the Cargo.toml</p></li><li><p>integration tests (<code>tests/examples.rs</code>)</p></li><li><p>your test input programs (<code>examples/*.cobra</code> files)</p></li></ul><p><span style="font-weight: bold">Please ensure the your code builds properly. The autograder
 will give you a 0 on that portion of the grade if it cannot compile
 your code.</span></p><h3>4<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards</h3><p><p>For this assignment, you will be graded on
-</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the clarity and cleanliness of your code, and</p></li></ul></p><h3>5<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to gradescope by the above deadline.</p><a name="(part._(gentag._3._assignmentdiamondback))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
+</p><ul><li><p>Whether your code implements the specification (functional correctness),</p></li><li><p>the clarity and cleanliness of your code, and</p></li></ul></p><h3>5<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission</h3><p><p><span style="font-weight: bold">Wait!</span> Please read the assignment again and verify that you have not forgotten anything!</p></p><p>Please submit your homework to gradescope by the above deadline.</p><a name="(part._(gentag._0._assignmentdiamondback))"></a><p class="FootnoteBlock"></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
