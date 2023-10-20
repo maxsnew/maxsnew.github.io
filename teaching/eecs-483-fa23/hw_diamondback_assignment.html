@@ -148,7 +148,7 @@ def loop(i,acc):
     acc
   else:
     loop(i - 1, acc + x)
-end
+in
 loop(x,0)</code></pre></div></div></p><p>Therefore for this program, lambda lifting will produce no global
 function definitions, and leave the definition of <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">loop</code></span>
 to be local. All that needs to be done is to make explicit that the
@@ -158,12 +158,12 @@ def loop(i,acc):
     acc
   else:
     internal_tail_call(loop; [i - 1, acc + x])
-end
+in
 internal_tail_call(loop; [x,0])</code></pre></div></div></p><p>On the other hand, in the following function, <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> is
 called twice, once in a non-tail position and once in tail position:</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 5 in
 def g(y):
   y * x
-end
+in
 let a = g(7) + 4 in
 g(a)</code></pre></div></div></p><p>Since <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> is called at least once in a non-tail position we lift it
 to a global function definition. Your lambda lifting function should
@@ -171,17 +171,17 @@ lift this to a top level function definition where the local variable
 <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is "captured" by <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> and added as an extra
 argument.</p><p><div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def g(x,y):
   y * x
-end</code></pre></div></div></p><p>And the main expression becomes
+in</code></pre></div></div></p><p>And the main expression becomes
 <div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let a = external_call{ fun_name: g, args: [x, 7], is_tail: false } + 4 in
 external_call { fun_name: g, args: [x, a], is_tail: true }</code></pre></div></div></p><p>But note that in addition to capturing variables, function definitions
 can also capture other function definitions:
 <div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 5 in
 def f(z):
   z * x
-end
+in
 def g(y):
   f(y + 1)
-end
+in
 g(7) + 4</code></pre></div></div></p><p>There are several valid ways to lambda lift this function. The easiest
 to implement correctly is to lift both <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and
 <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> to globals:
@@ -190,7 +190,7 @@ to implement correctly is to lift both <span title="Diamondback" class="sourceCo
 and
 def g(x,y):
   f(y + 1)
-end</code></pre></div></div></p><p>This method generalizes to a sub-obtimal but simple strategy: lift any
+in</code></pre></div></div></p><p>This method generalizes to a sub-obtimal but simple strategy: lift any
 function that is ever called in a non-tail position, and lift any
 local function definition that is in scope of another that is
 lifted. A refinement of this would be to only lift functions that are
@@ -200,9 +200,9 @@ into a local definition in the body of <span title="Diamondback" class="sourceCo
 <div class="sourceCodeWrapper"><span data-label="Diamondback" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def g(x,y):
   def f(z):
     z * x
-  end
+  in
   f(y + 1)
-end</code></pre></div></div></p><p>If you try to implement this cleverer transformation, be careful that
+in</code></pre></div></div></p><p>If you try to implement this cleverer transformation, be careful that
 it doesn&rsquo;t lead to an exponential blowup in the number of local
 function definitions in the final program.</p><h4>1.5<tt>&nbsp;</tt><a name="(part._.Backend)"></a>Backend</h4><p>The file <code>asm.rs</code> gives you all the assembly instructions you should
 need, though you&rsquo;re free to add your own new instructions if you want.</p><p>There are a few new pieces to the implementation:</p><p>For calling primitives like <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print</code></span>, obviously, you&rsquo;ll
