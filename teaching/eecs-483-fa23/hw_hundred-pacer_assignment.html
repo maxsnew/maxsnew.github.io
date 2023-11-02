@@ -51,7 +51,7 @@ each sub-expression annotated with the variables that are live in that
 sub-expression. So for example, if the input expression were</p><p><span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 3 in f(x, y, a)</code></span></p><p>where <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a</code></span> is a parameter, <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is not and
 <span title="Diamondback" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is a globally defined function, then your liveness
 function would return the expression annotated as follows:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Let { var: "x",
-      bound_exp: Imm(Num(3), {"y"}),
+      bound_exp: Imm(Num(3), { }),
       body: ExternalCall{ fun_name: "f", args: [Var("x"), Var("y"), Var("a")], is_tail: true, ann: {"x", "y"}},
       ann: {"y"},
     }</code></pre></div></div></p><p>The inner <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ExternalCall</code></span> has both <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">x</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">y</code></span> live because both
