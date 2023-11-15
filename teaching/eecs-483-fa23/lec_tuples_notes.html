@@ -125,7 +125,7 @@ extern "C" {
 }
 
 fn main() {
-    let output = unsafe { compiled_code(HEAP.as_mut_ptr()) } ;
+    let output = unsafe { start_here(HEAP.as_mut_ptr()) } ;
     let _ = print_snake_val(output);
 }</code></pre></div></div></p><p>Note here that we are turning an arryay <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">HEAP</code></span> into a <span class="emph">raw
 pointer</span> to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">u64</code></span> which is the type of unsafe pointer you are
@@ -146,7 +146,7 @@ can find the value of <span title="Rust" class="sourceCode"><code data-lang="tex
   move R15, RDI                    ;; Load R15 with the passed-in pointer
   add R15, 7                       ;; \ add 7 to get above the next multiple of 8
   mov temp_reg, 0xfffffffffffffff8 ;; | load a scratch register with the necessary mask
-  and R15, 0xfffffff8              ;; / and then round back down.
+  and R15, temp_reg                ;; / and then round back down.
   ...</code></pre></div></div></p><p>The indirection through <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_reg</code></span> is necessary once again because of the
 limitation on 64-bit literals in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">and</code></span> instructions.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>For this particular sequence of instructions, what register could we
 use for <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">temp_reg</code></span>, and why?  (Hint: it needs to be a register whose value
