@@ -13,6 +13,13 @@
     official-link: https://link.springer.com/chapter/10.1007/978-3-031-30829-1_6
     repo: https://github.com/maxsnew/virtual-equipments
 
+- title: Gradual Type Theory
+  id: gtt-journal
+  authors: Max S. New and Daniel R. Licata and Amal Ahmed
+  venue: JFP Vol 31, 2021
+  links:
+    doi: https://doi.org/10.1017/S0956796821000125
+
 - title: A Semantic Foundation for Sound Gradual Typing
   id: thesis
   authors: Max S. New
