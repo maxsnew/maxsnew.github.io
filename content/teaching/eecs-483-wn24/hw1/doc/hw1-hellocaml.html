@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HW1: Hellocaml &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="HW2: X86lite" href="../../hw2/doc/hw2-x86lite.html" />
+    <link rel="prev" title="LLVMlite Documentation" href="../../hw3/llvmlite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HW1: Hellocaml</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#before-you-begin">Before you begin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-running-and-testing-projects">Command-line Running and Testing Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grading">Grading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">HW1: Hellocaml</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hw1-hellocaml">
+<span id="hellocaml"></span><h1>HW1: Hellocaml<a class="headerlink" href="#hw1-hellocaml" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This project provides a refresher on OCaml programming and some
+warm-up exercises involving tree manipulation and recursive
+programming (both of which will be highly useful when building the
+compiler). It will also familiarize you with the basic workflow of the
+projects in this course, including the testing framework that we will
+use to (partially) automate the grading of your projects.</p>
+</section>
+<section id="before-you-begin">
+<h2>Before you begin<a class="headerlink" href="#before-you-begin" title="Link to this heading"></a></h2>
+<p>For help on how to get started with OCaml see the <a class="reference internal" href="../../toolchain.html#toolchain"><span class="std std-ref">toolchain web pages</span></a>
+and the <a class="reference external" href="https://ocaml.org/">OCaml web site</a>.</p>
+<p>Please also take some time to skim the available resources on the
+course homepage – in particular, the book <a class="reference external" href="../../../current/_static/files/ocaml-book.pdf">Introduction to Objective
+Caml</a>
+provides a very good reference for learning OCaml. In the problems
+below when you see a note like “See IOC 5.2” please refer to the
+corresponding section of the book.</p>
+<p><strong>Getting Started</strong></p>
+<p>Unlike future projects, most of the instructions for this project are
+found as comments in the source files. To get started on this project,
+run <code class="docutils literal notranslate"><span class="pre">make</span></code> from the project root directory (in VSCode or in a terminal)
+and then continue to the <code class="docutils literal notranslate"><span class="pre">bin/hellocaml.ml</span></code> file and follow the instructions
+(in comments) there.</p>
+<p><strong>Building the Project</strong></p>
+<p>It is recommended that you compile your projects from the command
+line, using <code class="docutils literal notranslate"><span class="pre">make</span></code>. We have included a <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> that provides
+several make targets that can help you with the homework:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>make       --  builds oatc using dune
+make test  --  runs the test suite
+make clean --  cleans your project directory
+make utop  --  starts a utop for the project
+make zip   --  creates a zip file with the code you need to submit
+</pre></div>
+</div>
+<p>For example, using make we can build the project and run the tests all
+in one go:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; make test
+dune build
+... [[ warnings omitted ]]
+./oatc --test
+Running test Student-Provided Tests For Problem 1-3
+Running test Problem1-1
+Running test Problem1-2
+...
+</pre></div>
+</div>
+</section>
+<section id="command-line-running-and-testing-projects">
+<h2>Command-line Running and Testing Projects<a class="headerlink" href="#command-line-running-and-testing-projects" title="Link to this heading"></a></h2>
+<p>After compiling the project, you can run it from the command line.</p>
+<p>The projects in this course are designed to have a single, top-level
+entry point in the file <code class="docutils literal notranslate"><span class="pre">main.ml</span></code>. Upon running <code class="docutils literal notranslate"><span class="pre">make</span></code>, it compiles to
+an executable <code class="docutils literal notranslate"><span class="pre">main.exe</span></code>, and copies it as <cite>oatc</cite> to the root of the project.</p>
+<p>This program provides a test harness that can be used from the command
+line with a variety of switches and command-line arguments, just like
+any other compiler. You can always check which command-line switches
+are available by using the <code class="docutils literal notranslate"><span class="pre">-help</span></code> or <code class="docutils literal notranslate"><span class="pre">--help</span></code> flags. For example,
+HW1 supports only one interesting command-line option <code class="docutils literal notranslate"><span class="pre">--test</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; ./oatc -help
+Main test harness
+
+  --test run the test suite, ignoring other inputs
+  -help  Display this list of options
+  --help  Display this list of options
+</pre></div>
+</div>
+<p>All of our projects will support the <code class="docutils literal notranslate"><span class="pre">--test</span></code> option, which will
+simply run the project’s unit tests, print a summary of the results
+and then exit. It might give output something like this (bogus sample)
+that will give you some idea about how much of the project you’ve
+completed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; ./oatc --test
+
+Test1:
+  case1: failed - not equal
+  case2: failed - assert fail
+  case3: failed - test threw an unknown exception
+Test4:
+  OK
+Test2 (3/10 points)
+  case1: failed - not equal
+  case2: failed - not equal
+  case3: passed
+Test3 (??/20 points):
+  Hidden
+Test5 (10/10 points):
+  OK
+---------------------------------------------------
+Passed: 5/10
+Failed: 5/10
+Score: 13/20 (given)
+       ??/20 (hidden)
+</pre></div>
+</div>
+<p>Once the compiler projects reach the stage where we can generate good
+assembly output, <code class="docutils literal notranslate"><span class="pre">oatc</span></code> will support more interesting
+command-line options and be able to process input files in a way that
+should be familiar if you’ve ever used gcc or another compiler.</p>
+</section>
+<section id="grading">
+<h2>Grading<a class="headerlink" href="#grading" title="Link to this heading"></a></h2>
+<p>Submit your solution to this assignment by following the <a class="reference internal" href="../../submit.html#submit"><span class="std std-ref">submission instructions</span></a></p>
+<p><strong>Projects that do not compile will receive no credit!</strong></p>
+<p>Your grade for this project will be based on:</p>
+<ul class="simple">
+<li><p>64 Points for the test cases that are visible to you</p></li>
+<li><p>23 Points for the hidden test cases</p></li>
+<li><p>13 Points for the tests you provide (manually graded)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../hw3/llvmlite.html" class="btn btn-neutral float-left" title="LLVMlite Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../hw2/doc/hw2-x86lite.html" class="btn btn-neutral float-right" title="HW2: X86lite" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

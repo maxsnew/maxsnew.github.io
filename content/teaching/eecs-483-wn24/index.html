@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EECS 483: Compiler Construction - Winter 2024 &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Syllabus" href="syllabus.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">EECS 483: Compiler Construction - Winter 2024</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="eecs-483-compiler-construction-winter-2024">
+<h1>EECS 483: Compiler Construction - Winter 2024<a class="headerlink" href="#eecs-483-compiler-construction-winter-2024" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+</div>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p><strong>If you have recently registered for the course, please see the additional information on Piazza, and contact the course staff if you need help.</strong></p>
+</div>
+<section id="course-information">
+<h2>Course Information<a class="headerlink" href="#course-information" title="Link to this heading"></a></h2>
+<p><strong>Instructor</strong></p>
+<ul>
+<li><p><a class="reference external" href="https://www.maxsnew.com">Max New</a></p>
+<dl class="simple">
+<dt>office hours: TBD</dt><dd></dd>
+</dl>
+</li>
+</ul>
+<p><strong>GSI</strong></p>
+<ul class="simple">
+<li><p><strong>Eric Giovannini</strong>
+office hours: TBD
+.. office hours: Monday 12:30-1:30pm, Location: see <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a></p></li>
+</ul>
+<p><strong>IA</strong>
+* <strong>Tingting Ding</strong></p>
+<blockquote>
+<div><p>office hours: TBD
+.. Wednesday 3:30-4:30pm, Location: see <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a></p>
+</div></blockquote>
+<p><strong>Coordinates</strong></p>
+<ul class="simple">
+<li><p>Time: Monday, Wednesday 1:30 - 3pm</p></li>
+<li><p>Lecture Location: <a class="reference external" href="https://25live.collegenet.com/pro/umich#!/home/location/82/details">DOW 1010</a>  (and virtually on Zoom, see the link on <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>)</p></li>
+<li><p>Discussion Location: <a class="reference external" href="https://25live.collegenet.com/pro/umich#!/home/location/4/details">BBB 1670</a>  (and virtually on Zoom, see the link on <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>)</p></li>
+<li><p><a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a></p></li>
+<li><p><a class="reference external" href="https://www.gradescope.com/courses/670650">Gradescope</a></p></li>
+<li><p><a class="reference external" href="https://gitlab.eecs.umich.edu/483-wn24/starter-code">EECS Gitlab</a></p></li>
+</ul>
+</section>
+<section id="homework-projects">
+<h2>Homework Projects<a class="headerlink" href="#homework-projects" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+</div>
+<ul class="simple">
+<li><p>HW1: Hellocaml!</p>
+<ul>
+<li><p>Due: Wednesday, January 26th at 11:59pm</p></li>
+</ul>
+</li>
+<li><p>HW2: X86lite simulator</p>
+<ul>
+<li><p>Due: Wednesday, February 9th at 11:59pm</p></li>
+</ul>
+</li>
+<li><p>HW3: LLVMlite backend</p>
+<ul>
+<li><p>Due: Wednesday, February 23rd at 11:59pm</p></li>
+</ul>
+</li>
+<li><p>HW4: Oat language compiler v.1</p>
+<ul>
+<li><p>Due: Wednesday, March 23rd at 11:59pm</p></li>
+</ul>
+</li>
+<li><p>HW5: Oat language compiler v.2</p>
+<ul>
+<li><p>Due: Wednesday, April 13th at 11:59pm</p></li>
+</ul>
+</li>
+<li><p>HW6: Program Analysis &amp; Optimizations</p>
+<ul>
+<li><p>Due: Wednesday, April 27th at 11:59pm</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="textbooks-and-resources">
+<h2>Textbooks and Resources<a class="headerlink" href="#textbooks-and-resources" title="Link to this heading"></a></h2>
+<p>There is no required textbook for this course.  However, you may find the following references useful for digging deeper into course topics.</p>
+<p><strong>On Principles of Compiler Construction</strong></p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://www.amazon.com/Compilers-Principles-Techniques-Tools-2nd/dp/0321486811">Compilers: Principles, Techniques, and Tools (2nd Edition)</a> by Aho, Lam, Sethi, and Ullman</p></li>
+<li><p><a class="reference external" href="https://www.amazon.com/Advanced-Compiler-Design-Implementation-Muchnick/dp/1558603204/">Advanced Compiler Design and Implementation</a> by Muchnick</p></li>
+<li><p><a class="reference external" href="https://www.amazon.com/Modern-Compiler-Implement-Andrew-Appel/dp/0521607647">Modern Compiler Implementation in ML</a> by Appel</p></li>
+</ol>
+<p><strong>On Types and Type Systems</strong></p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://www.cis.upenn.edu/~bcpierce/tapl/">Types and Programming Languages</a> by Pierce</p></li>
+<li><p><a class="reference external" href="https://www.cis.upenn.edu/~bcpierce/attapl/">Advanced Topics in Types and Programming Languages</a> by Pierce et al.</p></li>
+</ol>
+<p><strong>On Program Analysis</strong></p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://www.springer.com/gp/book/9783540654100">Principles of Program Analysis</a> by Nielson, Nielson, and Hankin</p></li>
+</ol>
+<p><strong>On OCaml</strong></p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="_static/files/ocaml-book.pdf">Introduction to Objective Caml</a> by Jason Hickey</p></li>
+<li><p><a class="reference external" href="https://dev.realworldocaml.org/">Real World OCaml</a> by Yaron Minsky, Anil Madhavapeddy, and Jason Hickey</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="syllabus.html" class="btn btn-neutral float-right" title="Syllabus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -32,9 +32,14 @@ University in Fall 2020 [Amal Ahmed][amal].
 
 ## Students
 
-- [Eric Giovannini][ericg], PhD Student (FA2021-)
+- [Eric Giovannini][ericg], PhD Student (2021-)
+- Steven Schaefer, PhD Student (2023-)
+- [Eric Bond][ericb], PhD Student (2023-)
+- Yuchen Jiang, PhD Student (2023-)
 
 [ericg]: http://www-personal.umich.edu/~ericgio/index.html
+[ericb]: https://externalhom.com/
+
 [amal]: http://www.ccs.neu.edu/home/amal/
 [robby]: http://www.eecs.northwestern.edu/~robby/
 [dan]: https://dlicata.wescreates.wesleyan.edu/

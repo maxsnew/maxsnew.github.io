@@ -67,15 +67,19 @@ site = do
                 >>= loadAndApplyTemplate defaultTemplate defaultContext
 
 
-    match "teaching/eecs-483-fa21/*" $ do
-      route idRoute
-      compile copyFileCompiler
-    match "teaching/eecs-483-fa22/*" $ do
-      route idRoute
-      compile copyFileCompiler
-    match "teaching/eecs-483-fa23/*" $ do
-      route idRoute
-      compile copyFileCompiler
+    forM_ [ "teaching/eecs-483-fa21/*"
+          , "teaching/eecs-483-fa22/*"
+          , "teaching/eecs-483-fa23/*"
+          , "teaching/eecs-483-wi24/**" ] $ \p ->
+      match p $ do
+        route idRoute
+        compile copyFileCompiler
+    -- match "teaching/eecs-483-fa22/*" $ do
+    --   route idRoute
+    --   compile copyFileCompiler
+    -- match "teaching/eecs-483-fa23/*" $ do
+    --   route idRoute
+    --   compile copyFileCompiler
 
     -- Add this for winter...
     -- match "teaching/eecs-483-wi23/*" $ do
@@ -88,6 +92,7 @@ site = do
     -- match "ps/src/Main.purs" $ do
     --   route   $ constRoute "js/hubway.js"
     --   compile $ psCompiler
+
 
 blogPostTemplate = "templates/blog-post.html"
 defaultTemplate = "templates/default.html"

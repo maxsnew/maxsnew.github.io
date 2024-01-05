@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Software Toolchain &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Project Management" href="submit.html" />
+    <link rel="prev" title="Schedule" href="schedule.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Schedule</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Software Toolchain </a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">OCaml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-ocaml">Updating OCaml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-ocaml-from-scratch-on-apple-s-macos">Installing OCaml from Scratch on Apple’s macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-ocaml-from-scratch-on-ms-windows-10">Installing OCaml from Scratch on MS Windows 10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-ocaml-from-scratch-on-linux">Installing OCaml from Scratch on Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-llvm-and-clang">Installing LLVM and Clang</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">VSCode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faq-and-troubleshooting">FAQ and Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Software Toolchain </li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="software-toolchain">
+<span id="toolchain"></span><h1>Software Toolchain <a class="footnote-reference brackets" href="#id5" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="headerlink" href="#software-toolchain" title="Link to this heading"></a></h1>
+<p>In this course, we will be using <a class="reference external" href="https://ocaml.org/">OCaml</a> as the main
+programming language. We will be working with multi-file projects, built using
+<a class="reference external" href="https://dune.build/">dune</a> and <a class="reference external" href="https://www.gnu.org/software/make/manual/make.html">GNU make</a>.  The projects will make
+use of various external libraries, and involve automated building and
+testing. The default OCaml version for this class is <code class="docutils literal notranslate"><span class="pre">5.1.0</span></code>.  If you don’t
+have a working OCaml framework (or your OCaml version is different from the one
+used below), please allocate <strong>at least 2 hours</strong> for going through this setup
+document, as some of the software packages listed required for our class will
+take quite a while to install.</p>
+<section id="id2">
+<h2>OCaml<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>First, we need to install all the software necessary for fully fledged
+OCaml development.</p>
+</div></blockquote>
+</section>
+<section id="updating-ocaml">
+<h2>Updating OCaml<a class="headerlink" href="#updating-ocaml" title="Link to this heading"></a></h2>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>If you already have some version of <cite>opam</cite> installed in your system, but
+your OCaml version is older than <code class="docutils literal notranslate"><span class="pre">5.1.0</span></code> (you can check it by executing
+<code class="docutils literal notranslate"><span class="pre">ocamlc</span> <span class="pre">--version</span></code>), please, update your set up and install the necessary
+packages as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>opam update; opam upgrade
+opam switch create 5.1.0
+eval $(opam env)
+opam install -y dune utop num menhir ocamlformat ocamlformat-rpc ocaml-lsp-server
+opam user-setup install
+</pre></div>
+</div>
+<p>Alternatively, if you don’t have a working <code class="docutils literal notranslate"><span class="pre">opam</span></code> and OCaml, please,
+follow the instructions below.</p>
+</div>
+</section>
+<section id="installing-ocaml-from-scratch-on-apple-s-macos">
+<h2>Installing OCaml from Scratch on Apple’s macOS<a class="headerlink" href="#installing-ocaml-from-scratch-on-apple-s-macos" title="Link to this heading"></a></h2>
+<p>OCaml is well-supported in macOS, so the installation process is fairly
+straightforward.</p>
+<ol class="arabic">
+<li><p>Install the <a class="reference external" href="https://brew.sh/">Homebrew package manager</a> for macOS.</p></li>
+<li><p>Install the following system packages using Homebrew:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>brew install make m4 gcc pkg-config fswatch
+</pre></div>
+</div>
+</li>
+<li><p>Next, install the <code class="docutils literal notranslate"><span class="pre">opam</span></code> package manager for installing
+and maintaining different OCaml libraries. Execute the following
+lines from the terminal:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>brew install opam
+opam init -y --compiler=5.1.0
+eval $(opam env)
+opam install -y dune utop num menhir user-setup ocamlformat ocamlformat-rpc ocaml-lsp-server
+opam user-setup install
+</pre></div>
+</div>
+</li>
+<li><p>Once done, add the following line to your <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code>, <code class="docutils literal notranslate"><span class="pre">~/.zshrc</span></code>, and/or <code class="docutils literal notranslate"><span class="pre">~/.profile</span></code>
+files (if they exist, otherwise create the file as appropriate for your shell, <em>e.g.</em>, <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>eval $(opam env)
+</pre></div>
+</div>
+</li>
+<li><p>Close your terminal window and start a new one.</p>
+<p>To check that your OCaml is correctly installed, run <code class="docutils literal notranslate"><span class="pre">ocamlc</span> <span class="pre">--version</span></code>
+from the terminal. You should get the output <code class="docutils literal notranslate"><span class="pre">5.1.0</span></code>, which is the version
+of the OCaml compiler we have just installed.</p>
+</li>
+</ol>
+</section>
+<section id="installing-ocaml-from-scratch-on-ms-windows-10">
+<h2>Installing OCaml from Scratch on MS Windows 10<a class="headerlink" href="#installing-ocaml-from-scratch-on-ms-windows-10" title="Link to this heading"></a></h2>
+<p>Unfortunately, the OCaml infrastructure is not supported well on
+Windows (natively), therefore developing large multi-file projects in
+it is problematic. To circumvent this issue, we suggest running OCaml
+and the related software using <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">Windows Subsystem for Linux</a>, a
+utility that allows to run a distribution of Linux within your Windows
+10 system. This setup takes a large number of steps, but once you’re
+done with it, you’ll have a premium support for OCaml, and also a
+fully functional Linux distribution installed on your machine.</p>
+<ol class="arabic simple">
+<li><p>First, let us enable WSL and install a Linux distribution. The
+detailed steps are given in <a class="reference external" href="https://solarianprogrammer.com/2017/04/15/install-wsl-windows-subsystem-for-linux/">this online tutorial</a>.
+Don’t forget the password for the Linux account you’ve just
+created: you will need it to install some software. At the end of
+this step, you should be able to run a “bare-bone” Ubuntu Linux
+terminal as an application within your Windows system. In my case, it
+looks as follows.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/ubuntu.png"><img alt="_images/ubuntu.png" class="align-center" src="_images/ubuntu.png" style="width: 820px;" /></a>
+<ol class="arabic" start="2">
+<li><p>You can access your Windows home folder from WSL Linux via tha path
+<code class="docutils literal notranslate"><span class="pre">/mnt/c/Users/YOURNAME/</span></code> where <code class="docutils literal notranslate"><span class="pre">YOURNAME</span></code> is your Windows user
+name. It is convenient to make a symbolic link for it, so you could
+access it quickly, for instance, calling it <code class="docutils literal notranslate"><span class="pre">home</span></code>. This is how
+you create such a link:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd ~
+ln -s /mnt/c/Users/YOURNAME/ home
+</pre></div>
+</div>
+<p>Now you can navigate to you Windows home folder via <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~/home</span></code> and to
+your Linux home folder via <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~</span></code>.</p>
+<p>Steps 3-4 are optional and are only required if you’re planning to use Emacs.</p>
+</li>
+<li><p>You might want to install a graphical shell for the Linux
+distribution running in WSL. <a class="reference external" href="https://solarianprogrammer.com/2017/04/16/windows-susbsystem-for-linux-xfce-4/">This article</a>
+provides detailed instructions on how to do so. Here are some
+comments:</p>
+<ul class="simple">
+<li><p>You don’t have to install Firefox in WSL Linux, as you can use
+your Windows browser instead.</p></li>
+<li><p>The required graphical XServer shell (run separately from
+Windows) can be downloaded from <a class="reference external" href="https://sourceforge.net/projects/vcxsrv/">this resource</a>.</p></li>
+<li><p>To run Linux with the graphical mode, you will <cite>always</cite> have to
+first run the XServer, and then the Ubuntu shell, in which you
+will have to type <code class="docutils literal notranslate"><span class="pre">xfce4-session</span></code>. The Ubuntu window will have
+to stay running as long as you use Linux.</p></li>
+</ul>
+<p>If the Linux image appears to be somewhat “blurred”, here’s how to fix it:</p>
+<ul>
+<li><p>First, add the following lines at the end of the file
+<code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> in your Linux home folder:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>export GDK_SCALE=0.5
+export GDK_DPI_SCALE=2
+</pre></div>
+</div>
+<p>This can be done using the <code class="docutils literal notranslate"><span class="pre">nano</span></code> editor, similarly to how it
+is done in  <a class="reference external" href="https://solarianprogrammer.com/2017/04/16/windows-susbsystem-for-linux-xfce-4/">this tutorial</a>.</p>
+</li>
+<li><p>Next, close any running instance of that X server (VcxSrv). Open
+the folder where you have installed it (e.g., <code class="docutils literal notranslate"><span class="pre">C:\Program</span>
+<span class="pre">Files\VcXsrv</span></code>),
+right click on <code class="docutils literal notranslate"><span class="pre">vcxsrv.exe</span></code>. Choose <cite>Properties &gt; Compatibility tab &gt; Change high DPI
+settings &gt; Enable Override high DPI scaling</cite> and change it to
+<code class="docutils literal notranslate"><span class="pre">Application</span></code> option. Here is the screenshot looks like after
+changing the settings:</p></li>
+</ul>
+</li>
+</ol>
+<a class="reference internal image-reference" href="_images/blur.png"><img alt="_images/blur.png" class="align-center" src="_images/blur.png" style="width: 820px;" /></a>
+<ol class="arabic simple" start="4">
+<li><p>Once you have done all of this, you can run Linux terminal within the
+graphical XFCE shell and execute all commands from it, rather than
+from a Windows-started Ubuntu terminal. In my case, it looks
+as follows:</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/xfce.png"><img alt="_images/xfce.png" class="align-center" src="_images/xfce.png" style="width: 820px;" /></a>
+<ol class="arabic" start="5">
+<li><p>So far so good, now we have a running Linux, so it’s time to install OCaml
+libraries. First, we need to install a number of Linux packages that OCaml
+needs. Run the following lines from Linux terminal (it can be done both from
+within graphical shell, or from within a separate Ubuntu terminal run as a
+Windows applications):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sudo apt install make m4 gcc pkg-config libx11-dev fswatch
+</pre></div>
+</div>
+<p>Don’t forget to enter the password you’ve created for your Linux account, it
+might be different from your Windows one. Be patient: installing those
+packages will take quite some time.</p>
+</li>
+<li><p>Next, we will install the <code class="docutils literal notranslate"><span class="pre">opam</span></code> package manager for working with different
+OCaml libraries. Execute the following lines from Linux terminal:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sudo add-apt-repository ppa:avsm/ppa
+sudo apt install opam
+opam init -y --compiler=5.1.0 --disable-sandboxing
+eval $(opam env)
+opam install -y dune utop num menhir ocamlformat ocamlformat-rpc ocaml-lsp-server
+opam user-setup install
+</pre></div>
+</div>
+<p>Once done, add the following line to the <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> file in your WSL/Linux
+(sub)system:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>eval $(opam env)
+</pre></div>
+</div>
+<p>After that, close your terminal window and start a new one.</p>
+<p>To check that your OCaml is correctly installed, run <code class="docutils literal notranslate"><span class="pre">ocamlc</span> <span class="pre">--version</span></code>
+from the terminal. You should get the output <code class="docutils literal notranslate"><span class="pre">5.1.0</span></code>, which is the version
+of the OCaml compiler we have just installed.</p>
+</li>
+<li><p>We recommend you to use <a class="reference external" href="https://code.visualstudio.com/">VSCode</a> for your
+OCaml your development, assuming you’ve done steps 1-6.</p>
+<p>Start by installing the <code class="docutils literal notranslate"><span class="pre">Remote-WSL</span></code> plugin. It is the one suggested the
+first time you run VSCode. Alternatively, you can install it by pressing
+<code class="docutils literal notranslate"><span class="pre">Ctrl-Shift-P</span></code>, typing <code class="docutils literal notranslate"><span class="pre">install</span> <span class="pre">extensions</span></code>, and choosing <code class="docutils literal notranslate"><span class="pre">Install</span>
+<span class="pre">Extensions</span></code> item from the dropdown menu, and then finding and installing the
+<code class="docutils literal notranslate"><span class="pre">Remote-WSL</span></code> extension.</p>
+<p>After installing that extension, press <code class="docutils literal notranslate"><span class="pre">Ctrl-Shift-P</span></code> and choose
+<code class="docutils literal notranslate"><span class="pre">Remote-WSL:</span> <span class="pre">New</span> <span class="pre">Window</span></code>. This will take a few seconds and will start a new
+window of VSCode that runs <strong>inside your WSL Linux</strong> (you can even start a
+Linux terminal there).</p>
+<p>Next, <strong>in this remote window</strong>, follow the instructions for <a class="reference external" href="https://code.visualstudio.com/">VScode</a> setup below.</p>
+<p>Now, you can open an OCaml file (<code class="docutils literal notranslate"><span class="pre">Ctrl-Shift-P</span></code>, followed by “File: Open
+File”) and enjoy the advanced features: highlighting, code completion, and
+type information, as well as many others. An example of the UI is shown
+below. Notice the indicators at the bottom of the screen, showing that VSCode
+runs in WSL (Ubuntu), with OCaml support enabled:</p>
+</li>
+</ol>
+<a class="reference internal image-reference" href="_images/vscode-wsl.png"><img alt="_images/vscode-wsl.png" class="align-center" src="_images/vscode-wsl.png" style="width: 820px;" /></a>
+</section>
+<section id="installing-ocaml-from-scratch-on-linux">
+<h2>Installing OCaml from Scratch on Linux<a class="headerlink" href="#installing-ocaml-from-scratch-on-linux" title="Link to this heading"></a></h2>
+<p>If you’re using Linux, the setup is similar to the one for Windows 10 WSL
+described previously. Just follow the points above starting from the step 5. If
+you’re using a distribution different from Ubuntu, make sure to use the
+corresponding package manager (instead of <code class="docutils literal notranslate"><span class="pre">apt</span></code>) to get the system packages in
+the step 5.</p>
+</section>
+<section id="installing-llvm-and-clang">
+<h2>Installing LLVM and Clang<a class="headerlink" href="#installing-llvm-and-clang" title="Link to this heading"></a></h2>
+<p>For some projectsin this class, we will be using the <a class="reference external" href="https://llvm.org/">LLVM</a>
+framework, which you can install as follows:</p>
+<ul class="simple">
+<li><p>Ubuntu or MS Windows 10 with WSL: run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span> <span class="pre">&amp;&amp;</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">clang</span></code></p></li>
+<li><p>macOS option 1: Install command line tools manually by running <code class="docutils literal notranslate"><span class="pre">xcode-select</span> <span class="pre">--install</span></code> from the terminal</p></li>
+<li><p>macOS option 2: Install XCode (via the AppStore) run it, go to <code class="docutils literal notranslate"><span class="pre">Preferences</span></code>  and
+install the command line tools on the “Locations” panel.</p></li>
+<li><p>macOS option 3: Intstall via Homebrew, run <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">llvm</span></code>.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>VSCode<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>Regardles of what platform you have, we suggest that you use <a class="reference external" href="https://code.visualstudio.com/">VSCode</a> for OCaml development. To do so, after
+downloading and installing the VSCode IDE, install the
+<a class="reference external" href="https://marketplace.visualstudio.com/items?itemName=ocamllabs.ocaml-platform">OCaml Platform</a>
+which enables OCaml support in VSCode. It assumes that you have installed all libraries
+above via <code class="docutils literal notranslate"><span class="pre">opam</span></code>.</p>
+<p>You can install the extension by pressing <code class="docutils literal notranslate"><span class="pre">Command-Shift-P</span></code>, typing <code class="docutils literal notranslate"><span class="pre">Install</span>
+<span class="pre">Extensions</span></code>, and choosing that item from the dropdown menu.</p>
+<div class="admonition-caution admonition">
+<p class="admonition-title">Caution</p>
+<p>The extensions named simply “OCaml” or “OCaml and Reason IDE” are <em>not</em> the
+right ones. (They are both old and no longer maintained by their developers.)</p>
+</div>
+<p><strong>Windows only:</strong> make sure you install the extension with the button that says “Install on WSL: …”,
+not with a button that says only “Install”. The latter will not work.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Make sure that you have install the “ocaml lsp server” and a few helper
+libraries, which support type annotation tool-tips, autocompletion hints, and
+code formatting:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>opam install ocaml-lsp-server ocamlformat ocamlformat-rpc
+</pre></div>
+</div>
+<p>(These should have already been installed if you followed the setup instructions above.)</p>
+</div>
+<p>Now, if you open a project folder, it will look something like what is shown below.</p>
+<img alt="_images/vscode-mac.png" class="align-center" src="_images/vscode-mac.png" />
+<p><strong>Terminal</strong></p>
+<p>Note the “OCaml” tab at left side of the screen, which should be available once
+you have the OCaml Platform plugin installed.  Clicking on it brings up some
+OCaml-specific features.  In, particular, you can use it for <code class="docutils literal notranslate"><span class="pre">Commands</span> <span class="pre">&gt;</span> <span class="pre">Open</span> <span class="pre">a</span>
+<span class="pre">sandboxed</span> <span class="pre">terminal</span></code>, which launches a terminal at the bottom of the IDE.
+Whenever you need to use <cite>make</cite>, <cite>dune</cite>, or the <cite>oatc</cite> compiler, you can use
+this terminal.</p>
+<p>The first thing you should do after importing a project is to run <cite>make test</cite>
+from that terminal.  It should succeed (perhaps with warnings about missing
+code) and produce test output.</p>
+<p><strong>dune</strong></p>
+<p>VSCode can only provide syntax type tooltypes and code completion hints <em>after</em>
+the project has successfully compiled (it looks in the <code class="docutils literal notranslate"><span class="pre">_build</span></code> directory for
+relevant metadata).  Therefore, when editing your project files, it is useful to
+have <code class="docutils literal notranslate"><span class="pre">dune</span></code> running in “watch” mode so that it looks for changes and rebuilds
+the files automatically.  You can do this by running <code class="docutils literal notranslate"><span class="pre">dune</span> <span class="pre">build</span> <span class="pre">-w</span></code> from the
+terminal.  (You can stop that process by doing <code class="docutils literal notranslate"><span class="pre">CTRL-C</span></code>.)</p>
+</section>
+<section id="faq-and-troubleshooting">
+<h2>FAQ and Troubleshooting<a class="headerlink" href="#faq-and-troubleshooting" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Question</strong>: May I use Emacs for programming in OCaml?</p>
+<p><strong>Answer</strong>: Of course, you can! This tutorial used to have notes on how to
+configure Emacs/Aquamacs for OCaml, but the experience of the last few years
+has convincingly demonstrated that VSCode is a much simpler and more
+convenient to use alternative, so why don’t you give it a try?</p>
+</li>
+<li><p><strong>Problem</strong>: Merlin is not detected by VSCode, which gives an error
+“<code class="docutils literal notranslate"><span class="pre">ocamlmerlin</span></code> is not found”.</p>
+<p><strong>Solution</strong>: This is the case if you didn’t add <code class="docutils literal notranslate"><span class="pre">eval</span> <span class="pre">$(opam</span> <span class="pre">env)</span></code> to the
+configuration files (e.g., <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> and/or <code class="docutils literal notranslate"><span class="pre">~/.profile</span></code>). Adding it
+and restarting VSCode should fix it.</p>
+<p>Alternatively (not recommended), you can add the following lines to the
+<code class="docutils literal notranslate"><span class="pre">settings.json</span></code> file (with your account name instead of <code class="docutils literal notranslate"><span class="pre">YOURNAME</span></code>). To
+find that file, press <code class="docutils literal notranslate"><span class="pre">Command-Shift-P</span></code> and choose “Preferences: Open
+Settings (JSON)” (to find it just type “settings” and choose the correct
+option):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;reason.path.ocamlmerlin&quot;: &quot;/Users/YOURNAME/.opam/5.1.0/bin/ocamlmerlin&quot;
+</pre></div>
+</div>
+<p>For example, in my case the contents of this file look as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;window.zoomLevel&quot;: 2,
+    &quot;search.searchOnType&quot;: false,
+    &quot;reason.path.ocamlmerlin&quot;: &quot;/Users/ilya/.opam/5.1.0/bin/ocamlmerlin&quot;
+}
+</pre></div>
+</div>
+<p>Don’t forget to save the file.</p>
+</li>
+<li><p><strong>Problem</strong>: In VSCode, a Git icon in the vertical panel on the left keeps
+blinking with  the “watch” symbol when being updated.</p>
+<p><strong>Solution</strong>: Add the following line to your <code class="docutils literal notranslate"><span class="pre">settings.json</span></code> file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;git.showProgress&quot;: false
+</pre></div>
+</div>
+</li>
+</ol>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id5" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>These instructions were adapted from a version kindly provided by <a class="reference external" href="https://ilyasergey.net/">Ilya Sergey</a>.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="schedule.html" class="btn btn-neutral float-left" title="Schedule" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="submit.html" class="btn btn-neutral float-right" title="Project Management" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

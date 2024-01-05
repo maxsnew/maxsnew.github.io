@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Software Toolchain" href="toolchain.html" />
+    <link rel="prev" title="Syllabus" href="syllabus.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="syllabus.html">Syllabus</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Schedule</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="schedule">
+<span id="id1"></span><h1>Schedule<a class="headerlink" href="#schedule" title="Link to this heading"></a></h1>
+<!-- New Scheduling Functionality -->
+<script type="text/javascript">
+
+// SEMESTER SETUP:
+
+// 1. Update the start date
+//   - it should be the Monday of the first week of classes
+//   - Note: do _not_ use 00:00:00 since the time change affects that!
+var semesterStartMonday = new Date('Mon Jan 8 2024 1:30:00');
+
+// 2. Skip down to "SCHEDULE"
+
+// -----------------------------------------------------------------------------------------
+// Code for the schedule layout
+
+// control visibility of lecture information (used to generate the "elide" tag)
+var HIDE = false;
+var SHOW = true;
+
+// count the total number of days from the semesterStartMonday
+var dayOfSemester = 0;    // 1 == start on Tuesday
+// count the number of TR slots
+var trCount = 0;
+// count the number of lectures (start at 1)
+var lecCount = 1;
+// count the number of homework assignments (start at 1)
+var hwCount = 1;
+
+// dayOfSemester to account for starting on Tuesday
+var day = 60 * 60 * 24 * 1000;
+function getSlotDateString() {
+    var date = new Date(semesterStartMonday.getTime() + (day * dayOfSemester));
+    return (date.getMonth() + 1).toString()  + '/' + date.getDate().toString();
+}
+
+function checkDate(tgtMonth, tgtDay) {
+    var date = new Date(semesterStartMonday.getTime() + (day * dayOfSemester));
+    var d = date.getDate();
+    var m = (date.getMonth() + 1);
+    if ((tgtMonth != m) || (tgtDay != d)) {
+	document.write('<tr style="background:red"><td></td><td>ERROR: slot expected on ' + tgtMonth + '/' + tgtDay + ' but positioned at: ' + m + '/' + d + '</td></tr>')
+    }
+}
+
+function nextDay() {
+    trCount = trCount + 1;
+    if (trCount % 2 === 0) {
+	dayOfSemester = dayOfSemester + 5;  // also skip Sunday and Monday.
+    } else {
+	dayOfSemester = dayOfSemester + 2;
+    }
+}
+
+// get the class that changes colors every two slots
+function getDateClass() {
+    if ((trCount % 4) < 2) {
+	return "week1";
+    } else {
+	return "week2";
+    }
+}
+
+function tdC(cls, data) {
+    document.write('<td class="' + cls + '">' + data + '</td>');
+}
+
+// just writes strings to the document
+function rawRowC(cls, date, topic, slides, code) {
+    document.write('<tr class="' + cls + '">');
+    tdC("date "+cls, date);
+    tdC("topic "+cls, topic);
+    tdC("slides "+cls, slides);
+    tdC("handout "+cls, code);
+    document.write('</tr>');
+}
+
+// Creates a string representing a link
+//  path : path relative to the web directory, e.g.:  "hw" or "lectures"
+//  filename : the file at that path, e.g.: "hw01" or "lec01.pdf"
+//  link : the displayed name of the link, e.g.: "Finger Exercises" or "lec01.pdf"
+function mkARef(path, filename, link) {
+    return ('<a href="' + path + '/' + filename + '">' + link + '</a>');
+}
+
+function italicize(str) {
+    return ('<i>' + str + '</i>');
+}
+
+function bright(str) {
+    return ('<span class="tipt">' + str + '</span>');
+}
+
+function mkSlide(filename) {
+    return mkARef("_static/lectures", filename, filename);
+}
+
+function mkCodeFile(filename) {
+    return mkARef("_static/lectures/code", filename, filename);
+}
+
+function mkCode(filenames) {
+    return filenames.map(mkCodeFile).join('</br>');
+}
+
+
+// Creates a lecture row in the schedule.
+//   visible : boolean indicating whether links should be displayed (e.g. HIDE or SHOW)
+//   topic : string identifying the subject of the lecture  (e.g. "Binary Search Trees")
+//   code : filename list  -  files found in lectures/code/file1 ...
+//   reading : string list - (links to) reading material (see notes() function)
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+function lec(visible, topic, code) {
+    var date = getSlotDateString();
+    var cls = getDateClass();
+    if (!visible) {
+	cls = cls + ' elide';
+    }
+    var slides = 'lec' + ("0" + lecCount).slice(-2) + '.pdf';
+    rawRowC(cls, date, topic, mkSlide(slides), mkCode(code));
+    nextDay();
+    lecCount = lecCount + 1;
+}
+
+// Creates an "no class day" row in the table
+//  desc - a string describing the reason there is no class
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+function noClass(desc) {
+    var date = getSlotDateString();
+    var cls = getDateClass();
+    rawRowC(cls, date, italicize(desc), "", "");
+    nextDay();
+}
+
+// same as noClass but also takes a target month and day
+//  desc - a string describing the reason there is no class
+//  tgtMonth - integer month that the row should land on (1-12)
+//  tgtDay - integer day that the row should land on (1-31)
+//
+//   gives an error if the row does not line up on the target date
+//   useful for: Fall / Spring breaks
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+function noClassDate(tgtMonth, tgtDay, desc) {
+    checkDate(tgtMonth, tgtDay);
+    noClass(desc);
+}
+
+// Create a homework row in the table
+//  visible : is the link to the web page active?  (HIDE or SHOW)
+//  duedate : a string indicating the due date
+//  name : homework name like "Finger Exercises"
+//
+// Does _not_ consumer a TR slot
+function hw(visible, duedate, name) {
+    var hwNum = ("0" + hwCount).slice(-2);
+    var file = "hw" + hwNum;
+    var link = mkARef("hw", file, "("+name+")");
+    var tag = "HW" + hwNum;
+    if (visible) {
+	rawRowC("hw", duedate, tag + '&nbsp ' + link + ' due', "", "");
+    } else {
+	rawRowC("hw elide", duedate, tag + '&nbsp (' + name + ') due', "", "");
+    }
+    hwCount = hwCount + 1;
+}
+
+function hwReminder(visible, hwNum, duedate, name) {
+    var file = "hw" + hwNum;
+    var link = mkARef("hw", file, name);
+    var tag = "HW" + hwNum;
+    if (visible) {
+	rawRowC("hw", duedate, tag + '&nbsp ' + link + ' due', "", "");
+    } else {
+	rawRowC("hw elide", duedate, tag + '&nbsp ' + name + ' due', "", "");
+    }
+}
+
+// generate the filename for a blank exam
+function blankExam(name, semester) {
+    return name + '-' + semester + '-' + 'blank.pdf';
+}
+
+// generate the filename for exam solutions
+function solnExam(name, semester) {
+    return name + '-' + semester + '-' + 'solutions.pdf';
+}
+
+// generate two links to blank|solution
+function mkExam(name, semester) {
+    var blank = mkARef("exams", blankExam(name,semester), "blank");
+    var solution = mkARef("exams", solnExam(name,semester), "solution");
+    return (blank + ' | ' + solution);
+}
+
+// Creates an exam row in the table
+//  tgtMonth - month of the exam date (in 1-12)
+//  tgtDay - day of the exam (in 1-31)
+//  tag - string naming the exam, e.g. "Midterm 1"
+//  info - string containing location info  (can include <br>)
+//  name - used to generated filenames, e.g. "midterm1"
+//  examples - string list of semesters to generate example exams from
+//             e.g. ["15fa", "15sp"]    generates links to:  midterm1-15fa-blank.pdf and midterm1-15fa-solution.pdf
+//  thisSemester - string that is either
+//        ""  - omit any links
+//    or a string like "16fa"  - generate a link to blank + solution
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+//
+//   NOTE: If exams are _not_ held during class periods, then this should be modified to be more like hw
+function exam(tgtMonth, tgtDay, tag, info, name, examples, thisSemester) {
+    checkDate(tgtMonth, tgtDay);
+    var date = getSlotDateString();
+    //var date = tgtMonth + "/" + tgtDay;
+    var cls = getDateClass();
+    var solutions = "";
+    if (!(thisSemester === "")) {
+	solutions = '</br>' + mkExam(name, thisSemester);
+    }
+    rawRowC(cls, date, bright(tag) + '</br>' + info, "",
+	    examples.map(function(sem){return (sem + ': ' + mkExam(name,sem));}).join('</br>') +  solutions
+	   );
+    nextDay();
+}
+
+// --------------------------------------------------------------------------
+</script>
+<!-- ------------------------ -->
+<!-- SEMESTER SETUP: SCHEDULE -->
+
+<!-- SEMESTER SETUP: LECTURES
+This table is generated using javascript functions (see code above) that generate each row.
+The dates of each lecture are calculated automatically from semesterStartMonday.
+Each row either:
+    - consumes a TR slot:  lec, exam, noCLass, noClassDate
+    - does not affect the schedule but displays a date string: hw, rawRowC
+
+lec : lecture rows
+  Lecture slide links are automatically generated and are numbered as:
+    lec01.pdf, lec02.pdf,  .. , lecNN.pdf
+
+  Mark as HIDE until the lecture content is uploaded, then mark as HIDE.
+
+Rearrange the schedule by moving the rows around.
+-->
+
+
+<table class="table" cellpadding="4" cellspacing="2" width="100%">
+<script type="text/javascript">
+
+rawRowC("week2", "<b>Date</b>", "<b>Topic</b>", "<b>Slides</b>", "<b>Handouts</b>");
+
+nextDay();
+
+lec(HIDE, "Introductions: Compilers, Interpreters, and OCaml", ["simple.ml"]);
+
+noClassDate(1, 15, "No Class: MLK Day");
+	
+lec(HIDE, "OCaml Crash Course: Translating SIMPLE to OCaml",   ["simple.ml","translate.ml"]);
+
+lec(HIDE, "OCaml Crash Course, Part II / X86lite", []);
+
+hw(HIDE, "1/23", "HW1: Hellocaml");
+  
+lec(HIDE, "X86lite / C calling conventions", ["lec04.zip"]);
+
+lec(HIDE, "X86lite - code generation", ["lec05.zip"]);
+
+lec(HIDE, "Intermediate Representations I", ["lec06.zip"]);
+
+lec(HIDE, "IRs II / LLVM", ["lec07.zip"]);
+
+hw(HIDE, "2/6", "HW2: X86lite simulator");
+  
+lec(HIDE, "Structured Data in the LLVM IR", ["struct.c", "unsafestack.c"]);
+
+lec(HIDE, "LLVM IR Data Types II / Intro to Lexing", ["handlex0.ml", "handlex.ml"]);
+
+lec(HIDE, "Lexing: DFAs and ocamllex / Parsing I: Context Free Grammars", ["lec09.zip"]);
+
+lec(HIDE, "Parsing II: Context Free Grammars, menhir, LL parsing", ["lec11.zip"]);
+
+hw(HIDE, "2/20", "HW3: LLVMlite backend");
+  
+lec(HIDE, "Parsing III: LL(k) parsing, LR(0) parsing", ["handparser.ml"]);
+
+noClassDate(2, 26, "Spring Break");
+
+noClassDate(2, 28, "Spring Break");
+
+lec(HIDE, "Parsing III: LR(1) Parsing", ["lec13.zip"]);
+
+lec(HIDE, "OAT v1 overview, First-class Functions I", ["lec14.zip"]);
+
+exam(3, 11, "Midterm", "", "midterm", [], "");
+	
+lec(HIDE, "First-class Functions II: lambda calculus", ["lec14.zip"]);
+
+lec(HIDE, "Closure Conversion /  Judgments & Derivations / Scope Checking", ["lec14.zip"]);
+
+lec(HIDE, "Types I: Typechecking", ["oat-v1-defn.pdf"]); 
+
+lec(HIDE, "Types II: Rich Types, Subtyping, Mutability", []);
+
+hw(HIDE, "3/26", "HW4: Oat language compiler v.1");
+  
+lec(HIDE, "OO: Dynamic Dispatch and Inheritance", []); 
+  
+lec(HIDE, "OO: Multiple Inheritance / Intro to Optimizations", []);
+
+lec(HIDE, "Optimizations I", ["opt-example.c", "opt-example.oat"]);
+
+lec(HIDE, "Data Flow Analysis", []);
+
+hw(HIDE, "4/9", "HW5: Oat language compiler v.2");
+  
+lec(HIDE, "Data Flow Analysis II / Control Flow Analysis", []);
+
+lec(HIDE, "Control Flow Analysis / Register Allocation", []);
+
+lec(HIDE, "Register Allocaion / SSA Revisited / Compiler Verification", []);
+
+lec(HIDE, "Compiler Verification / Course Wrap Up", []);
+
+hw(HIDE, "4/23", "HW6: Analysis & Optimizations");
+  
+</script>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="syllabus.html" class="btn btn-neutral float-left" title="Syllabus" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="toolchain.html" class="btn btn-neutral float-right" title="Software Toolchain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

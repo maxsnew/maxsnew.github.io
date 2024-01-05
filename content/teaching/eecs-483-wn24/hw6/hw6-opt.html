@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HW6: Dataflow Analysis and Optimizations &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping" href="../hw5/hw5-oatv2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HW6: Dataflow Analysis and Optimizations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#provided-code">Provided Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#task-i-dataflow-analysis">Task I: Dataflow Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-algorithm">The Algorithm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getting-started-and-testing">Getting Started and Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#now-implement-the-solver">Now implement the solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#task-ii-alias-analysis-and-dead-code-elimination">Task II: Alias Analysis and Dead Code Elimination</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#alias-analysis">Alias Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dead-code-elimination">Dead Code Elimination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#task-iii-constant-propagation">Task III: Constant Propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#task-iv-register-allocation">Task IV: Register Allocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#task-v-experimentation-validation">Task V: Experimentation / Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-test-case">Create a test case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#post-your-running-time">Post your running time</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#grading">Grading</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">HW6: Dataflow Analysis and Optimizations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hw6-dataflow-analysis-and-optimizations">
+<span id="hw6-opt"></span><h1>HW6: Dataflow Analysis and Optimizations<a class="headerlink" href="#hw6-dataflow-analysis-and-optimizations" title="Link to this heading"></a></h1>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>To get started, accept the assignment on <a class="reference external" href="https://gitlab.eecs.umich.edu/483-wn24/starter-code">EECS Gitlab</a> and clone your
+team’s repository.</p>
+<p>Many of the files in this project are taken from the earlier projects.  The
+new files (only) and their uses are listed below.  Those marked with <code class="docutils literal notranslate"><span class="pre">*</span></code> are
+the only ones you should need to modify while completing this assignment.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>bin/datastructures.ml</p></td>
+<td><p>set and map modules (enhanced with printing)</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/cfg.ml</p></td>
+<td><p>“view” of LL control-flow graphs as dataflow graphs</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/analysis.ml</p></td>
+<td><p>helper functions for propagating dataflow facts</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/solver.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> the general-purpose iterative dataflow analysis solver</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/alias.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> alias analysis</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/dce.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> dead code elimination optimization</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/constprop.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> constant propagation analysis &amp; optimization</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/liveness.ml</p></td>
+<td><p>provided liveness analysis code</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/analysistests.ml</p></td>
+<td><p>test cases (for liveness, constprop, alias)</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/opt.ml</p></td>
+<td><p>optimizer that runs dce and constprop</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/backend.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> you will implement register allocation heuristics here</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/registers.ml</p></td>
+<td><p>collects statistics about register usage</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/printanalysis.ml</p></td>
+<td><p>a standalone program to print the results of an analysis</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>You’ll need to have <a class="reference external" href="http://gallium.inria.fr/~fpottier/menhir/">menhir</a> and <a class="reference external" href="https://clang.llvm.org/">clang</a> installed on your system for this
+assignment.  If you have not already done so, follow the provided
+<a class="reference internal" href="../toolchain.html#toolchain"><span class="std std-ref">instructions</span></a> to install them.</p>
+</div>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>As usual, running <code class="docutils literal notranslate"><span class="pre">oatc</span> <span class="pre">--test</span></code> will run the test suite.  <code class="docutils literal notranslate"><span class="pre">oatc</span></code>
+also now supports several new flags having to do with optimizations.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-O1 :  runs two iterations of (constprop followed by dce)
+--liveness {trivial|dataflow} : select which liveness analysis to use for register allocation
+--regalloc {none|greedy|better} : select which register allocator to use
+--print-regs : print a histogram of the registers used
+</pre></div>
+</div>
+</div>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>The Oat compiler we have developed so far produces very inefficient code,
+since it performs no optimizations at any stage of the compilation
+pipeline. In this project, you will implement several simple dataflow analyses
+and some optimizations at the level of our LLVMlite intermediate
+representation in order to improve code size and speed.</p>
+<section id="provided-code">
+<h3>Provided Code<a class="headerlink" href="#provided-code" title="Link to this heading"></a></h3>
+<p>The provided code makes extensive use of modules, module signatures, and
+functors. These aid in code reuse and abstraction. If you need a refresher on
+OCaml functors, we recommend reading through the <a class="reference external" href="https://dev.realworldocaml.org/functors.html">Functors Chapter</a> of Real World OCaml.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">datastructures.ml</span></code>, we provide you with a number of useful modules,
+module signatures, and functors for the assignment, including:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">OrdPrintT</span></code>: A module signature for a type that is both comparable and
+can be converted to a string for printing. This is used in conjunction with
+some of our other custom modules described below. Wrapper modules <code class="docutils literal notranslate"><span class="pre">Lbl</span></code>
+and <code class="docutils literal notranslate"><span class="pre">Uid</span></code> satisfying this signature are defined later in the file for the
+<code class="docutils literal notranslate"><span class="pre">Ll.lbl</span></code> and <code class="docutils literal notranslate"><span class="pre">Ll.uid</span></code> types.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SetS</span></code>: A module signature that extends OCaml’s
+built-in set to include string conversion and printing capabilities.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MakeSet</span></code>: A functor that creates an extended set (<code class="docutils literal notranslate"><span class="pre">SetS</span></code>) from a type
+that satisfies the <code class="docutils literal notranslate"><span class="pre">OrdPrintT</span></code> module signature. This is applied to the
+<code class="docutils literal notranslate"><span class="pre">Lbl</span></code> and <code class="docutils literal notranslate"><span class="pre">Uid</span></code> wrapper modules to create a label set module <code class="docutils literal notranslate"><span class="pre">LblS</span></code>
+and a UID set module <code class="docutils literal notranslate"><span class="pre">UidS</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MapS</span></code>: A module signature that extends OCaml’s built-in maps to include
+string conversion and printing capabilities. Three additional helper
+functions are also included: <code class="docutils literal notranslate"><span class="pre">update</span></code> for updating the value associated
+with a particular key, <code class="docutils literal notranslate"><span class="pre">find_or</span></code> for performing a map look-up with a
+default value to be supplied when the key is not present, and <code class="docutils literal notranslate"><span class="pre">update_or</span></code>
+for updating the value associated with a key if it is present, or adding an
+entry with a default value if not.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MakeMap</span></code>: A functor that creates an extended map (<code class="docutils literal notranslate"><span class="pre">MapS</span></code>) from a type
+that satisfies the <code class="docutils literal notranslate"><span class="pre">OrdPrintT</span></code> module signature. This is applied to the
+<code class="docutils literal notranslate"><span class="pre">Lbl</span></code> and <code class="docutils literal notranslate"><span class="pre">Uid</span></code> wrapper modules to create a label map module <code class="docutils literal notranslate"><span class="pre">LblM</span></code>
+and a UID map module <code class="docutils literal notranslate"><span class="pre">UidM</span></code>. These map modules have fixed key types, but
+are polymorphic in the types of their values.</p></li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+<section id="task-i-dataflow-analysis">
+<h2>Task I: Dataflow Analysis<a class="headerlink" href="#task-i-dataflow-analysis" title="Link to this heading"></a></h2>
+<p>Your first task is to implement a version of the worklist algorithm for
+solving dataflow flow equations presented in lecture.  Since we plan to
+implement several analyses, we’d like to reuse as much code as possible
+between each one. In lecture, we saw that each analysis differs only in the
+choice of the lattice, the flow function, the direction of the analysis,
+and how to compute the meet of facts flowing into a node. We can take
+advantage of this by writing a generic solver as an OCaml functor and
+instantiating it with these parameters.</p>
+<section id="the-algorithm">
+<h3>The Algorithm<a class="headerlink" href="#the-algorithm" title="Link to this heading"></a></h3>
+<p>Assuming only that we have a directed graph where each node is labeled with a
+<em>dataflow fact</em> and a <em>flow function</em>, we can compute a fixpoint of the flow
+on the graph as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>let w = new set with all nodes
+repeat until w is empty
+  let n = w.pop()
+  old_out = out[n]
+  let in = combine(preds[n])
+  out[n] := flow[n](in)
+  if (!equal old_out out[n]),
+    for all m in succs[n], w.add(m)
+end
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">equal</span></code>, <code class="docutils literal notranslate"><span class="pre">combine</span></code> and <code class="docutils literal notranslate"><span class="pre">flow</span></code> are abstract operations that will be
+instantiated with lattice equality, the meet operation and the flow function
+(e.g., defined by the gen and kill sets of the analysis),
+respectively. Similarly, <code class="docutils literal notranslate"><span class="pre">preds</span></code> and <code class="docutils literal notranslate"><span class="pre">succs</span></code> are the graph predecessors
+and successors in the <em>flow graph</em>, and do not correspond to the control flow
+of the program. They can be instantiated appropriately to create a forwards or
+backwards analysis.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Don’t try to use OCaml’s polymorphic equality operator (<code class="docutils literal notranslate"><span class="pre">=</span></code>) to compare
+<code class="docutils literal notranslate"><span class="pre">old_out</span></code> and <code class="docutils literal notranslate"><span class="pre">out[n]</span></code> – that’s <em>reference equality</em>, not <em>structural
+equality</em>. Use the supplied <code class="docutils literal notranslate"><span class="pre">Fact.compare</span></code> instead.</p>
+</div>
+</section>
+<section id="getting-started-and-testing">
+<h3>Getting Started and Testing<a class="headerlink" href="#getting-started-and-testing" title="Link to this heading"></a></h3>
+<p>Be sure to review the comments in the <code class="docutils literal notranslate"><span class="pre">DFA_GRAPH</span></code> (<em>data flow analysis graph</em>)
+and <code class="docutils literal notranslate"><span class="pre">FACT</span></code> module signatures in <code class="docutils literal notranslate"><span class="pre">solver.ml</span></code>, which define the parameters of
+the solver. Make sure you understand what each declaration in the signature does
+– your solver will need to use each one (other than the printing functions)!
+It will also be helpful for you to understand the way that <code class="docutils literal notranslate"><span class="pre">cfg.ml</span></code> connects
+to the solver.  Read the commentary there for more information.</p>
+</section>
+<section id="now-implement-the-solver">
+<h3>Now implement the solver<a class="headerlink" href="#now-implement-the-solver" title="Link to this heading"></a></h3>
+<p>Your first task is to fill in the <code class="docutils literal notranslate"><span class="pre">solve</span></code> function in the <code class="docutils literal notranslate"><span class="pre">Solver.Make</span></code>
+functor in <code class="docutils literal notranslate"><span class="pre">solver.ml</span></code>. The input to the function is a flow graph labeled
+with the initial facts. It should compute the fixpoint and return a graph with
+the corresponding labeling. You will find the set datatype from
+<code class="docutils literal notranslate"><span class="pre">datastructures.ml</span></code> useful for manipulating sets of nodes.</p>
+<p>To test your solver, we have provided a full implementation of a liveness
+analysis in <code class="docutils literal notranslate"><span class="pre">liveness.ml</span></code>. Once you’ve completed the solver, the liveness
+tests in the test suite should all be passing. These tests compare the output
+of your solver on a number of programs with pre-computed solutions in
+<code class="docutils literal notranslate"><span class="pre">analysistest.ml</span></code>. Each entry in this file describes the set of uids that
+are <strong>live-in</strong> at a label in a program from <code class="docutils literal notranslate"><span class="pre">./llprograms</span></code>. To debug,
+you can compare these with the output of the <code class="docutils literal notranslate"><span class="pre">Graph.to_string</span></code> function on
+the flow graphs you will be manipulating.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>The stand-alone program <code class="docutils literal notranslate"><span class="pre">printanalysis</span></code> can print out the results of a
+dataflow analysis for a given .ll program.  You can build it by doing
+<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">printanalysis</span></code>.  It takes flags for each analysis (run with <code class="docutils literal notranslate"><span class="pre">--h</span></code>
+for a list).</p>
+</div>
+</section>
+</section>
+<section id="task-ii-alias-analysis-and-dead-code-elimination">
+<h2>Task II: Alias Analysis and Dead Code Elimination<a class="headerlink" href="#task-ii-alias-analysis-and-dead-code-elimination" title="Link to this heading"></a></h2>
+<p>The goal of this task is to implement a simple dead code elimination
+optimization that can also remove <code class="docutils literal notranslate"><span class="pre">store</span></code> instructions when we can prove
+that they have no effect on the result of the program. Though we already have
+a liveness analysis, it doesn’t give us enough information to eliminate
+<code class="docutils literal notranslate"><span class="pre">store</span></code> instructions: even if we know the UID of the destination pointer is
+dead after a store and is not used in a load in the rest of the program, we
+can not remove a store instruction because of <em>aliasing</em>.  The problem is that
+there may be different UIDs that name the same stack slot. There are a number
+of ways this can happen after a pointer is returned by <code class="docutils literal notranslate"><span class="pre">alloca</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The pointer is used as an argument to a <code class="docutils literal notranslate"><span class="pre">getelementptr</span></code> or <code class="docutils literal notranslate"><span class="pre">bitcast</span></code> instruction</p></li>
+<li><p>The pointer is stored into memory and then later loaded</p></li>
+<li><p>The pointer is passed as an argument to a function, which can manipulate it
+in arbitrary ways</p></li>
+</ul>
+</div></blockquote>
+<p>Some pointers are never aliased. For example, the code generated by the Oat
+frontend for local variables never creates aliases because the Oat language
+itself doesn’t have an “address of” operator. We can find such uses of
+<code class="docutils literal notranslate"><span class="pre">alloca</span></code> by applying a simple alias analysis.</p>
+<section id="alias-analysis">
+<h3>Alias Analysis<a class="headerlink" href="#alias-analysis" title="Link to this heading"></a></h3>
+<p>We have provided some code to get you started in <code class="docutils literal notranslate"><span class="pre">alias.ml</span></code>. You will have
+to fill in the flow function and lattice operations. The type of lattice
+elements, <code class="docutils literal notranslate"><span class="pre">fact</span></code>, is a map from UIDs to <em>symbolic pointers</em> of type
+<code class="docutils literal notranslate"><span class="pre">SymPtr.t</span></code>. Your analysis should compute, at every program point, the set of
+UIDs of pointer type that are in scope and, additionally, whether that pointer
+is the unique name for a stack slot according to the rules above. See the
+comments in <code class="docutils literal notranslate"><span class="pre">alias.ml</span></code> for details.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Alias.insn_flow</span></code>: the flow function over instructions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Alias.fact.combine</span></code>: the combine function for alias facts</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="dead-code-elimination">
+<h3>Dead Code Elimination<a class="headerlink" href="#dead-code-elimination" title="Link to this heading"></a></h3>
+<p>Now we can use our liveness and alias analyses to implement a dead code
+elimination pass. We will simply compute the results of the analysis at each
+program point, then iterate over the blocks of the CFG removing any
+instructions that do not contribute to the output of the program.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>For all instructions except <code class="docutils literal notranslate"><span class="pre">store</span></code> and <code class="docutils literal notranslate"><span class="pre">call</span></code>, the instruction can
+be removed if the UID it defines is not live-out at the point of definition</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">store</span></code> instruction can be removed if we know the UID of the destination
+pointer is not aliased and not live-out at the program point of the store</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">call</span></code> instruction can never be removed</p></li>
+</ul>
+</div></blockquote>
+<p>Complete the dead-code elimination optimization in <code class="docutils literal notranslate"><span class="pre">dce.ml</span></code>, where you will
+only need to fill out the <code class="docutils literal notranslate"><span class="pre">dce_block</span></code> function that implements these rules.</p>
+</section>
+</section>
+<section id="task-iii-constant-propagation">
+<h2>Task III: Constant Propagation<a class="headerlink" href="#task-iii-constant-propagation" title="Link to this heading"></a></h2>
+<p>Programmers don’t often write dead code directly. However, dead code is often
+produced as a result of other optimizations that execute parts of the original
+program at compile time, for instance <em>constant propagation</em>. In this section
+you’ll implement a simple constant propagation analysis and constant folding
+optimization.</p>
+<p>Start by reading through the <code class="docutils literal notranslate"><span class="pre">constprop.ml</span></code>. Constant propagation is similar
+to the alias analysis from the previous section. Dataflow facts will be maps
+from UIDs to the type <code class="docutils literal notranslate"><span class="pre">SymConst.t</span></code>, which corresponds to the lattice from
+the lecture slides. Your analysis will compute the set of UIDs in scope at
+each program point, and the integer value of any UID that is computed as a
+result of a series of <code class="docutils literal notranslate"><span class="pre">binop</span></code> and <code class="docutils literal notranslate"><span class="pre">icmp</span></code> instructions on constant
+operands. More specifically:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The flow out of any <code class="docutils literal notranslate"><span class="pre">binop</span></code> or <code class="docutils literal notranslate"><span class="pre">icmp</span></code> whose operands have been
+determined to be constants is the incoming flow with the defined UID to
+<code class="docutils literal notranslate"><span class="pre">Const</span></code> with the expected constant value</p></li>
+<li><p>The flow out of any <code class="docutils literal notranslate"><span class="pre">binop</span></code> or <code class="docutils literal notranslate"><span class="pre">icmp</span></code> with a <code class="docutils literal notranslate"><span class="pre">NonConst</span></code> operand sets
+the defined UID to <code class="docutils literal notranslate"><span class="pre">NonConst</span></code></p></li>
+<li><p>Similarly, the flow out of any <code class="docutils literal notranslate"><span class="pre">binop</span></code> or <code class="docutils literal notranslate"><span class="pre">icmp</span></code> with a <code class="docutils literal notranslate"><span class="pre">UndefConst</span></code>
+operand sets the defined UID to <code class="docutils literal notranslate"><span class="pre">UndefConst</span></code></p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">store</span></code> or <code class="docutils literal notranslate"><span class="pre">call</span></code> of type <code class="docutils literal notranslate"><span class="pre">Void</span></code> sets the defined UID to
+<code class="docutils literal notranslate"><span class="pre">UndefConst</span></code></p></li>
+<li><p>All other instructions set the defined UID to <code class="docutils literal notranslate"><span class="pre">NonConst</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>(At this point we could also include some arithmetic identities, for instance
+optimizing multiplication by 0, but we’ll keep the specification simple.)
+Next, you will have to implement the constant folding optimization itself,
+which just traverses the blocks of the CFG and replaces operands whose values
+we have computed with the appropriate constants. The structure of the code is
+very similar to that in the previous section. You will have to fill in:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Constprop.insn_flow</span></code> with the rules defined above</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Constprop.Fact.combine</span></code> with the combine operation for the analysis</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Constprop.cp_block</span></code> (inside the <code class="docutils literal notranslate"><span class="pre">run</span></code> function) with the code needed
+to perform the constant propagation transformation</p></li>
+</ol>
+</div></blockquote>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Once you have implemented constant folding and dead-code elimination, the
+compiler’s <code class="docutils literal notranslate"><span class="pre">-O1</span></code> option will optimize your ll code by doing 2 iterations
+of (constant prop followed by dce).  See <code class="docutils literal notranslate"><span class="pre">opt.ml</span></code>.  The <code class="docutils literal notranslate"><span class="pre">-O1</span></code>
+optimizations are <em>not</em> used for testing <em>except</em> that they are <em>always</em>
+performed in the register-allocation quality tests – these optimizations
+improve register allocation (see below).</p>
+<p>This coupling means that if you have a faulty optimization pass, it might
+cause the quality of your register allocator to degrade. And it might make
+getting a high score harder.</p>
+</div>
+</section>
+<section id="task-iv-register-allocation">
+<h2>Task IV: Register Allocation<a class="headerlink" href="#task-iv-register-allocation" title="Link to this heading"></a></h2>
+<p>The backend implementation that we have given you provides two basic register
+allocation stragies:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>none</strong>: spills all uids to the stack;</p></li>
+<li><p><strong>greedy</strong>: uses register and a greedy linear-scan algorithm.</p></li>
+</ul>
+</div></blockquote>
+<p>For this task, you will implement a <strong>better</strong> register allocation strategy
+that makes use of the liveness information that you compute in Task I.  Most
+of the instructions for this part of the assignment are found in
+<code class="docutils literal notranslate"><span class="pre">backend.ml</span></code>, where we have modified the code generation strategy to be able
+to make use of liveness information.  The task is to implement a single
+function <code class="docutils literal notranslate"><span class="pre">better_layout</span></code> that beats our example “greedy” register allocation
+strategy.  We recommend familiarizing yourself with the way that the simple
+strategies work before attempting to write your own allocator.</p>
+<p>The compiler now also supports several additional command-line switches that
+can be used to select among different analysis and code generation options for
+testing purposes:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--print-regs prints the register usage statistics for x86 code
+--liveness {trivial|dataflow} use the specified liveness analysis
+--regalloc {none|greedy|better} use the specified register allocator
+</pre></div>
+</div>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>The flags above <em>do not</em> imply the <code class="docutils literal notranslate"><span class="pre">-O1</span></code> flag (despite the fact that we
+always turn on optimization for testing purposes when running with
+<code class="docutils literal notranslate"><span class="pre">--test</span></code>).  You should enable it explicitly.</p>
+</div>
+<p>For testing purposes, you can run the compiler with the <code class="docutils literal notranslate"><span class="pre">-v</span></code> verbose flag
+and/or use the <code class="docutils literal notranslate"><span class="pre">--print-regs</span></code> flag to get more information about how your
+algorithm is performing.  It is also useful to sprinkle your own verbose
+output into the backend.</p>
+<p>The goal for this part of the homework is to create a strategy such that code
+generated with the <code class="docutils literal notranslate"><span class="pre">--regalloc</span> <span class="pre">better</span></code> <code class="docutils literal notranslate"><span class="pre">--liveness</span> <span class="pre">dataflow</span></code> flags is
+“better” than code generated using the simple settings, which are <code class="docutils literal notranslate"><span class="pre">--regalloc</span>
+<span class="pre">greedy</span></code> <code class="docutils literal notranslate"><span class="pre">--liveness</span> <span class="pre">dataflow</span></code>.  See the discussion about how we compare
+register allocation strategies in <code class="docutils literal notranslate"><span class="pre">backend.ml</span></code>.  The “quality” test cases
+report the results of these comparisons.</p>
+<p>Of course your register allocation strategy should produce correct code, so we
+still perform all of the correctness tests that we have used in previous
+version of the compiler.  Your allocation strategy should not break any of
+these tests – and you cannot earn points for the “quality” tests unless all
+of the correctness tests also pass.</p>
+</section>
+<section id="task-v-experimentation-validation">
+<h2>Task V: Experimentation / Validation<a class="headerlink" href="#task-v-experimentation-validation" title="Link to this heading"></a></h2>
+<p>Of course we want to understand how much of an impact your register allocation
+strategy has on actual execution time.  For the final task, you will create a
+new Oat program that highlights the difference.  There are two parts to this
+task.</p>
+<section id="create-a-test-case">
+<h3>Create a test case<a class="headerlink" href="#create-a-test-case" title="Link to this heading"></a></h3>
+<p>Post an Oat program to <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>.  This program should exhibit significantly
+different performance when compiled using the “greedy” register allocation
+strategy vs. using your “better” register allocation strategy with dataflow
+information.  See the file <code class="docutils literal notranslate"><span class="pre">hw4programs/regalloctest.oat</span></code> and
+<code class="docutils literal notranslate"><span class="pre">hw4programs/regalloctest2.oat</span></code> and for uninspired examples of such a
+program.  Yours should be more interesting.</p>
+</section>
+<section id="post-your-running-time">
+<h3>Post your running time<a class="headerlink" href="#post-your-running-time" title="Link to this heading"></a></h3>
+<p>Use the unix <code class="docutils literal notranslate"><span class="pre">time</span></code> command to test the performance of your
+register allocation algorithm.  This should take the form of a simple table of
+timing information for several test cases, including the one you create and
+those mentioned below.  You should test the performance in several
+configurations:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>using the <code class="docutils literal notranslate"><span class="pre">--liveness</span> <span class="pre">trivial</span></code>  <code class="docutils literal notranslate"><span class="pre">--regalloc</span> <span class="pre">none</span></code> flags  (baseline)</p></li>
+<li><p>using the <code class="docutils literal notranslate"><span class="pre">--liveness</span> <span class="pre">dataflow</span></code>  <code class="docutils literal notranslate"><span class="pre">--regalloc</span> <span class="pre">greedy</span></code> flags  (greedy)</p></li>
+<li><p>using the <code class="docutils literal notranslate"><span class="pre">--liveness</span> <span class="pre">dataflow</span></code>  <code class="docutils literal notranslate"><span class="pre">--regalloc</span> <span class="pre">better</span></code> flags  (better)</p></li>
+<li><p>using the <code class="docutils literal notranslate"><span class="pre">--clang</span></code> flags  (clang)</p></li>
+</ol>
+</div></blockquote>
+<p>And… all of the above plus the <code class="docutils literal notranslate"><span class="pre">-O1</span></code> flag.</p>
+<p>Test your compiler on at least these three programs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hw4programs/regalloctest.oat</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">llprograms/matmul.ll</span></code></p></li>
+<li><p>your own test case</p></li>
+</ul>
+</div></blockquote>
+<p>Report the processor and OS version that you use to test.  For best results,
+use a “lightly loaded” machine (close all other applications) and average the
+timing over several trial runs.</p>
+<p>The example below shows one interaction used to test the <code class="docutils literal notranslate"><span class="pre">matmul.ll</span></code> file in
+several configurations from the command line:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; ./oatc --liveness trivial --regalloc none llprograms/matmul.ll
+&gt; time ./a.out
+
+real 0m1.647s
+user 0m1.639s
+sys  0m0.002s
+
+
+&gt; ./oatc --liveness dataflow --regalloc greedy llprograms/matmul.ll
+&gt; time ./a.out
+
+real 0m1.127s
+user 0m1.123s
+sys  0m0.002s
+
+&gt; ./oatc --liveness dataflow --regalloc better llprograms/matmul.ll
+&gt; time ./a.out
+
+real 0m0.500s
+user 0m0.496s
+sys  0m0.002s
+
+&gt; ./oatc --clang llprograms/matmul.ll
+&gt; time ./a.out
+
+real 0m0.061s
+user 0m0.053s
+sys  0m0.004s
+</pre></div>
+</div>
+<p>Don’t get too discouraged when clang beats your compiler’s performance by many
+orders of magnitude.  It uses register promotion and many other optimizations
+to get high-quality code!</p>
+</section>
+</section>
+<section id="grading">
+<h2>Grading<a class="headerlink" href="#grading" title="Link to this heading"></a></h2>
+<p><strong>Projects that do not compile will receive no credit!</strong></p>
+<dl class="simple">
+<dt>Your team’s grade for this project will be based on:</dt><dd><ul class="simple">
+<li><p>90 Points: the various automated tests that we provide.  Note that the
+register-allocator quality points cannot be earned with an allocator that
+generates incorrect code.</p></li>
+<li><p>5 Points for posting an interesting test case to <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>.  (Graded manually.)</p></li>
+<li><p>5 Points for posting your timing analysis to <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>. (Graded manually.)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../hw5/hw5-oatv2.html" class="btn btn-neutral float-left" title="HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

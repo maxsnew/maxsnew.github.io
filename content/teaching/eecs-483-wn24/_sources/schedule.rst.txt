@@ -1,0 +1,16 @@
+.. _schedule:
+
+Schedule
+========
+
+.. raw:: html
+   :file: _static/schedule_setup.html
+
+.. raw:: html
+   :file: _static/schedule.html
+
+
+
+
+
+

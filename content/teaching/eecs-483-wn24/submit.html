@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Management &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OCaml Style Guide" href="codestyle.html" />
+    <link rel="prev" title="Software Toolchain" href="toolchain.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Project Management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#starter-code">Starter Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submit">Gradescope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#project-guidelines">Project Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Project Management</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="project-management">
+<span id="projects"></span><h1>Project Management<a class="headerlink" href="#project-management" title="Link to this heading"></a></h1>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The course projects are <em>challenging</em> and time <em>consuming</em>. They may require
+significant effort to understand the implementation details and concepts:
+<strong>Start Early!</strong></p>
+</div>
+<section id="starter-code">
+<h2>Starter Code<a class="headerlink" href="#starter-code" title="Link to this heading"></a></h2>
+<p>Most of the projects in this course will come with extensive (partially
+complete) skeleton code, test cases, infrastructure, etc.  We will distribute
+that code using the EECS gitlab (<a href="#id4"><span class="problematic" id="id5">|gitlab|_</span></a>).  You are encouraged to use git’s version control and
+code merge features to work with your partner collaboratively.</p>
+</section>
+<section id="submit">
+<span id="id1"></span><h2>Gradescope<a class="headerlink" href="#submit" title="Link to this heading"></a></h2>
+<p>Course projects will be submitted via <a class="reference external" href="https://www.gradescope.com/courses/670650">Gradescope</a>.</p>
+<p>Each project will be accompanied by a <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> that will build a (time stamped) zip file suitable for submission to gradescope. For example, in HW1, you would do:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt; make zip
+zip &#39;hw1-submit(2022-01-06-21:45:36).zip&#39; hellocaml.ml studenttests.ml
+adding: hellocaml.ml (deflated 67%)
+adding: studenttests.ml (deflated 52%)
+</pre></div>
+</div>
+<p>The result is a file called <cite>hw1-submit(&lt;TIMESTAMP&gt;).zip</cite>, which you should upload to <a class="reference external" href="https://www.gradescope.com/courses/670650">Gradescope</a>.</p>
+</section>
+<section id="project-guidelines">
+<h2>Project Guidelines<a class="headerlink" href="#project-guidelines" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Groups:</p></li>
+</ol>
+<blockquote>
+<div><p>Teams for group projects will consist of <em>two</em> students.</p>
+</div></blockquote>
+<ol class="arabic">
+<li><p>Late Projects:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>All projects are due at 11:59pm on the due date.</p></li>
+<li><p>Projects submitted late, but within 24 hours of the deadline are subject to a 10 point penalty.</p></li>
+<li><p>Projects submitted late, but between 24 and 48 hours of the deadline are subject to a 20 point penalty.</p></li>
+<li><p>If you have an extremely unusual circumstance, such as a serious and extended illness, contact the course instructor for special consideration.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Regrade Policy:</p>
+<p>Regrade requests should be sent to the course staff. Only reasonable requests will be considered. The entire project or exam will be regraded. Note that this means that the score on a regraded project might decrease.</p>
+</li>
+<li><p>Submission Policy</p>
+<ul class="simple">
+<li><p>Projects that do not compile will get no credit.</p></li>
+<li><p>Projects that compile will receive partial credit according to the grading guidelines provided in the project description.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="toolchain.html" class="btn btn-neutral float-left" title="Software Toolchain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="codestyle.html" class="btn btn-neutral float-right" title="OCaml Style Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
