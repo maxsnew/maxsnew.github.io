@@ -70,7 +70,7 @@ site = do
     forM_ [ "teaching/eecs-483-fa21/*"
           , "teaching/eecs-483-fa22/*"
           , "teaching/eecs-483-fa23/*"
-          , "teaching/eecs-483-wi24/**" ] $ \p ->
+          , "teaching/eecs-483-wn24/**" ] $ \p ->
       match p $ do
         route idRoute
         compile copyFileCompiler
