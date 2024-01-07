@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HW2: X86lite &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="HW3: LLVMlite" href="../../hw3/hw3-llvmlite.html" />
+    <link rel="prev" title="HW1: Hellocaml" href="../../hw1/doc/hw1-hellocaml.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HW2: X86lite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-running-and-testing-projects">Command-line Running and Testing Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#part-i-the-simulator">Part I: The Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#provided-code">Provided Code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tasks">Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tests">Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#part-ii-x86lite-assembler-and-loader">Part II: X86lite Assembler and Loader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#executable-file-specification">Executable File Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#loader-specification-and-memory-layout">Loader Specification and Memory Layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#part-iii-x86lite-assembly-programming">Part III: X86lite Assembly Programming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grading">Grading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">HW2: X86lite</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hw2-x86lite">
+<span id="id1"></span><h1>HW2: X86lite<a class="headerlink" href="#hw2-x86lite" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>In this project you will implement an assembler and simulator for a
+small, idealized subset of the X86-64 platform that will serve as the
+target language for the compilers we build in later projects.  This
+project will continue to help get you up to speed with OCaml
+programming – we’ll need a few more constructs not used in HW1. You
+will also implement a non-trivial assembly-language program <em>by hand</em>
+to familiarize yourself with the workings of the X86 architecture.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>You should work in pairs for this project.</p>
+</div>
+<p><strong>Getting Started</strong></p>
+<p>To get started, accept the assignment on <a class="reference external" href="https://gitlab.eecs.umich.edu/483-wn24/starter-code">EECS Gitlab</a> and clone your
+team’s repository.</p>
+<p>The files included in the repository are briefly described
+below. Those marked with <code class="docutils literal notranslate"><span class="pre">*</span></code> are the only ones you should need to
+modify while completing this assignment.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Makefile</p></td>
+<td><p>builds main.native, also supports targets ‘test’ and ‘zip’</p></td>
+</tr>
+<tr class="row-even"><td><p>util/assert.ml(i)</p></td>
+<td><p>the assertion framework</p></td>
+</tr>
+<tr class="row-odd"><td><p>test/gradedtests.ml</p></td>
+<td><p>graded test cases that we provide</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/main.ml</p></td>
+<td><p>the main test harness</p></td>
+</tr>
+<tr class="row-odd"><td><p>x86/x86.mli</p></td>
+<td><p>the X86lite interface</p></td>
+</tr>
+<tr class="row-even"><td><p>x86/x86.ml</p></td>
+<td><p>the X86lite instruction set implementation</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/int64_overflow.ml(i)</p></td>
+<td><p>library for working with int64 values</p></td>
+</tr>
+<tr class="row-even"><td><p>*bin/simulator.ml</p></td>
+<td><p>where your interpreter and assembler code (Parts I and II) should go</p></td>
+</tr>
+<tr class="row-odd"><td><p>*test/studenttests.ml</p></td>
+<td><p>where your submitted test cases (Part III) should go</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Building the Project</strong></p>
+<p>It is recommended that you compile your projects from the command
+line, using <code class="docutils literal notranslate"><span class="pre">make</span></code>. We have included a <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> that provides
+several make targets that can help you with the homework:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>make       --  builds oatc using dune
+make test  --  runs the test suite
+make clean --  cleans your project directory
+make utop  --  starts a utop for the project
+make zip   --  creates a zip file with the code you need to submit
+</pre></div>
+</div>
+</section>
+<section id="command-line-running-and-testing-projects">
+<h2>Command-line Running and Testing Projects<a class="headerlink" href="#command-line-running-and-testing-projects" title="Link to this heading"></a></h2>
+<p>After compiling the project with <code class="docutils literal notranslate"><span class="pre">make</span></code>, you can run it from the
+command line by running <code class="docutils literal notranslate"><span class="pre">./oatc</span></code>.  You may run the simulator’s unit
+tests by running <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> or <code class="docutils literal notranslate"><span class="pre">./oatc</span> <span class="pre">--test</span></code>.</p>
+</section>
+<section id="part-i-the-simulator">
+<h2>Part I: The Simulator<a class="headerlink" href="#part-i-the-simulator" title="Link to this heading"></a></h2>
+<p>X86lite assembly code is organized into labeled blocks of
+instructions, which might be written in concrete syntax as shown
+below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>      .text
+fac:
+
+      subq    $8, %rsp
+      cmpq    $1, %rdi
+      jle     exit
+      movq    %rdi, (%rsp)
+      decq    %rdi
+      callq   fac
+      imulq   (%rsp), %rax
+      addq    $8, %rsp
+      retq
+exit:
+      movq    $1, %rax
+      addq    $8, %rsp
+      retq
+      .globl  main
+main:
+      movq    $5, %rdi
+      callq   fac
+      retq
+</pre></div>
+</div>
+<p>This code has three blocks, labeled <code class="docutils literal notranslate"><span class="pre">fac</span></code>, <code class="docutils literal notranslate"><span class="pre">exit</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">main</span></code>. The code at labels <code class="docutils literal notranslate"><span class="pre">fac</span></code> and <code class="docutils literal notranslate"><span class="pre">exit</span></code> implements a
+recursive version of the familiar factorial function. The code at
+<code class="docutils literal notranslate"><span class="pre">main</span></code> calls factorial with the immediate value 5.</p>
+<p>In this part of the project you will implement a simulator for the X86lite
+platform, but rather than using the concrete syntax shown above, you will
+execute programs that have been converted to machine code and layed out in the
+memory of an idealized X86lite machine:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[|</span> <span class="o">...</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Subq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">8</span><span class="n">L</span><span class="o">);</span> <span class="nc">Reg</span> <span class="nc">Rsp</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Cmpq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">1</span><span class="n">L</span><span class="o">);</span> <span class="nc">Reg</span> <span class="nc">Rdi</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">J</span> <span class="nc">Le</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">72</span><span class="n">L</span><span class="o">)]);</span>          <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Movq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Reg</span> <span class="nc">Rdi</span><span class="o">;</span>      <span class="nc">Ind2</span> <span class="nc">Rsp</span><span class="o">]);</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Decq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Reg</span> <span class="nc">Rdi</span><span class="o">]);</span>                <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Callq</span><span class="o">,</span> <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">0</span><span class="n">L</span><span class="o">)]);</span>           <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Imulq</span><span class="o">,</span> <span class="o">[</span><span class="nc">Ind2</span> <span class="nc">Rsp</span><span class="o">;</span>     <span class="nc">Reg</span> <span class="nc">Rax</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Addq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">8</span><span class="n">L</span><span class="o">);</span> <span class="nc">Reg</span> <span class="nc">Rsp</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Retq</span><span class="o">,</span>  <span class="bp">[]</span><span class="o">);</span>                       <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Movq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">1</span><span class="n">L</span><span class="o">);</span> <span class="nc">Reg</span> <span class="nc">Rax</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Addq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">8</span><span class="n">L</span><span class="o">);</span> <span class="nc">Reg</span> <span class="nc">Rsp</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Retq</span><span class="o">,</span>  <span class="bp">[]</span><span class="o">);</span>                       <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Movq</span><span class="o">,</span>  <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">5</span><span class="n">L</span><span class="o">);</span> <span class="nc">Reg</span> <span class="nc">Rdi</span><span class="o">]);</span>  <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Callq</span><span class="o">,</span> <span class="o">[</span><span class="nc">Imm</span> <span class="o">(</span><span class="nc">Lit</span> <span class="mi">0</span><span class="n">L</span><span class="o">)]);</span>           <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span>
+ <span class="nc">InsB0</span> <span class="o">(</span><span class="nc">Retq</span><span class="o">,</span>  <span class="bp">[]</span><span class="o">);</span>                       <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nc">InsFrag</span><span class="o">;</span> <span class="nn">InsFrag</span>
+ <span class="p">...</span>
+<span class="o">|]</span>
+</pre></div>
+</div>
+<p>This is just an OCaml array of <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s, “symbolic” bytes where
+<code class="docutils literal notranslate"><span class="pre">InsB0</span></code> represents the first byte of an instruction and seven
+subsequent <code class="docutils literal notranslate"><span class="pre">InsFrag</span></code>s represent the remaining seven bytes. While in
+a real machine each fragment would encode meaningful information about
+the instructions, this approach hides the details of a specific
+encoding and aids in debugging. The actual encoding of X86
+instructions in particular is notoriously complicated, and as we
+mentioned in class, variable in length. We will assume a fixed-length,
+8-byte encoding of X86lite for our simulator, representing
+instructions in memory as <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s.  Fetching and decoding an
+instruction will simply involve reading the contents of its first
+byte, ignoring the following <code class="docutils literal notranslate"><span class="pre">InsFrag</span></code>s.</p>
+<p>The OCaml datatype used for instructions is defined in the provided
+<code class="docutils literal notranslate"><span class="pre">x86.ml</span></code>, and the <a class="reference internal" href="x86lite.html#x86lite"><span class="std std-ref">x86lite specification</span></a> gives the full
+details about the meaning of each instruction.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Read (or at least skim) the <a class="reference internal" href="x86lite.html#x86lite"><span class="std std-ref">x86lite specification</span></a>
+now.  You might want to correlate the various parts of the X86lite
+machine with the datatypes defined in <code class="docutils literal notranslate"><span class="pre">x86.ml</span></code>.</p>
+</div>
+<p>The X86lite specification is written from the point of view of actual
+X86 hardware, except for the behavior of labels, which are “resolved”
+by another program, the assembler (and linker/loader). Your simulator
+can assume that this has already been done, so instruction operands
+will not contain labels. In the memory image for the factorial example
+above, you can see that calls using the label <code class="docutils literal notranslate"><span class="pre">fac</span></code> and jumps
+using <code class="docutils literal notranslate"><span class="pre">exit</span></code> have been replaced with literal immediate operands
+<code class="docutils literal notranslate"><span class="pre">OL</span></code> and <code class="docutils literal notranslate"><span class="pre">72L</span></code>.</p>
+<p>Our ML-level interpreter’s representation of the X86lite machine state is given
+by the following type:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">flags</span> <span class="o">=</span> <span class="o">{</span> <span class="k">mutable</span> <span class="n">fo</span> <span class="o">:</span> <span class="kt">bool</span>
+             <span class="o">;</span> <span class="k">mutable</span> <span class="n">fs</span> <span class="o">:</span> <span class="kt">bool</span>
+             <span class="o">;</span> <span class="k">mutable</span> <span class="n">fz</span> <span class="o">:</span> <span class="kt">bool</span>
+             <span class="o">}</span>
+
+<span class="k">type</span> <span class="n">regs</span> <span class="o">=</span> <span class="n">quad</span> <span class="kt">array</span>
+
+<span class="k">type</span> <span class="n">mem</span> <span class="o">=</span> <span class="n">sbyte</span> <span class="kt">array</span>
+
+<span class="k">type</span> <span class="n">mach</span> <span class="o">=</span> <span class="o">{</span> <span class="n">flags</span> <span class="o">:</span> <span class="n">flags</span>
+            <span class="o">;</span> <span class="n">regs</span> <span class="o">:</span> <span class="n">regs</span>
+            <span class="o">;</span> <span class="n">mem</span> <span class="o">:</span> <span class="n">mem</span>
+            <span class="o">}</span>
+</pre></div>
+</div>
+<p>The memory and register files are simulated by OCaml-level (mutable)
+arrays of <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s and <code class="docutils literal notranslate"><span class="pre">quad</span></code>s (OCaml 64-bit integers),
+respectively. The three condition flags are mutable boolean fields;
+all of the state is bundled together in a record (see IOC Chapter 8.1
+for more about OCaml’s record types).</p>
+<p>The main differences between the interpreter and the environment in which real
+X86 programs are executed include:</p>
+<ul class="simple">
+<li><p><strong>Memory:</strong> Our simulator will use only 64K bytes of memory.  The
+part of the heap simulated is the block of highest addressable
+memory locations – in <code class="docutils literal notranslate"><span class="pre">simulator.ml</span></code>, this block is bounded from
+below by <code class="docutils literal notranslate"><span class="pre">mem_bot</span></code> and from above by <code class="docutils literal notranslate"><span class="pre">mem_top</span></code>.  We will not
+model requesting memory from the operating system: you can assume
+the entire 64K address space has been paged in before execution of
+the program starts. We will also not model any of the restrictions
+on alignment or code layout related to memory paging.</p></li>
+<li><p><strong>Symbolic instruction encoding:</strong> As described at the beginning of
+the section, we will assume a fixed-length, 8-byte instruction
+encoding by representing instructions symbolically in memory. The
+behavior of programs that read or manipulate <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s
+representing instructions as data is not specified. Your simulator
+may raise an error or assume some default behavior: we will not test
+these cases.</p></li>
+<li><p><strong>Operand restrictions:</strong> The X86Lite specification mentions several
+restrictions on the operands of various instructions. For example
+<code class="docutils literal notranslate"><span class="pre">leaq</span></code> can only take an indirect memory operand. Your simulator is
+not required to detect invalid operands, and may raise an exception
+or choose some convenient behavior. In other words, your simulator
+may implement a superset of the X86lite specification by executing
+instructions with invalid operands. We will only test your simulator
+with programs that conform to the restrictions in the specification.</p></li>
+<li><p><strong>Termination and system calls:</strong> Normally, a program will terminate
+by notifying the operating system using a system call (e.g. <code class="docutils literal notranslate"><span class="pre">exit</span></code>
+on POSIX systems). We will not simulate system calls, so instead we
+use a sentinel address outside of our address space, <code class="docutils literal notranslate"><span class="pre">exit_addr</span></code>,
+to indicate that a program has terminated. The provided``run``
+function will call the <code class="docutils literal notranslate"><span class="pre">step</span></code> function until <code class="docutils literal notranslate"><span class="pre">%rip</span></code> contains
+<code class="docutils literal notranslate"><span class="pre">exit_addr</span></code>. To achieve this, you should begin execution with
+<code class="docutils literal notranslate"><span class="pre">exit_addr</span></code> on the top of the stack, so that executing <code class="docutils literal notranslate"><span class="pre">RETQ</span></code>
+without first pushing something else on the stack will terminate the
+program.</p></li>
+</ul>
+<section id="provided-code">
+<h3>Provided Code<a class="headerlink" href="#provided-code" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sbyte</span></code> serialization</p></li>
+<li><p>Machine state and X86 instruction datatypes</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Int64_overflow</span></code> module</p></li>
+</ul>
+</section>
+<section id="tasks">
+<h3>Tasks<a class="headerlink" href="#tasks" title="Link to this heading"></a></h3>
+<p>Complete the implementation in the <code class="docutils literal notranslate"><span class="pre">simulator.ml</span></code> file, some parts
+of which are given to you.  We recommend that you do things in this
+order:</p>
+<ul class="simple">
+<li><p>First, as an exercise in condition codes, implement the
+<code class="docutils literal notranslate"><span class="pre">interp_cnd</span></code> function.</p></li>
+<li><p>Second, as another simple warm-up, implement the <code class="docutils literal notranslate"><span class="pre">map_addr</span></code>
+function, which maps X86lite addresses (represented as <code class="docutils literal notranslate"><span class="pre">quad</span></code>
+values) into <code class="docutils literal notranslate"><span class="pre">Some</span></code> OCaml array index (or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the address
+is not in the legal address space).</p></li>
+<li><p>Third, implement the interpretation of operands (including indirect
+addresses), since this functionality will be needed for simulating
+instructions.</p></li>
+<li><p>Finally, implement the <code class="docutils literal notranslate"><span class="pre">step</span></code> function, which simulates the
+execution of a single instruction by modifying the machine state
+passed as an argument.</p></li>
+</ul>
+<div class="admonition-hints admonition">
+<p class="admonition-title">Hints</p>
+<ul class="simple">
+<li><p>We have provided a module for performing 64-bit arithmetic with
+overflow detection. You may find this useful for setting the
+status flags.</p></li>
+<li><p>You’ll probably want a function that sets the three condition
+flags after a result has been computed.</p></li>
+<li><p>Groups of instructions share common behavior – for example, all
+of the arithmetic instructions are quite similar. You should
+factor out the commonality as much as you can in order to keep
+your code clean. Remember that code style constitutes a
+non-trivial portion of your grade.</p></li>
+<li><p>You will probably want to develop small test cases to try out the
+functionality of your interpreter. See <code class="docutils literal notranslate"><span class="pre">gradedtests.ml</span></code> for
+some examples of how to set up tests that can look at the final
+state of the machine.</p></li>
+</ul>
+</div>
+</section>
+<section id="tests">
+<h3>Tests<a class="headerlink" href="#tests" title="Link to this heading"></a></h3>
+<p>We will grade this part of the assignment based on a suite of tests.
+Some of them are available for you to look at in <code class="docutils literal notranslate"><span class="pre">gradedtests.ml</span></code>,
+the rest of them we reserve for our own cases. We will also
+stress-test your interpreter on a number of “big” programs (see
+Part III) that we have developed and that you and your classmates will
+develop as part of this project.</p>
+<p>To help other teams debug their interpreters, you are encouraged to
+share “microbenchmark” test cases by posting them to the indicated
+thread on <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>.  These should be short (2-3 instruction) programs
+that test various functional aspects of the interpreter. We will not
+use these tests in our grading. You may add such test cases to the
+test suite defined in <code class="docutils literal notranslate"><span class="pre">studenttests.ml</span></code>.</p>
+</section>
+</section>
+<section id="part-ii-x86lite-assembler-and-loader">
+<h2>Part II: X86lite Assembler and Loader<a class="headerlink" href="#part-ii-x86lite-assembler-and-loader" title="Link to this heading"></a></h2>
+<p>Writing machine code directly is difficult and error-prone, even using our
+symbolic representation of instructions. The example factorial program in the
+previous section is written as a set of instructions for an assembler, a
+program that can automate much of the process for us. The primary functionality
+of the assembler for the purposes of this project includes the translation of
+human-readable mnemonics for instructions into machine code, and the translation
+of symbolic labels that appear in the assembly program into addresses understood
+by the machine.</p>
+<p>Rather than working with a concrete syntax as in the above example, we
+will use the abstract syntax defined in <code class="docutils literal notranslate"><span class="pre">x86.ml</span></code>:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">[</span> <span class="n">text</span> <span class="s2">&quot;fac&quot;</span>
+     <span class="o">[</span> <span class="nc">Subq</span><span class="o">,</span>  <span class="o">[~$</span><span class="mi">8</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rsp</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Cmpq</span><span class="o">,</span>  <span class="o">[~$</span><span class="mi">1</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rdi</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">J</span> <span class="nc">Le</span><span class="o">,</span>  <span class="o">[~$$</span><span class="s2">&quot;exit&quot;</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Movq</span><span class="o">,</span>  <span class="o">[~%</span><span class="nc">Rdi</span><span class="o">;</span> <span class="nc">Ind2</span> <span class="nc">Rsp</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Decq</span><span class="o">,</span>  <span class="o">[~%</span><span class="nc">Rdi</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Callq</span><span class="o">,</span> <span class="o">[~$$</span><span class="s2">&quot;fac&quot;</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Imulq</span><span class="o">,</span> <span class="o">[</span><span class="nc">Ind2</span> <span class="nc">Rsp</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rax</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Addq</span><span class="o">,</span>  <span class="o">[~$</span><span class="mi">8</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rsp</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Retq</span><span class="o">,</span>  <span class="bp">[]</span>
+     <span class="o">]</span>
+<span class="o">;</span> <span class="n">text</span> <span class="s2">&quot;exit&quot;</span>
+     <span class="o">[</span> <span class="nc">Movq</span><span class="o">,</span>  <span class="o">[~$</span><span class="mi">1</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rax</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Addq</span><span class="o">,</span>  <span class="o">[~$</span><span class="mi">8</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rsp</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Retq</span><span class="o">,</span>  <span class="bp">[]</span>
+     <span class="o">]</span>
+<span class="o">;</span> <span class="n">gtext</span> <span class="s2">&quot;main&quot;</span>
+     <span class="o">[</span> <span class="nc">Movq</span><span class="o">,</span>  <span class="o">[~$</span><span class="n">n</span><span class="o">;</span> <span class="o">~%</span><span class="nc">Rdi</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Callq</span><span class="o">,</span> <span class="o">[~$$</span><span class="s2">&quot;fac&quot;</span><span class="o">]</span>
+     <span class="o">;</span> <span class="nc">Retq</span><span class="o">,</span>  <span class="bp">[]</span>
+     <span class="o">]</span>
+<span class="o">]</span>
+</pre></div>
+</div>
+<p>As you can see, the correspondence between the abstract syntax and the concrete
+syntax is quite close.  The file <code class="docutils literal notranslate"><span class="pre">x86.ml</span></code> and its corresponding
+interface <code class="docutils literal notranslate"><span class="pre">x86.mli</span></code> together provide the basic definitions for the
+creating and manipulating X86lite abstract syntax – the main types you should
+be aware of are <code class="docutils literal notranslate"><span class="pre">lbl</span></code>, <code class="docutils literal notranslate"><span class="pre">reg</span></code>, <code class="docutils literal notranslate"><span class="pre">operand</span></code>, <code class="docutils literal notranslate"><span class="pre">cnd</span></code>, <code class="docutils literal notranslate"><span class="pre">ins</span></code>,
+and. Each of these corresponds fairly directly to a concept from the X86lite spec.</p>
+<p>In addition to the instructions covered in the spec, X86lite assembly
+programs can contain label declarations and data consisting of either
+64-bit words or zero-terminated strings. Each label declaration also
+has a visibility modifier, though these will only be used in later
+projects. X86lite assembly programs are represented using the
+following types defined in <code class="docutils literal notranslate"><span class="pre">x86.ml</span></code>:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">data</span> <span class="o">=</span> <span class="nc">Asciz</span> <span class="k">of</span> <span class="kt">string</span>
+          <span class="o">|</span> <span class="nc">Quad</span> <span class="k">of</span> <span class="n">imm</span>
+
+<span class="k">type</span> <span class="n">asm</span> <span class="o">=</span> <span class="nc">Text</span> <span class="k">of</span> <span class="n">ins</span> <span class="kt">list</span>
+         <span class="o">|</span> <span class="nc">Data</span> <span class="k">of</span> <span class="n">data</span> <span class="kt">list</span>
+
+<span class="k">type</span> <span class="n">elem</span> <span class="o">=</span> <span class="o">{</span> <span class="n">lbl</span><span class="o">:</span> <span class="n">lbl</span><span class="o">;</span> <span class="n">global</span><span class="o">:</span> <span class="kt">bool</span><span class="o">;</span> <span class="n">asm</span><span class="o">:</span> <span class="n">asm</span> <span class="o">}</span>
+
+<span class="k">type</span> <span class="n">prog</span> <span class="o">=</span> <span class="n">elem</span> <span class="kt">list</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">elem</span></code> type represents a section of an assembly program beginning
+with a label that contains either a list of instructions or a list of data. Each
+piece of data in a data section is a 64-bit value or a string. We can access
+the contents of each of these sections via offsets from their associated labels.
+X86lite assembly programs are lists of labeled <code class="docutils literal notranslate"><span class="pre">elem</span></code> blocks.</p>
+<p>Your goal in this part of the assignment is to translate an <code class="docutils literal notranslate"><span class="pre">X86.prog</span></code>
+into an initial machine state that can be executed by your simulator. While this
+is not the simplest way to execute an X86lite program, it is meant to illustrate
+some of what the system assembler, linker, and loader will do to the assembly your
+compiler will generate in future projects.</p>
+<p>This part of the project will involve serializing instructions and
+data into <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s, laying out the program in memory, resolving
+labels to addresses, and initializing the machine state. We can split
+this into two phases, assembling and loading. The assembler will do
+most of the work, outputting an executable that the loader will use to
+generate an initial machine state:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">exec</span> <span class="o">=</span> <span class="o">{</span> <span class="n">entry</span>    <span class="o">:</span> <span class="n">quad</span>
+            <span class="o">;</span> <span class="n">text_pos</span> <span class="o">:</span> <span class="n">quad</span>
+            <span class="o">;</span> <span class="n">data_pos</span> <span class="o">:</span> <span class="n">quad</span>
+            <span class="o">;</span> <span class="n">text_seg</span> <span class="o">:</span> <span class="n">sbyte</span> <span class="kt">list</span>
+            <span class="o">;</span> <span class="n">data_seg</span> <span class="o">:</span> <span class="n">sbyte</span> <span class="kt">list</span>
+            <span class="o">}</span>
+</pre></div>
+</div>
+<p>An executable contains the following fields:</p>
+<ul class="simple">
+<li><p><strong>entry:</strong> The entry point of the program, the address in memory of
+the first instruction executed.</p></li>
+<li><p><strong>text_pos, data_pos:</strong> The address at which the following memory
+segments should be loaded.</p></li>
+<li><p><strong>text_seg, data_seg:</strong> The assembled code for the text and data
+sections of the assembly program, with symbolic labels resolved.</p></li>
+</ul>
+<p>Unlike an assembly program represented as an <code class="docutils literal notranslate"><span class="pre">X86.prog</span></code>, an object
+file has a single, contiguous segment of memory containing
+instructions and a single contiguous segment containing data. This is
+not strictly necessary to execute the program, but real systems often
+keep executable code in sections of memory that are guaranteed to be
+read-only by the virtual memory system for security purposes. Also,
+our executables contain neither declarations nor uses of labels. The
+provided functions to convert instructions and data to <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s
+guarantee this invariant.</p>
+<section id="executable-file-specification">
+<h3>Executable File Specification<a class="headerlink" href="#executable-file-specification" title="Link to this heading"></a></h3>
+<p>We will require very specific output from your assembler and loader. Though
+programs may still execute correctly using other layouts, uniform outputs are
+necessary for testing purposes.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">text_seg</span></code> and <code class="docutils literal notranslate"><span class="pre">data_seg</span></code> fields of the executable should
+consist of the serialized contents of the <code class="docutils literal notranslate"><span class="pre">Text</span></code> and <code class="docutils literal notranslate"><span class="pre">Data</span></code>
+sections of the assembly program in the order that they appear,
+without any extra padding or extraneous <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s. Use the supplied
+<code class="docutils literal notranslate"><span class="pre">sbytes_of_ins</span></code> and <code class="docutils literal notranslate"><span class="pre">sbytes_of_data</span></code> functions. The <code class="docutils literal notranslate"><span class="pre">text_pos</span></code>
+field must be exactly 0x400000, the lowest addressable byte in the
+simulator. The <code class="docutils literal notranslate"><span class="pre">data_pos</span></code> field must contain the address immediately
+following the end of the text segment in memory. The <code class="docutils literal notranslate"><span class="pre">entry</span></code> field
+must contain the address of the first instruction after the label
+<code class="docutils literal notranslate"><span class="pre">&quot;main&quot;</span></code> in the assembly program.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">assemble</span></code> function should raise an <code class="docutils literal notranslate"><span class="pre">Undefined_symbol</span></code>
+exception if it encounters a label that is not declared in the source
+program, or if <code class="docutils literal notranslate"><span class="pre">&quot;main&quot;</span></code> is not declared.</p>
+</section>
+<section id="loader-specification-and-memory-layout">
+<h3>Loader Specification and Memory Layout<a class="headerlink" href="#loader-specification-and-memory-layout" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">load</span></code> function should initialize a machine state given an
+executable file by copying the contents of <code class="docutils literal notranslate"><span class="pre">text_seg</span></code> and
+<code class="docutils literal notranslate"><span class="pre">data_seg</span></code> to the load addresses specified in <code class="docutils literal notranslate"><span class="pre">text_pos</span></code> and
+<code class="docutils literal notranslate"><span class="pre">data_pos</span></code>. It should initialize the instruction pointer to the
+address in <code class="docutils literal notranslate"><span class="pre">entry</span></code>, and the stack pointer to the highest legal
+memory address of our simulator. The contents of memory at the highest
+address should be the sentinel <code class="docutils literal notranslate"><span class="pre">exit_addr</span></code>.</p>
+</section>
+<section id="id2">
+<h3>Tasks<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fill out the <code class="docutils literal notranslate"><span class="pre">assemble</span></code> function in the file <code class="docutils literal notranslate"><span class="pre">simulator.ml</span></code>,
+which creates an <code class="docutils literal notranslate"><span class="pre">obj</span></code> given an <code class="docutils literal notranslate"><span class="pre">X86.prog</span></code>. First, calculate the
+address where text and data should be loaded according to the memory
+layout described above. Then, to resolve forward references to
+labels, you will need to traverse the assembly program and construct
+a <strong>symbol table</strong> to record the absolute address of each label
+definition you encounter. The last step is to traverse the assembly
+program a second time, outputting <code class="docutils literal notranslate"><span class="pre">sbyte</span></code>s for each instruction
+and data element you encounter. You will need to use your symbol
+table to replace labels, which can occur in instruction operands or
+<code class="docutils literal notranslate"><span class="pre">Quad</span></code> data, with their addresses.</p></li>
+<li><p>Fill out the <code class="docutils literal notranslate"><span class="pre">load</span></code> function, which creates an initial machine
+state given an object file. You will need to create an initial
+memory and copy the segments of the object file to their specified
+load addresses. You will also have to initialize the machine
+registers, setting <code class="docutils literal notranslate"><span class="pre">%rip</span></code> and <code class="docutils literal notranslate"><span class="pre">%rsp</span></code> appropriately. Lastly, you
+will need to initialize the stack to contain the sentinel
+<code class="docutils literal notranslate"><span class="pre">exit_addr</span></code> described in the previous section.</p></li>
+</ul>
+</section>
+</section>
+<section id="part-iii-x86lite-assembly-programming">
+<h2>Part III: X86lite Assembly Programming<a class="headerlink" href="#part-iii-x86lite-assembly-programming" title="Link to this heading"></a></h2>
+<p>For this part of the assignment, you will create (by hand) a
+non-trivial X86lite assembly program to test your interpreter’s
+behavior and gain some experience programming in X86lite.  The
+factorial program supplied with the test code is a minimal example of
+what we mean by “non-trivial” – only test cases at least this level
+of difficulty can earn full credit. In particular, your program should
+include:</p>
+<ul class="simple">
+<li><p>Non-trivial control flow: either nested loops, a recursive function,
+or something similarly complex</p></li>
+<li><p>At least one conditional branch.</p></li>
+<li><p>Some amount of arithmetic or logic.</p></li>
+<li><p>One or more test cases that excercise your program and test the
+correctness of the interpreter’s behavior. If your program computes
+a simple answer, it can return it in <code class="docutils literal notranslate"><span class="pre">Rax</span></code> and you can use the
+<code class="docutils literal notranslate"><span class="pre">program_test</span></code> harness as in the factorial example found in
+<code class="docutils literal notranslate"><span class="pre">gradedtests.ml</span></code>; for more complex programs you might want to use
+the <code class="docutils literal notranslate"><span class="pre">machine_test</span></code> function, which lets you examine the resulting
+state of the interpreter.</p></li>
+</ul>
+<p>Some good candidates for such programs include: simple sorting or
+searching algorithms (i.e. treat some chunk of memory as an array of
+values to be sorted), simple arithmetic algorithms such as GCD,
+recursive functions over integers or very simple data structures such
+as linked lists.  If you are unsure whether the test case you’d like
+to implement is sufficient, contact one of the course staff.</p>
+<p>Your test should be a function of type <code class="docutils literal notranslate"><span class="pre">unit</span> <span class="pre">-&gt;</span> <span class="pre">unit</span></code> that works in
+the assertion framework (as defined in <code class="docutils literal notranslate"><span class="pre">assert.ml</span></code>).  This test
+should be supplied in <code class="docutils literal notranslate"><span class="pre">studenttests.ml</span></code> as the “Student-Provided Big
+Test for Part III”.  We will hand grade this submission (and test it
+against our own interpreter). We will also use all correct submitted
+tests to validate all of the other projects in the course – the
+trickier your test is, the harder it will be for other teams to pass
+it!</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Unlike the “microbenchmark” tests from Part I, you should not post
+your big test to <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>.</p>
+</div>
+</section>
+<section id="grading">
+<h2>Grading<a class="headerlink" href="#grading" title="Link to this heading"></a></h2>
+<p>Submit your solution to this assignment by following the
+<a class="reference internal" href="../../submit.html#submit"><span class="std std-ref">submission instructions</span></a></p>
+<p><strong>Projects that do not compile will receive no credit!</strong></p>
+<p>Your team’s grade for this project will be based on:</p>
+<ul class="simple">
+<li><p>75 Points for implementing the X86lite simulator, assembler and
+loader in Parts I and II , graded via our test cases (29 of these 75
+points come from our hidden test cases, which contain several
+hundred tests and will be run only on the submission server). The
+maximum score you can get from the automated grading server is 75
+points.</p></li>
+<li><p>10 Points for submitting a non-trivial X86 test program as described
+in Part III above. (graded manually)</p></li>
+<li><p>10 Points for passing tests submitted by other teams. (graded manually)</p></li>
+<li><p>5 Points for “programming style” – see these <a class="reference internal" href="../../codestyle.html#codestyle"><span class="std std-ref">guidelines</span></a>. (graded manually)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../hw1/doc/hw1-hellocaml.html" class="btn btn-neutral float-left" title="HW1: Hellocaml" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../hw3/hw3-llvmlite.html" class="btn btn-neutral float-right" title="HW3: LLVMlite" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!-- New Scheduling Functionality -->
+<script type="text/javascript">
+
+// SEMESTER SETUP:
+
+// 1. Update the start date
+//   - it should be the Monday of the first week of classes
+//   - Note: do _not_ use 00:00:00 since the time change affects that!
+var semesterStartMonday = new Date('Mon Jan 8 2024 1:30:00');
+
+// 2. Skip down to "SCHEDULE"
+
+// -----------------------------------------------------------------------------------------
+// Code for the schedule layout
+
+// control visibility of lecture information (used to generate the "elide" tag)
+var HIDE = false;
+var SHOW = true;
+
+// count the total number of days from the semesterStartMonday
+var dayOfSemester = 0;    // 1 == start on Tuesday
+// count the number of TR slots
+var trCount = 0;
+// count the number of lectures (start at 1)
+var lecCount = 1;
+// count the number of homework assignments (start at 1)
+var hwCount = 1;
+
+// dayOfSemester to account for starting on Tuesday
+var day = 60 * 60 * 24 * 1000;
+function getSlotDateString() {
+    var date = new Date(semesterStartMonday.getTime() + (day * dayOfSemester));
+    return (date.getMonth() + 1).toString()  + '/' + date.getDate().toString();
+}
+
+function checkDate(tgtMonth, tgtDay) {
+    var date = new Date(semesterStartMonday.getTime() + (day * dayOfSemester));
+    var d = date.getDate();
+    var m = (date.getMonth() + 1);
+    if ((tgtMonth != m) || (tgtDay != d)) {
+	document.write('<tr style="background:red"><td></td><td>ERROR: slot expected on ' + tgtMonth + '/' + tgtDay + ' but positioned at: ' + m + '/' + d + '</td></tr>')
+    }
+}
+
+function nextDay() {
+    trCount = trCount + 1;
+    if (trCount % 2 === 0) {
+	dayOfSemester = dayOfSemester + 5;  // also skip Sunday and Monday.
+    } else {
+	dayOfSemester = dayOfSemester + 2;
+    }
+}
+
+// get the class that changes colors every two slots
+function getDateClass() {
+    if ((trCount % 4) < 2) {
+	return "week1";
+    } else {
+	return "week2";
+    }
+}
+
+function tdC(cls, data) {
+    document.write('<td class="' + cls + '">' + data + '</td>');
+}
+
+// just writes strings to the document
+function rawRowC(cls, date, topic, slides, code) {
+    document.write('<tr class="' + cls + '">');
+    tdC("date "+cls, date);
+    tdC("topic "+cls, topic);
+    tdC("slides "+cls, slides);
+    tdC("handout "+cls, code);
+    document.write('</tr>');
+}
+
+// Creates a string representing a link
+//  path : path relative to the web directory, e.g.:  "hw" or "lectures"
+//  filename : the file at that path, e.g.: "hw01" or "lec01.pdf"
+//  link : the displayed name of the link, e.g.: "Finger Exercises" or "lec01.pdf"
+function mkARef(path, filename, link) {
+    return ('<a href="' + path + '/' + filename + '">' + link + '</a>');
+}
+
+function italicize(str) {
+    return ('<i>' + str + '</i>');
+}
+
+function bright(str) {
+    return ('<span class="tipt">' + str + '</span>');
+}
+
+function mkSlide(filename) {
+    return mkARef("_static/lectures", filename, filename);
+}
+
+function mkCodeFile(filename) {
+    return mkARef("_static/lectures/code", filename, filename);
+}
+
+function mkCode(filenames) {
+    return filenames.map(mkCodeFile).join('</br>');
+}
+
+
+// Creates a lecture row in the schedule.
+//   visible : boolean indicating whether links should be displayed (e.g. HIDE or SHOW)
+//   topic : string identifying the subject of the lecture  (e.g. "Binary Search Trees")
+//   code : filename list  -  files found in lectures/code/file1 ...
+//   reading : string list - (links to) reading material (see notes() function)
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+function lec(visible, topic, code) {
+    var date = getSlotDateString();
+    var cls = getDateClass();
+    if (!visible) {
+	cls = cls + ' elide';
+    }
+    var slides = 'lec' + ("0" + lecCount).slice(-2) + '.pdf';
+    rawRowC(cls, date, topic, mkSlide(slides), mkCode(code));
+    nextDay();
+    lecCount = lecCount + 1;
+}
+
+// Creates an "no class day" row in the table
+//  desc - a string describing the reason there is no class
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+function noClass(desc) {
+    var date = getSlotDateString();
+    var cls = getDateClass();
+    rawRowC(cls, date, italicize(desc), "", "");
+    nextDay();
+}
+
+// same as noClass but also takes a target month and day
+//  desc - a string describing the reason there is no class
+//  tgtMonth - integer month that the row should land on (1-12)
+//  tgtDay - integer day that the row should land on (1-31)
+//
+//   gives an error if the row does not line up on the target date
+//   useful for: Fall / Spring breaks
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+function noClassDate(tgtMonth, tgtDay, desc) {
+    checkDate(tgtMonth, tgtDay);
+    noClass(desc);
+}
+
+// Create a homework row in the table
+//  visible : is the link to the web page active?  (HIDE or SHOW)
+//  duedate : a string indicating the due date
+//  name : homework name like "Finger Exercises"
+//
+// Does _not_ consumer a TR slot
+function hw(visible, duedate, name) {
+    var hwNum = ("0" + hwCount).slice(-2);
+    var file = "hw" + hwNum;
+    var link = mkARef("hw", file, "("+name+")");
+    var tag = "HW" + hwNum;
+    if (visible) {
+	rawRowC("hw", duedate, tag + '&nbsp ' + link + ' due', "", "");
+    } else {
+	rawRowC("hw elide", duedate, tag + '&nbsp (' + name + ') due', "", "");
+    }
+    hwCount = hwCount + 1;
+}
+
+function hwReminder(visible, hwNum, duedate, name) {
+    var file = "hw" + hwNum;
+    var link = mkARef("hw", file, name);
+    var tag = "HW" + hwNum;
+    if (visible) {
+	rawRowC("hw", duedate, tag + '&nbsp ' + link + ' due', "", "");
+    } else {
+	rawRowC("hw elide", duedate, tag + '&nbsp ' + name + ' due', "", "");
+    }
+}
+
+// generate the filename for a blank exam
+function blankExam(name, semester) {
+    return name + '-' + semester + '-' + 'blank.pdf';
+}
+
+// generate the filename for exam solutions
+function solnExam(name, semester) {
+    return name + '-' + semester + '-' + 'solutions.pdf';
+}
+
+// generate two links to blank|solution
+function mkExam(name, semester) {
+    var blank = mkARef("exams", blankExam(name,semester), "blank");
+    var solution = mkARef("exams", solnExam(name,semester), "solution");
+    return (blank + ' | ' + solution);
+}
+
+// Creates an exam row in the table
+//  tgtMonth - month of the exam date (in 1-12)
+//  tgtDay - day of the exam (in 1-31)
+//  tag - string naming the exam, e.g. "Midterm 1"
+//  info - string containing location info  (can include <br>)
+//  name - used to generated filenames, e.g. "midterm1"
+//  examples - string list of semesters to generate example exams from
+//             e.g. ["15fa", "15sp"]    generates links to:  midterm1-15fa-blank.pdf and midterm1-15fa-solution.pdf
+//  thisSemester - string that is either
+//        ""  - omit any links
+//    or a string like "16fa"  - generate a link to blank + solution
+//
+//  Consumes a TR slot and advances the schedule appropriately.
+//
+//   NOTE: If exams are _not_ held during class periods, then this should be modified to be more like hw
+function exam(tgtMonth, tgtDay, tag, info, name, examples, thisSemester) {
+    checkDate(tgtMonth, tgtDay);
+    var date = getSlotDateString();
+    //var date = tgtMonth + "/" + tgtDay;
+    var cls = getDateClass();
+    var solutions = "";
+    if (!(thisSemester === "")) {
+	solutions = '</br>' + mkExam(name, thisSemester);
+    }
+    rawRowC(cls, date, bright(tag) + '</br>' + info, "",
+	    examples.map(function(sem){return (sem + ': ' + mkExam(name,sem));}).join('</br>') +  solutions
+	   );
+    nextDay();
+}
+
+// --------------------------------------------------------------------------
+</script>

@@ -1,0 +1,105 @@
+.wy-side-nav-search, .wy-nav-top {
+    background: #6ba339;
+}
+
+.wy-nav-content {
+    max-width: none;
+}
+
+.wy-table-responsive table td {
+    white-space: normal;
+}
+
+/********************************************/
+/* LECTURE TABLE STYLES                     */
+/********************************************/
+
+:root {
+ --Color--border      : #FFFFFF;   /* border color */
+ --Color--link        : #DE3A0D;   /* hyperlinks */   /* red */
+ 
+ --Color--white       : #FFFFFF;
+ 
+ --Color--background  : #FFFFFF;   
+ --Color--text        : #000000;   
+ --Color--header      : #000000;   
+
+ --Color--menu-bg     : #FFFFFF;
+ --Color--menu-fg     : #000000;
+ --Color--menu-fg-hover : #FFFFFF;
+ --Color--menu-bg-hover : #DE3A0D; 
+
+ --Color--section-bg  : #F7F7F7;
+ --Color--section-fg  : #121519; 
+ 
+ --Color--week1       : #FFFFFF;   
+ --Color--week2       : #F7F7F7;   
+ --Color--dimweek1    : #CCCCCC;   
+ --Color--dimweek2    : #BBBBBB;
+ --Color--dimhw       : #AAAAAA;
+
+ --Color--note-bg     : #FCD63A;
+ --Color--note-border : #FCBF3A;
+ --Color--notice-fg   : #DE3A0D;
+ 
+ --Color--code-fg     : #000000;
+ --Color--code-bg     : #FEFEFB;
+ --Color--code-border : #E1EDB9;
+ --Color--code-error  : #A40000;
+
+ --Color--hdr-bg      : #666666;
+ --Color--hdr-fg      : #000000;
+}
+
+
+.bright {
+    color: var(--Color--white);
+}
+
+td.date {
+    color: #050505;
+}
+
+div.hdr {
+    color: var(--Color--white);
+}
+
+
+.week1 {
+    background-color: var(--Color--week1);/*week1*/
+}
+
+.week2 {
+    background-color: var(--Color--week2);;/*week2*/
+}
+
+tr.week2.elide > td.topic {
+    background-color: var(--Color--week2);
+    color: var(--Color--dimweek2); 
+}
+
+tr.week1.elide > td.topic {
+    background-color: var(--Color--week1);
+    color: var(--Color--dimweek1);
+}
+
+tr.elide > td.slides > br {
+    display:none;
+}    
+
+tr.elide > td.handout > br {
+    display:none;
+}    
+
+.tr.elide.hw > .td > a {
+    display:none;
+}
+
+tr.elide > td.slides > a {
+    display:none;
+}
+
+tr.elide > td.handout > a {
+    display:none;
+}
+
