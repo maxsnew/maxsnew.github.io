@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLVMlite Documentation &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="HW1: Hellocaml" href="../hw1/doc/hw1-hellocaml.html" />
+    <link rel="prev" title="X86lite Specification" href="../hw2/doc/x86lite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw2/doc/x86lite.html">X86lite Specification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LLVMlite Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#structure-and-well-formedness-of-programs">Structure and Well-Formedness of Programs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#program-structure">Program Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-types">Named Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#global-definitions">Global Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operands">Operands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instructions-and-terminators">Instructions and Terminators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getelementptr-well-formedness-and-result-type">Getelementptr Well-Formedness and Result Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#blocks-cfgs-and-function-definitions">Blocks, CFGs, and Function Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#abstract-machine">Abstract Machine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simple-and-memory-values">Simple and Memory Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#machine-configurations">Machine Configurations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#machine-execution">Machine Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instructions">Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initial-configurations">Initial Configurations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gep-indexing">GEP Indexing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">LLVMlite Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="llvmlite-documentation">
+<span id="llvmlite"></span><h1>LLVMlite Documentation<a class="headerlink" href="#llvmlite-documentation" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>LLVMlite is a small subset of the LLVM IR that we will be using
+throughout the course as the intermediate representation in our
+compiler.  Conceptually, it is either an abstract assembly-like
+language or an even lower-level C-like language that is convenient to
+manipulate programatically.</p>
+<p>LLVMlite’s features include:</p>
+<ul class="simple">
+<li><p>A C-like “weak type system” to statically rule out some malformed
+programs. More on this later.</p></li>
+<li><p>A variety of different kinds of integer values, pointers, function
+pointers, and structured data including strings, arrays, and
+structs.</p></li>
+<li><p>Top-level mutually-recursive function definitions and function calls
+as primitives.</p></li>
+<li><p>An infinite number of “locals” (also known as “pseudoregisters”,
+“SSA variables”, or “temporaries”) to hold intermediate results of
+computations.</p></li>
+<li><p>An abstract memory model that doesn’t constrain the layout of data
+in memory.</p></li>
+<li><p>Dynamically allocated memory associated with a function invocation
+(in C, the stack).</p></li>
+<li><p>Static and dynamically (heap) allocated structured data.</p></li>
+<li><p>A control-flow graph representation of function bodies.</p></li>
+</ul>
+<p>This document explains the structure of well-formed LLVMlite programs,
+the semantics of LLVMlite in terms of an abstract machine, and the
+relevant parts of the code provided with the assignments. A
+description of the full LLVM intermediate representation can be found
+in the <a class="reference external" href="http://llvm.org/releases/3.5.0/docs/LangRef.html">LLVM Language Reference</a>.</p>
+</section>
+<section id="structure-and-well-formedness-of-programs">
+<span id="syntax"></span><h2>Structure and Well-Formedness of Programs<a class="headerlink" href="#structure-and-well-formedness-of-programs" title="Link to this heading"></a></h2>
+<p>To give you a sense of structure of LLVMlite programs and the most
+basic features, the following is our running example, the simple
+recursive factorial function written in the concrete syntax of the
+LLVMlite IR.</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="vg">@fac</span><span class="p">(</span><span class="kt">i64</span><span class="w"> </span><span class="nv">%n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">              </span><span class="c">; (1)</span>
+<span class="w">  </span><span class="nv nv-Anonymous">%1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">icmp</span><span class="w"> </span><span class="k">sle</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="nv">%n</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="w">              </span><span class="c">; (2)</span>
+<span class="w">  </span><span class="k">br</span><span class="w"> </span><span class="kt">i1</span><span class="w"> </span><span class="nv nv-Anonymous">%1</span><span class="p">,</span><span class="w"> </span><span class="kt">label</span><span class="w"> </span><span class="nv">%ret</span><span class="p">,</span><span class="w"> </span><span class="kt">label</span><span class="w"> </span><span class="nv">%rec</span><span class="w">     </span><span class="c">; (3)</span>
+<span class="nl">ret:</span><span class="w">                                   </span><span class="c">; (4)</span>
+<span class="w">  </span><span class="k">ret</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="m">1</span>
+<span class="nl">rec:</span><span class="w">                                   </span><span class="c">; (5)</span>
+<span class="w">  </span><span class="nv nv-Anonymous">%2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">sub</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="nv">%n</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="w">                   </span><span class="c">; (6)</span>
+<span class="w">  </span><span class="nv nv-Anonymous">%3</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">call</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="vg">@fac</span><span class="p">(</span><span class="kt">i64</span><span class="w"> </span><span class="nv nv-Anonymous">%2</span><span class="p">)</span><span class="w">           </span><span class="c">; (7)</span>
+<span class="w">  </span><span class="nv nv-Anonymous">%4</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">mul</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="nv">%n</span><span class="p">,</span><span class="w"> </span><span class="nv nv-Anonymous">%3</span>
+<span class="w">  </span><span class="k">ret</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="nv nv-Anonymous">%4</span><span class="w">                           </span><span class="c">; (8)</span>
+<span class="p">}</span>
+
+<span class="k">define</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="vg">@main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">                   </span><span class="c">; (9)</span>
+<span class="w">  </span><span class="nv nv-Anonymous">%1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">call</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="vg">@fac</span><span class="p">(</span><span class="kt">i64</span><span class="w"> </span><span class="m">6</span><span class="p">)</span>
+<span class="w">  </span><span class="k">ret</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="nv nv-Anonymous">%1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>First, notice the function definition at (1).  The <code class="docutils literal notranslate"><span class="pre">i64</span></code> annotations
+declare the return type and the type of the argument <code class="docutils literal notranslate"><span class="pre">n</span></code>.  The
+argument is prefixed with <code class="docutils literal notranslate"><span class="pre">%</span></code> to indicate that it’s an identifier
+local to the function, while <code class="docutils literal notranslate"><span class="pre">fac</span></code> is prefixed with <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> to
+indicate that it is global (i.e. in scope in the entire compilation
+unit).</p>
+<p>Next, at (2) we have the first instruction of the body of <code class="docutils literal notranslate"><span class="pre">fac</span></code>,
+which performs a signed comparison of the argument <code class="docutils literal notranslate"><span class="pre">%n</span></code> and 0 and
+assigns the result to the temporary <code class="docutils literal notranslate"><span class="pre">%1</span></code>. The instruction at (3) is
+a “terminator”, and marks the end of the current block. It will
+transfer control to either <code class="docutils literal notranslate"><span class="pre">ret</span></code> at (4) or <code class="docutils literal notranslate"><span class="pre">rec</span></code> at (5). The
+labels at (4) and (5) each indicate the beginning of a new block of
+instructions. Notice that the entry block starting at (2) is not
+labeled: in LLVM it is illegal to jump back to the entry block of a
+function body. Moving on, (6) performs a subtraction and names the
+result <code class="docutils literal notranslate"><span class="pre">%2</span></code>. The 11i64`` annotation indicates that both operands are
+64-bit integers. The function <code class="docutils literal notranslate"><span class="pre">fac</span></code> is called at (7), and the result
+named <code class="docutils literal notranslate"><span class="pre">%3</span></code>. Again, the <code class="docutils literal notranslate"><span class="pre">i64</span></code> annotations indicate that the single
+argument and the returned value are 64-bit integers.</p>
+<p>Finally, (8) returns from the function with the result named by
+<code class="docutils literal notranslate"><span class="pre">%4</span></code>, and (9) defines the main function of the program, which simply
+calls <code class="docutils literal notranslate"><span class="pre">fac</span></code> with a literal <code class="docutils literal notranslate"><span class="pre">i64</span></code> argument.</p>
+<section id="program-structure">
+<h3>Program Structure<a class="headerlink" href="#program-structure" title="Link to this heading"></a></h3>
+<p>LLVMlite programs consist of three types of global definitions:
+function definitions, global data definitions, and named type
+definitions, which may be interleaved. These definitions are in scope
+for the entire compilation unit, may be mutually recursive, and need
+not be declared in order.</p>
+</section>
+<section id="types">
+<h3>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h3>
+<p>Functions, global data definitions, and instruction are explicitly
+annotated with types. These are divided into “simple” types that may
+appear on the stack and as arguments to functions and “aggregate”
+types that may only appear in global and heap-allocated data. (Unlike
+full LLVM, LLVM lite does not allow locals to hold structured data.)
+There is also a “void” type that only appears in the return type of
+instructions and functions that do not return a value. This is
+essentially the ML unit type, but it has the additional restriction
+that it cannot appear as the type of an operand, so it is actually
+illegal to give it a name in the LLVM concrete syntax.</p>
+<p>In the following table we use <code class="docutils literal notranslate"><span class="pre">T</span></code> to range over simple and aggregate
+(non-void, non-function) types, <code class="docutils literal notranslate"><span class="pre">F</span></code> to range over function types,
+and <code class="docutils literal notranslate"><span class="pre">S</span></code> to range over simple types.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Concrete Syntax</p></th>
+<th class="head"><p>Kind</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">void</span></code></p></td>
+<td><p>void</p></td>
+<td><p>Indicates the instruction does not return a usable value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i1,</span> <span class="pre">i64</span></code></p></td>
+<td><p>simple</p></td>
+<td><p>1-bit (boolean) and 64-bit integer values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">T*</span></code></p></td>
+<td><p>simple</p></td>
+<td><p>Pointer that can be dereferenced if its target is compatible with <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i8*</span></code></p></td>
+<td><p>simple</p></td>
+<td><p>Pointer to the first character in a null-terminated array of
+bytes. Note: <code class="docutils literal notranslate"><span class="pre">i8*</span></code> is a valid type, but just <code class="docutils literal notranslate"><span class="pre">i8</span></code> is
+not. LLVMlite programs do not operate over byte-sized integer
+values.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">F*</span></code></p></td>
+<td><p>simple</p></td>
+<td><p>Function pointer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">S(S1,</span> <span class="pre">...,</span> <span class="pre">SN)</span></code></p></td>
+<td><p>function</p></td>
+<td><p>A function from S1, …, SN to S.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">void(S1,</span> <span class="pre">...,</span> <span class="pre">SN)</span></code></p></td>
+<td><p>function</p></td>
+<td><p>A function from S1, …, SN to void.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">T1,</span> <span class="pre">...,</span> <span class="pre">TN</span> <span class="pre">}</span></code></p></td>
+<td><p>aggregate</p></td>
+<td><p>Tuple of values of types T1, …, TN.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">N</span> <span class="pre">x</span> <span class="pre">T</span> <span class="pre">]</span></code></p></td>
+<td><p>aggregate</p></td>
+<td><p>Exactly N values of type T.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%NAME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+<td><p>Abbreviation defined by a top-level named type definition.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="named-types">
+<h3>Named Types<a class="headerlink" href="#named-types" title="Link to this heading"></a></h3>
+<p>Named type definitions <code class="docutils literal notranslate"><span class="pre">%IDENT</span> <span class="pre">=</span> <span class="pre">type</span> <span class="pre">T</span></code> define abbreviations for
+types in the scope of the entire compilation unit.  The following
+specification assumes that these are replaced with their definitions
+whenever they are encountered.  Note that recursive types, in which
+<code class="docutils literal notranslate"><span class="pre">T</span></code> mentions <code class="docutils literal notranslate"><span class="pre">%IDENT</span></code> are allowed, but for the type to be well
+formed, each such recursive occurrence must appear under a <code class="docutils literal notranslate"><span class="pre">*</span></code>.
+More generally, any collection of named types may be mutually
+recursive (i.e. the names may appear in the the definitions), but each
+cycle of such references must be broken by a <code class="docutils literal notranslate"><span class="pre">*</span></code>.</p>
+</section>
+<section id="global-definitions">
+<h3>Global Definitions<a class="headerlink" href="#global-definitions" title="Link to this heading"></a></h3>
+<p>The next kind of top-level definition is global data <code class="docutils literal notranslate"><span class="pre">&#64;IDENT</span> <span class="pre">=</span> <span class="pre">global</span>
+<span class="pre">T</span> <span class="pre">G</span></code> where <code class="docutils literal notranslate"><span class="pre">G</span></code> ranges over global initializers, described in the
+following table, and <code class="docutils literal notranslate"><span class="pre">T</span></code> is the associated type.  The global
+identifier <code class="docutils literal notranslate"><span class="pre">&#64;IDENT</span></code>, when used in the program, has type <code class="docutils literal notranslate"><span class="pre">T*</span></code>.</p>
+<p>For example, the following program fragment has valid annotations:</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="vg">@foo</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">global</span><span class="w"> </span><span class="kt">i64</span><span class="w"> </span><span class="m">42</span>
+<span class="vg">@bar</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">global</span><span class="w"> </span><span class="kt">i64</span><span class="p">*</span><span class="w"> </span><span class="vg">@foo</span>
+<span class="vg">@baz</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="k">global</span><span class="w"> </span><span class="kt">i64</span><span class="p">**</span><span class="w"> </span><span class="vg">@bar</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 10.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Concrete Syntax</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T*</span></code></p></td>
+<td><p>The null pointer constant.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[0-9]+</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i64</span></code></p></td>
+<td><p>64-bit integer literal.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&#64;IDENT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T*</span></code></p></td>
+<td><p>Global identifier. The type is always a pointer of the type associated with the global definition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">c&quot;[A-z]*\00&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">N</span> <span class="pre">x</span> <span class="pre">i8</span> <span class="pre">]</span></code></p></td>
+<td><p>String literal. The size of the array N should be the length of the string in bytes, including the null terminator <code class="docutils literal notranslate"><span class="pre">\00</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">T</span> <span class="pre">G1,</span> <span class="pre">...,</span> <span class="pre">T</span> <span class="pre">GN</span> <span class="pre">]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">N</span> <span class="pre">x</span> <span class="pre">T</span> <span class="pre">]</span></code></p></td>
+<td><p>Array literal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">T1</span> <span class="pre">G1,</span> <span class="pre">...,</span> <span class="pre">TN</span> <span class="pre">GN</span> <span class="pre">}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{T1,...,TN}</span></code></p></td>
+<td><p>Struct literal.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bitcast</span> <span class="pre">(T1*</span> <span class="pre">G1</span> <span class="pre">to</span> <span class="pre">T2*)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T2*</span></code></p></td>
+<td><p>Bitcast.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="operands">
+<h3>Operands<a class="headerlink" href="#operands" title="Link to this heading"></a></h3>
+<p>We now turn to the parts of a function declaration. Each instruction
+in a function has zero or more operands which for the purposes of
+determining the well-formedness of programs, are restricted to the
+following types.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Concrete Syntax</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">null</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T*</span></code></p></td>
+<td><p>The null pointer constant.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[0-9]+</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i64</span></code></p></td>
+<td><p>64-bit integer literal.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&#64;IDENT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T*</span></code></p></td>
+<td><p>Global identifier. The type can always be determined from the
+global definitions and is always a pointer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%IDENT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">S</span></code></p></td>
+<td><p>Local identifier: can only name values of simple type. The type
+determined by an local definition of <code class="docutils literal notranslate"><span class="pre">%IDENT</span></code> in scope.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="instructions-and-terminators">
+<h3>Instructions and Terminators<a class="headerlink" href="#instructions-and-terminators" title="Link to this heading"></a></h3>
+<p>The following table describes the restrictions on the types that may
+appear as parameters of well-formed instructions, and the constraints
+on the operands and result of the instruction for the purposes of
+type-checking. We assume that named types have been replace by their
+definitions.</p>
+<p>For example, in the <code class="docutils literal notranslate"><span class="pre">call</span></code> instruction, each type parameter <code class="docutils literal notranslate"><span class="pre">S1</span></code>,
+…, <code class="docutils literal notranslate"><span class="pre">SN</span></code> must be a simple type. When we type check a program
+containing this instruction, we must make sure that the operand
+<code class="docutils literal notranslate"><span class="pre">OP1</span></code> has exactly the function pointer type <code class="docutils literal notranslate"><span class="pre">S1(S2,</span> <span class="pre">...,</span> <span class="pre">SN)*</span></code>,
+and that the remaining operands <code class="docutils literal notranslate"><span class="pre">OP2</span></code>, …, <code class="docutils literal notranslate"><span class="pre">OPN</span></code> have types
+<code class="docutils literal notranslate"><span class="pre">S2</span></code>, …, <code class="docutils literal notranslate"><span class="pre">SN</span></code>.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Concrete Syntax</p></th>
+<th class="head"><p>Operand → Result Types</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">BOP</span> <span class="pre">i64</span> <span class="pre">OP1,</span> <span class="pre">OP2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">i64</span> <span class="pre">x</span> <span class="pre">i64</span> <span class="pre">→</span> <span class="pre">i64</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">alloca</span> <span class="pre">S</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-</span> <span class="pre">→</span> <span class="pre">S*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">load</span> <span class="pre">S*</span> <span class="pre">OP</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">S*</span> <span class="pre">→</span> <span class="pre">S</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">store</span> <span class="pre">S</span> <span class="pre">OP1,</span> <span class="pre">S*</span> <span class="pre">OP2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">S</span> <span class="pre">x</span> <span class="pre">S*</span> <span class="pre">→</span> <span class="pre">void</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">icmp</span> <span class="pre">CND</span> <span class="pre">S</span> <span class="pre">OP1,</span> <span class="pre">OP2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">S</span> <span class="pre">x</span> <span class="pre">S</span> <span class="pre">→</span> <span class="pre">i1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">call</span> <span class="pre">S1</span> <span class="pre">OP1(S2</span> <span class="pre">OP2,</span> <span class="pre">...,</span> <span class="pre">SN</span> <span class="pre">OPN)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">S1(S2,</span> <span class="pre">...,</span> <span class="pre">SN)*</span> <span class="pre">x</span> <span class="pre">S2</span> <span class="pre">x</span> <span class="pre">...</span> <span class="pre">x</span> <span class="pre">SN</span> <span class="pre">→</span> <span class="pre">S1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">call</span> <span class="pre">void</span> <span class="pre">OP1(S2</span> <span class="pre">OP2,</span> <span class="pre">...</span> <span class="pre">,SN</span> <span class="pre">OPN)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">void(S2,</span> <span class="pre">...,</span> <span class="pre">SN)*</span> <span class="pre">x</span> <span class="pre">S2</span> <span class="pre">x</span> <span class="pre">...</span> <span class="pre">x</span> <span class="pre">SN</span> <span class="pre">→</span> <span class="pre">void</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">getelementptr</span> <span class="pre">T1*</span> <span class="pre">OP1,</span> <span class="pre">i32</span> <span class="pre">OP2,</span> <span class="pre">...,</span> <span class="pre">i32</span> <span class="pre">OPN</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T1*</span> <span class="pre">x</span> <span class="pre">i64</span> <span class="pre">x</span> <span class="pre">...</span> <span class="pre">x</span> <span class="pre">i64</span> <span class="pre">-&gt;</span> <span class="pre">GEPTY(T1,</span> <span class="pre">OP1,</span> <span class="pre">...,</span> <span class="pre">OPN)*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">bitcast</span> <span class="pre">T1*</span> <span class="pre">OP</span> <span class="pre">to</span> <span class="pre">T2*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">T1*</span> <span class="pre">→</span> <span class="pre">T2*</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="getelementptr-well-formedness-and-result-type">
+<h3>Getelementptr Well-Formedness and Result Type<a class="headerlink" href="#getelementptr-well-formedness-and-result-type" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">getelementptr</span></code> instruction has some additional well-formedness
+requirements.  Operands after the first must all be constants, unless
+they are used to index into an array.  LLVM actually requires the
+operands used to index into structs to be 32-bit integers. Rather than
+introducing 32-bit integers into our language, we will use our 64-bit
+constants and operands and assume the arguments of <code class="docutils literal notranslate"><span class="pre">getelementptr</span></code>
+always fall in the range [0, Int32.max_int].</p>
+<p>In the table above, the result type of a <code class="docutils literal notranslate"><span class="pre">getelementptr</span></code> instruction
+described using the <strong>GEPTY</strong> function, which is defined in pseudocode as follows:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">GEPTY</span> <span class="o">:</span> <span class="nc">T</span> <span class="o">-&gt;</span> <span class="n">operand</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="nc">T</span>
+<span class="nc">GEPTY</span> <span class="n">ty</span> <span class="n">operand</span><span class="o">::</span><span class="n">path&#39;</span> <span class="o">=</span> <span class="nc">GEPTY&#39;</span> <span class="n">ty</span> <span class="n">path&#39;</span>
+
+<span class="nc">GEPTY&#39;</span> <span class="o">:</span> <span class="nc">T</span> <span class="o">-&gt;</span> <span class="n">operand</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="nc">T</span>
+<span class="nc">GEPTY&#39;</span> <span class="n">ty</span>                                <span class="bp">[]</span> <span class="o">=</span> <span class="n">typ</span>
+<span class="nc">GEPTY&#39;</span> <span class="o">{</span> <span class="n">ty_1</span><span class="o">,</span> <span class="o">...,</span> <span class="n">ty_n</span> <span class="o">}</span> <span class="o">(</span><span class="nc">Const</span> <span class="n">m</span><span class="o">)::</span><span class="n">path&#39;</span> <span class="o">=</span> <span class="nc">GEPTY&#39;</span> <span class="n">ty_m</span> <span class="n">path&#39;</span> <span class="k">when</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="n">n</span>
+<span class="nc">GEPTY&#39;</span> <span class="o">[</span> <span class="o">_</span> <span class="n">x</span> <span class="n">ty</span> <span class="o">]</span>            <span class="n">operand</span><span class="o">::</span><span class="n">path&#39;</span> <span class="o">=</span> <span class="nc">GEPTY&#39;</span> <span class="n">ty</span> <span class="n">path&#39;</span>
+</pre></div>
+</div>
+<p>Notice that <code class="docutils literal notranslate"><span class="pre">GEPTY</span></code> is a partial function. When <code class="docutils literal notranslate"><span class="pre">GEPTY</span></code> is not
+defined, the corresponding instruction is malformed. This happens
+when, for example:</p>
+<ul class="simple">
+<li><p>The list of index operands provided is empty</p></li>
+<li><p>An operand used to index a struct is not a constant</p></li>
+<li><p>The type is not an aggregate and the list of indices is not empty</p></li>
+</ul>
+<p>Also notice that a GEP instruction that indexes beyond the size of an
+array is well-formed. The length information on array tags is only
+present to help the compiler lay out data in memory and is not
+verified statically.</p>
+</section>
+<section id="blocks-cfgs-and-function-definitions">
+<h3>Blocks, CFGs, and Function Definitions<a class="headerlink" href="#blocks-cfgs-and-function-definitions" title="Link to this heading"></a></h3>
+<p>A block (or “basic” block) is just a sequence of instructions followed by a terminator:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Concrete Syntax</p></th>
+<th class="head"><p>Operand → Result Types</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ret</span> <span class="pre">void</span></code></p></td>
+<td><ul class="simple">
+<li><p>→ -</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">res</span> <span class="pre">S</span> <span class="pre">OP</span></code></p></td>
+<td><p>S → -</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">br</span> <span class="pre">label</span> <span class="pre">%LAB</span></code></p></td>
+<td><ul class="simple">
+<li><p>→ -</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">br</span> <span class="pre">i1</span> <span class="pre">OP,</span> <span class="pre">label</span> <span class="pre">%LAB1,</span> <span class="pre">label</span> <span class="pre">%LAB2</span></code></p></td>
+<td><p>i1 → -</p></td>
+</tr>
+</tbody>
+</table>
+<p>The body of a function is represented by a control flow graph (CFG). A
+CFG consists of a distinguished entry block and a sequence blocks of
+prefixed with a label <code class="docutils literal notranslate"><span class="pre">LAB:</span></code>. A function definition has a return
+type, the function name, a list of formal parameters and their types,
+and the body of the function. The full syntax of a function definition
+is then:</p>
+<p><code class="docutils literal notranslate"><span class="pre">define</span> <span class="pre">[S|void]</span> <span class="pre">&#64;IDENT(S1</span> <span class="pre">OP,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">SN</span> <span class="pre">OP)</span> <span class="pre">{</span> <span class="pre">BLOCK</span> <span class="pre">(LAB:</span> <span class="pre">BLOCK)...}</span></code></p>
+<p>Like global data definitions, the type of the defined global
+identifier <code class="docutils literal notranslate"><span class="pre">&#64;IDENT</span></code> is <code class="docutils literal notranslate"><span class="pre">S(S1,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">SN)*</span></code> or <code class="docutils literal notranslate"><span class="pre">void(S1,</span> <span class="pre">...</span> <span class="pre">,</span>
+<span class="pre">SN)*</span></code>, a function pointer.</p>
+<p>There are some additional global well-formedness requirements for
+function definitions. Each label and local definition must be
+unique. In this way, a local identifier both names the result of an
+instruction and serves to identify the instruction within a function
+body. For the locals in a CFG to be well scoped, there must never be a
+path to a use of a local that does not pass through its definition. We
+will not go into the details here.</p>
+</section>
+</section>
+<section id="abstract-machine">
+<span id="semantics"></span><h2>Abstract Machine<a class="headerlink" href="#abstract-machine" title="Link to this heading"></a></h2>
+<p>Like for X86lite, we define the semantics of LLVMlite by describing
+the execution of an abstract machine. One major difference between the
+LLVMlite machine and our x86 simulator is that we specify an explicit
+stack, heap, code, and global memory. While these structures were
+present in X86lite as conventions on how areas of memory and registers
+were used during program execution, legal programs were free to, for
+example, write over the return address on the stack and jump to
+arbitrary locations in memory. The definition of LLVMlite, on the
+other hand, enforces some of the abstractions present in C-like
+languages.</p>
+<p>In general, a guiding principle behind LLVMlite and C-like languages
+is that the specification optimizes first for the ease of translation
+to assembly, as long as this does not constrain the underlying
+machine. This often leads to a more complicated semantics. We will
+provide the details here, but it is not necessary to understand them
+completely.  For X86lite we gave an informal natural language
+specification and asked you to implement it. For LLVMlite, we will
+provide an interpreter that (assuming it is entirely free of bugs!)
+can serve as a formal definition of the language. This means that if
+you have some technical question about a detail of the semantics, you
+can simply run a program through the interpreter.</p>
+<p>We will start with a high-level overview of the abstract machine,
+which should provide enough intuition for the assignments in the
+course. The details are presented in a later section.</p>
+<section id="simple-and-memory-values">
+<h3>Simple and Memory Values<a class="headerlink" href="#simple-and-memory-values" title="Link to this heading"></a></h3>
+<p>The LLVMlite machine operates on dynamic values that, like the operand
+tags described in the previous section, include a subset of <strong>simple
+values</strong>. During program execution, operands can evaluate only to
+simple values and all other <strong>memory values</strong> must be manipulated
+indirectly through pointers. While this distinction makes the
+specification of LLVMlite more complicated, it results in a very
+straightforward compilation strategy: the simple values are those that
+can appear in X86lite registers.</p>
+<p>Memory values will be represented as tree structures where the leaves
+are simple values (or strings) and finitely-branching nodes represent
+arrays and structs.  The memory state of the LLVMlite machine is
+represented by a mapping between <strong>block identifiers</strong> and memory
+values. We will refer to a top-level memory value that is not a
+subtree of another as a <strong>memory block</strong>.</p>
+<p>At this point, an illustration might be helpful:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{ bid0 -&gt; node     bid1 -&gt; node     bid2 -&gt; node }
+         /  |  \             |                |
+        L   L   L          node               L
+                          /    \
+                         L      node
+                               / | | \
+                               L L L* L
+</pre></div>
+</div>
+<p>The above diagram shows three memory values mapped to the block
+identifiers <code class="docutils literal notranslate"><span class="pre">bid0</span></code>, <code class="docutils literal notranslate"><span class="pre">bid1</span></code>, and <code class="docutils literal notranslate"><span class="pre">bid2</span></code>. One thing to notice is
+that every memory value contains at least one node. Even simple
+values, such as a single global i64 will be represented using a node
+with one leaf. The identifier <code class="docutils literal notranslate"><span class="pre">bid2</span></code> is an example of how
+non-aggregate data will be represented in memory, while <code class="docutils literal notranslate"><span class="pre">bid1</span></code> might
+be a structure having two fields. There’s no deep reason for this,
+it’s just a convenient invariant to represent the particular way LLVM
+computes pointers into structs.</p>
+<p>In order to manipulate the simple values at the leaves of our memory
+blocks, we need specify a <strong>path</strong> to a leaf. For example, to uniquely
+identify the leaf marked <code class="docutils literal notranslate"><span class="pre">*</span></code> we might provide the <strong>indices</strong>
+<code class="docutils literal notranslate"><span class="pre">0,1,2</span></code> along with the block identifier <code class="docutils literal notranslate"><span class="pre">bid1</span></code>. This means that
+we’re selecting the 2nd child of the 1st child of the 0th child of the
+root node.</p>
+<p>This approach might seem a more complicated than our memory
+representation in X86lite, but it has some advantages as a
+specification. If instead, like in X86lite, we represented memory as
+an array of bytes, we would be forced us to make decisions about how
+large each value in the language is and the relative position of
+values in memory. Using an unordered set of trees for the language
+specification lets us define how operations on structured data work
+while leaving such details up to the compiler.</p>
+<p>The simple values include:</p>
+<ul class="simple">
+<li><p>1-bit (boolean) and 64-bit 2’s complement signed integers</p></li>
+<li><p>Pointers to a subtree of a particular memory block containing a
+block identifier and path</p></li>
+<li><p>A special <strong>undef</strong> value that represents an unusable value</p></li>
+</ul>
+<p>So, a real piece of LLVMlite memory might look like:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{ bid0 -&gt; node       bid1 -&gt;  node      bid2 -&gt; node }
+           |                    \                |
+          node                   node           undef
+        /  |  \                 /  |  \
+   &quot;foo&quot; &quot;bar&quot; &quot;baz&quot;   (Ptr Null)  4  (Ptr bid0, 0, 1)
+</pre></div>
+</div>
+<p>Here, the pointer in memory at <code class="docutils literal notranslate"><span class="pre">(bid1,</span> <span class="pre">0,</span> <span class="pre">2)</span></code> refers to the string
+“bar” in memory block <code class="docutils literal notranslate"><span class="pre">bid0</span></code>. In addition to the restriction that
+each memory block has a node, we require that every pointer have at
+least one index. In other words, it is not possible to refer directly
+to the top-level node of each memory block.</p>
+</section>
+<section id="machine-configurations">
+<h3>Machine Configurations<a class="headerlink" href="#machine-configurations" title="Link to this heading"></a></h3>
+<p>References to memory blocks will be split between three different
+address spaces: the <strong>heap</strong>, <strong>stack</strong>, and <strong>globals</strong>.  Though all
+three are simply collections of memory values, they have different
+initialization and runtime behavior, as explained in the next
+section. We can think of machine configurations as having three
+separate memory components, mapping disjoint sets of identifiers to
+memory values.</p>
+<p>In addition to memory, machine configurations need to keep track of
+the values assigned to temporaries by instructions. We will call this
+mapping of uids to simple values the <strong>locals</strong> of the machine
+state. Finally, the machine needs to keep track of the progress of
+execution of a function body. This is the <strong>code</strong> component of the
+state, and will consist of a currently executing block and the mapping
+from labels to blocks.</p>
+</section>
+<section id="machine-execution">
+<h3>Machine Execution<a class="headerlink" href="#machine-execution" title="Link to this heading"></a></h3>
+<p>We can describe how the machine executes a program by using two
+mutually-recursive functions, <strong>interp_call</strong> and <strong>interp_cfg</strong> that
+execute, respectively, an entire function call and the body of a
+function. This is a different approach than the one used in the
+X86lite machine, where we described a function that executes a single
+step of the machine, and then iterated the function until we reached a
+terminating state. The evaluation function approach used here will
+allow us to use properties of functions in the meta-language to avoid
+describing some details of the machine.</p>
+<ul>
+<li><p><strong>interp_call</strong> takes the global identifier of a function in an
+LLVMlite program, a list of (simple) values to serve as arguments,
+and an initial memory state and returns the memory state after the
+function call has completed and the return value of the function.</p>
+<p>First, the machine looks up the function declaration associated with
+the global identifier. Then, it creates new <code class="docutils literal notranslate"><span class="pre">locals</span></code> that maps the
+formal parameters of the function declaration to the arguments
+supplied. It allocates a new frame by adding an empty memory block
+with a fresh frame identifier to the stack in the initial memory
+state. Finally, the machine evaluates the function body using
+<strong>interp_cfg</strong> and the cfg associated with the function identifier
+in the program text, and returns the result.</p>
+</li>
+<li><p><strong>interp_cfg</strong> does most of the work involved in evaluating an
+LLVMlite program. It takes a cfg, an initial locals map, and a
+memory state and evaluates the cfg, returning the resulting memory
+state and the return value of the function body.</p>
+<p>The LLVMlite machine examines the next instruction in the currently
+executing block, executes it, updating the locals, memory state, and
+currently executing block as necessary, and then calls itself again
+with the resulting configuration or returns. To interpret the call
+instruction, it uses the <strong>interp_call</strong> function above. A summary
+of the locals, cfg, and memory state passed to the next invocation
+is provided in the next section.</p>
+</li>
+</ul>
+</section>
+<section id="instructions">
+<h3>Instructions<a class="headerlink" href="#instructions" title="Link to this heading"></a></h3>
+<p>Constant operands evaluate to the corresponding integer value, while
+global identifiers evaluate to a global pointer, and the Null constant
+evaluates to a pointer with the special null block identifier. Local
+ids are looked up in the locals map. In well-formed programs,
+execution will always pass through the definition of a local id before
+it is used as an operand.</p>
+<p>Instructions are executed as follows:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction/Terminator</p></th>
+<th class="head"><p>Behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">BOP</span> <span class="pre">i64</span> <span class="pre">OP1,</span> <span class="pre">OP2</span></code></p></td>
+<td><p>Update locals(<code class="docutils literal notranslate"><span class="pre">%L</span></code>) with the result of the computation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">alloca</span> <span class="pre">S</span></code></p></td>
+<td><p>Allocate a slot in the current stack frame and return a pointer
+to it. This involves adding a subtree of undef to the root node
+of the memory block representing the frame at the next
+available index.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">load</span> <span class="pre">S*</span> <span class="pre">OP</span></code></p></td>
+<td><p>OP must be a pointer or <strong>undef</strong>. Find the value referenced by
+the pointer in the current memory state. Update locals(<code class="docutils literal notranslate"><span class="pre">%L</span></code>)
+with the result. If OP is not a valid pointer, either because
+it evaluates to <strong>undef</strong>, no memory value is associated with
+its block identifier or its path does not identify a valid
+subtree, then the operation raises an error and the machine
+crashes. If the pointer is valid, but the value in memory is
+not a simple value of type <code class="docutils literal notranslate"><span class="pre">S</span></code>, the operation raises an error and
+the machine crashes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">store</span> <span class="pre">S</span> <span class="pre">OP1,</span> <span class="pre">S*</span> <span class="pre">OP2</span></code></p></td>
+<td><p>Update the memory state by setting the target of OP2 to the
+value of <code class="docutils literal notranslate"><span class="pre">OP1</span></code>. If <code class="docutils literal notranslate"><span class="pre">OP2</span></code> is not a valid pointer, or if the target
+of OP2 is not a simple value in memory of type <code class="docutils literal notranslate"><span class="pre">S</span></code>, the operation
+raises an error and the machine crashes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">icmp</span> <span class="pre">CND</span> <span class="pre">S</span> <span class="pre">OP1,</span> <span class="pre">OP2</span></code></p></td>
+<td><p>Update locals(<code class="docutils literal notranslate"><span class="pre">%L</span></code>) to 1 if the condition holds and 0
+otherwise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">call</span> <span class="pre">S1</span> <span class="pre">OP1(S2</span> <span class="pre">OP2,</span> <span class="pre">...</span> <span class="pre">,SN</span> <span class="pre">OPN)</span></code></p></td>
+<td><p>Evaluate all of the operands and use them to recursively invoke
+the interpreter through <strong>interp_call</strong> with the current memory
+state. If OP1 does not evaluate to a function pointer that
+identifies a function with return type <code class="docutils literal notranslate"><span class="pre">S1</span></code> and argument
+types <code class="docutils literal notranslate"><span class="pre">S2,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">SN,</span></code> then the operation raises an error and
+the machine crashes. Update the local (<code class="docutils literal notranslate"><span class="pre">%L</span></code>) to the result of
+<strong>interp_call</strong> and continue with the return memory state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">call</span> <span class="pre">void</span> <span class="pre">OP1(S2</span> <span class="pre">OP2,</span> <span class="pre">...</span> <span class="pre">,SN</span> <span class="pre">OPN)</span></code></p></td>
+<td><p>The same as a non-void call, but no locals are updated with the
+returned value.</p></td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">getelementptr</span> <span class="pre">T1*</span> <span class="pre">OP1,</span></code></div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">i64</span> <span class="pre">OP2,</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">i64</span> <span class="pre">OPN</span></code></div>
+</div>
+</div>
+</td>
+<td><p>Create a new pointer by <em>adding</em> the first index operand <code class="docutils literal notranslate"><span class="pre">OP2</span></code> to
+the last index of the pointer value of <code class="docutils literal notranslate"><span class="pre">OP1</span></code> and then
+<em>concatenating</em> the remaining indices onto the path.  If the
+target of the resulting pointer is not a valid memory value
+<em>compatible</em> with the type <code class="docutils literal notranslate"><span class="pre">%L</span></code>, then update locals(<code class="docutils literal notranslate"><span class="pre">%L</span></code>) with
+the <strong>undef</strong> value. Otherwise, update locals(<code class="docutils literal notranslate"><span class="pre">%L</span></code>) with the
+new pointer. See the following section for a more detailed
+explanation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">%L</span> <span class="pre">=</span> <span class="pre">bitcast</span> <span class="pre">T1*</span> <span class="pre">OP</span> <span class="pre">to</span> <span class="pre">T2*</span></code></p></td>
+<td><p>Update locals(<code class="docutils literal notranslate"><span class="pre">%L</span></code>) with the value of <code class="docutils literal notranslate"><span class="pre">OP</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ret</span> <span class="pre">void</span></code></p></td>
+<td><p>Pop the most recently allocated frame off the stack and return
+from <strong>interp_cfg</strong> with the <strong>undef</strong> value and the resulting
+memory state.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ret</span> <span class="pre">S</span> <span class="pre">OP</span></code></p></td>
+<td><p>Pop the most recently allocated frame off the stack and return
+from <strong>interp_cfg</strong> with the value of OP and the resulting
+memory state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">br</span> <span class="pre">label</span> <span class="pre">%LAB</span></code></p></td>
+<td><p>Look up the block associated with <code class="docutils literal notranslate"><span class="pre">%LAB</span></code> in the CFG set is as
+the current executing block.</p></td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">br</span> <span class="pre">i1</span> <span class="pre">OP,</span></code></div>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">label</span> <span class="pre">%LAB1,</span> <span class="pre">label</span> <span class="pre">%LAB2</span></code></div>
+</div>
+</div>
+</td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">OP</span></code> is 1, set the current block to <code class="docutils literal notranslate"><span class="pre">%LAB1</span></code>, otherwise,
+set it to <code class="docutils literal notranslate"><span class="pre">%LAB2</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="initial-configurations">
+<h3>Initial Configurations<a class="headerlink" href="#initial-configurations" title="Link to this heading"></a></h3>
+<p>Creating the initial machine state requires a few steps. First, global
+data declarations must be converted to a global memory state. This
+process is entirely straightforward and is implemented in the provided
+interpreter. Next, memory values for each string passed to the main
+function are added to an empty heap. Execution is started by invoking
+<strong>interp_call</strong> with the global identifier of the “main” function,
+passing in the number of arguments supplied and pointers to each
+string on the heap.</p>
+</section>
+<section id="gep-indexing">
+<h3>GEP Indexing<a class="headerlink" href="#gep-indexing" title="Link to this heading"></a></h3>
+<p>The semantics of GEP and exactly when the resulting pointer is valid
+is the most complicated part of LLVMlite. Here we walk though a
+slightly more complex example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%t1 = type { A, B, C }
+%t2 = type [ 2 x %t1 ]
+
+@pn1 = global %t2 [ {a0, b0, c0}, {a1, b1, c1} ]
+
+; Memory:
+; { ... bid0 -&gt; root ... }
+;                |
+;                n1
+;              /    \
+;            n2      n3
+;          / | \    / | \
+;         a0 b0 c0 a1 b1 c1
+
+...
+%pn2 = getelementptr %t2* pn1, i32 0, i32 0    ; %t1* -&gt; n2
+%pb1 = getelementptr %t1* pn2, i32 1, i32 1    ; B* -&gt; b1
+</pre></div>
+</div>
+<p>Suppose we start with the pointer <code class="docutils literal notranslate"><span class="pre">pn1</span> <span class="pre">=</span> <span class="pre">(bid0,</span> <span class="pre">0)</span></code> pointing to
+<code class="docutils literal notranslate"><span class="pre">n1</span></code>. The first GEP instruction above will compute the pointer
+<code class="docutils literal notranslate"><span class="pre">(bid0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>, by first adding 0 to the last index of <code class="docutils literal notranslate"><span class="pre">pn1</span></code> and
+then concatenating the rest of the indices to the end of the path. The
+next GEP instruction will compute the pointer <code class="docutils literal notranslate"><span class="pre">(bid0,</span> <span class="pre">0,</span> <span class="pre">1,</span> <span class="pre">1)</span></code>,
+which points to <code class="docutils literal notranslate"><span class="pre">b1</span></code>.</p>
+<p>In LLVMlite, indexing into a sibling (rather than a child) of a node
+using GEP with a non-zero first index is only legal if sibling nodes
+are allocated as part of an array. In our example, n1 was allocated as
+<code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">2</span> <span class="pre">x</span> <span class="pre">%t1</span> <span class="pre">]</span></code>, so this is the case. In addition to the restricted
+use of the first, the resulting path must target a subtree. If,
+instead, we tried to create a pointer off the end of the array, the
+resulting pointer would be undef. Similarly, if <code class="docutils literal notranslate"><span class="pre">B</span></code> is not an
+aggregate type and we computed a path into it, the result of the gep
+would be undef.</p>
+<p>Lastly, since we do not preserve any
+metadata about the “shape” of memory values during compilation, we
+must check that there is enough information in the static annotation
+of the GEP instruction to actually compute the right index into
+memory. Since we can bitcast between any pointer values, there is no
+guarantee that the static annotation on a GEP instruction will match
+the target of the pointer value its operand will evaluate to at
+runtime.</p>
+<p>For this, we have to define a notion of <em>compatible</em> LLVMlite types,
+which is defined in terms of a flattened version of our type
+annotations:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>FLATTEN : ty -&gt; list ty
+FLATTEN i1           = [i1]
+FLATTEN i8           = [i8]
+FLATTEN i64          = [i64]
+FLATTEN Ptr t        = [Ptr I8]
+FLATTEN Array (n, t) = [Array (n, t)]
+FLATTEN Struct ts    = concat (map FLATTEN ts)
+
+PTRTOI8 : ty -&gt; ty
+PTRTOI8 Ptr t        = Ptr I8
+PTRTOI8 Array (n, t) = Array (n, PTRTOI8 t)
+PTRTOI8 Struct ts    = Struct (map PTRTOI8 ts)
+</pre></div>
+</div>
+<p>PTRTOI8 simply converts all pointers that appear in the type to Ptr
+I8. This is arbitrary, we just want all pointers to compare equal in
+the flattened type. FLATTEN then unnests all of the struct types that
+don’t occur under an array constructor. A type t1 is compatible with
+t2 if FLATTEN (PTRTOI8 t1) is a list prefix of FLATTEN (PTRTOI8
+t2). If, during execution, the annotation of a GEP instruction is not
+compatible with the actual type of the memory value that its operand
+was allocated with, the resulting pointer is undef.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../hw2/doc/x86lite.html" class="btn btn-neutral float-left" title="X86lite Specification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../hw1/doc/hw1-hellocaml.html" class="btn btn-neutral float-right" title="HW1: Hellocaml" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X86lite Specification &mdash; EECS 483 Winter 2024</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3dba9716" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7ca65bba"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="LLVMlite Documentation" href="../../hw3/llvmlite.html" />
+    <link rel="prev" title="OCaml Style Guide" href="../../codestyle.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            EECS 483: Compiler Construction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../syllabus.html">Syllabus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../schedule.html">Schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../toolchain.html">Software Toolchain </a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submit.html">Project Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codestyle.html">OCaml Style Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">X86lite Specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#x86lite-machine-state">X86lite Machine State</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#register-file">Register file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#condition-flags">Condition flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-addresses-and-the-stack">Memory, addresses, and the stack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#x86lite-operands-and-condition-codes">X86lite Operands and Condition Codes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#operands">Operands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#condition-codes">Condition codes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#x86lite-instructions">X86lite Instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#arithmetic-instructions">Arithmetic Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logic-instructions">Logic Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bit-manipulation-instructions">Bit-manipulation Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-movement-instructions">Data-movement Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#control-flow-and-condition-instructions">Control-flow and condition Instructions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw3/llvmlite.html">LLVMlite Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hw2-x86lite.html">HW2: X86lite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">EECS 483: Compiler Construction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">X86lite Specification</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="x86lite-specification">
+<span id="x86lite"></span><h1>X86lite Specification<a class="headerlink" href="#x86lite-specification" title="Link to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>X86lite is an abstract, 64-bit signed integer-only subset of the Intel
+X86-64 machine architecture. The X86lite instruction set is tiny by
+comparison to full X86, yet it still provides a sufficient compilation
+target for the EECS 483 course compiler projects.</p>
+<p>This document explains the X86lite machine model and its instruction
+set, and is intended for use as a reference manual.  Information about
+the full X86 architecture can be found on the <a class="reference external" href="http://www.intel.com/products/processor/manuals">Intel web pages</a>. The EECS 483
+course infrastructure provides OCaml interfaces for manipulating
+X86lite assembly programs and tools for creating X86-64 executables
+using the system assembler and linker.</p>
+</section>
+<section id="x86lite-machine-state">
+<h2>X86lite Machine State<a class="headerlink" href="#x86lite-machine-state" title="Link to this heading"></a></h2>
+<p>The X86lite machine state consists of sixteen general-purpose 64-bit
+registers, an instruction pointer register that can only be
+manipulated indirectly by control flow instructions, three condition
+flags, and a memory consisting of 2<sup>64</sup> bytes. Instructions are
+represented as 8-byte words using an unspecified fixed-length
+encoding.</p>
+<section id="register-file">
+<h3>Register file<a class="headerlink" href="#register-file" title="Link to this heading"></a></h3>
+<p>The 16 64-bit registers in X86lite and their common uses in the full
+X86 architecture are given below. In X86lite, most of the registers
+can be used for general purpose calculation, but some X86lite
+instructions make special use of some of the registers; see the
+instruction descriptions below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Register</p></th>
+<th class="head"><p>Description / common use on X86</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rax</span></code></p></td>
+<td><p>General purpose accumulator</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rbx</span></code></p></td>
+<td><p>Base register, pointer to data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rcx</span></code></p></td>
+<td><p>Counter register for strings and loops</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rdx</span></code></p></td>
+<td><p>Data register for I/O</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rsi</span></code></p></td>
+<td><p>Pointer register, string source register</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rdi</span></code></p></td>
+<td><p>Pointer register, string destination register</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rbp</span></code></p></td>
+<td><p>Base pointer, points to the stack frame</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsp</span></code></p></td>
+<td><p>Stack pointer, points to the value at the top of the stack</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">r08</span></code>–<code class="docutils literal notranslate"><span class="pre">r15</span></code></p></td>
+<td><p>General purpose</p></td>
+</tr>
+</tbody>
+</table>
+<p>In addition, the instruction pointer register <code class="docutils literal notranslate"><span class="pre">rip</span></code> contains the
+address of the next instruction to execute. The address in <code class="docutils literal notranslate"><span class="pre">rip</span></code> is
+used to load the next instruction to execute, then <code class="docutils literal notranslate"><span class="pre">rip</span></code> is
+increased by the size of the instruction (always 8-bytes, since we use
+a fixed-length encoding), and then the instruction is executed.</p>
+</section>
+<section id="condition-flags">
+<span id="ccs"></span><h3>Condition flags<a class="headerlink" href="#condition-flags" title="Link to this heading"></a></h3>
+<p>The X86 architecture provides conditional branch and conditional move
+instructions.  The processor maintains a set of bit-sized flags to
+keep track of conditions arising from arithmetic and comparison
+operations.  These condition flags are tested by the conditional jump
+and move instructions; the flags are set by the arithmetic
+instructions.  X86lite provides only three condition flags (the full
+X86 architecture has several more).</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 90.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition flag</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p><em>Overflow</em> set when the result is too big or too small to fit
+in a 64-bit value and cleared otherwise.  This is
+overflow/underflow for signed (two’s complement) 64-bit
+arithmetic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code></p></td>
+<td><p><em>Sign</em> equal to the most significant bit of the result (<code class="docutils literal notranslate"><span class="pre">0</span></code> = positive, <code class="docutils literal notranslate"><span class="pre">1</span></code> = negative)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ZF</span></code></p></td>
+<td><p><em>Zero</em> set if the result is <code class="docutils literal notranslate"><span class="pre">0</span></code> and cleared otherwise</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="memory-addresses-and-the-stack">
+<h3>Memory, addresses, and the stack<a class="headerlink" href="#memory-addresses-and-the-stack" title="Link to this heading"></a></h3>
+<p>The X86lite memory consists of 2<sup>64</sup> <em>bytes</em> numbered
+<code class="docutils literal notranslate"><span class="pre">0x0000000000000000</span></code> through <code class="docutils literal notranslate"><span class="pre">0xffffffffffffffff</span></code>.  All of the
+X86lite instructions operate on 8-byte quadwords, but memory is
+byte-addressable. That is, unaligned memory accesses are legal.</p>
+<p>The only general-purpose register that is treated specially by the
+X86lite ISA is <code class="docutils literal notranslate"><span class="pre">rsp</span></code>, which contains the address of the top of the
+stack of the executing program. By convention on X86 machines, the
+program stack starts at the high addresses of virtual memory and grows
+toward the low addresses. Instructions like <code class="docutils literal notranslate"><span class="pre">pushq</span></code>, <code class="docutils literal notranslate"><span class="pre">popq</span></code>,
+<code class="docutils literal notranslate"><span class="pre">callq</span></code>, and <code class="docutils literal notranslate"><span class="pre">retq</span></code>, increment and decrement <code class="docutils literal notranslate"><span class="pre">rsp</span></code> as needed to
+maintain this invariant.</p>
+</section>
+</section>
+<section id="x86lite-operands-and-condition-codes">
+<h2>X86lite Operands and Condition Codes<a class="headerlink" href="#x86lite-operands-and-condition-codes" title="Link to this heading"></a></h2>
+<p>This section describes the X86lite instruction set.</p>
+<section id="operands">
+<span id="id1"></span><h3>Operands<a class="headerlink" href="#operands" title="Link to this heading"></a></h3>
+<p>X86lite instructions manipulate data stored in memory or in registers.
+The values operated on by a given instruction are described by
+<em>operands</em>, which are constant values like integers and
+statically known memory addresses, or dynamic values such as the
+contents of a register or a computed memory address.</p>
+<p>Operands can take one of several forms, described below:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operand kind</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Imm</span></code> : <code class="docutils literal notranslate"><span class="pre">imm</span></code></p></td>
+<td><p>An immediate, constant literal of size 64-bits or a symbolic label that is resolved by the assembler/linker/loader to a 64-bit constant.  Label values typically denote targets of <code class="docutils literal notranslate"><span class="pre">Jmp</span></code> or <code class="docutils literal notranslate"><span class="pre">Call</span></code> instructions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Reg</span></code> : <code class="docutils literal notranslate"><span class="pre">reg</span></code></p></td>
+<td><p>One of the sixteen machine registers, or <code class="docutils literal notranslate"><span class="pre">rip</span></code>.  The value of a register is its contents.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ind1</span></code> : <code class="docutils literal notranslate"><span class="pre">imm</span></code></p></td>
+<td><p>An indirect address consisting only of a displacement by a literal or symbolic label immediate value.  An example use is <code class="docutils literal notranslate"><span class="pre">leaq</span> <span class="pre">_Label,</span> <span class="pre">%rax</span></code>, which loads the address denoted by the symbolic label into register <code class="docutils literal notranslate"><span class="pre">rax</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Ind2</span></code> : <code class="docutils literal notranslate"><span class="pre">reg</span></code></p></td>
+<td><p>An indirect reference to an address held in a register.  For example, <code class="docutils literal notranslate"><span class="pre">movq</span> <span class="pre">%rbx,</span> <span class="pre">(%rax)</span></code> moves the contents of register <code class="docutils literal notranslate"><span class="pre">rbx</span></code> into the memory location at the address held in <code class="docutils literal notranslate"><span class="pre">rax</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Ind3</span></code> : <code class="docutils literal notranslate"><span class="pre">imm</span> <span class="pre">*</span> <span class="pre">reg</span></code></p></td>
+<td><p>An indirect reference to an offset of an address held in a register.  For example, <code class="docutils literal notranslate"><span class="pre">movq</span> <span class="pre">%rbx,</span> <span class="pre">8(%rax)</span></code> moves the contents of register <code class="docutils literal notranslate"><span class="pre">rbx</span></code> into the memory location 8 bytes past the address held in <code class="docutils literal notranslate"><span class="pre">rax</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>In their full generality, and X86 indirect reference operand consists
+of three optional components:</p>
+<blockquote>
+<div><p>[base : <code class="docutils literal notranslate"><span class="pre">reg</span></code>] [index : <code class="docutils literal notranslate"><span class="pre">reg</span></code>, scale : <code class="docutils literal notranslate"><span class="pre">int64</span></code>] [disp : (<code class="docutils literal notranslate"><span class="pre">int64</span></code> | <code class="docutils literal notranslate"><span class="pre">Label</span></code>)]</p>
+</div></blockquote>
+<p>The effective address denoted by an indirect address is calculated by:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">addr(Ind)</span> <span class="pre">=</span> <span class="pre">base</span> <span class="pre">+</span> <span class="pre">(index</span> <span class="pre">*</span> <span class="pre">scale)</span> <span class="pre">+</span> <span class="pre">disp</span></code></p>
+</div></blockquote>
+<p>In the formula above, a missing optional component’s value is 0.  For
+the purposes of X86lite, we disregard the index and scale parts, which
+yields the three combinations given by <code class="docutils literal notranslate"><span class="pre">Ind1</span></code>, <code class="docutils literal notranslate"><span class="pre">Ind2</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">Ind3</span></code> described above.</p>
+<p>When an <code class="docutils literal notranslate"><span class="pre">Ind</span></code> operand is used as a value (not a location) the
+operand denotes Mem[<code class="docutils literal notranslate"><span class="pre">addr(Ind)</span></code>], the contents of the machine memory
+at the effective address denoted by <code class="docutils literal notranslate"><span class="pre">Ind</span></code>.</p>
+</section>
+<section id="condition-codes">
+<h3>Condition codes<a class="headerlink" href="#condition-codes" title="Link to this heading"></a></h3>
+<p>The X86lite <code class="docutils literal notranslate"><span class="pre">cmpq</span> <span class="pre">SRC1,</span> <span class="pre">SRC2</span></code> instruction is used to compare two
+64-bit operands (<code class="docutils literal notranslate"><span class="pre">SRC1</span></code> and <code class="docutils literal notranslate"><span class="pre">SRC2</span></code>).  It works by subtracting
+<code class="docutils literal notranslate"><span class="pre">SRC1</span></code> from <code class="docutils literal notranslate"><span class="pre">SRC2</span></code> (i.e., <code class="docutils literal notranslate"><span class="pre">SRC2</span> <span class="pre">-</span> <span class="pre">SRC1</span></code>), setting the condition
+flags according to the result (the actual result of the subtraction is
+ignored).</p>
+<p>The X86lite conditional branch (<code class="docutils literal notranslate"><span class="pre">J</span></code>) and conditional set (<code class="docutils literal notranslate"><span class="pre">setb</span></code>)
+instructions specify condition codes that look at the condition flags
+to determine whether or not the condition is satisfied.  The eight
+condition codes and their interpretation in terms of condition flags
+are given in the following table:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eq</span></code></p></td>
+<td><p><em>Equals:</em> This condition holds when <code class="docutils literal notranslate"><span class="pre">ZF</span></code> is set.  (Intuitively <code class="docutils literal notranslate"><span class="pre">SRC1</span> <span class="pre">=</span> <span class="pre">SRC2</span></code> when <code class="docutils literal notranslate"><span class="pre">SRC2</span> <span class="pre">-</span> <span class="pre">SRC1</span> <span class="pre">=</span> <span class="pre">0</span></code>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">neq</span></code></p></td>
+<td><p><em>Not equals:</em> This condition holds when <code class="docutils literal notranslate"><span class="pre">ZF</span></code> is not set.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lt</span></code></p></td>
+<td><p><em>(Signed) less than:</em> This condition holds when <code class="docutils literal notranslate"><span class="pre">SF</span></code> does not equal <code class="docutils literal notranslate"><span class="pre">OF</span></code>.  Equivalently, this condition holds when (<code class="docutils literal notranslate"><span class="pre">SF</span> <span class="pre">=</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">OF</span> <span class="pre">=</span> <span class="pre">0</span></code>) or (<code class="docutils literal notranslate"><span class="pre">SF</span> <span class="pre">=</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">OF</span> <span class="pre">=</span> <span class="pre">1</span></code>).  The first case holds when the result of <code class="docutils literal notranslate"><span class="pre">SRC2</span> <span class="pre">-</span> <span class="pre">SRC1</span></code> is negative and there has been no overflow, the second case holds when the result of <code class="docutils literal notranslate"><span class="pre">SRC2</span> <span class="pre">-</span> <span class="pre">SRC1</span></code> is positive and there has been an overflow.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">le</span></code></p></td>
+<td><p><em>(Signed) less than or equal:</em> This condition holds when (<code class="docutils literal notranslate"><span class="pre">SF</span></code> is not equal to <code class="docutils literal notranslate"><span class="pre">OF</span></code>) or <code class="docutils literal notranslate"><span class="pre">ZF</span></code> is set.  This is equivalent to (<code class="docutils literal notranslate"><span class="pre">lt</span></code> or <code class="docutils literal notranslate"><span class="pre">eq</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gt</span></code></p></td>
+<td><p><em>(Signed) greater than:</em>  This condition holds when (not <code class="docutils literal notranslate"><span class="pre">le</span></code>) holds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ge</span></code></p></td>
+<td><p><em>(Signed) greater than or equal:</em> This condition holds when (not <code class="docutils literal notranslate"><span class="pre">lt</span></code>) holds. Or, equivalently, if <code class="docutils literal notranslate"><span class="pre">SF</span></code> equals <code class="docutils literal notranslate"><span class="pre">OF</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="x86lite-instructions">
+<span id="insns"></span><h2>X86lite Instructions<a class="headerlink" href="#x86lite-instructions" title="Link to this heading"></a></h2>
+<p>There are only about 20 instructions in the X86lite architecture.
+Together, they provide basic signed arithmetic over 64-bit integers,
+logical operations, data movement between registers and memory, and
+control-flow operations for branches and jumps.  In general,
+instructions that involve two operands must not use two memory
+(<code class="docutils literal notranslate"><span class="pre">Ind</span></code>) operands.</p>
+<p>When an operand appears on the right-hand side of the ← symbol in the
+instruction descriptions below, it is interpreted as a <em>value</em>,
+computed as described above.  When an operand appears on the left-hand
+side of an ← symbol, it is interpreted as a <em>location</em>.  The location
+of a register operand is the register itself; the location of an
+<code class="docutils literal notranslate"><span class="pre">Ind</span></code> operand is the memory location at address <code class="docutils literal notranslate"><span class="pre">addr(Ind)</span></code>.
+Immediate values and labels do not denote valid locations.</p>
+<p>In the following table, the Flags column indicates which condition
+flags are affected by the operation.  The symbol <code class="docutils literal notranslate"><span class="pre">---</span></code> means that no
+condition flags are set (i.e., the operation does not modify the
+condition flags).  The presence of the symbols <code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">OF</span></code> indicate that these flags are set as described in the
+<a class="reference internal" href="#ccs"><span class="std std-ref">condition flags section</span></a>.  A <code class="docutils literal notranslate"><span class="pre">*</span></code> next to a flag indicates
+special handling.  Note that overflow conditions for all arithmetic
+operations are defined per instruction.</p>
+<section id="arithmetic-instructions">
+<h3>Arithmetic Instructions<a class="headerlink" href="#arithmetic-instructions" title="Link to this heading"></a></h3>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Arithmetic Instructions</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Flags</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">negq</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← -<code class="docutils literal notranslate"><span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Two’s complement negation. Note that flag <code class="docutils literal notranslate"><span class="pre">OF</span></code> is set to 1 if
+<code class="docutils literal notranslate"><span class="pre">DEST</span></code> is <code class="docutils literal notranslate"><span class="pre">MIN_INT</span></code>, and 0 otherwise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">addq</span> <span class="pre">SRC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span></code> +<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Signed integer addition.  Let <code class="docutils literal notranslate"><span class="pre">D64</span></code> be the 64-bit sign
+extension of <code class="docutils literal notranslate"><span class="pre">DEST</span></code> and <code class="docutils literal notranslate"><span class="pre">S64</span></code> be the 64-bit sign extension
+of <code class="docutils literal notranslate"><span class="pre">SRC</span></code>.  The result <code class="docutils literal notranslate"><span class="pre">R64</span></code> = <code class="docutils literal notranslate"><span class="pre">DEST</span></code> +<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">SRC</span></code> is the 64-bit
+truncation of <code class="docutils literal notranslate"><span class="pre">R64</span></code>, which is obtained by 64-bit addition
+<code class="docutils literal notranslate"><span class="pre">R64</span></code> = <code class="docutils literal notranslate"><span class="pre">D64</span></code> +<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">S64</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">subq</span> <span class="pre">SRC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span></code> -<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Signed integer subtraction.  This operation can be computed
+using arithmetic negation and addition.  Let <code class="docutils literal notranslate"><span class="pre">D64</span></code> be the
+64-bit sign extension of <code class="docutils literal notranslate"><span class="pre">DEST</span></code> and <code class="docutils literal notranslate"><span class="pre">S64</span></code> be the 64-bit
+sign extension of <code class="docutils literal notranslate"><span class="pre">SRC</span></code>.  The result
+<code class="docutils literal notranslate"><span class="pre">R64</span></code> = <code class="docutils literal notranslate"><span class="pre">DEST</span></code> -<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">SRC</span></code> is the 64-bit
+truncation of <code class="docutils literal notranslate"><span class="pre">R64</span></code>, which is obtained by the 64-bit computation
+<code class="docutils literal notranslate"><span class="pre">R64</span></code> = <code class="docutils literal notranslate"><span class="pre">D64</span></code> -<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">S64</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">imulq</span> <span class="pre">SRC,</span> <span class="pre">Reg</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Reg</span></code> ← <code class="docutils literal notranslate"><span class="pre">Reg</span></code> *<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Signed integer multiply. Let <code class="docutils literal notranslate"><span class="pre">D64</span></code> be the 64-bit sign
+extension of <code class="docutils literal notranslate"><span class="pre">Reg</span></code> and <code class="docutils literal notranslate"><span class="pre">S64</span></code> be the 64-bit sign extension
+of <code class="docutils literal notranslate"><span class="pre">SRC</span></code>.  The result <code class="docutils literal notranslate"><span class="pre">R64</span></code> = <code class="docutils literal notranslate"><span class="pre">Reg</span></code> *<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">SRC</span></code>
+is the 64-bit truncation of <code class="docutils literal notranslate"><span class="pre">R64</span></code>, which is obtained by
+64-bit multiplication <code class="docutils literal notranslate"><span class="pre">R64</span></code> = <code class="docutils literal notranslate"><span class="pre">D64</span></code> *<sub>64</sub> <code class="docutils literal notranslate"><span class="pre">S64</span></code>.
+Flag <code class="docutils literal notranslate"><span class="pre">OF</span></code> is set when <code class="docutils literal notranslate"><span class="pre">R64</span></code> cannot be represented as a
+64-bit sign-extended integer. Flags <code class="docutils literal notranslate"><span class="pre">ZF</span></code> and <code class="docutils literal notranslate"><span class="pre">SF</span></code> are
+undefined.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">incq</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span></code> +<sub>64</sub> 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Computes the 64-bit successor of <code class="docutils literal notranslate"><span class="pre">DEST</span></code>.  Flags are set as in
+<code class="docutils literal notranslate"><span class="pre">addq</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">decq</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span></code> -<sub>64</sub> 1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Computes the 64-bit predecessor of <code class="docutils literal notranslate"><span class="pre">DEST</span></code>.  Flags are set as
+in <code class="docutils literal notranslate"><span class="pre">subq</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="logic-instructions">
+<h3>Logic Instructions<a class="headerlink" href="#logic-instructions" title="Link to this heading"></a></h3>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">Logic Instructions</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Flags</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">notq</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>One’s complement (logical) negation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">andq</span> <span class="pre">SRC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span> <span class="pre">AND</span> <span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Logical <code class="docutils literal notranslate"><span class="pre">AND</span></code>. Flag <code class="docutils literal notranslate"><span class="pre">OF</span></code> is always set to 0.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orq</span> <span class="pre">SRC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span> <span class="pre">OR</span> <span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Logical <code class="docutils literal notranslate"><span class="pre">OR</span></code>. Flag <code class="docutils literal notranslate"><span class="pre">OF</span></code> is always set to 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">xorq</span> <span class="pre">SRC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span> <span class="pre">XOR</span> <span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF</span></code>, <code class="docutils literal notranslate"><span class="pre">OF</span></code></p></td>
+<td><p>Logical <code class="docutils literal notranslate"><span class="pre">XOR</span></code>. Flag <code class="docutils literal notranslate"><span class="pre">OF</span></code> is always set to 0.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bit-manipulation-instructions">
+<h3>Bit-manipulation Instructions<a class="headerlink" href="#bit-manipulation-instructions" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Flags</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sarq</span> <span class="pre">AMT,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span> <span class="pre">&gt;&gt;</span> <span class="pre">AMT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF*</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF*</span></code>, <code class="docutils literal notranslate"><span class="pre">OF*</span></code></p></td>
+<td><p>Arithmetic shift <code class="docutils literal notranslate"><span class="pre">DEST</span></code> right by <code class="docutils literal notranslate"><span class="pre">AMT</span></code>, replicating the
+sign bit for the vacated spaces.  <code class="docutils literal notranslate"><span class="pre">AMT</span></code> must be a <code class="docutils literal notranslate"><span class="pre">Imm</span></code> or
+<code class="docutils literal notranslate"><span class="pre">rcx</span></code> operand. If <code class="docutils literal notranslate"><span class="pre">AMT</span> <span class="pre">=</span> <span class="pre">0</span></code> flags are unaffected.
+Otherwise the flags <code class="docutils literal notranslate"><span class="pre">SF</span></code> and <code class="docutils literal notranslate"><span class="pre">ZF</span></code> are set as usual. The
+<code class="docutils literal notranslate"><span class="pre">OF</span></code> flag is set to 0 if the shift amount is 1 (and is
+otherwise unaffected).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shlq</span> <span class="pre">AMT,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span> <span class="pre">&lt;&lt;</span> <span class="pre">AMT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF*</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF*</span></code>, <code class="docutils literal notranslate"><span class="pre">OF*</span></code></p></td>
+<td><p>Bitwise shift <code class="docutils literal notranslate"><span class="pre">DEST</span></code> left by <code class="docutils literal notranslate"><span class="pre">AMT</span></code>. <code class="docutils literal notranslate"><span class="pre">AMT</span></code> must be a
+<code class="docutils literal notranslate"><span class="pre">Imm</span></code> or <code class="docutils literal notranslate"><span class="pre">rcx</span></code> operand.  If <code class="docutils literal notranslate"><span class="pre">AMT</span> <span class="pre">=</span> <span class="pre">0</span></code> flags are
+unaffected.  Otherwise, flags <code class="docutils literal notranslate"><span class="pre">SF</span></code> and <code class="docutils literal notranslate"><span class="pre">ZF</span></code> are set as
+usual. If the shift amount is 1, then <code class="docutils literal notranslate"><span class="pre">OF</span></code> is set to 1 if the
+top two bits (i.e., the two most-significant bits) of the
+original value of <code class="docutils literal notranslate"><span class="pre">DEST</span></code> are different and to 0 if the top
+two bits are the same. If the shift amount is not 1, then
+<code class="docutils literal notranslate"><span class="pre">OF</span></code> should not be modified.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">shrq</span> <span class="pre">AMT,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">DEST</span> <span class="pre">&gt;&gt;&gt;</span> <span class="pre">AMT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF*</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF*</span></code>, <code class="docutils literal notranslate"><span class="pre">OF*</span></code></p></td>
+<td><p>Bitwise shift <code class="docutils literal notranslate"><span class="pre">DEST</span></code> right by <code class="docutils literal notranslate"><span class="pre">AMT</span></code> inserting 0’s for the
+vacated spaces. <code class="docutils literal notranslate"><span class="pre">AMT</span></code> must be a <code class="docutils literal notranslate"><span class="pre">Imm</span></code> or <code class="docutils literal notranslate"><span class="pre">rcx</span></code>
+operand. If <code class="docutils literal notranslate"><span class="pre">AMT</span> <span class="pre">=</span> <span class="pre">0</span></code> flags are unaffected, otherwise the <code class="docutils literal notranslate"><span class="pre">SF</span></code> is set to the most significant bit of the result, and the <code class="docutils literal notranslate"><span class="pre">ZF</span></code> flag is set if and only if the result is
+zero. <code class="docutils literal notranslate"><span class="pre">OF</span></code> is set to the most-significant bit of the original
+operand if the shift amount is 1 (and is otherwise unaffected).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">setb</span> <span class="pre">CC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code>’s lower byte ← if <code class="docutils literal notranslate"><span class="pre">CC</span></code> then 1 else 0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>If condition code <code class="docutils literal notranslate"><span class="pre">CC</span></code> holds in the current state, move 1
+into the lower byte of <code class="docutils literal notranslate"><span class="pre">DEST</span></code>; otherwise move 0 into the
+lower byte.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-movement-instructions">
+<h3>Data-movement Instructions<a class="headerlink" href="#data-movement-instructions" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Flags</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">leaq</span> <span class="pre">Ind,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">addr(Ind)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Load effective address of <code class="docutils literal notranslate"><span class="pre">Ind</span></code>, which must be an operand of
+type <code class="docutils literal notranslate"><span class="pre">ind</span></code> (see <a class="reference internal" href="#operands"><span class="std std-ref">operands</span></a>). This instruction
+calculates a pointer into memory and stores it in <code class="docutils literal notranslate"><span class="pre">DEST</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">movq</span> <span class="pre">SRC,</span> <span class="pre">DEST</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← <code class="docutils literal notranslate"><span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Copy the value of <code class="docutils literal notranslate"><span class="pre">SRC</span></code> to the location denoted by <code class="docutils literal notranslate"><span class="pre">DEST</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pushq</span> <span class="pre">SRC</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">rsp</span></code> ← <code class="docutils literal notranslate"><span class="pre">rsp</span> <span class="pre">-</span> <span class="pre">8</span></code>;</div>
+<div class="line">Mem[<code class="docutils literal notranslate"><span class="pre">rsp</span></code>] ← <code class="docutils literal notranslate"><span class="pre">SRC</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Push a 64-bit value onto the stack: decrement <code class="docutils literal notranslate"><span class="pre">rsp</span></code> by 8 to
+allocate the new stack slot and then store <code class="docutils literal notranslate"><span class="pre">SRC</span></code> in the
+resulting memory address.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">popq</span> <span class="pre">DEST</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">DEST</span></code> ← Mem[<code class="docutils literal notranslate"><span class="pre">rsp</span></code>];</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">rsp</span></code> ← <code class="docutils literal notranslate"><span class="pre">rsp</span> <span class="pre">+</span> <span class="pre">8</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Pop the top of the stack into <code class="docutils literal notranslate"><span class="pre">DEST</span></code>: Load the value pointed
+to by <code class="docutils literal notranslate"><span class="pre">rsp</span></code> from memory and then increment <code class="docutils literal notranslate"><span class="pre">rsp</span></code> by 8.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="control-flow-and-condition-instructions">
+<h3>Control-flow and condition Instructions<a class="headerlink" href="#control-flow-and-condition-instructions" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Operation</p></th>
+<th class="head"><p>Flags</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cmpq</span> <span class="pre">SRC1</span> <span class="pre">SRC2</span></code></p></td>
+<td><p>← <code class="docutils literal notranslate"><span class="pre">SRC2</span> <span class="pre">-64</span> <span class="pre">SRC1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SF*</span></code>, <code class="docutils literal notranslate"><span class="pre">ZF*</span></code>, <code class="docutils literal notranslate"><span class="pre">OF*</span></code></p></td>
+<td><p>Compare <code class="docutils literal notranslate"><span class="pre">SRC1</span></code> to <code class="docutils literal notranslate"><span class="pre">SRC2</span></code> by setting all condition flags as
+though the instruction <code class="docutils literal notranslate"><span class="pre">subq</span> <span class="pre">SRC1</span> <span class="pre">SRC2</span></code> was executed.  Does
+not change register or memory contents.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">jmp</span> <span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rip</span></code> ←; <code class="docutils literal notranslate"><span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><dl class="simple">
+<dt>Jump to the machine instruction at the address given by</dt><dd><p>the value of <code class="docutils literal notranslate"><span class="pre">SRC</span></code>.  Sets the program counter.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">callq</span> <span class="pre">SRC</span></code></p></td>
+<td><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">pushq</span> <span class="pre">%rip</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">rip</span></code> ← <code class="docutils literal notranslate"><span class="pre">SRC</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Call a procedure: Push the program counter (which, at this
+point, contains the address of the instruction
+&lt;strong&gt;after&lt;/strong&gt; the <code class="docutils literal notranslate"><span class="pre">callq</span></code> instruction) to the stack
+(decrementing <code class="docutils literal notranslate"><span class="pre">rsp</span></code>) and then jump to the machine instruction
+at the address given by the value of <code class="docutils literal notranslate"><span class="pre">SRC</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">retq</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">popq</span> <span class="pre">%rip</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Return from a procedure: Pop the current top of the stack into
+<code class="docutils literal notranslate"><span class="pre">rip</span></code> (incrementing <code class="docutils literal notranslate"><span class="pre">rsp</span></code>); this instruction effectively
+jumps to the address at the top of the stack.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">j</span> <span class="pre">CC</span> <span class="pre">SRC</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rip</span></code> ← if <code class="docutils literal notranslate"><span class="pre">CC</span></code> then <code class="docutils literal notranslate"><span class="pre">SRC</span></code> else *</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">---</span></code></p></td>
+<td><p>Conditional jump: If the condition code <code class="docutils literal notranslate"><span class="pre">CC</span></code> holds in the
+current state, set <code class="docutils literal notranslate"><span class="pre">rip</span></code> to SRC; otherwise set <code class="docutils literal notranslate"><span class="pre">rip</span></code> to the
+next instruction (i.e. fallthrough).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../codestyle.html" class="btn btn-neutral float-left" title="OCaml Style Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../hw3/llvmlite.html" class="btn btn-neutral float-right" title="LLVMlite Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Max New and Steve Zdancewic.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

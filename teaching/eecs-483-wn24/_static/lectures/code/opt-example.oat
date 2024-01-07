@@ -1,0 +1,6 @@
+int foo(int w) {
+  var x = 3 + 5;
+  var y = x * w;
+  var z = y - 0;
+  return z * 4;
+}
