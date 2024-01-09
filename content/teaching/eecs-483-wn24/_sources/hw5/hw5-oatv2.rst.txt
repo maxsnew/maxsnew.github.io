@@ -7,482 +7,488 @@
 HW5: Oat v2 -- Typechecking Structs, Function Pointers, and Subtyping
 =====================================================================
 
-Getting Started
----------------
+In this project you will extend your Oat compiler to support more
+C-like features as well as some additional static checking.
 
-To get started, accept the assignment on |github|_ and clone your
-team's repository.
+More details will be released after HW4 is due.
 
-The files included in the repository are briefly described
-below. Those marked with ``*`` are the only ones you should need to
-modify while completing this assignment.
+..
+   Getting Started
+   ---------------
 
-======================  ======================================================
-lib/util/assert.ml(i)   the assertion framework
-lib/util/platform.ml    platform-specific compilation support
-lib/util/range.ml(i)    range datatype for error messages
+   To get started, accept the assignment on |github|_ and clone your
+   team's repository.
 
-lib/ll/ll.ml            the abstract syntax for LLVMlite
-lib/ll/llutil.ml        name generation and pretty-printing for LLVMlite
-lib/ll/lllexer.mll      lexer for LLVMlite syntax
-lib/ll/llparser.mly     parser generator for LLVMlite syntax
-lib/ll/llinterp.ml      reference interpreter for the LLVMlite semantics
+   The files included in the repository are briefly described
+   below. Those marked with ``*`` are the only ones you should need to
+   modify while completing this assignment.
 
-lib/x86/x86.ml          the X86lite language used as a target
+   ======================  ======================================================
+   lib/util/assert.ml(i)   the assertion framework
+   lib/util/platform.ml    platform-specific compilation support
+   lib/util/range.ml(i)    range datatype for error messages
 
-README.md               help about the main test harness
-Makefile                basic make support for invoking ocamlbuild
+   lib/ll/ll.ml            the abstract syntax for LLVMlite
+   lib/ll/llutil.ml        name generation and pretty-printing for LLVMlite
+   lib/ll/lllexer.mll      lexer for LLVMlite syntax
+   lib/ll/llparser.mly     parser generator for LLVMlite syntax
+   lib/ll/llinterp.ml      reference interpreter for the LLVMlite semantics
 
-hw4programs/\*.oat      example hw4 programs used in testing
-hw5programs/\*.oat      example hw5 programs used in testing
+   lib/x86/x86.ml          the X86lite language used as a target
 
-bin/main.ml             main test harness
-bin/driver.ml           utilities for invoking the compiler
-bin/backend.ml          sample solution to HW3
-bin/ast.ml              oat abstract syntax
-bin/astlib.ml           pretty printing
-bin/lexer.mll           oat lexer
-bin/parser.mly          oat parser
+   README.md               help about the main test harness
+   Makefile                basic make support for invoking ocamlbuild
 
-bin/tctxt.ml            typechecking context data structure
+   hw4programs/\*.oat      example hw4 programs used in testing
+   hw5programs/\*.oat      example hw5 programs used in testing
 
-bin/frontend.ml         ``*`` oat frontend [including most of a solution to HW4]
-bin/typechecker.ml      ``*`` oat typechecker
+   bin/main.ml             main test harness
+   bin/driver.ml           utilities for invoking the compiler
+   bin/backend.ml          sample solution to HW3
+   bin/ast.ml              oat abstract syntax
+   bin/astlib.ml           pretty printing
+   bin/lexer.mll           oat lexer
+   bin/parser.mly          oat parser
 
-bin/runtime.c           oat runtime library
+   bin/tctxt.ml            typechecking context data structure
 
-test/testlib.ml         helper definitions to be shared across test cases
-test/studenttests.ml    where your own test cases should go
-test/gradedtests.ml     graded test cases that we provide
-======================  ======================================================
+   bin/frontend.ml         ``*`` oat frontend [including most of a solution to HW4]
+   bin/typechecker.ml      ``*`` oat typechecker
 
+   bin/runtime.c           oat runtime library
 
-.. admonition:: Note
+   test/testlib.ml         helper definitions to be shared across test cases
+   test/studenttests.ml    where your own test cases should go
+   test/gradedtests.ml     graded test cases that we provide
+   ======================  ======================================================
 
-  You'll need to have `menhir`_ and `clang`_ installed on your system for this
-  assignment.  If you have not already done so, follow the provided
-  :ref:`instructions <toolchain>` to install them.
 
+   .. admonition:: Note
 
-Overview
---------
+     You'll need to have `menhir`_ and `clang`_ installed on your system for this
+     assignment.  If you have not already done so, follow the provided
+     :ref:`instructions <toolchain>` to install them.
 
-In this project, you will implement a compiler typechecker for an extended
-version of Oat that has boolean, int, string, array, struct and function
-pointer types as well as "possibly null" and "definitely not null" references.
-Your compiler will now accept source files of the form:
 
-.. code::
+   Overview
+   --------
 
-   struct Color {
-     int red;
-     int green;
-     int blue;
-     (Color) -> Color f
-   }
-
-   Color rot(Color c1) {
-     var c2 = new Color{ red = c1.green; green = c1.blue; blue = c1.red; f = c1.f };
-     return c2;
-   }
-
-   global c = new Color { red = 10; green = 20; blue = 30 ; f = rot};
+   In this project, you will implement a compiler typechecker for an extended
+   version of Oat that has boolean, int, string, array, struct and function
+   pointer types as well as "possibly null" and "definitely not null" references.
+   Your compiler will now accept source files of the form:
 
-   int program (int argc, string[] argv) {
-     return c.f(c).red;
-   }
+   .. code::
 
-and will produce an executable (by default named ``a.out``) that,
-when linked against ``runtime.c`` and then executed produces the resulting output:
+      struct Color {
+        int red;
+        int green;
+        int blue;
+        (Color) -> Color f
+      }
 
-.. code::
+      Color rot(Color c1) {
+        var c2 = new Color{ red = c1.green; green = c1.blue; blue = c1.red; f = c1.f };
+        return c2;
+      }
 
-   ./a.out
-   20
+      global c = new Color { red = 10; green = 20; blue = 30 ; f = rot};
 
+      int program (int argc, string[] argv) {
+        return c.f(c).red;
+      }
 
-.. admonition:: Hint
+   and will produce an executable (by default named ``a.out``) that,
+   when linked against ``runtime.c`` and then executed produces the resulting output:
 
-   For examples of Oat v2 code, see the files in ``/hw5programs``.
-
-The Oat Language
-----------------
-
-This version of Oat supports all of the features from HW4 but, in addition,
-support structs and function pointers, and a type system that makes a
-distinction between "possibly null" and "definitely not null" references.  It
-is the intention that this language is *type safe*, meaning that any
-well-typed program will not crash.  In particular, well-typed Oat v2 programs
-cannot exhibit null pointer dereference failures (though it may halt with an
-"array bounds check" failure).
-
-Oat supports multiple base-types of data: ``int``, ``bool``, and ``string``,
-as well as arrays of such data.  The Oat language is large enough that it is
-simpler to give the specification of its type system using inference rules
-than to use English prose.  The :download:`Oat language specification
-<oat-v2.pdf>` contains a definition of the language syntax and a collection of
-inference rules that define Oat type checking.
-	  
-See the file ``ast.ml`` for the OCaml representation of the abstract syntax --
-the type ``typ`` of types is defined there, along with representations of
-expressions, statements, blocks, function declarations, etc.  You should
-familiarize yourself with the correspondence between the OCaml representation
-and the notation used in the specification.  The ``astlib`` module defines
-some helper functions for printing Oat programs and abstract syntax.
-	  
-
-
-.. admonition:: Note    
-
-   The abstract syntax now has support for structs, function pointers, and new
-   types.  We have already provided the parser for you.
-
-
-New Features
-------------
-
-**Structs:**
-~~~~~~~~~~~~
-
-Oat struct types are declared by using the ``struct`` keyword at the top
-level.  For example the following program declares a new struct type named
-Color with three fields.  (Note: there is no trailing semicolon on the last
-struct field.)
-	  
-.. code::
-
-   struct Color {
-     int red;
-     int green;
-     int blue
-   }
-
-   int program (int argc, string[] argv) {
-     var garr = new Color { green = 4; red = 3; blue = 5 };
-     garr.red = 17;
-     return garr.red + garr.green;
-   }
-
-Struct values can be create by using the ``new`` keyword followed by the name
-of the struct type and a record of field initializers.  The order of the
-fields in the initializers does not have to match the order of the fields as
-declared, but all of the fields must be present and have the correct types.
-	  
-Struct values are represented internally as pointers to heap-allocated blocks
-of memory.  This means that structs, like strings and arrays, are reference
-values for the purposes of compilation.
-	  
-Struct fields are also mutable.  As shown in the sample program above, you can
-update the value of a struct.
-	  
-**Function Pointers:**
-~~~~~~~~~~~~~~~~~~~~~~
-
-This version of Oat supports function pointers as first-class values.  This
-means that the name of a top-level declared function can itself be used as a
-value.  For example, the following program declares a top-level function
-``inc`` of type ``(int) -> int`` and passes it as an argument to another
-function named ``call``:
-
-.. code::
-
-   int call((int) -> int f, int arg) {
-     return f(arg);
-   }
-
-   int inc(int x) { return x + 1; }
-
-   int program(int argc, string[] argv) {
-     return call(inc, 3);
-   }
-
-
-Function types are written ``(t1, .., tn) -> tret`` and, as illustrated above,
-function identifiers act as values of the corresponding type.  Note that such
-function identifiers, *unlike global variables*, do not denote storage space,
-and so cannot be used as the left-hand side of any assignment statement.
-These function pointers are not true closures, since they cannot capture
-variables from a local scope.
-	  
-  
-**Built-in Functions:**
-~~~~~~~~~~~~~~~~~~~~~~~
-
-The built-in functions, whose types are given below, can also be passed as
-function-pointers:
-	  
-  - | ``string_of_array : (int[]) -> string``
-    | Assumes each ``int`` of the array is the representation of an ASCII character.
-  - ``array_of_string : (string) -> int[]``
-  - ``print_string : (string) -> unit``
-  - ``print_int : (int) -> unit``
-  - ``print_bool : (bool) -> unit``
-	  
-These built-in operations, along with some internal C-functions used by the
-Oat runtime are implemented in ``runtime.c``.
-	  
-**Possibly null vs. Definitely Not Null References:**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The Oat type system makes a distinction between possibly null reference types
-``r?``, which are marked with a question mark and are not statically known to
-be different from ``null``, and definitely not-null reference types.  These
-features are illustrated in the following code from the ``ifq3.oat`` file:
-	  
-.. code::
-
-   int sum(int[]? arr) {
-       var z = 0;
-       if?(int[] a = arr) {
-         for(var i = 0; i<length(a); i = i + 1;) {
-           z = z + a[i];
-         }
-       }
-       return z;
-   }
-
-   int program (int argc, string[] argv) {
-       var x = 0;
-       x = x + sum(new int[]{1,2,3});
-       x = x + sum(int[] null);
-       return x;
-   }
-
-
-Here, the ``sum`` function takes a possibly null array reference.  Possibly
-null types, like ``int[]?``, cannot directly be treated as non-null.  Instead,
-the programmer has to insert the appropriate null check using the ``if?``
-statement, which performs the null check and, if it is successful, creates an
-alias to the checked value for use as a definitely not null pointer.  The rule
-for typechecking ``if?`` works for any possibly null reference types.
-
-.. admonition:: Note
-
-   The variable introduced by ``if?`` is still mutable, so
-   the frontend will have to allocate storage space just as for any other local
-   variable introduced by ``var``.
-
-
-**Array Initializers:**
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Once we decide to have definitely not-null types, we need a convenient way to
-initialize arrays of definitely-not-null reference types (so that we can
-ensure that the entries are not null).  We thus add support for built-in
-initializers, that work as shown below:
-	  
-.. code::
-
-   var matrix = new int[][3]{i -> new int[3]{j -> i * j}}
-
-
-This code declares a 3x3 matrix represented as an array of int arrays.  The
-entry ``matrix[i][j]`` is initialized to be ``i * j``.  The initializer array
-syntax is of the general form: ``new t[e1]{id -> e2}``, where ``e1`` is an
-integer determining the size of the array, ``id`` names the index, and the
-initializer expression ``e2`` computes the initial value at each index.  This
-initializer code is semantically equivalent to allocating an array followed by
-immediatelly initializing each element:
-	  
-.. code::
-
-   var a = new int[e1];
-   for(var id = 0; id < length(a); id = id + 1;) {
-      a[x] = e2;
-   }
-
-
-Note that ``e2`` can mention the loop index id.  See the typechecking rules
-for the details about scoping and typechecking.
-	  
-
-
-Oat v2 retains the *implicitly initialized arrays* from Oat v1 (which allowed
-only ``int`` and ``bool`` such arrays) and allows possibly-null types to have
-the default initializer ``null``.  That means that the following code snippet
-is legal, and initializes a length-three array of null pointers (each of type
-``int[]?``):
-
-.. code::
-
-   var a = new int[]?[3];
-
-
-The Oat v2 typechecker will condider the following code to be ill-typed
-because the inner array type ``int[]`` is definitely-not-null and so cannot be
-default initialized to null:
-
-.. code::
-
-   var a = new int[][3];
-
-
-Task I: Typechecking
---------------------
-
-The main task of this project is to implement a typechecker for the Oat
-language, which will put enough restrictions on its code to ensure type
-safety.
-	  
-
-The typing rules describing the intended behavior of the typechecker are given
-in the accompanying :download:`Oat v.2 language specification <oat-v2.pdf>`.  Use
-that, and the notes in ``typechecker.ml`` to get started.  We suggest that you
-tackle this part of the project in this order:
-	  
- 1. Try to read over the typing rules and get a sense of how the notion of
-    context used there matches up with the implementation in ``tctxt.ml``.
- 2. Complete the implementations of ``subtype`` and ``typecheck_ty`` (and
-    their mutually recursive companions), to remind yourself how the
-    typechecking rules line up with the code that implements them.  It might
-    be good to write a few unit tests for these functions to confirm your
-    expectations.
- 3. Think about the intended behavior of the typechecker for expressions and
-    work out a few of the easier cases.  We have given you helper functions
-    for typechecking the primitive operations.
- 4. Next tackle the context-building functions, which create the correct
-    typing context for later typechecking.
- 5. Take an initial stab at ``typecheck_fdecl``.  We suggest that you
-    introduce a helper function called ``typecheck_block``, which will be used
-    for function declarations (and elsewhere).
- 6. Working backwards through the file, work on typechecking statements, which
-    will rely heavily on typechecking expressions.  Make sure you understand
-    how the expected return type information and the behavior type of the
-    statement are propagated through this part of the code.
-
-
-Task II: Frontend Compilation
------------------------------
-
-We have provided a mostly complete sample implementation of the frontend of
-the compiler (corresponding to our solution to HW4).  Your task for this part
-of the project is to add support for structures and function pointers.
-	  
-.. admonition:: Note
-
-   If your group feels very strongly that you would be more comfortable using
-   your own frontend from HW4 as the starting point for this part of the
-   project, you may, but consult the course staff first.  A few things have
-   likely changed between HW4 and HW5, so there might be more work than you
-   expect if you decide to take this route.
-    
-**Functions Pointers:** Due to presence of function pointer values, you might
-want to familiarize yourself with the ``cmp_function_ctxt`` and the way we
-implement the ``Id id`` case for the expression compilation. There is nothing
-for you to do do here.
-	  
-**Arrays:** There are only a few places where the code must be modified, each
-of which is marked as a ``ARRAY TASK`` in the comments.  You'll need to add
-code to handle the ``length`` expression (for which you might want to recall
-the array representation from the HW4 instructions).  You'll also have to
-implement the array initializers.
-	  
-**Structs:** There are only a few places where the code must be modified, each
-of which is marked as a ``STRUCT TASK`` in the comments.  Struct compilation
-is (broadly) similar to how we handle arrays.  The main difference is that you
-need to use the structure information to look up the field index for the
-struct representation (rather than computing an integer directly).  Follow the
-``STRUCT TASK`` breadcrumbs left in the frontend and the comments there.
-	  
-**Checked Cast:** To implement the ``if?`` statement, you'll need to generate
-code that does a null-pointer check.  Since this construct introduces a
-variable into scope (for the 'notnull' branch), you'll have to handle the
-context and allocate storage space...
-	  
-
-Testing and Debugging Strategies
---------------------------------
-
-The test harness provided by ``main.ml`` gives several ways to assess your
-code. See the ``README.md`` file for a full description of the flags.
-	  
-
-.. admonition:: Note
-    
-   As with the previous project, you will find it particularly helpful to run
-   the LLVMlite code by compiling it via clang (with the ``--clang`` flag) or
-   testing with the ``llc`` backend. That is because our ``backend``
-   implementation from HW3 (which we have provided for your reference) does
-   *not* typecheck the ``.ll`` code that it compiles.  Using clang will help
-   you catch errors in the generated ll output, including type errors (which
-   aren't checked by HW3's ``backend.ml``).
-    
-Test Cases
-----------
-
-As part of this project, you must post *three* test cases for the compiler to
-the course |piazza|_ site.
-
-Two of your test cases must be small "unit tests" for a specific inference
-rule used in the type system.  Here's how it works: Choose a typechecking
-judgment and write one small, self-contained "positive" test case that
-succeeds because the inference rules for that judgment permit a particular
-derivation.  Then, write a second, small, self-contained "negative" test case
-that succeeds because the inference rules for that judgment do not permit a
-particular derivation.
-	  
-For example, I could pick the "subtype" inference rule and have the positive
-test case be testing that indeed, ``H |- string? <: string?`` and the negative
-test case could assert that it is not possible to derive ``H |- string? <:
-string``.  The OCaml code for these two tests would be given by:
-	  
-
-.. code::
-
-   let unit_tests = [
-     "subtype_stringQ_stringQ",
-      (fun () ->
-          if Typechecker.subtype Tctxt.empty (TNullRef RString) (TNullRef RString) then ()
-          else failwith "should not fail")
-   ; ("no_subtype_stringQ_stringQ",
-      (fun () ->
-          if Typechecker.subtype Tctxt.empty (TNullRef RString) (TRef RString) then
-            failwith "should not succeed" else ())
-     )
-   ]
-
-
-You might find the ``typecheck_error`` and ``typecheck_correct`` functions in
-the ``testlib.ml`` file useful for writing these unit tests.  (Note that
-``Testlib`` is also imported by ``studenttests.ml`` so you can use the test
-infrastucture for your own examples.)
-	  
-Your third test case must take the form of a ``.oat`` file along with expected
-input arguments and outputs (as found in the ``hard`` tests of
-``gradedtests.ml``).  Your test should be an Oat program about the size of
-those in the ``hard`` test cases categories.  This case must exercise some of
-the new features of this version of Oat: structs, function pointers, non-null
-vs. null references, or, ideally, some combination of these.  Oat is now quite
-a full-fledged language, so this can be pretty fun.  Ideas include:
-linked-list algorithms (will definitely need null), object-encodings like the
-color example above, trees, etc.
-
-How handy is it to have notation for array initialization?  How intrusive do you
-think the not-null pointer requirement is?
-	  
-
-.. admonition:: Warning
-  
-
-  *The test cases you submit to* |piazza|_ *will not count if they are too
-  similar to previously-posted tests!* Your test should be distinct from prior
-  test cases.  (Note that this policy encourages you to submit test cases
-  early!)
-  
-
-We will validate these tests against our own implementation of the compiler
-(and clang).  A second component of your grade will be determined by how your
-compiler fares against the test cases submitted by the other groups in the
-class.
-
-
-Grading
--------
-
-**Projects that do not compile will receive no credit!**
-
-Your team's grade for this project will be based on:
- - 90 Points: the various automated tests (most provided, some hidden until submission time).
- - 5 Points for posting your test cases to Piazza.  (Graded manually.)
- - 5 Points divided among the test cases created by other groups. (Graded
-   manually.)
+   .. code::
+
+      ./a.out
+      20
+
+
+   .. admonition:: Hint
+
+      For examples of Oat v2 code, see the files in ``/hw5programs``.
+
+   The Oat Language
+   ----------------
+
+   This version of Oat supports all of the features from HW4 but, in addition,
+   support structs and function pointers, and a type system that makes a
+   distinction between "possibly null" and "definitely not null" references.  It
+   is the intention that this language is *type safe*, meaning that any
+   well-typed program will not crash.  In particular, well-typed Oat v2 programs
+   cannot exhibit null pointer dereference failures (though it may halt with an
+   "array bounds check" failure).
+
+   Oat supports multiple base-types of data: ``int``, ``bool``, and ``string``,
+   as well as arrays of such data.  The Oat language is large enough that it is
+   simpler to give the specification of its type system using inference rules
+   than to use English prose.  The :download:`Oat language specification
+   <oat-v2.pdf>` contains a definition of the language syntax and a collection of
+   inference rules that define Oat type checking.
+
+   See the file ``ast.ml`` for the OCaml representation of the abstract syntax --
+   the type ``typ`` of types is defined there, along with representations of
+   expressions, statements, blocks, function declarations, etc.  You should
+   familiarize yourself with the correspondence between the OCaml representation
+   and the notation used in the specification.  The ``astlib`` module defines
+   some helper functions for printing Oat programs and abstract syntax.
+
+
+
+   .. admonition:: Note    
+
+      The abstract syntax now has support for structs, function pointers, and new
+      types.  We have already provided the parser for you.
+
+
+   New Features
+   ------------
+
+   **Structs:**
+   ~~~~~~~~~~~~
+
+   Oat struct types are declared by using the ``struct`` keyword at the top
+   level.  For example the following program declares a new struct type named
+   Color with three fields.  (Note: there is no trailing semicolon on the last
+   struct field.)
+
+   .. code::
+
+      struct Color {
+        int red;
+        int green;
+        int blue
+      }
+
+      int program (int argc, string[] argv) {
+        var garr = new Color { green = 4; red = 3; blue = 5 };
+        garr.red = 17;
+        return garr.red + garr.green;
+      }
+
+   Struct values can be create by using the ``new`` keyword followed by the name
+   of the struct type and a record of field initializers.  The order of the
+   fields in the initializers does not have to match the order of the fields as
+   declared, but all of the fields must be present and have the correct types.
+
+   Struct values are represented internally as pointers to heap-allocated blocks
+   of memory.  This means that structs, like strings and arrays, are reference
+   values for the purposes of compilation.
+
+   Struct fields are also mutable.  As shown in the sample program above, you can
+   update the value of a struct.
+
+   **Function Pointers:**
+   ~~~~~~~~~~~~~~~~~~~~~~
+
+   This version of Oat supports function pointers as first-class values.  This
+   means that the name of a top-level declared function can itself be used as a
+   value.  For example, the following program declares a top-level function
+   ``inc`` of type ``(int) -> int`` and passes it as an argument to another
+   function named ``call``:
+
+   .. code::
+
+      int call((int) -> int f, int arg) {
+        return f(arg);
+      }
+
+      int inc(int x) { return x + 1; }
+
+      int program(int argc, string[] argv) {
+        return call(inc, 3);
+      }
+
+
+   Function types are written ``(t1, .., tn) -> tret`` and, as illustrated above,
+   function identifiers act as values of the corresponding type.  Note that such
+   function identifiers, *unlike global variables*, do not denote storage space,
+   and so cannot be used as the left-hand side of any assignment statement.
+   These function pointers are not true closures, since they cannot capture
+   variables from a local scope.
+
+
+   **Built-in Functions:**
+   ~~~~~~~~~~~~~~~~~~~~~~~
+
+   The built-in functions, whose types are given below, can also be passed as
+   function-pointers:
+
+     - | ``string_of_array : (int[]) -> string``
+       | Assumes each ``int`` of the array is the representation of an ASCII character.
+     - ``array_of_string : (string) -> int[]``
+     - ``print_string : (string) -> unit``
+     - ``print_int : (int) -> unit``
+     - ``print_bool : (bool) -> unit``
+
+   These built-in operations, along with some internal C-functions used by the
+   Oat runtime are implemented in ``runtime.c``.
+
+   **Possibly null vs. Definitely Not Null References:**
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   The Oat type system makes a distinction between possibly null reference types
+   ``r?``, which are marked with a question mark and are not statically known to
+   be different from ``null``, and definitely not-null reference types.  These
+   features are illustrated in the following code from the ``ifq3.oat`` file:
+
+   .. code::
+
+      int sum(int[]? arr) {
+          var z = 0;
+          if?(int[] a = arr) {
+            for(var i = 0; i<length(a); i = i + 1;) {
+              z = z + a[i];
+            }
+          }
+          return z;
+      }
+
+      int program (int argc, string[] argv) {
+          var x = 0;
+          x = x + sum(new int[]{1,2,3});
+          x = x + sum(int[] null);
+          return x;
+      }
+
+
+   Here, the ``sum`` function takes a possibly null array reference.  Possibly
+   null types, like ``int[]?``, cannot directly be treated as non-null.  Instead,
+   the programmer has to insert the appropriate null check using the ``if?``
+   statement, which performs the null check and, if it is successful, creates an
+   alias to the checked value for use as a definitely not null pointer.  The rule
+   for typechecking ``if?`` works for any possibly null reference types.
+
+   .. admonition:: Note
+
+      The variable introduced by ``if?`` is still mutable, so
+      the frontend will have to allocate storage space just as for any other local
+      variable introduced by ``var``.
+
+
+   **Array Initializers:**
+   ~~~~~~~~~~~~~~~~~~~~~~~
+
+   Once we decide to have definitely not-null types, we need a convenient way to
+   initialize arrays of definitely-not-null reference types (so that we can
+   ensure that the entries are not null).  We thus add support for built-in
+   initializers, that work as shown below:
+
+   .. code::
+
+      var matrix = new int[][3]{i -> new int[3]{j -> i * j}}
+
+
+   This code declares a 3x3 matrix represented as an array of int arrays.  The
+   entry ``matrix[i][j]`` is initialized to be ``i * j``.  The initializer array
+   syntax is of the general form: ``new t[e1]{id -> e2}``, where ``e1`` is an
+   integer determining the size of the array, ``id`` names the index, and the
+   initializer expression ``e2`` computes the initial value at each index.  This
+   initializer code is semantically equivalent to allocating an array followed by
+   immediatelly initializing each element:
+
+   .. code::
+
+      var a = new int[e1];
+      for(var id = 0; id < length(a); id = id + 1;) {
+         a[x] = e2;
+      }
+
+
+   Note that ``e2`` can mention the loop index id.  See the typechecking rules
+   for the details about scoping and typechecking.
+
+
+
+   Oat v2 retains the *implicitly initialized arrays* from Oat v1 (which allowed
+   only ``int`` and ``bool`` such arrays) and allows possibly-null types to have
+   the default initializer ``null``.  That means that the following code snippet
+   is legal, and initializes a length-three array of null pointers (each of type
+   ``int[]?``):
+
+   .. code::
+
+      var a = new int[]?[3];
+
+
+   The Oat v2 typechecker will condider the following code to be ill-typed
+   because the inner array type ``int[]`` is definitely-not-null and so cannot be
+   default initialized to null:
+
+   .. code::
+
+      var a = new int[][3];
+
+
+   Task I: Typechecking
+   --------------------
+
+   The main task of this project is to implement a typechecker for the Oat
+   language, which will put enough restrictions on its code to ensure type
+   safety.
+
+
+   The typing rules describing the intended behavior of the typechecker are given
+   in the accompanying :download:`Oat v.2 language specification <oat-v2.pdf>`.  Use
+   that, and the notes in ``typechecker.ml`` to get started.  We suggest that you
+   tackle this part of the project in this order:
+
+    1. Try to read over the typing rules and get a sense of how the notion of
+       context used there matches up with the implementation in ``tctxt.ml``.
+    2. Complete the implementations of ``subtype`` and ``typecheck_ty`` (and
+       their mutually recursive companions), to remind yourself how the
+       typechecking rules line up with the code that implements them.  It might
+       be good to write a few unit tests for these functions to confirm your
+       expectations.
+    3. Think about the intended behavior of the typechecker for expressions and
+       work out a few of the easier cases.  We have given you helper functions
+       for typechecking the primitive operations.
+    4. Next tackle the context-building functions, which create the correct
+       typing context for later typechecking.
+    5. Take an initial stab at ``typecheck_fdecl``.  We suggest that you
+       introduce a helper function called ``typecheck_block``, which will be used
+       for function declarations (and elsewhere).
+    6. Working backwards through the file, work on typechecking statements, which
+       will rely heavily on typechecking expressions.  Make sure you understand
+       how the expected return type information and the behavior type of the
+       statement are propagated through this part of the code.
+
+
+   Task II: Frontend Compilation
+   -----------------------------
+
+   We have provided a mostly complete sample implementation of the frontend of
+   the compiler (corresponding to our solution to HW4).  Your task for this part
+   of the project is to add support for structures and function pointers.
+
+   .. admonition:: Note
+
+      If your group feels very strongly that you would be more comfortable using
+      your own frontend from HW4 as the starting point for this part of the
+      project, you may, but consult the course staff first.  A few things have
+      likely changed between HW4 and HW5, so there might be more work than you
+      expect if you decide to take this route.
+
+   **Functions Pointers:** Due to presence of function pointer values, you might
+   want to familiarize yourself with the ``cmp_function_ctxt`` and the way we
+   implement the ``Id id`` case for the expression compilation. There is nothing
+   for you to do do here.
+
+   **Arrays:** There are only a few places where the code must be modified, each
+   of which is marked as a ``ARRAY TASK`` in the comments.  You'll need to add
+   code to handle the ``length`` expression (for which you might want to recall
+   the array representation from the HW4 instructions).  You'll also have to
+   implement the array initializers.
+
+   **Structs:** There are only a few places where the code must be modified, each
+   of which is marked as a ``STRUCT TASK`` in the comments.  Struct compilation
+   is (broadly) similar to how we handle arrays.  The main difference is that you
+   need to use the structure information to look up the field index for the
+   struct representation (rather than computing an integer directly).  Follow the
+   ``STRUCT TASK`` breadcrumbs left in the frontend and the comments there.
+
+   **Checked Cast:** To implement the ``if?`` statement, you'll need to generate
+   code that does a null-pointer check.  Since this construct introduces a
+   variable into scope (for the 'notnull' branch), you'll have to handle the
+   context and allocate storage space...
+
+
+   Testing and Debugging Strategies
+   --------------------------------
+
+   The test harness provided by ``main.ml`` gives several ways to assess your
+   code. See the ``README.md`` file for a full description of the flags.
+
+
+   .. admonition:: Note
+
+      As with the previous project, you will find it particularly helpful to run
+      the LLVMlite code by compiling it via clang (with the ``--clang`` flag) or
+      testing with the ``llc`` backend. That is because our ``backend``
+      implementation from HW3 (which we have provided for your reference) does
+      *not* typecheck the ``.ll`` code that it compiles.  Using clang will help
+      you catch errors in the generated ll output, including type errors (which
+      aren't checked by HW3's ``backend.ml``).
+
+   Test Cases
+   ----------
+
+   As part of this project, you must post *three* test cases for the compiler to
+   the course |piazza|_ site.
+
+   Two of your test cases must be small "unit tests" for a specific inference
+   rule used in the type system.  Here's how it works: Choose a typechecking
+   judgment and write one small, self-contained "positive" test case that
+   succeeds because the inference rules for that judgment permit a particular
+   derivation.  Then, write a second, small, self-contained "negative" test case
+   that succeeds because the inference rules for that judgment do not permit a
+   particular derivation.
+
+   For example, I could pick the "subtype" inference rule and have the positive
+   test case be testing that indeed, ``H |- string? <: string?`` and the negative
+   test case could assert that it is not possible to derive ``H |- string? <:
+   string``.  The OCaml code for these two tests would be given by:
+
+
+   .. code::
+
+      let unit_tests = [
+        "subtype_stringQ_stringQ",
+         (fun () ->
+             if Typechecker.subtype Tctxt.empty (TNullRef RString) (TNullRef RString) then ()
+             else failwith "should not fail")
+      ; ("no_subtype_stringQ_stringQ",
+         (fun () ->
+             if Typechecker.subtype Tctxt.empty (TNullRef RString) (TRef RString) then
+               failwith "should not succeed" else ())
+        )
+      ]
+
+
+   You might find the ``typecheck_error`` and ``typecheck_correct`` functions in
+   the ``testlib.ml`` file useful for writing these unit tests.  (Note that
+   ``Testlib`` is also imported by ``studenttests.ml`` so you can use the test
+   infrastucture for your own examples.)
+
+   Your third test case must take the form of a ``.oat`` file along with expected
+   input arguments and outputs (as found in the ``hard`` tests of
+   ``gradedtests.ml``).  Your test should be an Oat program about the size of
+   those in the ``hard`` test cases categories.  This case must exercise some of
+   the new features of this version of Oat: structs, function pointers, non-null
+   vs. null references, or, ideally, some combination of these.  Oat is now quite
+   a full-fledged language, so this can be pretty fun.  Ideas include:
+   linked-list algorithms (will definitely need null), object-encodings like the
+   color example above, trees, etc.
+
+   How handy is it to have notation for array initialization?  How intrusive do you
+   think the not-null pointer requirement is?
+
+
+   .. admonition:: Warning
+
+
+     *The test cases you submit to* |piazza|_ *will not count if they are too
+     similar to previously-posted tests!* Your test should be distinct from prior
+     test cases.  (Note that this policy encourages you to submit test cases
+     early!)
+
+
+   We will validate these tests against our own implementation of the compiler
+   (and clang).  A second component of your grade will be determined by how your
+   compiler fares against the test cases submitted by the other groups in the
+   class.
+
+
+   Grading
+   -------
+
+   **Projects that do not compile will receive no credit!**
+
+   Your team's grade for this project will be based on:
+    - 90 Points: the various automated tests (most provided, some hidden until submission time).
+    - 5 Points for posting your test cases to Piazza.  (Graded manually.)
+    - 5 Points divided among the test cases created by other groups. (Graded
+      manually.)

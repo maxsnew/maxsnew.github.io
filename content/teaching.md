@@ -1,4 +1,4 @@
-- [EECS 483 Compiler Construction - Winter 2024](/teaching/eecs-483-wi24/index.html)
+- [EECS 483 Compiler Construction - Winter 2024](/teaching/eecs-483-wn24/index.html)
 - [EECS 483 Compiler Construction - Fall 2023](/teaching/eecs-483-fa23)
 - [EECS 598 005 Category Theory - Winter 2023](/teaching/eecs-598-w23)
 - [EECS 483 Compiler Construction - Fall 2022](/teaching/eecs-483-fa22)
