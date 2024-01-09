@@ -7,484 +7,492 @@
 HW4: Oat v.1 Compiler
 =====================
 
-Getting Started
----------------
+In this project you will implement a non-optimizing compiler for a
+C-like language. The source language is a subset of C called "Oat" and
+the target is our LLVMlite subset of LLVM. This includes implementing
+a portion of the frontend of the compiler.
 
-To get started, accept the assignment on |github|_ and clone your
-team's repository.
+More details will be released after the midterm.
 
-The files included in the repository are briefly described
-below. Those marked with ``*`` are the only ones you should need to
-modify while completing this assignment.
+..
+   Getting Started
+   ---------------
 
-======================  ======================================================
-lib/util/assert.ml(i)   the assertion framework
-lib/util/platform.ml    platform-specific compilation support
-lib/util/range.ml(i)    range datatype for error messages
+   To get started, accept the assignment on |github|_ and clone your
+   team's repository.
 
-lib/ll/ll.ml            the abstract syntax for LLVMlite
-lib/ll/llutil.ml        name generation and pretty-printing for LLVMlite
-lib/ll/lllexer.mll      lexer for LLVMlite syntax
-lib/ll/llparser.mly     parser generator for LLVMlite syntax
-lib/ll/llinterp.ml      reference interpreter for the LLVMlite semantics
+   The files included in the repository are briefly described
+   below. Those marked with ``*`` are the only ones you should need to
+   modify while completing this assignment.
 
-lib/x86/x86.ml          the X86lite language used as a target
+   ======================  ======================================================
+   lib/util/assert.ml(i)   the assertion framework
+   lib/util/platform.ml    platform-specific compilation support
+   lib/util/range.ml(i)    range datatype for error messages
 
-README.md               help about the main test harness
-Makefile                basic make support for invoking ocamlbuild
+   lib/ll/ll.ml            the abstract syntax for LLVMlite
+   lib/ll/llutil.ml        name generation and pretty-printing for LLVMlite
+   lib/ll/lllexer.mll      lexer for LLVMlite syntax
+   lib/ll/llparser.mly     parser generator for LLVMlite syntax
+   lib/ll/llinterp.ml      reference interpreter for the LLVMlite semantics
 
-hw4programs/\*.oat      example .oat v.1 programs used in testing
+   lib/x86/x86.ml          the X86lite language used as a target
 
-bin/main.ml             main test harness
-bin/driver.ml           utilities for invoking the compiler
+   README.md               help about the main test harness
+   Makefile                basic make support for invoking ocamlbuild
 
-bin/ast.ml              oat abstract syntax
-bin/astlib.ml           pretty printing
-bin/backend.ml          sample solution to HW3
-bin/lexer.mll           ``*`` oat lexer
-bin/parser.mly          ``*`` oat parser
-bin/frontend.ml         ``*`` oat frontend
+   hw4programs/\*.oat      example .oat v.1 programs used in testing
 
-bin/runtime.c           oat runtime library
+   bin/main.ml             main test harness
+   bin/driver.ml           utilities for invoking the compiler
 
-test/studenttests.ml    ``*`` where your own test cases should go
-test/gradedtests.ml     graded test cases that we provide
-bin/progasts.ml         helper ast representations for parser tests
-======================  ======================================================
+   bin/ast.ml              oat abstract syntax
+   bin/astlib.ml           pretty printing
+   bin/backend.ml          sample solution to HW3
+   bin/lexer.mll           ``*`` oat lexer
+   bin/parser.mly          ``*`` oat parser
+   bin/frontend.ml         ``*`` oat frontend
 
+   bin/runtime.c           oat runtime library
 
-.. admonition:: Note
+   test/studenttests.ml    ``*`` where your own test cases should go
+   test/gradedtests.ml     graded test cases that we provide
+   bin/progasts.ml         helper ast representations for parser tests
+   ======================  ======================================================
 
-  You'll need to have `menhir`_ and `clang`_ installed on your system for this
-  assignment.  If you have not already done so, follow the provided
-  :ref:`instructions <toolchain>` to install them.
 
-Overview
---------
+   .. admonition:: Note
 
-In this project, you will implement a compiler frontend for a simple
-imperative language that has boolean, int, string, and array types as well as
-top-level, mutually-recursive functions and global variables. Your compiler
-will accept source files that use syntax like:
+     You'll need to have `menhir`_ and `clang`_ installed on your system for this
+     assignment.  If you have not already done so, follow the provided
+     :ref:`instructions <toolchain>` to install them.
 
-.. code::
+   Overview
+   --------
 
-   int fact(int x) {
-     var acc = 1;
-     while (x > 0) {
-       acc = acc * x;
-       x = x - 1;
-     }
-     return acc;
-   }
-
-   int program(int argc, string[] argv) {
-     print_string(string_of_int(fact(5)));
-     return 0;
-   }
-
-and will produce an executable (by default named ``a.out``) that, when
-linked against ``runtime.c`` and then executed produces the resulting
-output:
-
-.. code::
-
-   ./a.out
-   120
-
-
-.. admonition:: Hint
-
-  For examples of Oat code, see the files in
-  ``/hw4programs``, especially those with sensible names.
-
-The Oat Language
-----------------
-
-Oat supports multiple base-types of data: ``int``, ``bool``, and ``string``,
-as well as arrays of such data.  The :download:`Oat language specification
-<oat-v1.pdf>`.  contains a definition of the language syntax.  Oat concrete
-syntax does not require a local variable declaration to include a type
-definition, instead it uses the keyword ``var``, as shown in the example
-above.  Oat mostly sticks with C or Java-like syntax, except for some quirks:
-``null`` requires a type annotation, and bit-wise arithmetic operators have
-their own notation (so there is no overloading).
-
-See the file ``ast.ml`` for the OCaml representation of the abstract syntax —
-the type ``typ`` of types is defined there, along with representations of
-expressions, statements, blocks, function declarations, etc.  You should
-familiarize yourself with the correspondence between the OCaml representation
-and the notation used in the specification.  The ``astlib`` module defines
-some helper functions for printing Oat programs and abstract syntax.
-
-This version of Oat will not be safe: it is possible to access an array out of
-bounds or to call a function with incorrectly typed arguments.  The next
-version of Oat (which you will implement in HW5) will address these issues and
-add some other missing features. In particular, although the grammar gives a
-syntax for function types, this version of Oat does not need to support
-function pointers; these are included in anticipation of the next project.
-
-
-Features
-~~~~~~~~
-
-Functions
-~~~~~~~~~
-
-Oat supports mutually-recursive, top-level functions.  Each function body
-consisting of a series of imperative statements that have Java-like semantics.
-
-
-A complete Oat program contains a function called ``program`` with type
-``(int, string[]) -> int``, which takes command-line arguments like the C
-``main`` function and is the entry-point of the executable.  The file
-``runtime.c`` defines the Oat standard library, which provides a few
-:ref:`universally available functions <oat-runtime>`, mostly for doing I/O and working with
-strings.
-
-Global values
-~~~~~~~~~~~~~
-
-Oat supports globally-declared variables with a limited set of initializers,
-including just base values (integer and boolean constants and null) and array
-literals. Unlike LLVM, Oat global initializers can't contain identifiers that
-refer to other global values.
-
-Expression forms
-~~~~~~~~~~~~~~~~
-
-Oat supports several forms of expressions, including all the usual binary and
-unary operations.  Boolean values are ``true`` and ``false``. Integer values
-have type ``int`` and they are 64-bits. Oat uses different syntax to
-distinguish boolean logical operations ``b1 & b2`` (and) and ``b1 | b2`` (or)
-from bit-wise int operations ``i1 [&] i2`` (bitwise or) and ``i1 [|] i2``
-(bitwise or).  (This difference from a C-like language is necessitated by the
-lack of casts and overloading.)
-
-Arrays
-~~~~~~
-
-Oat supports arrays whose elements are all of the same type, which could be
-any type, including nested arrays. Arrays are considered to be *reference
-types*.  The expression ``new typ [len]`` creates a new default-initialized
-array of length ``len``. In this case, ``typ`` must be either ``int`` or
-``bool``.  Each element of an integer array will be set to 0, and boolean
-arrays will be set false.
-
-
-.. admonition:: Note
-
-   For forward compatibility with Oat v.2,
-   default-initialized arrays cannot use reference types (like ``string``
-   or other arrays) as the array element type.  (In Oat v.2 ``string``
-   will mean "definitely not a null" string, which is not compatible with
-   default initialization.)  This means that Oat v.1 cannot support
-   dynamically-sized arrays whose elements are of reference type.
-
-
-Explicitly-initialized arrays have a length determined at compile time, and
-are written using braces with a comma-separated enumeration of array
-elements. They can appear as expressions declared inside a function, and
-(unlike default-initialized arrays) may contain reference types:
-
-.. code::
-
-   var vec = new int[]{1, -2, 3+1, f(4)};       /* vec has length 4 */
-   var strs = new string[]{"a", "b", "c"};      /* strs has length 3 */
-   var matrix = new int[][]{new int[]{1, 2, 3},
-                            new int[]{4, 5, 6}};  /* an array of arrays */
-
-or as global explicitly-initialized arrays (which can only use constant values):
-
-.. code::
-
-   global arr = new int[]{1, 2, 3, 4};
-
-
-.. admonition:: Note
-
-   There is a distinction between explicitly-initialized arrays declared at
-   the global scope and those declared locally to a function.  Global
-   initialized arrays are allocated at compile time, while those local to a
-   function must be allocated at run time, on the heap.  Each call to a
-   function might generate a new such array.
-
-
-Arrays are mutable, and they can be updated using assignment notation:
-``vec[0] = 17``.  Array indices start at 0 and go through ``len - 1``, where
-``len`` is the length of the array.  Oat arrays (unlike C arrays) also store a
-length field to support array-bounds checks, which we will add in a future
-project.  For this project, you do not have to implement bounds checking.
-
-Arrays in Oat are represented at the LL IR level by objects of the LL type
-``{i64, [0 x t]}*``, that is, an array is a *pointer* to a struct whose first
-element is an ``i64`` value that is the array's length, and whose second
-component is an array of elements of type ``t``.  See the translation of Oat
-types into LL types via the ``cmp_ty`` function.
-
-This array representation is similar to that used in OCaml or Java, which do
-not allow "inlined" multidimensional arrays as in C.  We choose this
-representation to facilitate array-bounds checking (which we will implement in
-a later HW). The length information is located *before* the 0th element of the
-array.  For example, the following array would be represented as a pointer to
-memory as shown below:
-
-
-.. code::
-
-   int[]{11,12,13,14};
-
-   arr --+
-         |
-         v
-        [4][11][12][13][14]
-
-We will exploit this array representation that includes length data in the
-next assignment, when we use a type system to make it a safe language.
-
-Left-Hand-Side Expressions
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-As usual in imperative languages, local and global identifiers denote mutable
-locations, and they can appear to the left of an assignment operation. In the
-example below, the identifier ``x`` appears on both the left and right:
-
-.. code::
-
-   x = x + 1;
-
-On the right-hand-side of the assignment, ``x`` is implicitly dereferenced to
-obtain its value, whereas on the left-hand-side, it stands for the location
-where the value of ``x`` is stored. For example, in our LLVMlite IR, each Oat
-local identifier will correspond to an ``alloca``\ d value on the stack,
-accessed through a pointer.
-
-Similarly, the ``i``\ th array index denotes both the value stored in the array
-and the corresponding location in memory.
-
-.. code::
-
-   myarr[i] = myarr[i] + 1;
-
-
-In this case, ``myarr`` can be an arbitrary expression that evaluates to an
-array, including function calls or an index into an array of arrays. For
-example the code below shows that it is legal to index off of a function call
-expression, as long as the function returns an array.
-
-.. code::
-
-   int[] f(int[] x, int[] y, bool b) {
-     if ( b ) {
-       return x;
-     } else {
-       return y;
-     }
-   }
-
-   global x = new int[]{1, 2, 3};
-   global y = new int[]{4, 5, 6};
-
-   int program (int argc, string[] argv) {
-     f(x, y, true)[0] = 17;     /* non-trivial lhs */
-     var z = f(x, y, true)[0] + f(y, x, false)[0];
-     return z;  /* returns the value 34 */
-   }
-
-
-Strings
-~~~~~~~
-
-Oat supports C-style *immutable* strings, written ``"in quotes"``.  For the
-moment, the string operations are very limited and mostly provided by built-in
-functions provided by the runtime system.  Strings are considered to be
-reference types because they are represented by a pointer to some byte
-sequence.  Therefore they cannot be used in implicitly-initialized arrays
-(we'll address this infelicity in HW5).  Note that the type ``string[]`` makes
-sense in Oat v.1, and it means an array of strings, none of which is null.
-The only way to get a value of such a type in Oat v.1 is as an input to the
-toplevel program.
-
-
-.. _oat-runtime:
-
-Built-in Functions
-~~~~~~~~~~~~~~~~~~
-
-We now have enough infrastructure to support interesting built-in operations,
-including:
-
-  - | ``string_of_array : (int[]) -> string``
-    | Assumes each ``int`` of the array is in the range 0-127 and therefore represents an ASCII character.
-  - ``array_of_string : (string) -> int[]``
-  - ``print_string : (string) -> void``
-  - ``print_int : (int) -> void``
-  - ``print_bool : (bool) -> void``
-
-These built-in operations, along with some internal C-functions used by the
-Oat runtime, are implemented in ``runtime.c``.
-
-Task I: Lexing and Parsing
---------------------------
-
-The first step in implementing the frontend of the compiler is to get the
-lexer and parser working.  We have provided you with a partial implementation
-in the ``lexer.mll`` and ``parser.mly`` files, but the provided grammar is
-both ambiguous and missing syntax for several key language constructs.
-Complete this implementation so that your frontend can parse all of the
-example ``hw4programs/*.oat`` files.
-
-The full grammar is given in the :download:`Oat v.1 Language Specification
-<oat-v1.pdf>`.
-
-You need to:
-
- - Add the appropriate token definitions to ``parser.mly`` and adjust
-   ``lexer.ml``.
- - Complete the parser according to the full grammar.
- - Disambiguate any parse conflicts (shift/reduce or reduce/reduce) according
-   to the precedence and associativity rules.
-
-
-Missing constructs include:
-
- - all of the binary operations except ``+``, ``-``, ``*``, and ``==``
- - the boolean type and values
- - default-initialized and implicitly-initialized array expressions and array global initializers
- - string literal expressions and global initializers
- - ``for`` loops
-
-.. admonition:: Note
-
-   Besides the parsing tests provided in ``gradedtests.ml``, you
-   can also test just the parsing behavior of your frontend by
-   stopping compilation after parsing with the ``-S`` flag and pretty-printing the Oat code to the terminal:
+   In this project, you will implement a compiler frontend for a simple
+   imperative language that has boolean, int, string, and array types as well as
+   top-level, mutually-recursive functions and global variables. Your compiler
+   will accept source files that use syntax like:
 
    .. code::
 
-      ./main.native -S --print-oat file.oat
+      int fact(int x) {
+        var acc = 1;
+        while (x > 0) {
+          acc = acc * x;
+          x = x - 1;
+        }
+        return acc;
+      }
 
-.. admonition:: Warning
+      int program(int argc, string[] argv) {
+        print_string(string_of_int(fact(5)));
+        return 0;
+      }
 
-   Because the entire rest of the project hinges on getting a correct parser
-   up and running, please try to do this early and seek help if you need it.
+   and will produce an executable (by default named ``a.out``) that, when
+   linked against ``runtime.c`` and then executed produces the resulting
+   output:
 
-.. admonition:: Note
+   .. code::
 
-   Note that completing the parser will not require massive refactoring! The
-   tasks described above each require only relatively small changes to
-   ``lexer.mll`` and/or ``parser.mly``.  We suggest you refer to the `menhir`_
-   documentation to understand how to use Menhir's built-in associativity
-   features.
-
-Task II: Frontend Compilation
------------------------------
-
-The bulk of this project is implemeting the compiler in ``frontend.ml``.
-
-The comments in that file will help you, but here is how we suggest you proceed:
-
- 1. Read through the whole ``frontend.ml`` file to get a sense of its
-    structure.  It is arranged so that it mirrors the syntax described in the
-    :download:`Oat v.1 Language Specification <oat-v1.pdf>`.
-
-    To a first approximation, there is one compilation function for each
-    nonterminal of the language syntax.  The inputs to these functions are the
-    static context and the piece of syntax (and its type) to be compiled. The
-    output of such a function depends on which part of the program you are
-    compiling: expressions evaluate to values, so their compilation function
-    returns the code computing an operand; statements do not evaluate to
-    values, but they do introduce new local variables, so their compilation
-    function returns a new context and an instruction stream, etc.
-	    
- 2. Take a close look at the ``Ctxt`` to see how it represents the compilation
-    contexts.
- 3. Begin by working on ``cmp_global_ctxt`` and ``cmp_gexp``, though initially
-    you can leave out arrays.
- 4. Next try to get a minimal ``cmp_fdecl`` working, producing an ``Ll.fdecl``
-    with the correct params and type.
- 5. Next handle the ``Ret`` case of ``cmp_stmt``.  Use the provided
-    ``cfg_of_stream`` function to produce a non-empty function body in
-    ``cmp_fdecl``. At this point, you should be able to compile a program like
-    ``hw4programs/easyrun1.oat``.
- 6. Next implement boolean and integer
-    values, ``Bop``, and ``Uop`` cases of ``cmp_exp``. Again, saving arrays
-    for later.
- 7. Add support for the ``Decl`` statement and identifier expressions. Each
-    local Oat variable will correspond to an ``alloca``\ d stack slot, which
-    should be hoisted to the entry block of the function using the ``E``
-    stream element constructor.
- 8. Add more statements. The ``If`` and ``While`` statements are very similar
-    to what we've seen in the lecture code. You can do ``for`` in several
-    ways, but one easy way is to translate it at the Oat abstract syntax level
-    to a block of code that uses a while loop. The ``SCall`` statement isn't
-    that different from the expression form; you might want to find a way to
-    have them share code.
- 9. Revisit the whole compiler adding support for arrays, following the same
-    order as above.
-	    
-.. admonition:: Note
-
-   Although we have given you only the skeleton of the ``frontend.ml`` file,
-   much of the code is similar (if not identical to) that demonstrated in
-   lecture.  See the sample code there for additional guidance.
-
-.. admonition:: Note
-
-   String constants must be hoisted to the global scope so that the string
-   data can be defined as LLVM IR global values.  See the comments in
-   ``frontend.ml``
+      ./a.out
+      120
 
 
-Testing and Debugging Strategies
---------------------------------
+   .. admonition:: Hint
 
-The test harness provided by ``main.ml`` gives several ways to assess your
-code. See the ``README.md`` file for a full description of the flags.
+     For examples of Oat code, see the files in
+     ``/hw4programs``, especially those with sensible names.
 
-.. admonition:: Note
+   The Oat Language
+   ----------------
 
-   For this project, you will find it particularly
-   helpful to run the LLVMlite code by compiling it via clang (with the
-   ``--clang`` flag). That is because our
-   ``backend`` implementation from HW3 (which we have provided for
-   your reference) does *not* typecheck the ``.ll`` code that
-   it compiles.  Using clang will help you catch errors in the
-   generated ll output.
+   Oat supports multiple base-types of data: ``int``, ``bool``, and ``string``,
+   as well as arrays of such data.  The :download:`Oat language specification
+   <oat-v1.pdf>`.  contains a definition of the language syntax.  Oat concrete
+   syntax does not require a local variable declaration to include a type
+   definition, instead it uses the keyword ``var``, as shown in the example
+   above.  Oat mostly sticks with C or Java-like syntax, except for some quirks:
+   ``null`` requires a type annotation, and bit-wise arithmetic operators have
+   their own notation (so there is no overloading).
 
-Graded Test Cases
-~~~~~~~~~~~~~~~~~
+   See the file ``ast.ml`` for the OCaml representation of the abstract syntax —
+   the type ``typ`` of types is defined there, along with representations of
+   expressions, statements, blocks, function declarations, etc.  You should
+   familiarize yourself with the correspondence between the OCaml representation
+   and the notation used in the specification.  The ``astlib`` module defines
+   some helper functions for printing Oat programs and abstract syntax.
 
-As part of this project, you must post an interesting test case for the
-compiler to the course |piazza|_ site.  This test case must take the form of a
-valid ``.oat`` (v.1) file along with expected input arguments and outputs (as
-found in the ``hard`` tests of ``gradedtests.ml``).
-
-
-*The test case you submit to* |piazza|_ *will not count if it is too similar to
-previously-posted tests!* Your test should be distinct from prior test cases.
-(Note that this policy encourages you to submit test cases early!)
-
-.. admonition:: Note
-
-   Your test should be an Oat program about the size
-   of those in the ``hard`` test cases categories.  Tests that
-   stress parts of the language that aren't well exercised by the
-   provided tests are particularly encouraged.
-
-   We will validate these tests against our own implementation of
-   the compiler (and clang).  A second component of your grade will be
-   determined by how your compiler fares against the test cases
-   submitted by the other groups in the class.
+   This version of Oat will not be safe: it is possible to access an array out of
+   bounds or to call a function with incorrectly typed arguments.  The next
+   version of Oat (which you will implement in HW5) will address these issues and
+   add some other missing features. In particular, although the grammar gives a
+   syntax for function types, this version of Oat does not need to support
+   function pointers; these are included in anticipation of the next project.
 
 
-Grading
--------
+   Features
+   ~~~~~~~~
 
-**Projects that do not compile will receive no credit!**
+   Functions
+   ~~~~~~~~~
 
-Your team's grade for this project will be based on:
- - 85 Points: the various automated tests that we provide.
- - 5 Points: for hidden test cases run only on the server.
- - 5 Points: for posting an interesting test case to |piazza|_.  (Graded manually.)
- - 5 Points: divided among the test cases created by other groups. (Graded manually.)
+   Oat supports mutually-recursive, top-level functions.  Each function body
+   consisting of a series of imperative statements that have Java-like semantics.
+
+
+   A complete Oat program contains a function called ``program`` with type
+   ``(int, string[]) -> int``, which takes command-line arguments like the C
+   ``main`` function and is the entry-point of the executable.  The file
+   ``runtime.c`` defines the Oat standard library, which provides a few
+   :ref:`universally available functions <oat-runtime>`, mostly for doing I/O and working with
+   strings.
+
+   Global values
+   ~~~~~~~~~~~~~
+
+   Oat supports globally-declared variables with a limited set of initializers,
+   including just base values (integer and boolean constants and null) and array
+   literals. Unlike LLVM, Oat global initializers can't contain identifiers that
+   refer to other global values.
+
+   Expression forms
+   ~~~~~~~~~~~~~~~~
+
+   Oat supports several forms of expressions, including all the usual binary and
+   unary operations.  Boolean values are ``true`` and ``false``. Integer values
+   have type ``int`` and they are 64-bits. Oat uses different syntax to
+   distinguish boolean logical operations ``b1 & b2`` (and) and ``b1 | b2`` (or)
+   from bit-wise int operations ``i1 [&] i2`` (bitwise or) and ``i1 [|] i2``
+   (bitwise or).  (This difference from a C-like language is necessitated by the
+   lack of casts and overloading.)
+
+   Arrays
+   ~~~~~~
+
+   Oat supports arrays whose elements are all of the same type, which could be
+   any type, including nested arrays. Arrays are considered to be *reference
+   types*.  The expression ``new typ [len]`` creates a new default-initialized
+   array of length ``len``. In this case, ``typ`` must be either ``int`` or
+   ``bool``.  Each element of an integer array will be set to 0, and boolean
+   arrays will be set false.
+
+
+   .. admonition:: Note
+
+      For forward compatibility with Oat v.2,
+      default-initialized arrays cannot use reference types (like ``string``
+      or other arrays) as the array element type.  (In Oat v.2 ``string``
+      will mean "definitely not a null" string, which is not compatible with
+      default initialization.)  This means that Oat v.1 cannot support
+      dynamically-sized arrays whose elements are of reference type.
+
+
+   Explicitly-initialized arrays have a length determined at compile time, and
+   are written using braces with a comma-separated enumeration of array
+   elements. They can appear as expressions declared inside a function, and
+   (unlike default-initialized arrays) may contain reference types:
+
+   .. code::
+
+      var vec = new int[]{1, -2, 3+1, f(4)};       /* vec has length 4 */
+      var strs = new string[]{"a", "b", "c"};      /* strs has length 3 */
+      var matrix = new int[][]{new int[]{1, 2, 3},
+                               new int[]{4, 5, 6}};  /* an array of arrays */
+
+   or as global explicitly-initialized arrays (which can only use constant values):
+
+   .. code::
+
+      global arr = new int[]{1, 2, 3, 4};
+
+
+   .. admonition:: Note
+
+      There is a distinction between explicitly-initialized arrays declared at
+      the global scope and those declared locally to a function.  Global
+      initialized arrays are allocated at compile time, while those local to a
+      function must be allocated at run time, on the heap.  Each call to a
+      function might generate a new such array.
+
+
+   Arrays are mutable, and they can be updated using assignment notation:
+   ``vec[0] = 17``.  Array indices start at 0 and go through ``len - 1``, where
+   ``len`` is the length of the array.  Oat arrays (unlike C arrays) also store a
+   length field to support array-bounds checks, which we will add in a future
+   project.  For this project, you do not have to implement bounds checking.
+
+   Arrays in Oat are represented at the LL IR level by objects of the LL type
+   ``{i64, [0 x t]}*``, that is, an array is a *pointer* to a struct whose first
+   element is an ``i64`` value that is the array's length, and whose second
+   component is an array of elements of type ``t``.  See the translation of Oat
+   types into LL types via the ``cmp_ty`` function.
+
+   This array representation is similar to that used in OCaml or Java, which do
+   not allow "inlined" multidimensional arrays as in C.  We choose this
+   representation to facilitate array-bounds checking (which we will implement in
+   a later HW). The length information is located *before* the 0th element of the
+   array.  For example, the following array would be represented as a pointer to
+   memory as shown below:
+
+
+   .. code::
+
+      int[]{11,12,13,14};
+
+      arr --+
+            |
+            v
+           [4][11][12][13][14]
+
+   We will exploit this array representation that includes length data in the
+   next assignment, when we use a type system to make it a safe language.
+
+   Left-Hand-Side Expressions
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   As usual in imperative languages, local and global identifiers denote mutable
+   locations, and they can appear to the left of an assignment operation. In the
+   example below, the identifier ``x`` appears on both the left and right:
+
+   .. code::
+
+      x = x + 1;
+
+   On the right-hand-side of the assignment, ``x`` is implicitly dereferenced to
+   obtain its value, whereas on the left-hand-side, it stands for the location
+   where the value of ``x`` is stored. For example, in our LLVMlite IR, each Oat
+   local identifier will correspond to an ``alloca``\ d value on the stack,
+   accessed through a pointer.
+
+   Similarly, the ``i``\ th array index denotes both the value stored in the array
+   and the corresponding location in memory.
+
+   .. code::
+
+      myarr[i] = myarr[i] + 1;
+
+
+   In this case, ``myarr`` can be an arbitrary expression that evaluates to an
+   array, including function calls or an index into an array of arrays. For
+   example the code below shows that it is legal to index off of a function call
+   expression, as long as the function returns an array.
+
+   .. code::
+
+      int[] f(int[] x, int[] y, bool b) {
+        if ( b ) {
+          return x;
+        } else {
+          return y;
+        }
+      }
+
+      global x = new int[]{1, 2, 3};
+      global y = new int[]{4, 5, 6};
+
+      int program (int argc, string[] argv) {
+        f(x, y, true)[0] = 17;     /* non-trivial lhs */
+        var z = f(x, y, true)[0] + f(y, x, false)[0];
+        return z;  /* returns the value 34 */
+      }
+
+
+   Strings
+   ~~~~~~~
+
+   Oat supports C-style *immutable* strings, written ``"in quotes"``.  For the
+   moment, the string operations are very limited and mostly provided by built-in
+   functions provided by the runtime system.  Strings are considered to be
+   reference types because they are represented by a pointer to some byte
+   sequence.  Therefore they cannot be used in implicitly-initialized arrays
+   (we'll address this infelicity in HW5).  Note that the type ``string[]`` makes
+   sense in Oat v.1, and it means an array of strings, none of which is null.
+   The only way to get a value of such a type in Oat v.1 is as an input to the
+   toplevel program.
+
+
+   .. _oat-runtime:
+
+   Built-in Functions
+   ~~~~~~~~~~~~~~~~~~
+
+   We now have enough infrastructure to support interesting built-in operations,
+   including:
+
+     - | ``string_of_array : (int[]) -> string``
+       | Assumes each ``int`` of the array is in the range 0-127 and therefore represents an ASCII character.
+     - ``array_of_string : (string) -> int[]``
+     - ``print_string : (string) -> void``
+     - ``print_int : (int) -> void``
+     - ``print_bool : (bool) -> void``
+
+   These built-in operations, along with some internal C-functions used by the
+   Oat runtime, are implemented in ``runtime.c``.
+
+   Task I: Lexing and Parsing
+   --------------------------
+
+   The first step in implementing the frontend of the compiler is to get the
+   lexer and parser working.  We have provided you with a partial implementation
+   in the ``lexer.mll`` and ``parser.mly`` files, but the provided grammar is
+   both ambiguous and missing syntax for several key language constructs.
+   Complete this implementation so that your frontend can parse all of the
+   example ``hw4programs/*.oat`` files.
+
+   The full grammar is given in the :download:`Oat v.1 Language Specification
+   <oat-v1.pdf>`.
+
+   You need to:
+
+    - Add the appropriate token definitions to ``parser.mly`` and adjust
+      ``lexer.ml``.
+    - Complete the parser according to the full grammar.
+    - Disambiguate any parse conflicts (shift/reduce or reduce/reduce) according
+      to the precedence and associativity rules.
+
+
+   Missing constructs include:
+
+    - all of the binary operations except ``+``, ``-``, ``*``, and ``==``
+    - the boolean type and values
+    - default-initialized and implicitly-initialized array expressions and array global initializers
+    - string literal expressions and global initializers
+    - ``for`` loops
+
+   .. admonition:: Note
+
+      Besides the parsing tests provided in ``gradedtests.ml``, you
+      can also test just the parsing behavior of your frontend by
+      stopping compilation after parsing with the ``-S`` flag and pretty-printing the Oat code to the terminal:
+
+      .. code::
+
+         ./main.native -S --print-oat file.oat
+
+   .. admonition:: Warning
+
+      Because the entire rest of the project hinges on getting a correct parser
+      up and running, please try to do this early and seek help if you need it.
+
+   .. admonition:: Note
+
+      Note that completing the parser will not require massive refactoring! The
+      tasks described above each require only relatively small changes to
+      ``lexer.mll`` and/or ``parser.mly``.  We suggest you refer to the `menhir`_
+      documentation to understand how to use Menhir's built-in associativity
+      features.
+
+   Task II: Frontend Compilation
+   -----------------------------
+
+   The bulk of this project is implemeting the compiler in ``frontend.ml``.
+
+   The comments in that file will help you, but here is how we suggest you proceed:
+
+    1. Read through the whole ``frontend.ml`` file to get a sense of its
+       structure.  It is arranged so that it mirrors the syntax described in the
+       :download:`Oat v.1 Language Specification <oat-v1.pdf>`.
+
+       To a first approximation, there is one compilation function for each
+       nonterminal of the language syntax.  The inputs to these functions are the
+       static context and the piece of syntax (and its type) to be compiled. The
+       output of such a function depends on which part of the program you are
+       compiling: expressions evaluate to values, so their compilation function
+       returns the code computing an operand; statements do not evaluate to
+       values, but they do introduce new local variables, so their compilation
+       function returns a new context and an instruction stream, etc.
+
+    2. Take a close look at the ``Ctxt`` to see how it represents the compilation
+       contexts.
+    3. Begin by working on ``cmp_global_ctxt`` and ``cmp_gexp``, though initially
+       you can leave out arrays.
+    4. Next try to get a minimal ``cmp_fdecl`` working, producing an ``Ll.fdecl``
+       with the correct params and type.
+    5. Next handle the ``Ret`` case of ``cmp_stmt``.  Use the provided
+       ``cfg_of_stream`` function to produce a non-empty function body in
+       ``cmp_fdecl``. At this point, you should be able to compile a program like
+       ``hw4programs/easyrun1.oat``.
+    6. Next implement boolean and integer
+       values, ``Bop``, and ``Uop`` cases of ``cmp_exp``. Again, saving arrays
+       for later.
+    7. Add support for the ``Decl`` statement and identifier expressions. Each
+       local Oat variable will correspond to an ``alloca``\ d stack slot, which
+       should be hoisted to the entry block of the function using the ``E``
+       stream element constructor.
+    8. Add more statements. The ``If`` and ``While`` statements are very similar
+       to what we've seen in the lecture code. You can do ``for`` in several
+       ways, but one easy way is to translate it at the Oat abstract syntax level
+       to a block of code that uses a while loop. The ``SCall`` statement isn't
+       that different from the expression form; you might want to find a way to
+       have them share code.
+    9. Revisit the whole compiler adding support for arrays, following the same
+       order as above.
+
+   .. admonition:: Note
+
+      Although we have given you only the skeleton of the ``frontend.ml`` file,
+      much of the code is similar (if not identical to) that demonstrated in
+      lecture.  See the sample code there for additional guidance.
+
+   .. admonition:: Note
+
+      String constants must be hoisted to the global scope so that the string
+      data can be defined as LLVM IR global values.  See the comments in
+      ``frontend.ml``
+
+
+   Testing and Debugging Strategies
+   --------------------------------
+
+   The test harness provided by ``main.ml`` gives several ways to assess your
+   code. See the ``README.md`` file for a full description of the flags.
+
+   .. admonition:: Note
+
+      For this project, you will find it particularly
+      helpful to run the LLVMlite code by compiling it via clang (with the
+      ``--clang`` flag). That is because our
+      ``backend`` implementation from HW3 (which we have provided for
+      your reference) does *not* typecheck the ``.ll`` code that
+      it compiles.  Using clang will help you catch errors in the
+      generated ll output.
+
+   Graded Test Cases
+   ~~~~~~~~~~~~~~~~~
+
+   As part of this project, you must post an interesting test case for the
+   compiler to the course |piazza|_ site.  This test case must take the form of a
+   valid ``.oat`` (v.1) file along with expected input arguments and outputs (as
+   found in the ``hard`` tests of ``gradedtests.ml``).
+
+
+   *The test case you submit to* |piazza|_ *will not count if it is too similar to
+   previously-posted tests!* Your test should be distinct from prior test cases.
+   (Note that this policy encourages you to submit test cases early!)
+
+   .. admonition:: Note
+
+      Your test should be an Oat program about the size
+      of those in the ``hard`` test cases categories.  Tests that
+      stress parts of the language that aren't well exercised by the
+      provided tests are particularly encouraged.
+
+      We will validate these tests against our own implementation of
+      the compiler (and clang).  A second component of your grade will be
+      determined by how your compiler fares against the test cases
+      submitted by the other groups in the class.
+
+
+   Grading
+   -------
+
+   **Projects that do not compile will receive no credit!**
+
+   Your team's grade for this project will be based on:
+    - 85 Points: the various automated tests that we provide.
+    - 5 Points: for hidden test cases run only on the server.
+    - 5 Points: for posting an interesting test case to |piazza|_.  (Graded manually.)
+    - 5 Points: divided among the test cases created by other groups. (Graded manually.)

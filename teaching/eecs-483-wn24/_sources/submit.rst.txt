@@ -18,7 +18,7 @@ Starter Code
 
 Most of the projects in this course will come with extensive (partially
 complete) skeleton code, test cases, infrastructure, etc.  We will distribute
-that code using the EECS gitlab (|gitlab|_).  You are encouraged to use git's version control and
+that code using the EECS gitlab (|github|_).  You are encouraged to use git's version control and
 code merge features to work with your partner collaboratively.
 
 ..
