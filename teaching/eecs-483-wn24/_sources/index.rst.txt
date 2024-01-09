@@ -27,19 +27,18 @@ Course Information
 * `Max New <https://www.maxsnew.com>`_
 
   office hours: TBD
-    .. Mondays 4:00-5:00pm and by appointment, Levine 511
 
 **GSI**
 
 * **Eric Giovannini**
-  office hours: TBD
-  .. office hours: Monday 12:30-1:30pm, Location: see |piazza|_
 
-**IA**     
+  office hours: TBD
+
+**IA**
+
 * **Tingting Ding**
 
   office hours: TBD
-  .. Wednesday 3:30-4:30pm, Location: see |piazza|_
 
 **Coordinates**
 
