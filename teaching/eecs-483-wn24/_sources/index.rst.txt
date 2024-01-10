@@ -26,7 +26,7 @@ Course Information
 
 * `Max New <https://www.maxsnew.com>`_
 
-  office hours: TBD
+  office hours: Mondays 4-5pm, Thursday 10-11am, and by appointment, Beyster 4628
 
 **GSI**
 
@@ -43,8 +43,8 @@ Course Information
 **Coordinates**
 
 * Time: Monday, Wednesday 1:30 - 3pm
-* Lecture Location: |location|_  (and virtually on Zoom, see the link on |piazza|_)
-* Discussion Location: |discussion|_  (and virtually on Zoom, see the link on |piazza|_)
+* Lecture Location: |location|_
+* Discussion Location: |discussion|_
 * |piazza|_
 * |gradescope|_
 * |github|_
