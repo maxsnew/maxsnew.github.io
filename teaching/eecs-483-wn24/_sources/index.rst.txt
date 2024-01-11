@@ -32,13 +32,13 @@ Course Information
 
 * **Eric Giovannini**
 
-  office hours: TBD
+  office hours: Tuesdays 3-5pm, Beyster Atrium 
 
 **IA**
 
 * **Tingting Ding**
 
-  office hours: TBD
+  office hours: Tuesdays 2-3pm, Beyster 1637 Beyster Table 2
 
 **Coordinates**
 
@@ -70,27 +70,27 @@ Homework Projects
 
 - HW1: Hellocaml!
 
-  * Due: Wednesday, January 26th at 11:59pm
+  * Due: Tuesday, January 23rd at 11:59pm
   
 - HW2: X86lite simulator
 
-  * Due: Wednesday, February 9th at 11:59pm
+  * Due: Tuesday, February 6th at 11:59pm
   
 - HW3: LLVMlite backend
 
-  * Due: Wednesday, February 23rd at 11:59pm
+  * Due: Tuesday, February 20th at 11:59pm
   
 - HW4: Oat language compiler v.1
 
-  * Due: Wednesday, March 23rd at 11:59pm
+  * Due: Tuesday, March 26th at 11:59pm
   
 - HW5: Oat language compiler v.2
 
-  * Due: Wednesday, April 13th at 11:59pm
+  * Due: Tuesday, April 9th at 11:59pm
 
 - HW6: Program Analysis & Optimizations
 
-  * Due: Wednesday, April 27th at 11:59pm
+  * Due: Tuesday, April 23th at 11:59pm
 
 
     
