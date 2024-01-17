@@ -300,9 +300,9 @@ function mkExam(name, semester) {
 //
 //   NOTE: If exams are _not_ held during class periods, then this should be modified to be more like hw
 function exam(tgtMonth, tgtDay, tag, info, name, examples, thisSemester) {
-    checkDate(tgtMonth, tgtDay);
-    var date = getSlotDateString();
-    //var date = tgtMonth + "/" + tgtDay;
+    // checkDate(tgtMonth, tgtDay);
+    // var date = getSlotDateString();
+    var date = tgtMonth + "/" + tgtDay;
     var cls = getDateClass();
     var solutions = "";
     if (!(thisSemester === "")) {
@@ -311,7 +311,7 @@ function exam(tgtMonth, tgtDay, tag, info, name, examples, thisSemester) {
     rawRowC(cls, date, bright(tag) + '</br>' + info, "",
 	    examples.map(function(sem){return (sem + ': ' + mkExam(name,sem));}).join('</br>') +  solutions
 	   );
-    nextDay();
+    // nextDay();
 }
 
 // --------------------------------------------------------------------------
@@ -383,7 +383,8 @@ lec(HIDE, "Parsing III: LR(1) Parsing", ["lec13.zip"]);
 
 lec(HIDE, "OAT v1 overview, First-class Functions I", ["lec14.zip"]);
 
-exam(3, 11, "Midterm", "", "midterm", [], "");
+noClassDate(3, 11, "Pre-midterm Review");
+exam(3, 12, "Midterm, 7-9pm, DOW 1013 and 1014", "", "midterm", [], "");
 	
 lec(HIDE, "First-class Functions II: lambda calculus", ["lec14.zip"]);
 

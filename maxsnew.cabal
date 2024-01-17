@@ -27,7 +27,6 @@ library
                        text,
                        yaml
   default-language:    Haskell2010
-  ghc-options:         -dynamic
 
 executable maxsnew-exe
   hs-source-dirs:      app
