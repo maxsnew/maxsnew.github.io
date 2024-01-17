@@ -25,7 +25,7 @@ and the `OCaml web site <https://ocaml.org/>`_.
 
 Please also take some time to skim the available resources on the
 course homepage -- in particular, the book `Introduction to Objective
-Caml <../../../_static/files/ocaml-book.pdf>`_
+Caml <../../_static/files/ocaml-book.pdf>`_
 provides a very good reference for learning OCaml. In the problems
 below when you see a note like "See IOC 5.2" please refer to the
 corresponding section of the book.
