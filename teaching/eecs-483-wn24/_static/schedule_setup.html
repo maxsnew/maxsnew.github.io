@@ -210,9 +210,9 @@ function mkExam(name, semester) {
 //
 //   NOTE: If exams are _not_ held during class periods, then this should be modified to be more like hw
 function exam(tgtMonth, tgtDay, tag, info, name, examples, thisSemester) {
-    checkDate(tgtMonth, tgtDay);
-    var date = getSlotDateString();
-    //var date = tgtMonth + "/" + tgtDay;
+    // checkDate(tgtMonth, tgtDay);
+    // var date = getSlotDateString();
+    var date = tgtMonth + "/" + tgtDay;
     var cls = getDateClass();
     var solutions = "";
     if (!(thisSemester === "")) {
@@ -221,7 +221,7 @@ function exam(tgtMonth, tgtDay, tag, info, name, examples, thisSemester) {
     rawRowC(cls, date, bright(tag) + '</br>' + info, "",
 	    examples.map(function(sem){return (sem + ': ' + mkExam(name,sem));}).join('</br>') +  solutions
 	   );
-    nextDay();
+    // nextDay();
 }
 
 // --------------------------------------------------------------------------

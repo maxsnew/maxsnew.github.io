@@ -25,13 +25,15 @@ and the `OCaml web site <https://ocaml.org/>`_.
 
 Please also take some time to skim the available resources on the
 course homepage -- in particular, the book `Introduction to Objective
-Caml <../../../current/_static/files/ocaml-book.pdf>`_
+Caml <../../../_static/files/ocaml-book.pdf>`_
 provides a very good reference for learning OCaml. In the problems
 below when you see a note like "See IOC 5.2" please refer to the
 corresponding section of the book.
 
 
 **Getting Started**
+
+As with all projects, the starter code can be found on |github|_.
 
 Unlike future projects, most of the instructions for this project are
 found as comments in the source files. To get started on this project, 
