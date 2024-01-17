@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-stack build \
-    && stack exec maxsnew-exe clean \
-    && stack exec maxsnew-exe build \
+cabal build \
+    && cabal run maxsnew-exe clean \
+    && cabal run maxsnew-exe build \
     && git checkout master \
     && cp -a _site/. . \
     && git add -A \
