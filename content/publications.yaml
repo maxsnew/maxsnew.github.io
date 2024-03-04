@@ -1,3 +1,25 @@
+- title: Compiling with Call-by-push-value
+  id: mfps2023
+  venue: Invited talk, MFPS 2023
+  authors: Max S. New
+  abstract: True
+  links:
+    slides: docs/mfps2023-slides.pdf
+
+- title: Notions of Stack-manipulating Computation and Relative Monads
+  id: relative-monads
+  authors: Yuchen Jiang, Runze Xue and Max S. New
+  preprint: true
+  links:
+    draft: docs/zydeco-relmonad.pdf
+
+- title: Denotational Semantics of Gradual Typing using Synthetic Guarded Domain Theory
+  id: sgdt-gtt
+  authors: Eric Giovannini, Tingting Ding and Max S. New
+  preprint: true
+  links:
+    draft: docs/sgdt-gtt.pdf
+
 - title: Gradual Typing for Effect Handlers
   id: greff
   authors: Max S. New and Eric Giovannini and Daniel R. Licata

@@ -206,7 +206,7 @@ groupedPubsContext = listFieldWith "groups" pubsContext (return . traverse separ
                              [ ("Manuscripts", manus)
                              , ("Peer-Reviewed Papers", paperPubs)
                              , ("Drafts", prePubs)
-                             , ("Abstracts", absPubs) ]
+                             , ("Talks and Abstracts", absPubs) ]
 
 blogPostCtx :: Context String
 blogPostCtx =
