@@ -58,7 +58,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../hw1/doc/hw1-hellocaml.html">HW1: Hellocaml</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">HW4: Oat v.1 Compiler</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HW4: Oat v.1 Compiler</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-oat-language">The Oat Language</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#global-values">Global values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#expression-forms">Expression forms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arrays">Arrays</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#left-hand-side-expressions">Left-Hand-Side Expressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#strings">Strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#built-in-functions">Built-in Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#task-i-lexing-and-parsing">Task I: Lexing and Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#task-ii-frontend-compilation">Task II: Frontend Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-and-debugging-strategies">Testing and Debugging Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#graded-test-cases">Graded Test Cases</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#grading">Grading</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../hw5/hw5-oatv2.html">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
 </ul>
@@ -92,7 +114,481 @@
 C-like language. The source language is a subset of C called “Oat” and
 the target is our LLVMlite subset of LLVM. This includes implementing
 a portion of the frontend of the compiler.</p>
-<p>More details will be released after the midterm.</p>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>To get started, accept the assignment on <a class="reference external" href="https://gitlab.eecs.umich.edu/483-wn24/starter-code">EECS Gitlab</a> and clone your
+team’s repository.</p>
+<p>The files included in the repository are briefly described
+below. Those marked with <code class="docutils literal notranslate"><span class="pre">*</span></code> are the only ones you should need to
+modify while completing this assignment.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>lib/util/assert.ml(i)</p></td>
+<td><p>the assertion framework</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/util/platform.ml</p></td>
+<td><p>platform-specific compilation support</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/util/range.ml(i)</p></td>
+<td><p>range datatype for error messages</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/ll/ll.ml</p></td>
+<td><p>the abstract syntax for LLVMlite</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/ll/llutil.ml</p></td>
+<td><p>name generation and pretty-printing for LLVMlite</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/ll/lllexer.mll</p></td>
+<td><p>lexer for LLVMlite syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/ll/llparser.mly</p></td>
+<td><p>parser generator for LLVMlite syntax</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/ll/llinterp.ml</p></td>
+<td><p>reference interpreter for the LLVMlite semantics</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/x86/x86.ml</p></td>
+<td><p>the X86lite language used as a target</p></td>
+</tr>
+<tr class="row-even"><td><p>README.md</p></td>
+<td><p>help about the main test harness</p></td>
+</tr>
+<tr class="row-odd"><td><p>Makefile</p></td>
+<td><p>basic make support for invoking ocamlbuild</p></td>
+</tr>
+<tr class="row-even"><td><p>hw4programs/*.oat</p></td>
+<td><p>example .oat v.1 programs used in testing</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/main.ml</p></td>
+<td><p>main test harness</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/driver.ml</p></td>
+<td><p>utilities for invoking the compiler</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/ast.ml</p></td>
+<td><p>oat abstract syntax</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/astlib.ml</p></td>
+<td><p>pretty printing</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/backend.ml</p></td>
+<td><p>sample solution to HW3</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/lexer.mll</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> oat lexer</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/parser.mly</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> oat parser</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/frontend.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> oat frontend</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/runtime.c</p></td>
+<td><p>oat runtime library</p></td>
+</tr>
+<tr class="row-even"><td><p>test/studenttests.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> where your own test cases should go</p></td>
+</tr>
+<tr class="row-odd"><td><p>test/gradedtests.ml</p></td>
+<td><p>graded test cases that we provide</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/progasts.ml</p></td>
+<td><p>helper ast representations for parser tests</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>You’ll need to have <a class="reference external" href="http://gallium.inria.fr/~fpottier/menhir/">menhir</a> and <a class="reference external" href="https://clang.llvm.org/">clang</a> installed on your system for this
+assignment.  If you have not already done so, follow the provided
+<a class="reference internal" href="../toolchain.html#toolchain"><span class="std std-ref">instructions</span></a> to install them.</p>
+</div>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>In this project, you will implement a compiler frontend for a simple
+imperative language that has boolean, int, string, and array types as well as
+top-level, mutually-recursive functions and global variables. Your compiler
+will accept source files that use syntax like:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int fact(int x) {
+  var acc = 1;
+  while (x &gt; 0) {
+    acc = acc * x;
+    x = x - 1;
+  }
+  return acc;
+}
+
+int program(int argc, string[] argv) {
+  print_string(string_of_int(fact(5)));
+  return 0;
+}
+</pre></div>
+</div>
+<p>and will produce an executable (by default named <code class="docutils literal notranslate"><span class="pre">a.out</span></code>) that, when
+linked against <code class="docutils literal notranslate"><span class="pre">runtime.c</span></code> and then executed produces the resulting
+output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>./a.out
+120
+</pre></div>
+</div>
+<div class="admonition-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>For examples of Oat code, see the files in
+<code class="docutils literal notranslate"><span class="pre">/hw4programs</span></code>, especially those with sensible names.</p>
+</div>
+</section>
+<section id="the-oat-language">
+<h2>The Oat Language<a class="headerlink" href="#the-oat-language" title="Link to this heading"></a></h2>
+<p>Oat supports multiple base-types of data: <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code>, and <code class="docutils literal notranslate"><span class="pre">string</span></code>,
+as well as arrays of such data.  The <a class="reference download internal" download="" href="../_downloads/5e47632c7bfbf5de04616b2dbb587d87/oat-v1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Oat</span> <span class="pre">language</span> <span class="pre">specification</span></code></a>.  contains a definition of the language syntax.  Oat concrete
+syntax does not require a local variable declaration to include a type
+definition, instead it uses the keyword <code class="docutils literal notranslate"><span class="pre">var</span></code>, as shown in the example
+above.  Oat mostly sticks with C or Java-like syntax, except for some quirks:
+<code class="docutils literal notranslate"><span class="pre">null</span></code> requires a type annotation, and bit-wise arithmetic operators have
+their own notation (so there is no overloading).</p>
+<p>See the file <code class="docutils literal notranslate"><span class="pre">ast.ml</span></code> for the OCaml representation of the abstract syntax —
+the type <code class="docutils literal notranslate"><span class="pre">typ</span></code> of types is defined there, along with representations of
+expressions, statements, blocks, function declarations, etc.  You should
+familiarize yourself with the correspondence between the OCaml representation
+and the notation used in the specification.  The <code class="docutils literal notranslate"><span class="pre">astlib</span></code> module defines
+some helper functions for printing Oat programs and abstract syntax.</p>
+<p>This version of Oat will not be safe: it is possible to access an array out of
+bounds or to call a function with incorrectly typed arguments.  The next
+version of Oat (which you will implement in HW5) will address these issues and
+add some other missing features. In particular, although the grammar gives a
+syntax for function types, this version of Oat does not need to support
+function pointers; these are included in anticipation of the next project.</p>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h3>
+</section>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h3>
+<p>Oat supports mutually-recursive, top-level functions.  Each function body
+consisting of a series of imperative statements that have Java-like semantics.</p>
+<p>A complete Oat program contains a function called <code class="docutils literal notranslate"><span class="pre">program</span></code> with type
+<code class="docutils literal notranslate"><span class="pre">(int,</span> <span class="pre">string[])</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code>, which takes command-line arguments like the C
+<code class="docutils literal notranslate"><span class="pre">main</span></code> function and is the entry-point of the executable.  The file
+<code class="docutils literal notranslate"><span class="pre">runtime.c</span></code> defines the Oat standard library, which provides a few
+<a class="reference internal" href="#oat-runtime"><span class="std std-ref">universally available functions</span></a>, mostly for doing I/O and working with
+strings.</p>
+</section>
+<section id="global-values">
+<h3>Global values<a class="headerlink" href="#global-values" title="Link to this heading"></a></h3>
+<p>Oat supports globally-declared variables with a limited set of initializers,
+including just base values (integer and boolean constants and null) and array
+literals. Unlike LLVM, Oat global initializers can’t contain identifiers that
+refer to other global values.</p>
+</section>
+<section id="expression-forms">
+<h3>Expression forms<a class="headerlink" href="#expression-forms" title="Link to this heading"></a></h3>
+<p>Oat supports several forms of expressions, including all the usual binary and
+unary operations.  Boolean values are <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>. Integer values
+have type <code class="docutils literal notranslate"><span class="pre">int</span></code> and they are 64-bits. Oat uses different syntax to
+distinguish boolean logical operations <code class="docutils literal notranslate"><span class="pre">b1</span> <span class="pre">&amp;</span> <span class="pre">b2</span></code> (and) and <code class="docutils literal notranslate"><span class="pre">b1</span> <span class="pre">|</span> <span class="pre">b2</span></code> (or)
+from bit-wise int operations <code class="docutils literal notranslate"><span class="pre">i1</span> <span class="pre">[&amp;]</span> <span class="pre">i2</span></code> (bitwise or) and <code class="docutils literal notranslate"><span class="pre">i1</span> <span class="pre">[|]</span> <span class="pre">i2</span></code>
+(bitwise or).  (This difference from a C-like language is necessitated by the
+lack of casts and overloading.)</p>
+</section>
+<section id="arrays">
+<h3>Arrays<a class="headerlink" href="#arrays" title="Link to this heading"></a></h3>
+<p>Oat supports arrays whose elements are all of the same type, which could be
+any type, including nested arrays. Arrays are considered to be <em>reference
+types</em>.  The expression <code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">typ</span> <span class="pre">[len]</span></code> creates a new default-initialized
+array of length <code class="docutils literal notranslate"><span class="pre">len</span></code>. In this case, <code class="docutils literal notranslate"><span class="pre">typ</span></code> must be either <code class="docutils literal notranslate"><span class="pre">int</span></code> or
+<code class="docutils literal notranslate"><span class="pre">bool</span></code>.  Each element of an integer array will be set to 0, and boolean
+arrays will be set false.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>For forward compatibility with Oat v.2,
+default-initialized arrays cannot use reference types (like <code class="docutils literal notranslate"><span class="pre">string</span></code>
+or other arrays) as the array element type.  (In Oat v.2 <code class="docutils literal notranslate"><span class="pre">string</span></code>
+will mean “definitely not a null” string, which is not compatible with
+default initialization.)  This means that Oat v.1 cannot support
+dynamically-sized arrays whose elements are of reference type.</p>
+</div>
+<p>Explicitly-initialized arrays have a length determined at compile time, and
+are written using braces with a comma-separated enumeration of array
+elements. They can appear as expressions declared inside a function, and
+(unlike default-initialized arrays) may contain reference types:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>var vec = new int[]{1, -2, 3+1, f(4)};       /* vec has length 4 */
+var strs = new string[]{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;};      /* strs has length 3 */
+var matrix = new int[][]{new int[]{1, 2, 3},
+                         new int[]{4, 5, 6}};  /* an array of arrays */
+</pre></div>
+</div>
+<p>or as global explicitly-initialized arrays (which can only use constant values):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>global arr = new int[]{1, 2, 3, 4};
+</pre></div>
+</div>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>There is a distinction between explicitly-initialized arrays declared at
+the global scope and those declared locally to a function.  Global
+initialized arrays are allocated at compile time, while those local to a
+function must be allocated at run time, on the heap.  Each call to a
+function might generate a new such array.</p>
+</div>
+<p>Arrays are mutable, and they can be updated using assignment notation:
+<code class="docutils literal notranslate"><span class="pre">vec[0]</span> <span class="pre">=</span> <span class="pre">17</span></code>.  Array indices start at 0 and go through <code class="docutils literal notranslate"><span class="pre">len</span> <span class="pre">-</span> <span class="pre">1</span></code>, where
+<code class="docutils literal notranslate"><span class="pre">len</span></code> is the length of the array.  Oat arrays (unlike C arrays) also store a
+length field to support array-bounds checks, which we will add in a future
+project.  For this project, you do not have to implement bounds checking.</p>
+<p>Arrays in Oat are represented at the LL IR level by objects of the LL type
+<code class="docutils literal notranslate"><span class="pre">{i64,</span> <span class="pre">[0</span> <span class="pre">x</span> <span class="pre">t]}*</span></code>, that is, an array is a <em>pointer</em> to a struct whose first
+element is an <code class="docutils literal notranslate"><span class="pre">i64</span></code> value that is the array’s length, and whose second
+component is an array of elements of type <code class="docutils literal notranslate"><span class="pre">t</span></code>.  See the translation of Oat
+types into LL types via the <code class="docutils literal notranslate"><span class="pre">cmp_ty</span></code> function.</p>
+<p>This array representation is similar to that used in OCaml or Java, which do
+not allow “inlined” multidimensional arrays as in C.  We choose this
+representation to facilitate array-bounds checking (which we will implement in
+a later HW). The length information is located <em>before</em> the 0th element of the
+array.  For example, the following array would be represented as a pointer to
+memory as shown below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int[]{11,12,13,14};
+
+arr --+
+      |
+      v
+     [4][11][12][13][14]
+</pre></div>
+</div>
+<p>We will exploit this array representation that includes length data in the
+next assignment, when we use a type system to make it a safe language.</p>
+</section>
+<section id="left-hand-side-expressions">
+<h3>Left-Hand-Side Expressions<a class="headerlink" href="#left-hand-side-expressions" title="Link to this heading"></a></h3>
+<p>As usual in imperative languages, local and global identifiers denote mutable
+locations, and they can appear to the left of an assignment operation. In the
+example below, the identifier <code class="docutils literal notranslate"><span class="pre">x</span></code> appears on both the left and right:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>x = x + 1;
+</pre></div>
+</div>
+<p>On the right-hand-side of the assignment, <code class="docutils literal notranslate"><span class="pre">x</span></code> is implicitly dereferenced to
+obtain its value, whereas on the left-hand-side, it stands for the location
+where the value of <code class="docutils literal notranslate"><span class="pre">x</span></code> is stored. For example, in our LLVMlite IR, each Oat
+local identifier will correspond to an <code class="docutils literal notranslate"><span class="pre">alloca</span></code>d value on the stack,
+accessed through a pointer.</p>
+<p>Similarly, the <code class="docutils literal notranslate"><span class="pre">i</span></code>th array index denotes both the value stored in the array
+and the corresponding location in memory.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>myarr[i] = myarr[i] + 1;
+</pre></div>
+</div>
+<p>In this case, <code class="docutils literal notranslate"><span class="pre">myarr</span></code> can be an arbitrary expression that evaluates to an
+array, including function calls or an index into an array of arrays. For
+example the code below shows that it is legal to index off of a function call
+expression, as long as the function returns an array.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int[] f(int[] x, int[] y, bool b) {
+  if ( b ) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+global x = new int[]{1, 2, 3};
+global y = new int[]{4, 5, 6};
+
+int program (int argc, string[] argv) {
+  f(x, y, true)[0] = 17;     /* non-trivial lhs */
+  var z = f(x, y, true)[0] + f(y, x, false)[0];
+  return z;  /* returns the value 34 */
+}
+</pre></div>
+</div>
+</section>
+<section id="strings">
+<h3>Strings<a class="headerlink" href="#strings" title="Link to this heading"></a></h3>
+<p>Oat supports C-style <em>immutable</em> strings, written <code class="docutils literal notranslate"><span class="pre">&quot;in</span> <span class="pre">quotes&quot;</span></code>.  For the
+moment, the string operations are very limited and mostly provided by built-in
+functions provided by the runtime system.  Strings are considered to be
+reference types because they are represented by a pointer to some byte
+sequence.  Therefore they cannot be used in implicitly-initialized arrays
+(we’ll address this infelicity in HW5).  Note that the type <code class="docutils literal notranslate"><span class="pre">string[]</span></code> makes
+sense in Oat v.1, and it means an array of strings, none of which is null.
+The only way to get a value of such a type in Oat v.1 is as an input to the
+toplevel program.</p>
+</section>
+<section id="built-in-functions">
+<span id="oat-runtime"></span><h3>Built-in Functions<a class="headerlink" href="#built-in-functions" title="Link to this heading"></a></h3>
+<p>We now have enough infrastructure to support interesting built-in operations,
+including:</p>
+<blockquote>
+<div><ul>
+<li><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">string_of_array</span> <span class="pre">:</span> <span class="pre">(int[])</span> <span class="pre">-&gt;</span> <span class="pre">string</span></code></div>
+<div class="line">Assumes each <code class="docutils literal notranslate"><span class="pre">int</span></code> of the array is in the range 0-127 and therefore represents an ASCII character.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">array_of_string</span> <span class="pre">:</span> <span class="pre">(string)</span> <span class="pre">-&gt;</span> <span class="pre">int[]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print_string</span> <span class="pre">:</span> <span class="pre">(string)</span> <span class="pre">-&gt;</span> <span class="pre">void</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print_int</span> <span class="pre">:</span> <span class="pre">(int)</span> <span class="pre">-&gt;</span> <span class="pre">void</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print_bool</span> <span class="pre">:</span> <span class="pre">(bool)</span> <span class="pre">-&gt;</span> <span class="pre">void</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>These built-in operations, along with some internal C-functions used by the
+Oat runtime, are implemented in <code class="docutils literal notranslate"><span class="pre">runtime.c</span></code>.</p>
+</section>
+</section>
+<section id="task-i-lexing-and-parsing">
+<h2>Task I: Lexing and Parsing<a class="headerlink" href="#task-i-lexing-and-parsing" title="Link to this heading"></a></h2>
+<p>The first step in implementing the frontend of the compiler is to get the
+lexer and parser working.  We have provided you with a partial implementation
+in the <code class="docutils literal notranslate"><span class="pre">lexer.mll</span></code> and <code class="docutils literal notranslate"><span class="pre">parser.mly</span></code> files, but the provided grammar is
+both ambiguous and missing syntax for several key language constructs.
+Complete this implementation so that your frontend can parse all of the
+example <code class="docutils literal notranslate"><span class="pre">hw4programs/*.oat</span></code> files.</p>
+<p>The full grammar is given in the <a class="reference download internal" download="" href="../_downloads/5e47632c7bfbf5de04616b2dbb587d87/oat-v1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Oat</span> <span class="pre">v.1</span> <span class="pre">Language</span> <span class="pre">Specification</span></code></a>.</p>
+<p>You need to:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Add the appropriate token definitions to <code class="docutils literal notranslate"><span class="pre">parser.mly</span></code> and adjust
+<code class="docutils literal notranslate"><span class="pre">lexer.ml</span></code>.</p></li>
+<li><p>Complete the parser according to the full grammar.</p></li>
+<li><p>Disambiguate any parse conflicts (shift/reduce or reduce/reduce) according
+to the precedence and associativity rules.</p></li>
+</ul>
+</div></blockquote>
+<p>Missing constructs include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>all of the binary operations except <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, and <code class="docutils literal notranslate"><span class="pre">==</span></code></p></li>
+<li><p>the boolean type and values</p></li>
+<li><p>default-initialized and implicitly-initialized array expressions and array global initializers</p></li>
+<li><p>string literal expressions and global initializers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">for</span></code> loops</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Besides the parsing tests provided in <code class="docutils literal notranslate"><span class="pre">gradedtests.ml</span></code>, you
+can also test just the parsing behavior of your frontend by
+stopping compilation after parsing with the <code class="docutils literal notranslate"><span class="pre">-S</span></code> flag and pretty-printing the Oat code to the terminal:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>./main.native -S --print-oat file.oat
+</pre></div>
+</div>
+</div>
+<div class="admonition-warning admonition">
+<p class="admonition-title">Warning</p>
+<p>Because the entire rest of the project hinges on getting a correct parser
+up and running, please try to do this early and seek help if you need it.</p>
+</div>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Note that completing the parser will not require massive refactoring! The
+tasks described above each require only relatively small changes to
+<code class="docutils literal notranslate"><span class="pre">lexer.mll</span></code> and/or <code class="docutils literal notranslate"><span class="pre">parser.mly</span></code>.  We suggest you refer to the <a class="reference external" href="http://gallium.inria.fr/~fpottier/menhir/">menhir</a>
+documentation to understand how to use Menhir’s built-in associativity
+features.</p>
+</div>
+</section>
+<section id="task-ii-frontend-compilation">
+<h2>Task II: Frontend Compilation<a class="headerlink" href="#task-ii-frontend-compilation" title="Link to this heading"></a></h2>
+<p>The bulk of this project is implemeting the compiler in <code class="docutils literal notranslate"><span class="pre">frontend.ml</span></code>.</p>
+<p>The comments in that file will help you, but here is how we suggest you proceed:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p>Read through the whole <code class="docutils literal notranslate"><span class="pre">frontend.ml</span></code> file to get a sense of its
+structure.  It is arranged so that it mirrors the syntax described in the
+<a class="reference download internal" download="" href="../_downloads/5e47632c7bfbf5de04616b2dbb587d87/oat-v1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Oat</span> <span class="pre">v.1</span> <span class="pre">Language</span> <span class="pre">Specification</span></code></a>.</p>
+<p>To a first approximation, there is one compilation function for each
+nonterminal of the language syntax.  The inputs to these functions are the
+static context and the piece of syntax (and its type) to be compiled. The
+output of such a function depends on which part of the program you are
+compiling: expressions evaluate to values, so their compilation function
+returns the code computing an operand; statements do not evaluate to
+values, but they do introduce new local variables, so their compilation
+function returns a new context and an instruction stream, etc.</p>
+</li>
+<li><p>Take a close look at the <code class="docutils literal notranslate"><span class="pre">Ctxt</span></code> to see how it represents the compilation
+contexts.</p></li>
+<li><p>Begin by working on <code class="docutils literal notranslate"><span class="pre">cmp_global_ctxt</span></code> and <code class="docutils literal notranslate"><span class="pre">cmp_gexp</span></code>, though initially
+you can leave out arrays.</p></li>
+<li><p>Next try to get a minimal <code class="docutils literal notranslate"><span class="pre">cmp_fdecl</span></code> working, producing an <code class="docutils literal notranslate"><span class="pre">Ll.fdecl</span></code>
+with the correct params and type.</p></li>
+<li><p>Next handle the <code class="docutils literal notranslate"><span class="pre">Ret</span></code> case of <code class="docutils literal notranslate"><span class="pre">cmp_stmt</span></code>.  Use the provided
+<code class="docutils literal notranslate"><span class="pre">cfg_of_stream</span></code> function to produce a non-empty function body in
+<code class="docutils literal notranslate"><span class="pre">cmp_fdecl</span></code>. At this point, you should be able to compile a program like
+<code class="docutils literal notranslate"><span class="pre">hw4programs/easyrun1.oat</span></code>.</p></li>
+<li><p>Next implement boolean and integer
+values, <code class="docutils literal notranslate"><span class="pre">Bop</span></code>, and <code class="docutils literal notranslate"><span class="pre">Uop</span></code> cases of <code class="docutils literal notranslate"><span class="pre">cmp_exp</span></code>. Again, saving arrays
+for later.</p></li>
+<li><p>Add support for the <code class="docutils literal notranslate"><span class="pre">Decl</span></code> statement and identifier expressions. Each
+local Oat variable will correspond to an <code class="docutils literal notranslate"><span class="pre">alloca</span></code>d stack slot, which
+should be hoisted to the entry block of the function using the <code class="docutils literal notranslate"><span class="pre">E</span></code>
+stream element constructor.</p></li>
+<li><p>Add more statements. The <code class="docutils literal notranslate"><span class="pre">If</span></code> and <code class="docutils literal notranslate"><span class="pre">While</span></code> statements are very similar
+to what we’ve seen in the lecture code. You can do <code class="docutils literal notranslate"><span class="pre">for</span></code> in several
+ways, but one easy way is to translate it at the Oat abstract syntax level
+to a block of code that uses a while loop. The <code class="docutils literal notranslate"><span class="pre">SCall</span></code> statement isn’t
+that different from the expression form; you might want to find a way to
+have them share code.</p></li>
+<li><p>Revisit the whole compiler adding support for arrays, following the same
+order as above.</p></li>
+</ol>
+</div></blockquote>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Although we have given you only the skeleton of the <code class="docutils literal notranslate"><span class="pre">frontend.ml</span></code> file,
+much of the code is similar (if not identical to) that demonstrated in
+lecture.  See the sample code there for additional guidance.</p>
+</div>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>String constants must be hoisted to the global scope so that the string
+data can be defined as LLVM IR global values.  See the comments in
+<code class="docutils literal notranslate"><span class="pre">frontend.ml</span></code></p>
+</div>
+</section>
+<section id="testing-and-debugging-strategies">
+<h2>Testing and Debugging Strategies<a class="headerlink" href="#testing-and-debugging-strategies" title="Link to this heading"></a></h2>
+<p>The test harness provided by <code class="docutils literal notranslate"><span class="pre">main.ml</span></code> gives several ways to assess your
+code. See the <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file for a full description of the flags.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>For this project, you will find it particularly
+helpful to run the LLVMlite code by compiling it via clang (with the
+<code class="docutils literal notranslate"><span class="pre">--clang</span></code> flag). That is because our
+<code class="docutils literal notranslate"><span class="pre">backend</span></code> implementation from HW3 (which we have provided for
+your reference) does <em>not</em> typecheck the <code class="docutils literal notranslate"><span class="pre">.ll</span></code> code that
+it compiles.  Using clang will help you catch errors in the
+generated ll output.</p>
+</div>
+<section id="graded-test-cases">
+<h3>Graded Test Cases<a class="headerlink" href="#graded-test-cases" title="Link to this heading"></a></h3>
+<p>As part of this project, you must post an interesting test case for the
+compiler to the course <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a> site.  This test case must take the form of a
+valid <code class="docutils literal notranslate"><span class="pre">.oat</span></code> (v.1) file along with expected input arguments and outputs (as
+found in the <code class="docutils literal notranslate"><span class="pre">hard</span></code> tests of <code class="docutils literal notranslate"><span class="pre">gradedtests.ml</span></code>).</p>
+<p><em>The test case you submit to</em> <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a> <em>will not count if it is too similar to
+previously-posted tests!</em> Your test should be distinct from prior test cases.
+(Note that this policy encourages you to submit test cases early!)</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Your test should be an Oat program about the size
+of those in the <code class="docutils literal notranslate"><span class="pre">hard</span></code> test cases categories.  Tests that
+stress parts of the language that aren’t well exercised by the
+provided tests are particularly encouraged.</p>
+<p>We will validate these tests against our own implementation of
+the compiler (and clang).  A second component of your grade will be
+determined by how your compiler fares against the test cases
+submitted by the other groups in the class.</p>
+</div>
+</section>
+</section>
+<section id="grading">
+<h2>Grading<a class="headerlink" href="#grading" title="Link to this heading"></a></h2>
+<p><strong>Projects that do not compile will receive no credit!</strong></p>
+<dl class="simple">
+<dt>Your team’s grade for this project will be based on:</dt><dd><ul class="simple">
+<li><p>85 Points: the various automated tests that we provide.</p></li>
+<li><p>5 Points: for hidden test cases run only on the server.</p></li>
+<li><p>5 Points: for posting an interesting test case to <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a>.  (Graded manually.)</p></li>
+<li><p>5 Points: divided among the test cases created by other groups. (Graded manually.)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
 </section>
 
 
