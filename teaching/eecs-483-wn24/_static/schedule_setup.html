@@ -122,6 +122,19 @@ function lec(visible, topic, code) {
     lecCount = lecCount + 1;
 }
 
+
+function reviewDay(visible, topic, reviewName) {
+    var date = getSlotDateString();
+    var cls = getDateClass();
+    if (!visible) {
+	cls = cls + ' elide';
+    }
+    var slides = reviewName + '.pdf';
+    rawRowC(cls, date, topic, mkSlide(slides), "");
+    nextDay();
+    // lecCount = lecCount + 1;
+}  
+
 // Creates an "no class day" row in the table
 //  desc - a string describing the reason there is no class
 //
