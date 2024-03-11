@@ -212,6 +212,19 @@ function lec(visible, topic, code) {
     lecCount = lecCount + 1;
 }
 
+
+function reviewDay(visible, topic, reviewName) {
+    var date = getSlotDateString();
+    var cls = getDateClass();
+    if (!visible) {
+	cls = cls + ' elide';
+    }
+    var slides = reviewName + '.pdf';
+    rawRowC(cls, date, topic, mkSlide(slides), "");
+    nextDay();
+    // lecCount = lecCount + 1;
+}  
+
 // Creates an "no class day" row in the table
 //  desc - a string describing the reason there is no class
 //
@@ -383,7 +396,7 @@ lec(SHOW, "Parsing III: Bottom-up Parsing: LR(0), LR(1)", []);
 
 lec(SHOW, "OAT v1 overview, First-class Functions I", ["lec14.zip"]);
 
-noClassDate(3, 11, "Pre-midterm Review");
+reviewDay(SHOW, "Pre-midterm Review", "midterm-review");
 exam(3, 12, "Midterm, 7-9pm, DOW 1013 and 1014", "", "midterm", [], "");
 	
 lec(HIDE, "First-class Functions II: lambda calculus", ["lec14.zip"]);
