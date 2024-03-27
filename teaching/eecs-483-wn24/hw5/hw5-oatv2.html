@@ -59,7 +59,25 @@
 <li class="toctree-l1"><a class="reference internal" href="../hw2/doc/hw2-x86lite.html">HW2: X86lite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hw3/hw3-llvmlite.html">HW3: LLVMlite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../hw4/hw4-oatv1.html">HW4: Oat v.1 Compiler</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-oat-language">The Oat Language</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#new-features">New Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#structs"><strong>Structs:</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-pointers"><strong>Function Pointers:</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#built-in-functions"><strong>Built-in Functions:</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#possibly-null-vs-definitely-not-null-references"><strong>Possibly null vs. Definitely Not Null References:</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#array-initializers"><strong>Array Initializers:</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#task-i-typechecking">Task I: Typechecking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#task-ii-frontend-compilation">Task II: Frontend Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-and-debugging-strategies">Testing and Debugging Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases">Test Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grading">Grading</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../hw6/hw6-opt.html">HW6: Dataflow Analysis and Optimizations</a></li>
 </ul>
 
@@ -90,7 +108,473 @@
 <span id="hw5-oatv2"></span><h1>HW5: Oat v2 – Typechecking Structs, Function Pointers, and Subtyping<a class="headerlink" href="#hw5-oat-v2-typechecking-structs-function-pointers-and-subtyping" title="Link to this heading"></a></h1>
 <p>In this project you will extend your Oat compiler to support more
 C-like features as well as some additional static checking.</p>
-<p>More details will be released after HW4 is due.</p>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>To get started, accept the assignment on <a class="reference external" href="https://gitlab.eecs.umich.edu/483-wn24/starter-code">EECS Gitlab</a> and clone your
+team’s repository. Note that the starter code as initially released is
+incomplete as some of it involves a solution to HW4. On April 1, the
+starter code will be updated to include the full starter code for
+frontend.ml.</p>
+<p>The files included in the repository are briefly described
+below. Those marked with <code class="docutils literal notranslate"><span class="pre">*</span></code> are the only ones you should need to
+modify while completing this assignment.</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>lib/util/assert.ml(i)</p></td>
+<td><p>the assertion framework</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/util/platform.ml</p></td>
+<td><p>platform-specific compilation support</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/util/range.ml(i)</p></td>
+<td><p>range datatype for error messages</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/ll/ll.ml</p></td>
+<td><p>the abstract syntax for LLVMlite</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/ll/llutil.ml</p></td>
+<td><p>name generation and pretty-printing for LLVMlite</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/ll/lllexer.mll</p></td>
+<td><p>lexer for LLVMlite syntax</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/ll/llparser.mly</p></td>
+<td><p>parser generator for LLVMlite syntax</p></td>
+</tr>
+<tr class="row-even"><td><p>lib/ll/llinterp.ml</p></td>
+<td><p>reference interpreter for the LLVMlite semantics</p></td>
+</tr>
+<tr class="row-odd"><td><p>lib/x86/x86.ml</p></td>
+<td><p>the X86lite language used as a target</p></td>
+</tr>
+<tr class="row-even"><td><p>README.md</p></td>
+<td><p>help about the main test harness</p></td>
+</tr>
+<tr class="row-odd"><td><p>Makefile</p></td>
+<td><p>basic make support for invoking ocamlbuild</p></td>
+</tr>
+<tr class="row-even"><td><p>hw4programs/*.oat</p></td>
+<td><p>example hw4 programs used in testing</p></td>
+</tr>
+<tr class="row-odd"><td><p>hw5programs/*.oat</p></td>
+<td><p>example hw5 programs used in testing</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/main.ml</p></td>
+<td><p>main test harness</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/driver.ml</p></td>
+<td><p>utilities for invoking the compiler</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/backend.ml</p></td>
+<td><p>sample solution to HW3</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/ast.ml</p></td>
+<td><p>oat abstract syntax</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/astlib.ml</p></td>
+<td><p>pretty printing</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/lexer.mll</p></td>
+<td><p>oat lexer</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/parser.mly</p></td>
+<td><p>oat parser</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/tctxt.ml</p></td>
+<td><p>typechecking context data structure</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/frontend.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> oat frontend [including most of a solution to HW4]</p></td>
+</tr>
+<tr class="row-odd"><td><p>bin/typechecker.ml</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code> oat typechecker</p></td>
+</tr>
+<tr class="row-even"><td><p>bin/runtime.c</p></td>
+<td><p>oat runtime library</p></td>
+</tr>
+<tr class="row-odd"><td><p>test/testlib.ml</p></td>
+<td><p>helper definitions to be shared across test cases</p></td>
+</tr>
+<tr class="row-even"><td><p>test/studenttests.ml</p></td>
+<td><p>where your own test cases should go</p></td>
+</tr>
+<tr class="row-odd"><td><p>test/gradedtests.ml</p></td>
+<td><p>graded test cases that we provide</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>You’ll need to have <a class="reference external" href="http://gallium.inria.fr/~fpottier/menhir/">menhir</a> and <a class="reference external" href="https://clang.llvm.org/">clang</a> installed on your system for this
+assignment.  If you have not already done so, follow the provided
+<a class="reference internal" href="../toolchain.html#toolchain"><span class="std std-ref">instructions</span></a> to install them.</p>
+</div>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>In this project, you will implement a compiler typechecker for an extended
+version of Oat that has boolean, int, string, array, struct and function
+pointer types as well as “possibly null” and “definitely not null” references.
+Your compiler will now accept source files of the form:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>struct Color {
+  int red;
+  int green;
+  int blue;
+  (Color) -&gt; Color f
+}
+
+Color rot(Color c1) {
+  var c2 = new Color{ red = c1.green; green = c1.blue; blue = c1.red; f = c1.f };
+  return c2;
+}
+
+global c = new Color { red = 10; green = 20; blue = 30 ; f = rot};
+
+int program (int argc, string[] argv) {
+  return c.f(c).red;
+}
+</pre></div>
+</div>
+<p>and will produce an executable (by default named <code class="docutils literal notranslate"><span class="pre">a.out</span></code>) that,
+when linked against <code class="docutils literal notranslate"><span class="pre">runtime.c</span></code> and then executed produces the resulting output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>./a.out
+20
+</pre></div>
+</div>
+<div class="admonition-hint admonition">
+<p class="admonition-title">Hint</p>
+<p>For examples of Oat v2 code, see the files in <code class="docutils literal notranslate"><span class="pre">/hw5programs</span></code>.</p>
+</div>
+</section>
+<section id="the-oat-language">
+<h2>The Oat Language<a class="headerlink" href="#the-oat-language" title="Link to this heading"></a></h2>
+<p>This version of Oat supports all of the features from HW4 but, in addition,
+support structs and function pointers, and a type system that makes a
+distinction between “possibly null” and “definitely not null” references.  It
+is the intention that this language is <em>type safe</em>, meaning that any
+well-typed program will not crash.  In particular, well-typed Oat v2 programs
+cannot exhibit null pointer dereference failures (though it may halt with an
+“array bounds check” failure).</p>
+<p>Oat supports multiple base-types of data: <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code>, and <code class="docutils literal notranslate"><span class="pre">string</span></code>,
+as well as arrays of such data.  The Oat language is large enough that it is
+simpler to give the specification of its type system using inference rules
+than to use English prose.  The <a class="reference download internal" download="" href="../_downloads/cc6e255671082a548f10c34aa4ff92f5/oat-v2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Oat</span> <span class="pre">language</span> <span class="pre">specification</span></code></a> contains a definition of the language syntax and a collection of
+inference rules that define Oat type checking.</p>
+<p>See the file <code class="docutils literal notranslate"><span class="pre">ast.ml</span></code> for the OCaml representation of the abstract syntax –
+the type <code class="docutils literal notranslate"><span class="pre">typ</span></code> of types is defined there, along with representations of
+expressions, statements, blocks, function declarations, etc.  You should
+familiarize yourself with the correspondence between the OCaml representation
+and the notation used in the specification.  The <code class="docutils literal notranslate"><span class="pre">astlib</span></code> module defines
+some helper functions for printing Oat programs and abstract syntax.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>The abstract syntax now has support for structs, function pointers, and new
+types.  We have already provided the parser for you.</p>
+</div>
+</section>
+<section id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Link to this heading"></a></h2>
+<section id="structs">
+<h3><strong>Structs:</strong><a class="headerlink" href="#structs" title="Link to this heading"></a></h3>
+<p>Oat struct types are declared by using the <code class="docutils literal notranslate"><span class="pre">struct</span></code> keyword at the top
+level.  For example the following program declares a new struct type named
+Color with three fields.  (Note: there is no trailing semicolon on the last
+struct field.)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>struct Color {
+  int red;
+  int green;
+  int blue
+}
+
+int program (int argc, string[] argv) {
+  var garr = new Color { green = 4; red = 3; blue = 5 };
+  garr.red = 17;
+  return garr.red + garr.green;
+}
+</pre></div>
+</div>
+<p>Struct values can be create by using the <code class="docutils literal notranslate"><span class="pre">new</span></code> keyword followed by the name
+of the struct type and a record of field initializers.  The order of the
+fields in the initializers does not have to match the order of the fields as
+declared, but all of the fields must be present and have the correct types.</p>
+<p>Struct values are represented internally as pointers to heap-allocated blocks
+of memory.  This means that structs, like strings and arrays, are reference
+values for the purposes of compilation.</p>
+<p>Struct fields are also mutable.  As shown in the sample program above, you can
+update the value of a struct.</p>
+</section>
+<section id="function-pointers">
+<h3><strong>Function Pointers:</strong><a class="headerlink" href="#function-pointers" title="Link to this heading"></a></h3>
+<p>This version of Oat supports function pointers as first-class values.  This
+means that the name of a top-level declared function can itself be used as a
+value.  For example, the following program declares a top-level function
+<code class="docutils literal notranslate"><span class="pre">inc</span></code> of type <code class="docutils literal notranslate"><span class="pre">(int)</span> <span class="pre">-&gt;</span> <span class="pre">int</span></code> and passes it as an argument to another
+function named <code class="docutils literal notranslate"><span class="pre">call</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int call((int) -&gt; int f, int arg) {
+  return f(arg);
+}
+
+int inc(int x) { return x + 1; }
+
+int program(int argc, string[] argv) {
+  return call(inc, 3);
+}
+</pre></div>
+</div>
+<p>Function types are written <code class="docutils literal notranslate"><span class="pre">(t1,</span> <span class="pre">..,</span> <span class="pre">tn)</span> <span class="pre">-&gt;</span> <span class="pre">tret</span></code> and, as illustrated above,
+function identifiers act as values of the corresponding type.  Note that such
+function identifiers, <em>unlike global variables</em>, do not denote storage space,
+and so cannot be used as the left-hand side of any assignment statement.
+These function pointers are not true closures, since they cannot capture
+variables from a local scope.</p>
+</section>
+<section id="built-in-functions">
+<h3><strong>Built-in Functions:</strong><a class="headerlink" href="#built-in-functions" title="Link to this heading"></a></h3>
+<p>The built-in functions, whose types are given below, can also be passed as
+function-pointers:</p>
+<blockquote>
+<div><ul>
+<li><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">string_of_array</span> <span class="pre">:</span> <span class="pre">(int[])</span> <span class="pre">-&gt;</span> <span class="pre">string</span></code></div>
+<div class="line">Assumes each <code class="docutils literal notranslate"><span class="pre">int</span></code> of the array is the representation of an ASCII character.</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">array_of_string</span> <span class="pre">:</span> <span class="pre">(string)</span> <span class="pre">-&gt;</span> <span class="pre">int[]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print_string</span> <span class="pre">:</span> <span class="pre">(string)</span> <span class="pre">-&gt;</span> <span class="pre">unit</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print_int</span> <span class="pre">:</span> <span class="pre">(int)</span> <span class="pre">-&gt;</span> <span class="pre">unit</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print_bool</span> <span class="pre">:</span> <span class="pre">(bool)</span> <span class="pre">-&gt;</span> <span class="pre">unit</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>These built-in operations, along with some internal C-functions used by the
+Oat runtime are implemented in <code class="docutils literal notranslate"><span class="pre">runtime.c</span></code>.</p>
+</section>
+<section id="possibly-null-vs-definitely-not-null-references">
+<h3><strong>Possibly null vs. Definitely Not Null References:</strong><a class="headerlink" href="#possibly-null-vs-definitely-not-null-references" title="Link to this heading"></a></h3>
+<p>The Oat type system makes a distinction between possibly null reference types
+<code class="docutils literal notranslate"><span class="pre">r?</span></code>, which are marked with a question mark and are not statically known to
+be different from <code class="docutils literal notranslate"><span class="pre">null</span></code>, and definitely not-null reference types.  These
+features are illustrated in the following code from the <code class="docutils literal notranslate"><span class="pre">ifq3.oat</span></code> file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>int sum(int[]? arr) {
+    var z = 0;
+    if?(int[] a = arr) {
+      for(var i = 0; i&lt;length(a); i = i + 1;) {
+        z = z + a[i];
+      }
+    }
+    return z;
+}
+
+int program (int argc, string[] argv) {
+    var x = 0;
+    x = x + sum(new int[]{1,2,3});
+    x = x + sum(int[] null);
+    return x;
+}
+</pre></div>
+</div>
+<p>Here, the <code class="docutils literal notranslate"><span class="pre">sum</span></code> function takes a possibly null array reference.  Possibly
+null types, like <code class="docutils literal notranslate"><span class="pre">int[]?</span></code>, cannot directly be treated as non-null.  Instead,
+the programmer has to insert the appropriate null check using the <code class="docutils literal notranslate"><span class="pre">if?</span></code>
+statement, which performs the null check and, if it is successful, creates an
+alias to the checked value for use as a definitely not null pointer.  The rule
+for typechecking <code class="docutils literal notranslate"><span class="pre">if?</span></code> works for any possibly null reference types.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>The variable introduced by <code class="docutils literal notranslate"><span class="pre">if?</span></code> is still mutable, so
+the frontend will have to allocate storage space just as for any other local
+variable introduced by <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+</div>
+</section>
+<section id="array-initializers">
+<h3><strong>Array Initializers:</strong><a class="headerlink" href="#array-initializers" title="Link to this heading"></a></h3>
+<p>Once we decide to have definitely not-null types, we need a convenient way to
+initialize arrays of definitely-not-null reference types (so that we can
+ensure that the entries are not null).  We thus add support for built-in
+initializers, that work as shown below:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>var matrix = new int[][3]{i -&gt; new int[3]{j -&gt; i * j}}
+</pre></div>
+</div>
+<p>This code declares a 3x3 matrix represented as an array of int arrays.  The
+entry <code class="docutils literal notranslate"><span class="pre">matrix[i][j]</span></code> is initialized to be <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">*</span> <span class="pre">j</span></code>.  The initializer array
+syntax is of the general form: <code class="docutils literal notranslate"><span class="pre">new</span> <span class="pre">t[e1]{id</span> <span class="pre">-&gt;</span> <span class="pre">e2}</span></code>, where <code class="docutils literal notranslate"><span class="pre">e1</span></code> is an
+integer determining the size of the array, <code class="docutils literal notranslate"><span class="pre">id</span></code> names the index, and the
+initializer expression <code class="docutils literal notranslate"><span class="pre">e2</span></code> computes the initial value at each index.  This
+initializer code is semantically equivalent to allocating an array followed by
+immediatelly initializing each element:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>var a = new int[e1];
+for(var id = 0; id &lt; length(a); id = id + 1;) {
+   a[x] = e2;
+}
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">e2</span></code> can mention the loop index id.  See the typechecking rules
+for the details about scoping and typechecking.</p>
+<p>Oat v2 retains the <em>implicitly initialized arrays</em> from Oat v1 (which allowed
+only <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">bool</span></code> such arrays) and allows possibly-null types to have
+the default initializer <code class="docutils literal notranslate"><span class="pre">null</span></code>.  That means that the following code snippet
+is legal, and initializes a length-three array of null pointers (each of type
+<code class="docutils literal notranslate"><span class="pre">int[]?</span></code>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>var a = new int[]?[3];
+</pre></div>
+</div>
+<p>The Oat v2 typechecker will condider the following code to be ill-typed
+because the inner array type <code class="docutils literal notranslate"><span class="pre">int[]</span></code> is definitely-not-null and so cannot be
+default initialized to null:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>var a = new int[][3];
+</pre></div>
+</div>
+</section>
+</section>
+<section id="task-i-typechecking">
+<h2>Task I: Typechecking<a class="headerlink" href="#task-i-typechecking" title="Link to this heading"></a></h2>
+<p>The main task of this project is to implement a typechecker for the Oat
+language, which will put enough restrictions on its code to ensure type
+safety.</p>
+<p>The typing rules describing the intended behavior of the typechecker are given
+in the accompanying <a class="reference download internal" download="" href="../_downloads/cc6e255671082a548f10c34aa4ff92f5/oat-v2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Oat</span> <span class="pre">v.2</span> <span class="pre">language</span> <span class="pre">specification</span></code></a>.  Use
+that, and the notes in <code class="docutils literal notranslate"><span class="pre">typechecker.ml</span></code> to get started.  We suggest that you
+tackle this part of the project in this order:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Try to read over the typing rules and get a sense of how the notion of
+context used there matches up with the implementation in <code class="docutils literal notranslate"><span class="pre">tctxt.ml</span></code>.</p></li>
+<li><p>Complete the implementations of <code class="docutils literal notranslate"><span class="pre">subtype</span></code> and <code class="docutils literal notranslate"><span class="pre">typecheck_ty</span></code> (and
+their mutually recursive companions), to remind yourself how the
+typechecking rules line up with the code that implements them.  It might
+be good to write a few unit tests for these functions to confirm your
+expectations.</p></li>
+<li><p>Think about the intended behavior of the typechecker for expressions and
+work out a few of the easier cases.  We have given you helper functions
+for typechecking the primitive operations.</p></li>
+<li><p>Next tackle the context-building functions, which create the correct
+typing context for later typechecking.</p></li>
+<li><p>Take an initial stab at <code class="docutils literal notranslate"><span class="pre">typecheck_fdecl</span></code>.  We suggest that you
+introduce a helper function called <code class="docutils literal notranslate"><span class="pre">typecheck_block</span></code>, which will be used
+for function declarations (and elsewhere).</p></li>
+<li><p>Working backwards through the file, work on typechecking statements, which
+will rely heavily on typechecking expressions.  Make sure you understand
+how the expected return type information and the behavior type of the
+statement are propagated through this part of the code.</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="task-ii-frontend-compilation">
+<h2>Task II: Frontend Compilation<a class="headerlink" href="#task-ii-frontend-compilation" title="Link to this heading"></a></h2>
+<p>We have provided a mostly complete sample implementation of the frontend of
+the compiler (corresponding to our solution to HW4).  Your task for this part
+of the project is to add support for structures and function pointers.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>If your group feels very strongly that you would be more comfortable using
+your own frontend from HW4 as the starting point for this part of the
+project, you may, but consult the course staff first.  A few things have
+likely changed between HW4 and HW5, so there might be more work than you
+expect if you decide to take this route.</p>
+</div>
+<p><strong>Functions Pointers:</strong> Due to presence of function pointer values, you might
+want to familiarize yourself with the <code class="docutils literal notranslate"><span class="pre">cmp_function_ctxt</span></code> and the way we
+implement the <code class="docutils literal notranslate"><span class="pre">Id</span> <span class="pre">id</span></code> case for the expression compilation. There is nothing
+for you to do do here.</p>
+<p><strong>Arrays:</strong> There are only a few places where the code must be modified, each
+of which is marked as a <code class="docutils literal notranslate"><span class="pre">ARRAY</span> <span class="pre">TASK</span></code> in the comments.  You’ll need to add
+code to handle the <code class="docutils literal notranslate"><span class="pre">length</span></code> expression (for which you might want to recall
+the array representation from the HW4 instructions).  You’ll also have to
+implement the array initializers.</p>
+<p><strong>Structs:</strong> There are only a few places where the code must be modified, each
+of which is marked as a <code class="docutils literal notranslate"><span class="pre">STRUCT</span> <span class="pre">TASK</span></code> in the comments.  Struct compilation
+is (broadly) similar to how we handle arrays.  The main difference is that you
+need to use the structure information to look up the field index for the
+struct representation (rather than computing an integer directly).  Follow the
+<code class="docutils literal notranslate"><span class="pre">STRUCT</span> <span class="pre">TASK</span></code> breadcrumbs left in the frontend and the comments there.</p>
+<p><strong>Checked Cast:</strong> To implement the <code class="docutils literal notranslate"><span class="pre">if?</span></code> statement, you’ll need to generate
+code that does a null-pointer check.  Since this construct introduces a
+variable into scope (for the ‘notnull’ branch), you’ll have to handle the
+context and allocate storage space…</p>
+</section>
+<section id="testing-and-debugging-strategies">
+<h2>Testing and Debugging Strategies<a class="headerlink" href="#testing-and-debugging-strategies" title="Link to this heading"></a></h2>
+<p>The test harness provided by <code class="docutils literal notranslate"><span class="pre">main.ml</span></code> gives several ways to assess your
+code. See the <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file for a full description of the flags.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>As with the previous project, you will find it particularly helpful to run
+the LLVMlite code by compiling it via clang (with the <code class="docutils literal notranslate"><span class="pre">--clang</span></code> flag) or
+testing with the <code class="docutils literal notranslate"><span class="pre">llc</span></code> backend. That is because our <code class="docutils literal notranslate"><span class="pre">backend</span></code>
+implementation from HW3 (which we have provided for your reference) does
+<em>not</em> typecheck the <code class="docutils literal notranslate"><span class="pre">.ll</span></code> code that it compiles.  Using clang will help
+you catch errors in the generated ll output, including type errors (which
+aren’t checked by HW3’s <code class="docutils literal notranslate"><span class="pre">backend.ml</span></code>).</p>
+</div>
+</section>
+<section id="test-cases">
+<h2>Test Cases<a class="headerlink" href="#test-cases" title="Link to this heading"></a></h2>
+<p>As part of this project, you must post <em>three</em> test cases for the compiler to
+the course <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a> site.</p>
+<p>Two of your test cases must be small “unit tests” for a specific inference
+rule used in the type system.  Here’s how it works: Choose a typechecking
+judgment and write one small, self-contained “positive” test case that
+succeeds because the inference rules for that judgment permit a particular
+derivation.  Then, write a second, small, self-contained “negative” test case
+that succeeds because the inference rules for that judgment do not permit a
+particular derivation.</p>
+<p>For example, I could pick the “subtype” inference rule and have the positive
+test case be testing that indeed, <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">|-</span> <span class="pre">string?</span> <span class="pre">&lt;:</span> <span class="pre">string?</span></code> and the negative
+test case could assert that it is not possible to derive <code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">|-</span> <span class="pre">string?</span> <span class="pre">&lt;:</span>
+<span class="pre">string</span></code>.  The OCaml code for these two tests would be given by:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>let unit_tests = [
+  &quot;subtype_stringQ_stringQ&quot;,
+   (fun () -&gt;
+       if Typechecker.subtype Tctxt.empty (TNullRef RString) (TNullRef RString) then ()
+       else failwith &quot;should not fail&quot;)
+; (&quot;no_subtype_stringQ_stringQ&quot;,
+   (fun () -&gt;
+       if Typechecker.subtype Tctxt.empty (TNullRef RString) (TRef RString) then
+         failwith &quot;should not succeed&quot; else ())
+  )
+]
+</pre></div>
+</div>
+<p>You might find the <code class="docutils literal notranslate"><span class="pre">typecheck_error</span></code> and <code class="docutils literal notranslate"><span class="pre">typecheck_correct</span></code> functions in
+the <code class="docutils literal notranslate"><span class="pre">testlib.ml</span></code> file useful for writing these unit tests.  (Note that
+<code class="docutils literal notranslate"><span class="pre">Testlib</span></code> is also imported by <code class="docutils literal notranslate"><span class="pre">studenttests.ml</span></code> so you can use the test
+infrastucture for your own examples.)</p>
+<p>Your third test case must take the form of a <code class="docutils literal notranslate"><span class="pre">.oat</span></code> file along with expected
+input arguments and outputs (as found in the <code class="docutils literal notranslate"><span class="pre">hard</span></code> tests of
+<code class="docutils literal notranslate"><span class="pre">gradedtests.ml</span></code>).  Your test should be an Oat program about the size of
+those in the <code class="docutils literal notranslate"><span class="pre">hard</span></code> test cases categories.  This case must exercise some of
+the new features of this version of Oat: structs, function pointers, non-null
+vs. null references, or, ideally, some combination of these.  Oat is now quite
+a full-fledged language, so this can be pretty fun.  Ideas include:
+linked-list algorithms (will definitely need null), object-encodings like the
+color example above, trees, etc.</p>
+<p>How handy is it to have notation for array initialization?  How intrusive do you
+think the not-null pointer requirement is?</p>
+<div class="admonition-warning admonition">
+<p class="admonition-title">Warning</p>
+<p><em>The test cases you submit to</em> <a class="reference external" href="https://piazza.com/class/lpwv6v8j1st66o">Piazza</a> <em>will not count if they are too
+similar to previously-posted tests!</em> Your test should be distinct from prior
+test cases.  (Note that this policy encourages you to submit test cases
+early!)</p>
+</div>
+<p>We will validate these tests against our own implementation of the compiler
+(and clang).  A second component of your grade will be determined by how your
+compiler fares against the test cases submitted by the other groups in the
+class.</p>
+</section>
+<section id="grading">
+<h2>Grading<a class="headerlink" href="#grading" title="Link to this heading"></a></h2>
+<p><strong>Projects that do not compile will receive no credit!</strong></p>
+<dl class="simple">
+<dt>Your team’s grade for this project will be based on:</dt><dd><ul class="simple">
+<li><p>85 Points: the various automated tests.</p></li>
+<li><p>5 Points: for hidden test cases run only on the server.</p></li>
+<li><p>5 Points for posting your test cases to Piazza.  (Graded manually.)</p></li>
+<li><p>5 Points divided among the test cases created by other groups. (Graded
+manually.)</p></li>
+</ul>
+</dd>
+</dl>
+</section>
 </section>
 
 
