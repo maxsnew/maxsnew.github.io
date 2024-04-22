@@ -37,11 +37,12 @@ PhD students
 - [Eric Giovannini][ericg] (2021-)
 - [Steven Schaefer][stschaef] (2023-)
 - [Eric Bond][ericb] (2023-)
-- Yuchen Jiang (2023-)
+- [Yuchen Jiang][lighght] (2023-)
 
 [ericg]: http://www-personal.umich.edu/~ericgio/index.html
 [ericb]: https://externalhom.com/
 [stschaef]: https://stevenschaefer.net/
+[lighght]: https://lighghteeloo.github.io/
 
 [amal]: http://www.ccs.neu.edu/home/amal/
 [robby]: http://www.eecs.northwestern.edu/~robby/
