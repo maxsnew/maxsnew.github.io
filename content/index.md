@@ -38,6 +38,7 @@ PhD students
 - [Steven Schaefer][stschaef] (2023-)
 - [Eric Bond][ericb] (2023-)
 - [Yuchen Jiang][lighght] (2023-)
+- Jesse Slater (2024-) (co-advised with [Xinyu Wang][xinyu])
 
 [ericg]: http://www-personal.umich.edu/~ericgio/index.html
 [ericb]: https://externalhom.com/
@@ -47,6 +48,7 @@ PhD students
 [amal]: http://www.ccs.neu.edu/home/amal/
 [robby]: http://www.eecs.northwestern.edu/~robby/
 [dan]: https://dlicata.wescreates.wesleyan.edu/
+[xinyu]: https://web.eecs.umich.edu/~xwangsd/
 [umich]: https://cse.engin.umich.edu/
 [mplse]: http://mplse.org/
 [github]: https://github.com/maxsnew
