@@ -28,7 +28,7 @@ supporting multiple source languages.
 
 Prior to my current position, I completed a postdoc at Wesleyan
 University with [Dan Licata][dan]. I completed my PhD at Northeastern
-University in Fall 2020 [Amal Ahmed][amal].
+University in Fall 2020 advised by [Amal Ahmed][amal].
 
 ## Students
 
