@@ -6,6 +6,13 @@
   links:
     slides: docs/mfps2023-slides.pdf
 
+- title: Intrinsic Verification of Parsers and Formal Grammar Theory in Dependent Lambek Calculus
+  id: lambek
+  authors: Steven Schaefer, Nathan Varner, Pedro H. Azevedo de Amorim and Max S. New
+  preprint: true
+  links:
+    draft: docs/lambek.pdf
+
 - title: Notions of Stack-manipulating Computation and Relative Monads
   id: relative-monads
   authors: Yuchen Jiang, Runze Xue and Max S. New
@@ -16,9 +23,9 @@
 - title: Denotational Semantics of Gradual Typing using Synthetic Guarded Domain Theory
   id: sgdt-gtt
   authors: Eric Giovannini, Tingting Ding and Max S. New
-  preprint: true
+  venue: POPL 2025
   links:
-    draft: docs/sgdt-gtt.pdf
+    extended version: https://arxiv.org/abs/2411.12822
 
 - title: Gradual Typing for Effect Handlers
   id: greff
