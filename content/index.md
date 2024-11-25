@@ -3,6 +3,7 @@ title: Max S. New
 ---
 
 <div><img src="/img/max_new2.jpg" id="selfportrait"></img></div>
+<div><a rel="me" id="mastodon" href="https://types.pl/@maxsnew">Mastodon</a></div>
 
 ## Address
 
