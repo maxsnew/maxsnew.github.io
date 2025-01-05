@@ -7,6 +7,3 @@
 [submodule "src/483-fa23"]
 	path = src/483-fa23
 	url = git@gitlab.eecs.umich.edu:483-fa23/private/website.git
-[submodule "src/483-wi24"]
-	path = src/483-wn24
-	url = git@gitlab.eecs.umich.edu:483-wi24/private/course-materials.git
