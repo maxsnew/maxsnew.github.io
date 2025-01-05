@@ -1,0 +1,300 @@
+* Is Recursion necessary?
+
+** Mutual Recursion: Last Time
+
+let x0 = e0
+    x1 = e2
+    x2 = e3
+in
+def f(y0):
+  e_f
+and
+def g(z0,z1):
+  e_g
+in
+
+e_bod
+
+becomes
+
+def f(env, y0):
+  let x0 = env[0],
+      x1 = env[1],
+      x2 = env[2],
+      f  = mk_closure(1, f, env),
+      g  = mk_closure(2, g, env),
+  in
+  e_f
+and
+...
+in
+let x0 = ...
+...
+let env = [x0, x1, x2] in
+    f   = mk_closure(1, f, env),
+    g   = mk_closure(2, g, env),
+...
+e_bod
+
+But notice that this is a low-level transformation, we use mk_closure
+to do it. Do we need it at all?
+
+
+** Landin's Knot
+
+
+
+
+
+
+
+
+Consider a recursive function
+def fact(x):
+  if x == 0:
+    1
+  else:
+    x * fact(x - 1)
+in
+fact(5)
+
+
+
+
+
+
+
+
+Say we hadn't implemented recursive functions, only lambda
+functions. Could you write fact still?
+
+Yes.
+
+There is a trick called "Landin's Knot" after Peter Landin, who
+discovered it.
+
+let fact' = [ false ],
+    fact  = lambda x:
+      if x == 0:
+        1
+      else:
+        x * fact'[0](x - 1)
+      end
+in
+fact'[0] := fact;
+fact(5)
+
+
+
+
+
+
+
+
+
+What's going on here? We have created a loop in the heap:
+
+fact is a closure whose environment is just fact'. Initially this is
+| 1 | lambda_code | ptr to [ false ] | 
+
+but after the mutation becomes
+fact -> | 1 | lambda_code | ptr to [ fact ] | 
+
+So we are simulating the "circularity" of a recursive function using a
+cycle in the heap.
+
+
+
+
+
+-- In class Exercise --
+
+More generally, you can implement mutual recursion this way as well:
+
+How would you translate:
+
+def even(x):
+  if x == 0:
+    true
+  else:
+    not(odd(x - 1))
+and
+def odd(x):
+  if x == 0:
+    false
+  else:
+    not(even(x - 1))
+in
+even(10)
+
+
+
+
+
+
+
+
+
+
+
+let even_odd = [false, false] in
+let even = lambda x:
+    let odd = even_odd[1],
+    if x == 0: true
+    else: not(odd(x - 1))
+let odd = ...
+in
+even_odd[0] := even;
+even_odd[1] := odd;
+even(10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+general pattern
+def f(x): e_f and
+def g(y): e_g and ...
+e'
+
+
+
+could turn into
+let funs = [ false , false , ... ] in
+let f = lambda x: let f = e[0], g = e[1], ... in e_f end,
+    g = lambda y: let f = e[0], g = e[1], ... in e_g end
+in
+funs[0] := f;
+funs[1] := g;
+...
+e'
+
+
+
+
+
+
+-- How is the performance of this ? --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+** Y
+
+We can in fact do it without recursion,
+in some ways the simplest way to do it.
+
+Transform
+
+def fact(x):
+  if x == 0:
+    1
+  else:
+    x * fact(x - 1)
+in
+fact(5)
+
+into 
+
+let Y = ???
+let fact = Y(lambda fact: lambda x:
+  if x == 0:
+    1
+  else:
+    x * fact(x - 1)
+  end)
+in
+fact(5)
+
+where Y is a function we can implement inside our language!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Y = lambda f:
+      let w = (lambda x: f(lambda v: x(x)(v) end) end)
+      in w(w)
+    end
+
+
+
+
+
+
+
+
+
+
+      
+
+How does this work?      
+
+let Y = lambda f: let w = (lambda x: f(lambda v: x(x)(v) end) end) in w(w) end,
+    fact = Y(lambda fact: lambda x:
+  if x == 0:
+    1
+  else:
+    x * fact(x - 1)
+  end end)
+in
+fact(10)
+
+-- How is the performance of this operation? --
