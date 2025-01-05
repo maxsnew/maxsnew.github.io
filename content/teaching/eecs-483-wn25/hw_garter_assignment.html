@@ -1,0 +1,66 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 7: Garter: Design Your Own Language Extension</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 7:</span> Garter:<span class="mywbr"> &nbsp;</span> Design Your Own Language Extension</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Part_.I__.Written_.Specification%29" class="tocviewlink" data-pltdoc="x">Part I:<span class="mywbr"> &nbsp;</span> Written Specification</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Part_.I.I__.Implementation%29" class="tocviewlink" data-pltdoc="x">Part II:<span class="mywbr"> &nbsp;</span> Implementation</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 7:</span> Garter:<span class="mywbr"> &nbsp;</span> Design Your Own Language Extension</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.Part_.I__.Written_.Specification%29" class="tocsubseclink" data-pltdoc="x">Part I:<span class="mywbr"> &nbsp;</span> Written Specification</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Part_.I.I__.Implementation%29" class="tocsubseclink" data-pltdoc="x">Part II:<span class="mywbr"> &nbsp;</span> Implementation</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.14</span></div><h2 class="heading"><a name="(part._)"></a><span class="AssignmentNum">Assignment 7:</span> Garter: Design Your Own Language Extension<span class="button-group"><a href="#(part._)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><p><h4 class="due">Part I Due: Fri 12/01 at 11:59pm, Part II Due: 12/13 at 11:59pm</h4></p><p>NOTE: This final, 2-part assignment, <span class="emph">must</span> be completed with a
+partner. We are releasing it early so that you have ample time to find
+a partner if you don&rsquo;t already have one. If you have not found a
+partner by class time on Monday, November 19, make a private piazza
+post with title "Partner Needed" and we will pair you with someone
+else who does not have a partner.</p><p>Thus far in the class we have provided you with a specification for a
+new language feature or analysis and you have implemented it according
+to the provided specification. For this final project <span class="emph">you</span> will
+take over, and both design the language extension and implement it.
+The assignment is broken up into two parts: first you will submit a
+written document specifying the syntax, semantics and an outline for
+how to implement a new language feature, along with a suite of
+executable tests demonstrating the expected behavior. Then you will
+extend the compiler end-to-end to support your new feature with a robust
+test suite to demonstrate your new language in action.</p><p><p>Here are a couple of recommended features for you to choose from that
+should be feasible and that the professor and GSI/IAs will be most
+prepared to help with. We will be providing additional background
+resources on these topics on Piazza to help you with your design.
+</p><ul><li><p>Raising and handling of exceptions. This extension has
+similarities to Diamondback and the array portion of Egg-eater.</p></li><li><p>Floating point numbers and operations on them. This extension
+has similarities to the Cobra assignment, but floating point numbers
+use unique assembly code registers and instructions that you will need
+to learn.</p></li><li><p>Implementing an interactive debugger with breakpoints. This is
+similar to implementing exceptions but more complex.</p></li></ul></p><p>If you would like to choose a different language feature to implement,
+e-mail the professor to confirm that it is sufficient and
+feasible. Whatever language feature you choose it should involve both
+of an extension to the concrete syntax and a non-trivial extension to
+the remainder of the compiler.</p><p>You may choose to base your extension off of either your diamondback
+or egg-eater compiler, or something in between such as diamondback
+with arrays added but not closures. You do not need to perform
+register allocation for your final compiler.</p><h3 class="heading">1<tt>&nbsp;</tt><a name="(part._.Part_.I__.Written_.Specification)"></a>Part I: Written Specification<span class="button-group"><a href="#(part._.Part_.I__.Written_.Specification)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>For part 1 you will submit a 3-5 page technical specification for your
+chosen language extension in pdf format.</p><p><p>This document should address the first four steps of our language
+extension recipe we&rsquo;ve seen throughout the course:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new
+forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><p><p>You will be graded on
+</p><ol><li><p>Whether you thoroughly cover all 4 of the topics above</p></li><li><p>The logic of your design</p></li><li><p>The clarity of your writing</p></li><li><p>The thoroughness of your test suite in exploring the behavior of your new program feature</p></li></ol></p><p>We will grade the written assignments quickly so as to quickly alert
+you to any design flaws we find and help you to correct them.</p><p>For this submission you should submit your usual codebase as usual but
+include a document <code>docs/proposal.pdf</code> with your written
+proposal, as well as your test files <code>examples/*</code> with automated
+tests for running them in <code>tests/examples.rs</code>, labeled with a
+comment <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">/* Garter tests */</code></span> (or whatever fun snake name you
+decide to give to your language). The tests will fail because you
+haven&rsquo;t implemented the feature yet.</p><h3 class="heading">2<tt>&nbsp;</tt><a name="(part._.Part_.I.I__.Implementation)"></a>Part II: Implementation<span class="button-group"><a href="#(part._.Part_.I.I__.Implementation)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>For the final submission you will implement your proposed language
+feature and submit the following for grading:</p><ol><li><p>The repository with your compiler implementation</p></li><li><p>A collection of executable tests to demonstrate that your extended compiler works as intended</p></li><li><p>A short pdf document detailing any changes from your submitted Part I design, if any</p></li></ol><p>This should be in the following format:</p><ul><li><p>Your <code>Cargo.toml</code>, <code>runtime/stub.rs</code> and <code>src/</code> files.</p></li><li><p>Your example programs in <code>examples/*</code>, with automated tests running them in <code>tests/examples.rs</code> so that we can run <code>cargo test</code> to see that you are passing your tests.</p></li><li><p>Files <code>docs/proposal.pdf</code> containing your original proposal and a file <code>docs/updates.pdf</code> that documents any changes to your original proposal or design components unforeseen in your original proposal.</p></li></ul><p><p>You will be graded on
+</p><ul><li><p>To what extent you successfully implement the proposed feature.</p></li><li><p>The thoroughness of your test suite.</p></li><li><p>That the implementation matches your final amended specification.</p></li><li><p>That your implementation continues to support features of prior languages.</p></li></ul></p><p>For this last point, your <code>docs/updates.pdf</code> should detail which
+language features from egg-eater, if any are not supported. Your
+implementation should at least support the features in diamondback.</p></div></div><div id="contextindicator">&nbsp;</div></body></html>
