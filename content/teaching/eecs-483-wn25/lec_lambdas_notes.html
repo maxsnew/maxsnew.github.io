@@ -1,0 +1,396 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 12: First-class Functions</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-<wbr></wbr>class Functions</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.First-class_.Functions%29" class="tocviewlink" data-pltdoc="x">First-<wbr></wbr>class Functions</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Reminder__.How_are_functions_currently_compiled_%29" class="tocviewlink" data-pltdoc="x">Reminder:<span class="mywbr"> &nbsp;</span> How are functions <span class="emph">currently</span> compiled?</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.The_value_of_a_function_---_.Attempt__1%29" class="tocviewlink" data-pltdoc="x">The value of a function &#8212;<wbr></wbr> Attempt #1</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.The_measure_of_a_function_---_.Attempt__2%29" class="tocviewlink" data-pltdoc="x">The measure of a function &#8212;<wbr></wbr> Attempt #2</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.A_function_by_any_other_name_---_.Attempt__3%29" class="tocviewlink" data-pltdoc="x">A function by any other name &#8212;<wbr></wbr> Attempt #3</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Recursion%29" class="tocviewlink" data-pltdoc="x">Recursion</a></td></tr><tr><td align="right">7&nbsp;</td><td><a href="#%28part._.Avoiding_.Performance_.Degradation%29" class="tocviewlink" data-pltdoc="x">Avoiding Performance Degradation</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 12:</span> First-<wbr></wbr>class Functions</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.First-class_.Functions%29" class="tocsubseclink" data-pltdoc="x">First-<wbr></wbr>class Functions</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Reminder__.How_are_functions_currently_compiled_%29" class="tocsubseclink" data-pltdoc="x">Reminder:<span class="mywbr"> &nbsp;</span> How are functions <span class="emph">currently</span> compiled?</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.The_value_of_a_function_---_.Attempt__1%29" class="tocsubseclink" data-pltdoc="x">The value of a function &#8212;<wbr></wbr> Attempt #1</a></td></tr><tr><td><span class="tocsublinknumber">3.1<tt>&nbsp;</tt></span><a href="#%28part._.Passing_in_functions%29" class="tocsubseclink" data-pltdoc="x">Passing in functions</a></td></tr><tr><td><span class="tocsublinknumber">3.2<tt>&nbsp;</tt></span><a href="#%28part._.Using_function_arguments%29" class="tocsubseclink" data-pltdoc="x">Using function arguments</a></td></tr><tr><td><span class="tocsublinknumber">3.3<tt>&nbsp;</tt></span><a href="#%28part._victory1%29" class="tocsubseclink" data-pltdoc="x">Victory!</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.The_measure_of_a_function_---_.Attempt__2%29" class="tocsubseclink" data-pltdoc="x">The measure of a function &#8212;<wbr></wbr> Attempt #2</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.A_function_by_any_other_name_---_.Attempt__3%29" class="tocsubseclink" data-pltdoc="x">A function by any other name &#8212;<wbr></wbr> Attempt #3</a></td></tr><tr><td><span class="tocsublinknumber">5.1<tt>&nbsp;</tt></span><a href="#%28part._.Compiling_make_closure_and_function_calls%29" class="tocsubseclink" data-pltdoc="x">Compiling make_<span class="mywbr"> &nbsp;</span>closure and function calls</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Recursion%29" class="tocsubseclink" data-pltdoc="x">Recursion</a></td></tr><tr><td><span class="tocsublinknumber">7<tt>&nbsp;</tt></span><a href="#%28part._.Avoiding_.Performance_.Degradation%29" class="tocsubseclink" data-pltdoc="x">Avoiding Performance Degradation</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.14</span></div><h2 class="heading"><a name="(part._)"></a><span class="LectureNum">Lecture 12:</span> First-class Functions<span class="button-group"><a href="#(part._)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><h3 class="heading">1<tt>&nbsp;</tt><a name="(part._.First-class_.Functions)"></a>First-class Functions<span class="button-group"><a href="#(part._.First-class_.Functions)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>In <a href="lec_tail-calls-as-jmps_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 8:</span> Local Function Definitions and Tail Calls</a> and <a href="lec_non-tail-calls_notes.html" data-pltdoc="x"><span class="LectureNum">Lecture 9:</span> Global Function Definitions and Non-tail Calls</a>, we introduced the ability for our programs to
+define functions that we could then call in other expressions in our program.
+Our programs included local function definitions, which can capture .
+This notion of a program was far more flexible than we had before,
+and lets us define many computations we simply could not previously. But one
+aspect was distinctly unsatisfying: functions are <span class="emph">second-class</span> entities in our
+language, they had their own separate namespace and and can&rsquo;t be used the same way as other values in our programs.</p><p>We know from other courses, and possibly even from using features like
+iterators in Rust in this course, that <span class="emph">higher-order</span> functions &#8212;<wbr></wbr> functions
+whose arguments can be functions &#8212;<wbr></wbr> are very useful notions to have.
+Let&rsquo;s consider the most trivial higher-order program:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
+  it(5)
+in
+
+def incr(x):
+  x + 1
+in
+
+applyToFive(incr)</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What errors currently get reported for this program?</p></blockquote><p>Because <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is a parameter to the first function, our compiler will
+complain that <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is not defined as a function, when used as such on line
+2.  Additionally, because <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> is defined as a function, our compiler will
+complain that it can&rsquo;t be used as a parameter on the last line.  We&rsquo;d like to
+be able to support this program, though, and others more sophisticated.  Doing
+so will bring in a number of challenges, whose solutions are detailed and all
+affect each other.  Let&rsquo;s build up to those programs, incrementally.</p><h3 class="heading">2<tt>&nbsp;</tt><a name="(part._.Reminder__.How_are_functions_currently_compiled_)"></a>Reminder: How are functions <span class="emph">currently</span> compiled?<span class="button-group"><a href="#(part._.Reminder__.How_are_functions_currently_compiled_)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>Let&rsquo;s simplify away the higher-order parts of the program above, and look just
+at a basic function definition.  The following program:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def incr(x):
+  x + 1
+end
+
+incr(5)</code></pre></div></div></p><p>is compiled to something like<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._11._lecturelambdas%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">ignoring tag checking and tail call elimination</span></span>:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">incr:
+  mov RAX, [RSP - 8] ;; get param
+  add RAX, 2         ;; add (encoded) 1 to it
+  ret                ;; exit
+
+start_here:
+  mov [RSP - 16], 10  ;; pass 5 as an argument
+  call incr           ;; call function
+
+  ret                 ;; exit</code></pre></div></div></p><p>This compilation is a pretty straightforward translation of the code we have.
+What can we do to start supporting higher-order functions?</p><h3 class="heading">3<tt>&nbsp;</tt><a name="(part._.The_value_of_a_function_---_.Attempt__1)"></a>The value of a function &#8212;<wbr></wbr> Attempt #1<span class="button-group"><a href="#(part._.The_value_of_a_function_---_.Attempt__1)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><h4 class="heading">3.1<tt>&nbsp;</tt><a name="(part._.Passing_in_functions)"></a>Passing in functions<span class="button-group"><a href="#(part._.Passing_in_functions)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>Going back to the original motivating example, the first problem we encounter
+is seen in the first and last lines of code.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
+  it(5)
+in
+
+def incr(x):
+  x + 1
+in
+
+applyToFive(incr)</code></pre></div></div></p><p>Functions receive values as their parameters, and function calls push values
+onto the stack.  So in order to &ldquo;pass a function in&rdquo; to another function, we
+need to answer the question, what is the <span class="emph">value</span> of a function?  In the
+assembly above, what could possibly be a candidate for the value of the
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">incr</code></span> function?</p><p>A function, as a standalone entity, seems to just be the code that
+comprises its compiled body.  We can&rsquo;t conveniently talk about the
+entire chunk of code, though, but we don&rsquo;t actually need to.  We
+really only need to know the &ldquo;entrance&rdquo; to the function: if we can
+jump there, then the rest of the function will execute in order,
+automatically.  So one prime candidate for &ldquo;the value of a function&rdquo;
+is <span class="emph">the address of its first instruction.</span>  Annoyingly, we don&rsquo;t
+know that address explicitly, but fortunately, the assembler helps us
+here: we can just use <span class="emph">the initial label</span> of the function, whose
+name we certainly do know. This is basically what in C/C++ we would
+call a <span class="emph">function pointer</span>.</p><p>In other words, we can compile the main expression of our program as:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">start_here:
+  mov RAX, incr        ;; load the address of incr into RAX
+  mov [RSP - 16], RAX  ;; pass the address of incr as an argument
+  call applyToFive     ;; call function
+  ret                ;; exit</code></pre></div></div></p><p>This might seem quite bizarre: how can we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> a label into a
+register?  Doesn&rsquo;t <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> require that we mov a value &#8212;<wbr></wbr> either a
+constant, or a register&rsquo;s value, or some word of memory?  In fact it
+is no more and no less bizarre than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>ing a label in the first
+place: the assembler replaces those named labels with the actual
+addresses within the program, and so at runtime, they&rsquo;re simply normal
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">QWORD</code></span> values representing memory addresses. Note that we can&rsquo;t
+do this in one expression <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [RSP - 16], incr</code></span> because the
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">incr</code></span> is a 64-bit address and x64 doesn&rsquo;t support <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>ing a
+64-bit literal into a memory location, so we need the intermediate
+register.</p><h4 class="heading">3.2<tt>&nbsp;</tt><a name="(part._.Using_function_arguments)"></a>Using function arguments<span class="button-group"><a href="#(part._.Using_function_arguments)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>The compiled code for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> looks like this:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">applyToFive:
+  mov RAX, [RSP - 8] ;; get the param
+  mov ????           ;; pass the argument to `it`
+  call ????          ;; call `it`
+  ret                ;; exit</code></pre></div></div></p><p>Fill in the questions to complete the compilation of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>.</p></blockquote><p>The parameter for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">it</code></span> is simply <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span>, so we pass
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span> as an argument on the stack, just as before.  The function to
+be called, however, isn&rsquo;t identified by its label: we already have its
+address, since it was passed in as the argument to
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span>.  Accordingly, we <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call RAX</code></span> in order to
+find and call our function.  Again, this generalizes the syntax of
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instructions slightly just as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">push</code></span> was generalized:
+we can call an address given by a register, instead of just a
+constant.</p><h4 class="heading">3.3<tt>&nbsp;</tt><a name="(part._victory1)"></a>Victory!<span class="button-group"><a href="#(part._victory1)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>We can now pass functions to functions!  Everything works exactly as intended.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Tweak the example program slightly, and cause it to break.  What
+haven&rsquo;t we covered yet?</p></blockquote><h3 class="heading">4<tt>&nbsp;</tt><a name="(part._.The_measure_of_a_function_---_.Attempt__2)"></a>The measure of a function &#8212;<wbr></wbr> Attempt #2<span class="button-group"><a href="#(part._.The_measure_of_a_function_---_.Attempt__2)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>Just because we <span class="emph">use</span> a parameter as a function doesn&rsquo;t mean we actually
+passed a function in as an argument.  If we change our program to
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive(true)</code></span>, our program will attempt to apply <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> as a
+function, meaning it will try to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call 0xFFFFFFFFFFFFFFFF</code></span>, which isn&rsquo;t likely to
+be a valid address of a function.</p><p>As a second, related problem: suppose we get bored of merely incrementing values
+by one, and generalize our program slightly:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def applyToFive(it):
+  it(5)
+in
+
+def add(x, y):
+  x + y
+in
+
+applyToFive(add)</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What happens now?</p></blockquote><p>Let&rsquo;s examine the stack very carefully.  When our program starts, it moves
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> onto the stack, then <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>s <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">applyToFive</code></span>:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="353.3502604166667" height="216.0"/></p></p><p>That function in turn moves <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span> onto the stack, and calls
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">it</code></span>, which in this case is <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add</code></span>:</p><p><p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_3.png" alt="image" width="353.3502604166667" height="256.0"/></p>
+<p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_4.png" alt="image" width="442.5787760416667" height="336.0"/></p></p><p>But look, since <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> has been called with only one argument, it
+will read from the free stack space in blue for its second
+argument. So it adds <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span> (encoded as <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">10</code></span>) <span class="emph">to an
+arbitrary unspecified value,</span> since as far as it knows that stack
+location is where its second parameter should be.</p><p>We had eliminated both of these problems before via well-formedness checking:
+our function-definition environment knew about every function and its arity,
+and we could check every function application to ensure that a well-known
+function was called, with the correct number of arguments were passed.  But now
+that we can pass functions around dynamically, we can&rsquo;t know statically whether
+the arities are correct, and can&rsquo;t even know whether we have a function at all!</p><p>We don&rsquo;t know anything about precisely where a function&rsquo;s code begins, so
+there&rsquo;s no specific property we could check about the value passed in to
+determine if it actually is a function.  But in any case, that value is
+insufficient to encode both the function and its arity.  Fortunately, we now
+have a technique for storing multiple pieces of data as a single value:
+tuples.  So our second candidate for &ldquo;the value of a function&rdquo; is a tuple
+containing the function&rsquo;s arity and start address.  This isn&rsquo;t quite right
+either, since we wouldn&rsquo;t then be able to distinguish actual tuples from
+&ldquo;tuples-that-are-functions&rdquo;.</p><p>So we choose a new tag value, say <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">0x3</code></span>, distinct from the ones
+used so far, to mark these function values.  Even better: we now have
+free rein to separate and optimize the representation for functions,
+rather than hew completely to the tuple layout.  As one immediate
+consequence: we don&rsquo;t need to store the tuple length &#8212;<wbr></wbr> it&rsquo;s always
+2, namely the arity and the function pointer. This is ok because we&rsquo;ll
+always know based on the tag whether to interpret the memory as a
+function or an array.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Revise the compiled code of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">applyToFive</code></span> to assume it gets one
+of the new tuple-like values.</p></blockquote><p>The pseudocode for calling a higher-order function like this is roughly:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov RAX, &lt;the function tuple&gt;  ;; load the intended function
+&lt;check-tag RAX, 0x3&gt;           ;; ensure it has the right tag
+sub RAX, 3                     ;; untag the value
+&lt;check-arity [RAX], num-args&gt;  ;; the second word at stores the arity
+&lt;push all the args&gt;            ;; set up the stack
+call [RAX + 8]                 ;; the first word stores the function address
+add RSP, &lt;8 * num-args&gt;        ;; finish the call</code></pre></div></div></p><p>Now we just need to create these tuples.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Revise the compiled code above to allocate and tag a function value
+using this new scheme, instead of a bare function pointer.</p></blockquote><h3 class="heading">5<tt>&nbsp;</tt><a name="(part._.A_function_by_any_other_name_---_.Attempt__3)"></a>A function by any other name &#8212;<wbr></wbr> Attempt #3<span class="button-group"><a href="#(part._.A_function_by_any_other_name_---_.Attempt__3)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>While everything above works fine for top-level, global function
+definitions, how do we extend it to our <span class="emph">local</span> function
+definitions?</p><p>To start, let&rsquo;s consider the simple case of non-recursive functions.
+If the function is not recursive, then we don&rsquo;t need our FunDefs form
+at all: instead we can use a literal notation for functions, the same
+way that we can write boolean, number and array literals. You may be
+familiar with these from other languages: we call them <span class="emph">lambda
+expressions</span>, and they appear in pretty much all modern major
+languages:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Language</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Lambda syntax</p></td></tr><tr><td><p>Javascript</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Javascript" class="sourceCode"><code data-lang="text/x-javascript" class="sourceCode">(x1,...,xn) =&gt; { return e; }</code></span></p></td></tr><tr><td><p>C++</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="C/C++" class="sourceCode"><code data-lang="text/x-csrc" class="sourceCode">[&amp;](x1,...,xn){ return e; }</code></span></p></td></tr><tr><td><p>Rust</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">|x1, x2,..., xn| e</code></span></p></td></tr><tr><td><p>Ocaml</p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><span title="OCaml" class="sourceCode"><code data-lang="text/x-ocaml" class="sourceCode">fun (x1,...,xn) -&gt; e</code></span></p></td></tr></table></p><p>Technically, once we can use functions as values, any program with lambdas can
+be desugared to use a local function definition. Any
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda x1,...: e end</code></span> can be desugared to
+<div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def foo(x1,...): e in foo</code></pre></div></div>
+Where <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">foo</code></span> is an arbitrary variable name.</p><p>We can also rewrite any program using only <span class="emph">non-recursive</span> functions using
+lambdas instead as follows, e.g. our example above could be written as</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let applyToFive = (lambda it: it(5) end) in
+let incr = (lambda x: x + 1 end) in
+applyToFive(incr)</code></pre></div></div></p><p>Then, all our functions are defined in the same manner as any other let-binding:
+they&rsquo;re just another expression, and we can simply produce the function values
+right then, storing them in let-bound variables as normal.</p><p>Now let&rsquo;s consider what happens when we try to extend our lambda
+lifting procedure from diamondback to this new form on the following
+illustrative program:
+<div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let f =
+  if g():
+    let seven = 7 in lambda x: x + seven end
+  else:
+    lambda y: y + 1
+in
+f(5)</code></pre></div></div></p><p>Here let&rsquo;s assume <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> is some unknown globally defined function function.
+Then we can&rsquo;t determine locally which branch of the <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">if</code></span> will be
+taken, we will either add seven or add one to 5. This
+program makes perfect sense, but notice that if we naively apply our
+lambda lifting, we run into a problem. Previously, we added each
+captured variable as an extra argument, so if we did the same thing
+here we would get the following, where we make up names for the
+anonymous lambda functions:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def lambda1(seven, x): x + seven and
+def lambda2(y): y + 1 in
+let f = if g(): (let seven = 7 in lambda1) else: lambda2
+in
+f(5)</code></pre></div></div></p><p>But we run into a problem: now <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> takes two arguments
+but <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda2</code></span> takes one. Additionally, if
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> returns <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">true</code></span> we will call
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> with only one argument, neglecting to "capture"
+seven in any meaningful sense. Before we would have solved this by
+adding <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">seven</code></span> to every place where <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> was
+called, but now that functions are values that isn&rsquo;t really
+possible. And anyway, this call to <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> would need to be
+applied to a different number of arguments when it calls
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda1</code></span> vs <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">lambda2</code></span>. And if it seems like we
+might be able to solve this by a sufficiently advanced analysis,
+consider the fact that first class function values might be passed in
+as arguments so it is not feasible to statically detect which captured
+variables will be needed at each call site statically.</p><p>So instead, we will have to determine which extra arguments to pass
+<span class="emph">dynamically</span>, by including them as a third field in our function
+values. That is, our function values will now consist of an arity, a
+function pointer, and finally a (pointer to) an array of all the
+values captured by that function. This data structure is called a
+<span class="emph">closure</span> and we say it "closes over" the captured free
+variables. Then when we do lambda lifting, instead of adding each
+variable as an additional argument, we will package them up into an
+array, which we pass as a single argument. Then when we create a
+function value, we will pair up the function pointer and arity with an
+array of all the captured variables. We can do this by augmenting our
+intermediate representation with a new form for creating closures,
+analogous to our form for creating arrays:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def lambda1(env, x): let seven = env[0] in x + seven and
+def lambda2(env, y): y + 1 in
+let f = if g():
+          (let seven = 7 in make_closure(1, lambda1, [seven]))
+        else:
+          make_closure(1, lambda2, [])
+in
+call_closure(f, [5])</code></pre></div></div></p><p>So now the captured variables are all stored in the single environment
+parameter, and before we run the body, we project out all of the
+captured free variables.</p><p>Also notice that the function call <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(5)</code></span> will need to be
+compiled differently as <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is not a statically known
+function definition, but instead a dynamically determined closure
+value, so we will need to dynamically check its arity, and pass its
+environment to it as an extra argument. We can implement this by
+translating <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call_closure(f, args)</code></span> to several other
+internal forms:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let untagged = check_arity_and_untag(f, args.len()) in
+let code_ptr = get_code(untagged) in
+let env      = get_env(untagged) in
+ecall(code_ptr, (env; args))</code></pre></div></div></p><p>Where the primitives <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">check_arity_and_untag</code></span>,
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">get_code</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">get_env</code></span> are internal forms that
+manipulate the closure object. This way we can re-use our existing
+implementation of external function calls from diamondback, as long as
+we now allow for the address of the function we are calling to be
+given dynamically.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Augment your lambda lifting code to generate make_closure.</p></blockquote><h4 class="heading">5.1<tt>&nbsp;</tt><a name="(part._.Compiling_make_closure_and_function_calls)"></a>Compiling make_closure and function calls<span class="button-group"><a href="#(part._.Compiling_make_closure_and_function_calls)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>Now that we have desugared away lambdas, we instead need to generate
+code to create closures at runtime. But we already know how to create
+heap-allocated values, we simply:</p><ol><li><p>Move the arity, function pointer and environment into the next three available slots in the heap</p></li><li><p>Increment the heap pointer by 8 * 3</p></li><li><p>Return the previous value of the heap pointer, tagged with our closure tag 0x3</p></li></ol><p>Correspondingly, we need to implement the primitives
+(<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">check_arity_and_untag</code></span>, <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">get_code</code></span> and
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">get_env</code></span>) for implementing closure calls, which are very
+similar to the code for implementing tuples/arrays:</p><ol><li><p><span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">check_arity_and_untag</code></span>: Check that a value is tagged as a closure and check its arity matches a given value</p></li><li><p><span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">get_code</code></span>: read the code pointer field of the closure object</p></li><li><p><span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">get_env</code></span>: read the environment field of the closure object</p></li></ol><p>Since we re-use our diamondback implementation, we seamlessly support
+both tail and non-tail calls. The only change is to allow for
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">jmp</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> to use a register rather than a label.</p><h3 class="heading">6<tt>&nbsp;</tt><a name="(part._.Recursion)"></a>Recursion<span class="button-group"><a href="#(part._.Recursion)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>If we try even a simple recursive function &#8212;<wbr></wbr> something <span class="emph">that worked</span> with our
+previous top-level function definitions &#8212;<wbr></wbr> we run into a problem.  Because we now
+only have let-bindings and anonymous lambdas, we have no way to refer to the
+function itself from within the function.  We&rsquo;ll get a scope error during
+well-formedness checking; such a program wouldn&rsquo;t even make it to compilation.</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let fac = (lambda n:
+  if n &lt; 1: 1
+  else: n * fac(n - 1)) # ERROR: fac is not in scope
+in fac(5)</code></pre></div></div></p><p>Since our language is dynamically typed it is actually possible to
+desugar recursive function definitions into lambdas using clever
+variants of the
+<a href="https://en.wikipedia.org/wiki/Fixed-point_combinator#Fixed-point_combinators_in_lambda_calculus">Y
+combinator</a>, but such encodings inherently involve a closure
+allocation for each recursive call, which we should certainly avoid,
+especially without a garbage collector!</p><p>Then we need to see how to extend our treatment of lambdas to support
+mutually recursive closures, or put another way, adapt our lambda
+lifting to create closures at runtime.</p><p>Given a mutually recursive function definition,</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x1 = e1,
+    x2 = e2,
+    x3 = e3 in
+def f(x,y): e4
+and
+def g(a,b,c): e5
+in
+e6</code></pre></div></div></p><p>Currently we lambda lift <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> unless they
+are purely local. Now we need to make sure to lambda lift any function
+that ends up being used as a closure as well. Our previous approach
+gives us something like
+<div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x1, x2, x3, x, y): e4'
+and
+def g(x1, x2, x3, a, b, c): e5'
+in
+
+let x1 = e1',
+    x2 = e2',
+    x3 = e3' in
+e6'</code></pre></div></div></p><p>However this is no longer correct because the expressions
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e6</code></span> might use <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span>
+closures. Furthermore, note that <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> are
+now free variables in <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e4</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e5</code></span> so they should
+be included in their captured variables! So let&rsquo;s try to accommodate
+these:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x1, x2, x3, f, g, x, y): e4'
+and
+def g(x1, x2, x3, f, g, a, b, c): e5'
+in
+
+let x1 = e1',
+    x2 = e2',
+    x3 = e3',
+    f = ??,
+    g = ??,
+in
+e6'</code></pre></div></div></p><p>So how do we construct the closures for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span>? Well first notice that their lambda-lifted versions are
+not of the correct form for constructing a closure: they have many
+extra arguments instead of a single <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">env</code></span>. So in addition to
+the lambda lifted version we will generate a second version for
+constructing closures that unpacks the closure and calls the original version:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x1, x2, x3, f, g, x, y): e4'
+and
+def f_closure(env, x, y):
+  ecall(f, [env[0], env[1], env[2], env[3], env[4], env[5], x, y])
+and
+def g(x1, x2, x3, f, g, a, b, c): e5'
+and
+def g_closure(env, a, b, c):
+  ecall(g, [env[0], env[1], env[2], env[3], env[4], env[5]], a, b, c)
+
+in
+let x1 = e1',
+    x2 = e2',
+    x3 = e3',
+    f = make_closure(2, f_closure, [x1,x2,x3,f,g]),
+    g = make_closure(3, g_closure, [x1,x2,x3,f,g]),
+in
+e6'</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What went wrong?</p></blockquote><p>We still haven&rsquo;t solved the recursion problem: <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>&rsquo;s
+environment needs to contain the closures for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span>, but they haven&rsquo;t been defined yet! But this is a
+familiar problem from low-level programming: to construct a data
+structure with circular references, we can initialize the references
+to be null and then update them once we&rsquo;ve allocated the rest of the
+structure. So here we can construct a closure with "null" references
+to <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span>, then use this to construct
+closures and then after they are constructed update the environment to
+point to the correct values:</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def f(x1, x2, x3, f, g, x, y): e4'
+and
+def f_closure(env, x, y):
+  ecall(f, [env[0], env[1], env[2], env[3], env[4], env[5], x, y])
+and
+def g(x1, x2, x3, f, g, a, b, c): e5'
+and
+def g_closure(env, a, b, c):
+  ecall(g, [env[0], env[1], env[2], env[3], env[4], env[5]], a, b, c)
+
+in
+let x1 = e1',
+    x2 = e2',
+    x3 = e3',
+    env = [x1, x2, x3, 0, 0]
+    f = make_closure(2, f_closure, env),
+    g = make_closure(3, g_closure, env),
+in
+env[3] := f;
+env[4] := g;
+e6'</code></pre></div></div></p><p>Why does this work? Well notice that we won&rsquo;t ever <span class="emph">run</span> the code
+for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> or <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> until we evaluate <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e6</code></span>,
+and so by the time <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> or <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> actually get&rsquo;s
+called, when it projects out <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">env[3]</code></span>, it will have been
+updated to point back to <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> itself. And we don&rsquo;t perform
+any unnecessary allocations: we only construct the
+closures for <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> once when they are declared and these .</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend the compilation above to work for recursive functions</p></blockquote><h3 class="heading">7<tt>&nbsp;</tt><a name="(part._.Avoiding_.Performance_.Degradation)"></a>Avoiding Performance Degradation<span class="button-group"><a href="#(part._.Avoiding_.Performance_.Degradation)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>Our functional snake language is now fairly elegant in its simplicity:
+the single notion of recursive functions, with a proper implementation
+of tail calls, allows us to implement any kind of looping construct we
+would like. But implemented naively as we&rsquo;ve done so far, we get major
+performance regressions from our implementation of
+diamondback. In diamondback a program like</p><p><div class="sourceCodeWrapper"><span data-label="Egg-eater" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def fac(x):
+  def loop(x, acc):
+    if x == 0:
+      acc
+    else:
+      loop(x - 1, acc * x)
+  in
+  loop(x, 1)
+in
+fac(10)</code></pre></div></div></p><p>would be compiled fairly straightforwardly to direct jumps in
+assembly, with all intermediate values stored on the stack. With
+register allocation, we would do even better and store those locals
+all in registers.</p><p>However if we naively compile this program, we will interpret the uses
+of <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fac</code></span> and <span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">loop</code></span> as using a closure, and
+compile the calls to <span class="emph">indirect</span> calls, including loading values
+from the heap. Here we see why high-level functional languages are
+challenging to implement: it&rsquo;s elegant and simple to express loops as
+functions, but then it&rsquo;s up to the language implementor to make sure
+that those are compiled to simple jumps when possible.  The best
+functional language compilers work very hard to eliminate closures
+when possible, and to minimize the size of the allocated objects. We
+will be a bit less ambitious but we should at least make sure that
+compiling simple programs like these requires no heap manipulation.</p><p>We can accomplish this by a simple pass that distinguishes between
+calls to dynamically determined functions and "direct" calls to a
+known function definition, which can be compiled exactly as before in
+diamondback:
+<span title="Egg-eater" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def fac(x):
+  def loop(x, acc):
+    if x == 0:
+      acc
+    else:
+      direct_call(loop, [x - 1, acc * x])
+  in
+  direct_call(loop, [x, 1])
+in
+direct_call(fac, [5])</code></span></p><a name="(part._(gentag._10._lecturelambdas))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._11._lecturelambdas))"></a>1</span></span>ignoring tag checking and tail call elimination</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
