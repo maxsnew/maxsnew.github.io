@@ -1,0 +1,372 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 4: Let-bindings and simple stack allocations</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 4:</span> Let-<wbr></wbr>bindings and simple stack allocations</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._let._.Growing_the_language__adding_let%29" class="tocviewlink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span></a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Compiling_.Variables_and_.Let-expressions%29" class="tocviewlink" data-pltdoc="x">Compiling Variables and Let-<wbr></wbr>expressions</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Mapping_.Variables_to_.Memory%29" class="tocviewlink" data-pltdoc="x">Mapping Variables to Memory</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 4:</span> Let-<wbr></wbr>bindings and simple stack allocations</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._let._.Growing_the_language__adding_let%29" class="tocsubseclink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span></a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._let._.The_new_syntax__both_concrete_and_abstract%29" class="tocsubseclink" data-pltdoc="x">The new syntax, both concrete and abstract</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._let._.Examples_and_.Well-formedness_.Conditions%29" class="tocsubseclink" data-pltdoc="x">Examples and Well-<wbr></wbr>formedness Conditions</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._let._.Semantic_.Analysis_and_.Scope%29" class="tocsubseclink" data-pltdoc="x">Semantic Analysis and Scope</a></td></tr><tr><td><span class="tocsublinknumber">1.4<tt>&nbsp;</tt></span><a href="#%28part._let._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.5<tt>&nbsp;</tt></span><a href="#%28part._let._.Shadowing%29" class="tocsubseclink" data-pltdoc="x">Shadowing</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Compiling_.Variables_and_.Let-expressions%29" class="tocsubseclink" data-pltdoc="x">Compiling Variables and Let-<wbr></wbr>expressions</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._x86__.Addressable_.Memory__the_.Stack%29" class="tocsubseclink" data-pltdoc="x">x86:<span class="mywbr"> &nbsp;</span> Addressable Memory, the Stack</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Mapping_.Variables_to_.Memory%29" class="tocsubseclink" data-pltdoc="x">Mapping Variables to Memory</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.15</span></div><h2 class="heading"><a name="(part._)"></a><span class="LectureNum">Lecture 4:</span> Let-bindings and simple stack allocations<span class="button-group"><a href="#(part._)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><h3 class="heading">1<tt>&nbsp;</tt><a name="(part._let._.Growing_the_language__adding_let)"></a>Growing the language: adding <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span><span class="button-group"><a href="#(part._let._.Growing_the_language__adding_let)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p><p>Every time we enhance our source language, we need to consider several things:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition of them</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><h4 class="heading">1.1<tt>&nbsp;</tt><a name="(part._let._.The_new_syntax__both_concrete_and_abstract)"></a>The new syntax, both concrete and abstract<span class="button-group"><a href="#(part._let._.The_new_syntax__both_concrete_and_abstract)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>Let&rsquo;s grow the language above further, by adding the concepts of identifiers
+and let-bindings:</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._let._(bnf-prod._(let-lang._prog)))"></a><span class="bnf-rule">&#8249;prog&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit">def</span> <span class="bnf-lit">main</span> <span class="bnf-lit">(</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">)</span> <span class="bnf-lit">colon</span> <span class=""><a href="#%28elem._let._%28bnf-prod._%28let-lang._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._let._(bnf-prod._(let-lang._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">...</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">let</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._let._%28bnf-prod._%28let-lang._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._let._%28bnf-prod._%28let-lang._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span></p></blockquote><p><p>We&rsquo;ve changed a few things syntactically:
+</p><ul><li><p>We allow the argument to the <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> function to be any identifier, rather than hard-coding the choice of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span></p></li><li><p>Similarly, we allow variables used to be any identifier.</p></li><li><p>We add a <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span> <span class="emph">expression</span>, <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = e1 in e2</code></span></p></li></ul></p><p>This change means we now need abstract syntax for programs and expressions, which we update as follows:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">type Var = String;
+
+#[derive(Clone, Debug)]
+pub struct Program {
+    pub parameter: Var,
+    pub body: Expression,
+}
+
+#[derive(Clone, Debug)]
+pub enum Expression {
+    Variable(Var),
+    Number(i64),
+    Add1(Box&lt;Expression&gt;),
+    Sub1(Box&lt;Expression&gt;),
+    Let(Var, Box&lt;Expression&gt;, Box&lt;Expression&gt;),
+}</code></pre></div></div></p><p>This time we add an abstract syntax form for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Program</code></span>s since we
+now allow for an arbitrary variable name used in the parameter.</p><h4 class="heading">1.2<tt>&nbsp;</tt><a name="(part._let._.Examples_and_.Well-formedness_.Conditions)"></a>Examples and Well-formedness Conditions<span class="button-group"><a href="#(part._let._.Examples_and_.Well-formedness_.Conditions)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>Let&rsquo;s start by taking a look at a few example programs that match this
+grammar. If we write the let form sequentially, this looks much like C-style imperative programming.</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  let y = sub1(x) in
+  let z = add1(add1(y)) in
+  add1(z)</code></pre></div></div></p><p>But notice that <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span> is allowed in <span class="emph">expression</span> position
+so we get some perhaps unexpected combinations:</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  let z =
+      let y = sub1(x) in
+      add1(add1(y)) in
+  add1(z)</code></pre></div></div></p><p>or even</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  let z = add1(add1(let y = sub1(x) in y)) in
+  add1(z)</code></pre></div></div></p><p>In C-like languages variable binding is included in <span class="emph">statements</span>
+which are a separate syntactic class from expressions. Statements
+<span class="emph">do</span> something which has a side-effect, and can contain
+expressions, which <span class="emph">evaluate</span> to some result. In the Snake
+language, instead we follow the style of functional programming
+languages, where we dispense with this distinction and make all
+constructs into expression constructors. This makes the language a bit
+more uniform, and as we&rsquo;ll see when we get further into compilation,
+functional and imperative languages are ultimately not all that
+different when viewed from the perspective of the compiler.</p><p>Rust in particular takes a sort of middle ground in the statement vs
+expression divide, owing to its functional roots. In Rust, a
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">let</code></span> is a statement, but statements themselves can produce a
+value, more similar to expression forms. So the Rust equivalent of our
+unusual example above would be</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn add1(x: i64) -&gt; i64 {
+    x + 1
+}
+
+fn sub1(x: i64) -&gt; i64 {
+    x - 1
+}
+
+fn funny(x: i64) -&gt; i64 {
+    let z = {
+        add1(add1({
+            let y = sub1(x);
+            y
+        }))
+    };
+    add1(z)
+}</code></pre></div></div></p><p>Another thing we should notice about our syntax is that unlike our
+previous languages, there are some well-formed terms in our concrete syntax
+that don&rsquo;t look like well-formed programs. For example the program</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  y</code></pre></div></div></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Should this program be accepted by our language? Why or why not?</p></blockquote><h4 class="heading">1.3<tt>&nbsp;</tt><a name="(part._let._.Semantic_.Analysis_and_.Scope)"></a>Semantic Analysis and Scope<span class="button-group"><a href="#(part._let._.Semantic_.Analysis_and_.Scope)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>Most programming languages will reject such a program at compile-time,
+the reason being that the variable <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> has not yet been
+declared. This is an example where the abstract syntax tree doesn&rsquo;t
+fully capture all of the invariants that the programs in our language
+need to satisfy. This is typical in programming languages: even after
+parsing into a syntax tree, there are more sophisticated properties
+like variable usage, type checking, borrow checking etc. that are
+performed. This phase of the compiler after parsing is sometimes
+called <span class="emph">semantic analysis</span>, as opposed to the simple
+<span class="emph">syntactic analysis</span> performed by the parser. The combination of
+lexing, parsing and semantic analysis are collectively called the
+<span class="emph">frontend</span> of the compiler. We can identify when we&rsquo;ve reached
+the end of the frontend of the compiler when we are able to define a
+semantics.</p><p>Let&rsquo;s set some terminology. We reject the program above because the
+usage of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> happens in a context in which <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is not
+<span class="emph">in scope</span>. We call such a <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> a <span class="emph">free variable</span>. On
+the other hand, in the similar program</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  x</code></pre></div></div></p><p>There are two occurrences of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>. The first one is as a
+parameter to the main function. We call this the <span class="emph">binding-site</span>
+for <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>, and the second the usage of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>. In this usage,
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is a <span class="emph">bound</span> variable, or that it is <span class="emph">in the scope
+of its binding site</span>.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Identify the binding sites, free variables and bound variables in the following term:</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+let y =
+  let z = x in add1(y)
+  in
+let w = sub1(x) in
+sub1(z)</code></pre></div></div></p></blockquote><p>In this program, there are 4 binding sites: <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x)</code></span>,
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let y = </code></span>, <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let z =</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let w =</code></span>. There are 4
+occurrences of variables, <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> in <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let z = x in add1(y)</code></span>,
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> in <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1(y)</code></span>, <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> again in <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(x)</code></span> and
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> in <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(z)</code></span>. Of these, the occurrences of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>
+are bound, referencing the parameter of the main function, but the
+occurrences of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> are free. The occurrence of
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is unbound because the <span class="emph">scope</span> of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> in
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let y = e1 in e2</code></span> is only <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e2</code></span>, not
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span>. Similarly, while there is a declaration of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span>, the
+use of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">z</code></span> is not in a sub-tree of that <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let z</code></span> at all,
+and so similarly it is a free variable.</p><p>We can formalize this property in code, by writing a function
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">check_scope(&amp;Program) -&gt; Result&lt;(), ScopeError&gt;</code></pre></div></div></p><p>In the design of such a function, we again apply our strategy of
+programming with expressions by <span class="emph">recursive descent</span>. To do so, we
+realize that we need some auxiliary data to keep track of <span class="emph">which</span>
+variables are currently <span class="emph">in scope</span>. In this case, we can use a
+<span class="emph">set</span> of variables that are currently in scope. We call an
+auxiliary data structure like this that keeps track of which variables
+are in scope an <span class="emph">environment</span>.</p><h4 class="heading">1.4<tt>&nbsp;</tt><a name="(part._let._.Semantics)"></a>Semantics<span class="button-group"><a href="#(part._let._.Semantics)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Extend the interpreter from last time to handle the new constructs in
+this language.  You will need a function with signature</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">interpret(&amp;Program, i64) -&gt; i64</code></pre></div></div></p><p>...and you will certainly need a helper function.  What should that function
+do, and what should its signature be?</p></blockquote><p>Writing this interpreter is straightforward, at least initially: numbers
+evaluate to themselves, and adding or subtracting one from an expression should
+simply evaluate the expression and then add or subtract one from the result.
+But what should we do about identifiers and let-bindings?</p><p><p>We first need to make a <span class="emph">choice</span> in our semantics, how does an
+expression <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = e1 in e2</code></span> evaluate. The two simplest choices are:
+</p><ul><li><p>We evaluate <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span> down to a number <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">n</code></span>, and then proceed to evaluate <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e2</code></span>, remembering that <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> now corresponds to <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">n</code></span></p></li><li><p>We immediately proceed to evaluate <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e2</code></span>, but remembering that <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> now corresponds to the expression <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span></p></li></ul></p><p>The first strategy is called <span class="emph">eager</span> evaluation and is the most
+common in programming languages. The latter strategy is called
+<span class="emph">lazy</span> evaluation, and is used in some functional languages, most
+famously Haskell.  To implement eager or lazy evaluation in our
+interpreter, we will have to keep track of a new kind of
+environment. This time the environment will not be simply a <span class="emph">set</span>
+of variables that are in scope, but a mapping from variable names to
+their associated meaning. The meaning of the variables is what differs
+in the two different evaluation strategies:</p><ul><li><p>In <span class="emph">lazy</span> evaluation, we need an environment that maps variables to <span class="emph">expressions</span>, and only run the expression when the variable is <span class="emph">used</span>.</p></li><li><p>In <span class="emph">eager</span> evaluation, we need an environemnt that maps variables to <span class="emph">values</span>, in our case integers, so using a variable is just a lookup in the environment.</p></li></ul><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Suppose we added an infix <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Plus(Box&lt;Exp&gt;, Box&lt;Exp&gt;)</code></span> operation.
+Construct a program whose running time is drastically worse with the first
+environment type, compared to the second environment type.</p><p>Suppose we added an expression <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Print(Box&lt;Exp&gt;)</code></span> that both prints its argument
+to the console, and evaluates to the same value as its argument.  Construct a
+program whose behavior is actually different with the two environment types.</p></blockquote><h4 class="heading">1.5<tt>&nbsp;</tt><a name="(part._let._.Shadowing)"></a>Shadowing<span class="button-group"><a href="#(part._let._.Shadowing)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>There is one final subtlety to variable names to address. Consider the following expression
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = 1 in
+let x = 2 in
+x</code></pre></div></div>
+Should we accept or reject this program? Most programming languages,
+for example Rust, will accept it, and its value will be
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">2</code></span>. This phenomenon, where an inner variable binding overrides
+an outer one is called <span class="emph">shadowing</span>, we say that the second
+binding site <span class="emph">shadows</span> the first one. An unusual consequence of
+allowing shadowing is that if a variable is shadowed it cannot be
+directly accessed inside the shadowing binding, as the name is now
+being used for something else.</p><p>Allowing shadowing is convenient and intuitive to programmers, but
+raises some implementation pitfalls we should be aware of.
+Consider the task of optimizing the input program. Say we are working with an
+expression <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = e1 in e2</code></span> where <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span> is a fairly
+simple term like a number or a variable or just one <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span>, then
+we could simplify the term by simply replacing all occurrences of
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> in <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e2</code></span> with <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span>. This simplification is
+sometimes known as beta-reduction, and when done in reverse is called
+common-subexpression elimination. Both beta-reduction and
+common-subexpression elimination can speed up programs depending on
+the complexity of recomputing <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span> and how <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> is used in
+the program. If we perform this substitution naively, we can
+unintentionally change the behavior of the program!</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Can you give an example program in which the textual substitution of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e1</code></span> for <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> in <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e2</code></span> differs in behavior from <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let x = e1 in e2</code></span>? Hint: it will involve shadowing</p></blockquote><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(y):
+  let x = y in
+  let y = 17 in
+  add1(x)</code></pre></div></div></p><p>This program implements a function that adds <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">1</code></span> to the input.
+If we naively replace all occurrences of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span> with <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>, we end up with</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(y):
+  let y = 17 in
+  add1(y)</code></pre></div></div></p><p>which always returns <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">18</code></span>! The reason is that the meaning of a
+variable <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is dependent on the <span class="emph">environment</span>, and in this
+case there are two different binding sites that bind the variable
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>. In fact, because of shadowing it is impossible to refer to
+the outer definition of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> in the body of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let y =
+17</code></span>. How can we solve this issue? We notice that this is really only a
+problem with the fact that the names happen to be the same, but the
+actual <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">String</code></span> name of the variable is not really relevant to
+execution, the only purpose of the name is to identify <span class="emph">which</span>
+binding site the variable refers to. If we were to consistently
+<span class="emph">change</span> the names at the binding sites along with their
+corresponding uses, we would produce an equivalent program. A simple
+way to do this is to append a unique number to all identifiers, so
+that we can still recall the original names for better error messages
+and more readable intermediate code when debugging, but to ensure that
+all binding sites have unique names so that we cannot accidentally
+conflate them. After such a name resolution pass the program would look like</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(y#0):
+  let x#0 = y#0 in
+  let y#1 = 17 in
+  add1(x#0)</code></pre></div></div></p><p>And applying the naive substitution now preserves the intended meaning
+of the variable names:</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(y#0):
+  let y#1 = 17 in
+  add1(y#0)</code></pre></div></div></p><p>For this reason, it is common in compilers to perform a
+<span class="emph">renaming</span> pass that ensures that all binding sites have globally
+unique names, and to maintain this invariant for the remainder of the
+compilation process.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Implement a function resolve_names(p: &amp;Program) -&gt; Program that renames all variables to unique identifiers. As before, you will need to carry some kind of environment. What data structure is appropriate for the environment in this case?</p></blockquote><h3 class="heading">2<tt>&nbsp;</tt><a name="(part._.Compiling_.Variables_and_.Let-expressions)"></a>Compiling Variables and Let-expressions<span class="button-group"><a href="#(part._.Compiling_.Variables_and_.Let-expressions)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>When we turn to the task of compiling our expressions, we see that the
+presence of a context of variables complicates matters. Previously, we
+stored all intermediate results in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, and our two base cases
+of a number and usage of the single input variable would <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> a
+constant, or the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, respectively.  We
+were able to use <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> before because we knew there was only a
+single variable, but now there are arbitrarily many different
+variables, and so we need to store each of their corresponding values
+in distinct memory locations. That is, just as how in the scope
+checker we needed an environment to know which variables were in
+scope, and in the interpreter we needed an environment to know what
+values the in-scope variables had, for the compiler we also need an
+environment, which tells us <span class="emph">where</span> the variables&rsquo; values are
+stored.</p><h4 class="heading">2.1<tt>&nbsp;</tt><a name="(part._x86__.Addressable_.Memory__the_.Stack)"></a>x86: Addressable Memory, the Stack<span class="button-group"><a href="#(part._x86__.Addressable_.Memory__the_.Stack)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>So far our only access to memory in x86-64 has been the registers. But
+there are only 16 of these, giving us only 128 bytes of memory to work
+with. Since each variable in our source language holds an 64-bit
+integer, and we can have arbitrarily many variables, we need access to
+more memory than just the registers. In the x86-64 abstract machine,
+in addition to the registers, we also have access to byte-addressable
+memory, where addresses are themselves 64-bit integers. So this would
+seem to imply that we have access to 2^64 bytes of memory, though in
+reality current hardware only considers the lower 48 bits
+significant. Still this gives us access to 256 terabytes of
+addressable memory, which should be plenty for our applications.</p><p>Programs don&rsquo;t start at memory address 0, or at address
+<span style="font-style: italic"></span>2<span style="font-style: italic"></span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic"></span>6<span style="font-style: italic"></span>4<span style="font-style: italic"></span></span><span style="font-style: italic"></span>, but they do have access to some contiguous region:</p><p><p class="center"><img style="vertical-align: 3.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="386.8251953125" height="627.19921875"/></p></p><p>The <span class="emph">Code</span> segment includes the code for our program.  The <span class="emph">Global</span>
+segment includes any global data that should be available throughout our
+program&rsquo;s execution.  The <span class="emph">Heap</span> includes memory that is dynamically
+allocated as our program runs &#8212;<wbr></wbr> we&rsquo;ll come back to using the heap later.
+Finally the <span class="emph">Stack</span> segment is used as our program calls functions and
+returns from them &#8212;<wbr></wbr> we&rsquo;ll need to work with this segment right away.</p><p>Because the heap and the stack segments are adjacent to each other, care must
+be taken to ensure they don&rsquo;t actually overlap each other, or else the same
+region of memory would not have a unique interpretation, and our program would
+crash.  This implies that as we start using addresses within each region, one
+convenient way to ensure such a separation is to choose addresses from opposite
+ends.  Historically, the convention has been that the heap grows upwards from
+lower addresses, while the stack grows downward from higher addresses.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._1._lecturelet-and-stack%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">This
+makes allocating and using arrays particularly easy, as the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span>
+element will simply be <span style="font-style: italic">i</span> words away from the starting address of the
+array.</span></span></p><p>The stack itself must conform to a particular structure, so that
+functions can call each other reliably.  This is (part of) what&rsquo;s
+known as the <span class="emph">calling convention</span>, and we&rsquo;ll add more details to
+this later.  For now, the high-level picture is that the stack is
+divided into <span class="emph">stack frames</span>, one per function-in-progress, that
+each stack frame can be used freely by its function, and that when the
+function returns, its stack frame is freed for use by future calls.
+(Hence the appropriateness of the name &ldquo;stack&rdquo;: stack frames obey a
+last-in-first-out discipline as functions call one another and
+return.)  When a function is called, it needs to be told where its
+stack frame begins.  Per the calling convention, this address is
+stored in the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> register (read <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sp</code></span> as standing for
+&ldquo;stack pointer&rdquo;)<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._2._lecturelet-and-stack%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">This is a simplification.  We&rsquo;ll see the
+fuller rules soon.</span></span>.  Addresses <span class="emph">lower</span> than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> are free
+for use; addresses <span class="emph">greater</span> than <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> are already used and
+should not be tampered with:</p><p><p class="center"><img style="vertical-align: 3.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="427.1142578125" height="336.599609375"/></p></p><p>To access memory in x86, we need to "dereference" an address,
+syntactically, this is written by surrounding the address in square
+brackets. For instance to move a value from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, we
+write <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, rdi</code></span>, but to load a value from the memory pointed
+to by <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> we write <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, [rdi]</code></span>. Vice-versa, to store
+the value in the register <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> in the memory pointed to by
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, we write <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [rax], rdi</code></span>. Most instructions in x86
+that work with registers work just as well with addresses, with the
+exception that there can only be one memory access in the
+instruction. So for instance, we cannot write <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [rax], [rdi]</code></span>,
+we would instead need to first load <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[rdi]</code></span> into a register and
+then store it to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[rax]</code></span>.</p><h3 class="heading">3<tt>&nbsp;</tt><a name="(part._.Mapping_.Variables_to_.Memory)"></a>Mapping Variables to Memory<span class="button-group"><a href="#(part._.Mapping_.Variables_to_.Memory)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>The description above lets us refine our compilation challenge: we
+have a large region of of memory available to us on the stack, and we
+can store our variables at locations <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp - 8 * 1</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp - 8 *
+2</code></span>, ... <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp - 8 * i</code></span>.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Why do we use multiples of 8?</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Given the description of the stack above, come up with a strategy for
+allocating numbers to each identifier in the program, such that identifiers
+that are potentially needed simultaneously are mapped to different numbers.</p></blockquote><p>One possibility is simply to give every unique binding its own unique integer.
+Trivially, if we reserve enough stack space for all bindings, and every binding
+gets its own stack slot, then no two bindings will conflict with each other and
+our program will work properly.</p><p>In the following examples, the code is on the left, and the mappings of names
+to stack slots is on the right.</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let x = 10       /* [] */
+in add1(x)          /* [ x --&gt; 1 ] */
+
+   let x = 10       /* [] */
+in let y = add1(x)  /* [x --&gt; 1] */
+in let z = add1(y)  /* [y --&gt; 2, x --&gt; 1] */
+in add1(z)          /* [z --&gt; 3, y --&gt; 2, x --&gt; 1] */
+
+   let a = 10             /* [] */
+in let c =    let b = add1(a)   /* [a --&gt; 1] */
+           in let d = add1(b)   /* [b --&gt; 2, a --&gt; 1] */
+           in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
+in  add1(c)               /* [c --&gt; 4, d --&gt; 3, b --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>We can implement this strategy fairly easily: we can keep one mutable
+counter and as we traverse the program, associate each variable with
+an offset, incrementing the counter to ensure all variables are placed
+in different locations. However, if we inspect the output of this
+program carefully, we notice that it doesn&rsquo;t use the <span class="emph">minimal</span>
+number of stack slots. In the last expression, where we have a
+left-nested let, the variables <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">d</code></span> have fallen out
+of scope when we define <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c</code></span>. So in fact we don&rsquo;t actually
+<span class="emph">need</span> to ensure that <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c</code></span> uses a different
+address. Instead, we can re-use the space we used for <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> to
+store the value of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">c</code></span>.</p><p>A closer reading of the code reveals that our usage of let bindings also forms
+a stack discipline: as we enter the bodies of let-expressions, only the
+bindings of those particular let-expressions are in scope; everything else is
+unavailable.  And since we can trace a straight-line path from any given
+let-body out through its parents to the outermost expression of a given
+program, we only need to maintain uniqueness among the variables on those
+paths.  Here are the same examples as above, with this new strategy:
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let x = 10       /* [] */
+in add1(x)          /* [ x --&gt; 1 ] */
+
+   let x = 10       /* [] */
+in let y = add1(x)  /* [x --&gt; 1] */
+in let z = add1(y)  /* [y --&gt; 2, x --&gt; 1] */
+in add1(z)          /* [z --&gt; 3, y --&gt; 2, x --&gt; 1] */
+
+   let a = 10             /* [] */
+in let c =    let b = add1(a)   /* [a --&gt; 1] */
+           in let d = add1(b)   /* [b --&gt; 2, a --&gt; 1] */
+           in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
+in  add1(c)               /* [c --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>Only the last line differs, but it is typical of what this algorithm can
+achieve.  Let&rsquo;s work through the examples above to see their intended compiled
+assembly forms.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._3._lecturelet-and-stack%29%29" data-pltdoc="x">3</a></span></span><span class="FootnoteContent">Note that we do not care at all, right now, about
+inefficient assembly.  There are clearly a lot of wasted instructions that move
+a value out of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> only to move it right back again.  We&rsquo;ll consider
+cleaning these up in a later, more general-purpose compiler pass.</span></span>  Each
+binding is colored in a unique color, and the corresponding assembly is
+highlighted to match.</p><p><table cellspacing="0" cellpadding="0" class="centered"><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let ~hl:1:s~x =~hl:1:e~ ~hl:2:s~10~hl:2:e~
+in ~hl:3:s~add1(~hl:4:s~x~hl:4:e~)~hl:3:e~</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:2:s~mov rax, 10~hl:2:e~
+~hl:1:s~mov [rsp - 8*1], rax~hl:1:e~
+~hl:4:s~mov rax, [rsp - 8*1]~hl:4:e~
+~hl:3:s~add rax, 1~hl:3:e~</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let ~hl:1:s~x = 10~hl:1:e~
+in let ~hl:3:s~y =~hl:3:e~ ~hl:2:s~add1(x)~hl:2:e~
+in let ~hl:5:s~z =~hl:5:e~ ~hl:4:s~add1(y)~hl:4:e~
+in ~hl:6:s~add1(z)~hl:6:e~</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:1:s~mov rax, 10
+mov [rsp - 8*1], rax~hl:1:e~
+~hl:2:s~mov rax, [rsp - 8*1]
+add rax, 1~hl:2:e~
+~hl:3:s~mov [rsp - 8*2], rax~hl:3:e~
+~hl:4:s~mov rax, [rsp - 8*2]
+add rax, 1~hl:4:e~
+~hl:5:s~mov [rsp - 8*3], rax~hl:5:e~
+~hl:6:s~mov rax, [rsp - 8*3]
+add rax, 1~hl:6:e~</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">   let ~hl:1:s~a = 10~hl:1:e~
+in let ~hl:5:s~c =~hl:5:e~    let ~hl:2:s~b = add1(a)~hl:2:e~
+           in let ~hl:3:s~d = add1(b)~hl:3:e~
+           in ~hl:4:s~add1(b)~hl:4:e~
+in  ~hl:6:s~add1(c)~hl:6:e~</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:1:s~mov rax, 10
+mov [rsp - 8*1], rax~hl:1:e~
+~hl:2:s~mov rax, [rsp - 8*1]
+add rax, 1
+mov [rsp - 8*2], rax~hl:2:e~
+~hl:3:s~mov rax, [rsp - 8*2]
+add rax, 1
+mov [rsp - 8*3], rax~hl:3:e~
+~hl:4:s~mov rax, [rsp - 8*2]
+add rax, 1~hl:4:e~
+~hl:5:s~mov [rsp - 8*2], rax~hl:5:e~
+~hl:6:s~mov rax, [rsp - 8*2]
+add rax, 1~hl:6:e~</code></pre></div></div></p></td></tr></table></p><p>This algorithm is also not really any harder to implement than the
+previous one: adding a binding to the environment simply allocates it
+at a slot equal to the new size of the environment. As we descend
+into a let-binding, we keep the current environment. As we descend
+into a let-body, we augment the environment with the new binding.
+<span class="emph">And as we exit a let-expression, we discard the augmented
+environment &#8212;<wbr></wbr> the bindings inside it have now fallen out of scope.</span>
+This usage of the environment is directly analogous to how the scope
+checking, interpreter and name resolution.</p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Complete this compiler, and test that it works on all these and any
+other examples you can throw at it.</p></blockquote><a name="(part._(gentag._0._lecturelet-and-stack))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._1._lecturelet-and-stack))"></a>1</span></span>This
+makes allocating and using arrays particularly easy, as the <span style="font-style: italic">i</span><span style="vertical-align: super; font-size: 80%"><span style="font-style: italic">th</span></span><span style="font-style: italic"></span>
+element will simply be <span style="font-style: italic">i</span> words away from the starting address of the
+array.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._2._lecturelet-and-stack))"></a>2</span></span>This is a simplification.  We&rsquo;ll see the
+fuller rules soon.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._3._lecturelet-and-stack))"></a>3</span></span>Note that we do not care at all, right now, about
+inefficient assembly.  There are clearly a lot of wasted instructions that move
+a value out of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> only to move it right back again.  We&rsquo;ll consider
+cleaning these up in a later, more general-purpose compiler pass.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
