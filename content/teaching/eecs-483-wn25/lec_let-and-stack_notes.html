@@ -179,8 +179,8 @@ If we naively replace all occurrences of <span title="Adder" class="sourceCode">
 variable <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> is dependent on the <span class="emph">environment</span>, and in this
 case there are two different binding sites that bind the variable
 <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span>. In fact, because of shadowing it is impossible to refer to
-the outer definition of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> in the body of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let y =
-17</code></span>. How can we solve this issue? We notice that this is really only a
+the outer definition of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y</code></span> in the body of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let y = 17</code></span>.
+How can we solve this issue? We notice that this is really only a
 problem with the fact that the names happen to be the same, but the
 actual <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">String</code></span> name of the variable is not really relevant to
 execution, the only purpose of the name is to identify <span class="emph">which</span>
@@ -281,11 +281,11 @@ in let y = add1(x)  /* [x --&gt; 1] */
 in let z = add1(y)  /* [y --&gt; 2, x --&gt; 1] */
 in add1(z)          /* [z --&gt; 3, y --&gt; 2, x --&gt; 1] */
 
-   let a = 10             /* [] */
+   let a = 10                   /* [] */
 in let c =    let b = add1(a)   /* [a --&gt; 1] */
            in let d = add1(b)   /* [b --&gt; 2, a --&gt; 1] */
            in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
-in  add1(c)               /* [c --&gt; 4, d --&gt; 3, b --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>We can implement this strategy fairly easily: we can keep one mutable
+in  add1(c)                     /* [c --&gt; 4, d --&gt; 3, b --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>We can implement this strategy fairly easily: we can keep one mutable
 counter and as we traverse the program, associate each variable with
 an offset, incrementing the counter to ensure all variables are placed
 in different locations. However, if we inspect the output of this
@@ -310,11 +310,11 @@ in let y = add1(x)  /* [x --&gt; 1] */
 in let z = add1(y)  /* [y --&gt; 2, x --&gt; 1] */
 in add1(z)          /* [z --&gt; 3, y --&gt; 2, x --&gt; 1] */
 
-   let a = 10             /* [] */
+   let a = 10                   /* [] */
 in let c =    let b = add1(a)   /* [a --&gt; 1] */
            in let d = add1(b)   /* [b --&gt; 2, a --&gt; 1] */
            in add1(b)           /* [d --&gt; 3, b --&gt; 2, a --&gt; 1] */
-in  add1(c)               /* [c --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>Only the last line differs, but it is typical of what this algorithm can
+in  add1(c)                     /* [c --&gt; 2, a --&gt; 1] */</code></pre></div></div></p><p>Only the last line differs, but it is typical of what this algorithm can
 achieve.  Let&rsquo;s work through the examples above to see their intended compiled
 assembly forms.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._3._lecturelet-and-stack%29%29" data-pltdoc="x">3</a></span></span><span class="FootnoteContent">Note that we do not care at all, right now, about
 inefficient assembly.  There are clearly a lot of wasted instructions that move
