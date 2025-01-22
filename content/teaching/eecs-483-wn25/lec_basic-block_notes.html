@@ -1,0 +1,380 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 5: Binary Operations and Basic Blocks</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 5:</span> Binary Operations and Basic Blocks</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._infix._.Growing_the_language__adding_infix_operators%29" class="tocviewlink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding infix operators</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Basic_.Blocks%29" class="tocviewlink" data-pltdoc="x">Basic Blocks</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 5:</span> Binary Operations and Basic Blocks</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._infix._.Growing_the_language__adding_infix_operators%29" class="tocsubseclink" data-pltdoc="x">Growing the language:<span class="mywbr"> &nbsp;</span> adding infix operators</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._infix._.Concrete_and_.Abstract_.Syntax__.Examples%29" class="tocsubseclink" data-pltdoc="x">Concrete and Abstract Syntax, Examples</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._infix._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.3<tt>&nbsp;</tt></span><a href="#%28part._infix._.Enhancing_the_transformations__a_new_intermediate_representation__.I.R_%29" class="tocsubseclink" data-pltdoc="x">Enhancing the transformations:<span class="mywbr"> &nbsp;</span> a new intermediate representation (IR)</a></td></tr><tr><td><span class="tocsublinknumber">1.3.1<tt>&nbsp;</tt></span><a href="#%28part._infix._.Immediate_expressions%29" class="tocsubseclink" data-pltdoc="x">Immediate expressions</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Basic_.Blocks%29" class="tocsubseclink" data-pltdoc="x">Basic Blocks</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Translating_.Basic_.Blocks_to_.Assembly%29" class="tocsubseclink" data-pltdoc="x">Translating Basic Blocks to Assembly</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._.Translating_to_a_.Basic_.Block%29" class="tocsubseclink" data-pltdoc="x">Translating to a Basic Block</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.15</span></div><h2 class="heading"><a name="(part._)"></a><span class="LectureNum">Lecture 5:</span> Binary Operations and Basic Blocks<span class="button-group"><a href="#(part._)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><p>Today we will extend the compiler to support binary arithmetic
+operations. This is a surprisingly significant change as it introduces
+the ambiguity of <span class="emph">evaluation order</span> into the language, and so we
+will introduce a new pass to the compiler that makes the evaluation
+order explicit in the structure of the term.</p><h3 class="heading">1<tt>&nbsp;</tt><a name="(part._infix._.Growing_the_language__adding_infix_operators)"></a>Growing the language: adding infix operators<span class="button-group"><a href="#(part._infix._.Growing_the_language__adding_infix_operators)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p><p>Again, we follow our standard recipe:
+</p><ol><li><p>Its impact on the <span class="emph">concrete syntax</span> of the language</p></li><li><p>Examples using the new enhancements, so we build intuition of them</p></li><li><p>Its impact on the <span class="emph">abstract syntax</span> and <span class="emph">semantics</span> of the language</p></li><li><p>Any new or changed <span class="emph">transformations</span> needed to process the new forms</p></li><li><p>Executable <span class="emph">tests</span> to confirm the enhancement works as intended</p></li></ol></p><h4 class="heading">1.1<tt>&nbsp;</tt><a name="(part._infix._.Concrete_and_.Abstract_.Syntax__.Examples)"></a>Concrete and Abstract Syntax, Examples<span class="button-group"><a href="#(part._infix._.Concrete_and_.Abstract_.Syntax__.Examples)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>We add three new forms to our grammar: three binary arithmetic
+operations as well as parentheses so that we can disambiguate
+arithmetic notation.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._infix._(bnf-prod._(binops._prog)))"></a><span class="bnf-rule">&#8249;prog&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit">def</span> <span class="bnf-lit">main</span> <span class="bnf-lit">(</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._infix._(bnf-prod._(binops._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">ADD1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">SUB1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">LET</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit bnf-unknown">EQ</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit bnf-unknown">IN</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">+</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">-</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">*</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">(</span> <span class=""><a href="#%28elem._infix._%28bnf-prod._%28binops._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span></p></blockquote><p>Here the abstract syntax breaks slightly from the concrete syntax in
+that we don&rsquo;t have an abstract syntax form for parentheses, since they
+only serve a syntactic and not a semantic purpose. We add these new
+operations as primitives, adjusting the primitive constructor to take
+in a vector of arguments, so that it encapsulates both unary and binary primitives.
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Prim {
+    Add1,
+    Sub1,
+    Add,
+    Sub,
+    Mul,
+}
+
+enum Expression {
+  ...
+  Prim(Prim, Vec&lt;Expression&gt;),
+}</code></pre></div></div></p><p>These new expression forms should be familiar from standard arithmetic
+notation. The parser will take care of operator precedence. I.e., the
+expressions
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(2 - 3) + 4 * 5</code></pre></div></div>
+and
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(2 - 3) + (4 * 5)</code></pre></div></div>
+both are parsed into the same abstract syntax tree
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Prim(Add,
+  [Prim(Sub, [Number(2), Number(3)]),
+   Prim(Mul, [Number(4), Number(5)])])</code></pre></div></div></p><h4 class="heading">1.2<tt>&nbsp;</tt><a name="(part._infix._.Semantics)"></a>Semantics<span class="button-group"><a href="#(part._infix._.Semantics)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>At first it seems utterly straightforward to extend our interpreter to
+account for these new forms:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn interpret(p: &amp;ast::Program, x: i64) -&gt; i64 {
+    fn interp_exp(e: &amp;ast::Expression, mut env: HashMap&lt;String, i64&gt;) -&gt; i64 {
+        match e {
+            ast::Expression::Prim { prim, args } =&gt; match prim {
+                ast::Prim::Add =&gt; {
+                    let res1 = interp_exp(&amp;args[0], env.clone());
+                    let res2 = interp_exp(&amp;args[1], env);
+                    res1 + res2
+                }
+                ...
+            },
+        }
+    }
+    let env: HashMap&lt;String, i64&gt; = HashMap::unit(p.parameter.clone(), x);
+    interp_exp(&amp;p.body, env)
+}</code></pre></div></div></p><p>But notice that there is a somewhat arbitrary choice here. Should the clause for interpreting add be
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ast::Prim::Add =&gt; {
+  let res1 = interp_exp(&amp;args[0], env.clone());
+  let res2 = interp_exp(&amp;args[1], env);
+  res1 + res2
+}</code></pre></div></div>
+or
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">ast::Prim::Add =&gt; {
+  let res2 = interp_exp(&amp;args[1], env.clone());
+  let res1 = interp_exp(&amp;args[0], env);
+  res1 + res2
+}</code></pre></div></div></p><p>Do we evaluate the expression from left-to-right or right-to-left? It
+turns out that this decision doesn&rsquo;t affect the interpreter for our
+current language, but it will matter with future extensions.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>What programming language feature could you add to our language that would make the difference between left-to-right and right-to-left evaluation matter?</p></blockquote><p><p>There are many different possible answers:
+</p><ul><li><p>Mutable variables</p></li><li><p>Writing to stdout or files</p></li><li><p>Reading from stdin</p></li></ul></p><p>For instance, consider if we added a primitive <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print(e)</code></span> that
+would print out the value of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">e</code></span> and produce the same value. So
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print(5)</code></span> would print <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></span> to stdout.
+Then how should the following program evaluate?</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">print(6) * print(7)</code></pre></div></div></p><p>Obviously, the value it should produce is <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">42</code></span>, but what should
+it print?</p><ul><li><p>Prints "67", this is left-to-right evaluation order</p></li><li><p>Prints "76", this is right-to-left evaluation order</p></li><li><p>Print either "67" or "76", meaning the evaluation order is unspecified, or implementation dependent</p></li></ul><p>Which do you prefer? Either of the first two seem very reasonable,
+with left-to-right seeming more reasonable to match the way we write
+English. The third option is something probably only a compiler writer
+would choose, because it means it is easier to optimize the program
+because you can arbitrarily re-order things!</p><p>We&rsquo;ll go with the first choice: left-to-right evaluation order.</p><p>Note that doing things left-to-right like this is not quite the same
+as the PEMDAS rules. For instance the following arithmetic expression evaluates:
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">    (2 - 3) + 4 * 5
+==&gt; -1 + (4 * 5)
+==&gt; -1 + 20
+==&gt; 19</code></pre></div></div></p><p>rather than the possible alternative of doing the multiplication
+first. The alternative of following PEMDAS to do the evaluation order
+would be very confusing:
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(print(2) - 3) + print(4) * 5</code></pre></div></div>
+If we follow our left-to-right evaluation then this would print "24"
+but if we follow PEMDAS literally we would probably print "42".</p><h4 class="heading">1.3<tt>&nbsp;</tt><a name="(part._infix._.Enhancing_the_transformations__a_new_intermediate_representation__.I.R_)"></a>Enhancing the transformations: a new intermediate representation (IR)<span class="button-group"><a href="#(part._infix._.Enhancing_the_transformations__a_new_intermediate_representation__.I.R_)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>What goes wrong with our current naive transformations?  How can we
+fix them?</p></blockquote><p>We don&rsquo;t need much in the way of new x86 features to compile our
+language. We&rsquo;re already familiar with <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span>, and so
+we only need to know that the signed multiplication operation is
+called <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">imul</code></span>.</p><p>Let&rsquo;s try manually &ldquo;compiling&rdquo; some simple
+binary-operator expressions to assembly:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Original expression</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Compiled assembly</p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(2 + 3) + 4</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, 2
+add rax, 3
+add rax, 4</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(4 - 3) - 2</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, 4
+sub rax, 3
+sub rax, 2</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">((4 - 3) - 2) * 5</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, 4
+sub rax, 3
+sub rax, 2
+imul rax, 5</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(2 - 3) + (4 * 5)</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, 2
+sub rax, 3
+?????</code></pre></div></div></p></td></tr></table></p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Convince yourself that using a let-bound variable in place of any of
+these constants will work just as well.</p></blockquote><p>So far, our compiler has only ever had to deal with a single active expression
+at a time: it moves the result into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, increments or decrements it, and
+then potentially moves it somewhere onto the stack, for retrieval and later
+use.  But with our new compound expression forms, that won&rsquo;t suffice: the
+execution of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(2 - 3) + (4 * 5)</code></span> above clearly must stash the result of
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(2 - 3)</code></span> somewhere, to make room in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> for the subsequent
+multiplication.  We might try to use another register (<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rcx</code></span>, maybe?), but
+clearly this approach won&rsquo;t scale up, since there are only a handful of
+registers available.  What to do?</p><h5 class="heading">1.3.1<tt>&nbsp;</tt><a name="(part._infix._.Immediate_expressions)"></a>Immediate expressions<span class="button-group"><a href="#(part._infix._.Immediate_expressions)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Why did the first few expressions compile successfully?</p></blockquote><p>Notice that for the first few expressions, all the arguments to the operators
+were <span class="emph">immediately ready</span>:
+</p><ul><li><p>They required no further computation to be ready.</p></li><li><p>They were either constants, or variables that could be read off the stack.</p></li></ul></p><p>Perhaps we can salvage the final program by transforming it somehow, such that
+all its operations are on immediate values, too.</p><blockquote class="IncerciseBody"><p class="Incercise">Do Now!</p><p>Try to do this: Find a program that computes the same answer, in the same
+order of operations, but where every operator is applied only to immediate values.</p></blockquote><p>Note that conceptually, our last program is equivalent to the following:</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let first = 2 - 3 in
+let second = 4 * 5 in
+first + second</code></pre></div></div></p><p>This program has decomposed the compound addition expression into the sum of
+two let-bound variables, each of which is a single operation on immediate
+values.  We can easily compile each individual operation, and we already know
+how to save results to the stack and restore them for later use, which means we
+can compile this transformed program to assembly successfully.</p><p>Come to think of it, compiling operations when they are applied to
+immediate values is so easy, wouldn&rsquo;t it be nice if we did the same
+thing for unary primitives and if? This way every intermediate result
+gets a name, which will then be assigned a place on the stack (or
+better yet, a register) instead of every intermediate result
+necessarily going through <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>.</p><h3 class="heading">2<tt>&nbsp;</tt><a name="(part._.Basic_.Blocks)"></a>Basic Blocks<span class="button-group"><a href="#(part._.Basic_.Blocks)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>We introduce a new compiler pass: translating the code into an
+<span class="emph">intermediate representation</span> (IR). The intermediate
+representation we will use is called Static Single Assignment (SSA),
+and is the industry standard, used for example by the
+<a href="https://llvm.org/">LLVM compiler framework</a>.</p><p>We&rsquo;ll only use a fragment of the full SSA IR for now: we will compile
+our source programs to a single <span class="emph">basic block</span>. The version of
+basic blocks we use now is a sequence of simple "operations" applied
+to immediate values, ending in a return statement<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._2._lecturebasic-block%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">We will later
+add other "terminating" statements that can end a basic block, but we
+only need return for the straightline code we are producing
+now.</span></span>. This has the benefit of being quite straightforward to compile
+to assembly code: if we have a mapping from variables to memory
+locations, then each operation can be directly compiled to a short
+sequence of instructions. This is one of the benefits of our IR: since
+the IR is "closer" to assembly, we can more easily understand what
+code will be generated for it, and in particular how to make that code
+efficient.</p><p>Interestingly, even though SSA IR is used for compilation of
+imperative code, like our source language, the variable bindings in
+SSA IR are <span class="emph">immutable</span>, meaning that a variable cannot be updated
+once it is defined. This is the origin of the name "Static Single
+Assignment", every variable is only assigned to at one static program
+position<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._3._lecturebasic-block%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">when we extend to full SSA IR we will see that a
+variable can take on multiple values dynamically.</span></span>.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub struct Program {
+    pub param: VarName,
+    pub entry: BlockBody,
+}
+
+pub enum BlockBody {
+    Return(Immediate),
+    Operation { dest: VarName, op: Operation, next: Box&lt;BlockBody&gt; },
+}
+
+pub enum Operation {
+    Immediate(Immediate),
+    Prim(Prim, Immediate, Immediate),
+}
+
+pub enum Prim {
+    Add,
+    Sub,
+    Mul,
+}
+
+pub enum Immediate {
+    Const(i64),
+    Var(VarName),
+}</code></pre></div></div></p><p>An SSA program consists of a single basic block body, with a parameter
+name for the argument to the main function. A <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span> is a
+sequence of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Operation</code></span>s that assign the output of an
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Operation</code></span> to a variable, ending with a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Return</code></span> of a
+specified immediate value. An operation is either one of the primitive
+arithmetic operations, or an immediate value.</p><p>Our SSA IR is a different kind of "programming language" than our
+source, in that we don&rsquo;t really ever use a concrete syntax for it,
+instead only working with the abstract syntax trees. Programmers don&rsquo;t
+write SSA programs themselves, the compiler generates them and
+analyzes them. But for convenience of discussion, we will sometimes
+use a textual format rendering a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Program</code></span> with 3 operations
+ending in a return as:</p><p><div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">entry(x):
+  y = add 2 x
+  z = sub 18 3
+  w = mul y z
+  ret w</code></pre></div></div></p><h4 class="heading">2.1<tt>&nbsp;</tt><a name="(part._.Translating_.Basic_.Blocks_to_.Assembly)"></a>Translating Basic Blocks to Assembly<span class="button-group"><a href="#(part._.Translating_.Basic_.Blocks_to_.Assembly)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>We can think of our Basic Blocks as a simplified version of our source
+language and so we can adapt our method of compiling <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span>
+bindings to compile basic blocks. We map each SSA variable to a memory
+offset from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> and then we compile each operation to a sequence
+of instructions that places the result of the operation in the
+location of the given variable. For instance if we store <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">y, z, w</code></span>
+to the offsets <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[rsp - 16]</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[rsp - 24]</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">[rsp - 32]</code></span>
+then we can compile the multiply operation <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">w = mul y z</code></span> to
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rax, [rsp - 16]
+mov r10, [rsp - 24]
+imul rax, r10
+mov [rsp - 32], rax</code></pre></div></div></p><p>Here we use <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r10</code></span> as "scratch registers" since x86
+cannot operate on multiple addressed memory locations in the same
+instruction.</p><p>For uniformity, we can compile the entry point to move the input
+parameter from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> into an offset from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>. And lastly, we
+compile a <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">ret</code></span> in SSA to move the value into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> and then
+execute the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span> instruction. This strategy would compile our example SSA program</p><p><div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">entry(x):
+  y = add 2 x
+  z = sub 18 3
+  w = mul y z
+  ret w</code></pre></div></div>
+to the following assembly
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">;; entry(x):
+mov [rsp - 8], rdi
+;; y = add 2 x
+mov rax, 2
+mov r10, [rsp - 8]
+add rax, r10
+mov [rsp - 16], rax
+;; z = sub 18 3
+mov rax, 18
+mov r10, 3
+add rax, r10
+mov [rsp - 24], rax
+;; w = mul y z
+mov rax, [rsp - 16]
+mov r10, [rsp - 24]
+imul rax, r10
+mov [rsp - 32], rax
+;; ret w
+mov rax, [rsp - 32]
+ret</code></pre></div></div></p><h4 class="heading">2.2<tt>&nbsp;</tt><a name="(part._.Translating_to_a_.Basic_.Block)"></a>Translating to a Basic Block<span class="button-group"><a href="#(part._.Translating_to_a_.Basic_.Block)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p><p>Now how do we go about compiling our source language to an SSA Basic Block?
+An SSA Basic Block is very similar to our source programming language except that
+</p><ul><li><p>We&rsquo;ve removed the redundant <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span> primitives, translating them to use <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub</code></span> with a constant</p></li><li><p>Programs end with an explicit <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">ret</code></span> of an immediate, whereas Adder was an expression language</p></li><li><p>Primitive operations can only be applied to immediates, whereas in Adder they can be arbitrarily complex sub-expressions</p></li><li><p>A variable bindings stores the result of a simple <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Operation</code></span>, whereas in Adder, the <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">let</code></span> binding stores the result of an arbitrarily complicated sub-expression.</p></li></ul></p><p>Our goal then is to implement a function</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn lower(prog: ast::Program) -&gt; ssa::Program</code></pre></div></div>
+that "lowers" the AST into our intermediate representation. A AST program is just a thin wrapper around an AST expression, so we will most likely need to implement a recursive function on expressions:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn lower_exp(exp: ast::Expression) -&gt; ssa::BlockBody</code></pre></div></div>
+That is, we compile an expression to a basic block body that returns the result of the expression.
+Such a function is easily implemented for immediates, but we run into issues with the other cases:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn lower_exp(e: &amp;ast::Expression) -&gt; ssa::BlockBody {
+    match e {
+        ast::Expression::Variable(x) =&gt; ssa::Return(ssa::Immediate(Immediate::Var(x.clone()))),
+        ast::Expression::Number(n) =&gt; ssa::Return(ssa::Immediate(Immediate::Const(*n))),
+        ast::Prim { prim, args } =&gt; match prim {
+            Add =&gt; {
+                let arg1 = args[0];
+                let arg2 = args[1];
+                ??
+            }
+            ...
+        },
+        ...
+    }
+}</code></pre></div></div>
+The problem we have here is that outputting a basic block that
+<span class="emph">returns</span> the result of an expression is not compositional:
+there&rsquo;s no way to combine the basic blocks <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">lower_exp(arg1)</code></span> and
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">lower_exp(arg2)</code></span> to get one that returns their sum.</p><p><p>What do we want to do in this case? We want to perform some sequence
+of operations and store the output of <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">arg1</code></span> in a variable, then
+do the same for <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">arg2</code></span> and then add up the results. We can make
+this compositional by using a trick called <span class="emph">continuation-passing
+style</span>: instead of producing a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span> that returns the value
+of the input expression directly, we take in as an argument
+</p><ul><li><p>A "destination" variable where we should store the result of the expression</p></li><li><p>A "next" <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span> of code that should be run <span class="emph">after</span> we have assigned the result to the destination variable</p></li></ul><p>We call this combination of a destination variable and a next
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span> a <span class="emph">continuation</span>, as it tells us how the program
+should continue after the expression we are compiling.</p></p><p>How does continuation-passing style solve our issue? Well consider the
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">lower_exp</code></span> function, but now taking a continuation as an
+argument:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn lower_exp(e: &amp;ast::Expression, k: Continuation) -&gt; ssa::BlockBody {
+    match e {
+        ast::Expression::Variable(x) =&gt; {
+            let (dest, body) = k;
+            ssa::BlockBody::Operation {
+                dest: dest,
+                op: ssa::Operation::Immediate(ssa::Immediate::Var(x.to_string())),
+                next: Box::new(body),
+            }
+        }
+        ast::Expression::Number(n) =&gt; {
+            let (dest, body) = k;
+            ssa::BlockBody::Operation {
+                dest: dest,
+                op: ssa::Operation::Immediate(ssa::Immediate::Const(*n)),
+                next: Box::new(body),
+            }
+        }
+        ast::Expression::Prim { prim, args } =&gt; match prim {
+            ast::Prim::Add =&gt; {
+                let arg1 = &amp;args[0];
+                let arg2 = &amp;args[1];
+                // TODO: generate *unique* variable names for these!
+                let tmp1 = format!("addArg1");
+                let tmp2 = format!("addArg2");
+                let (dest, body) = k;
+                lower_exp(
+                    arg1,
+                    (
+                        tmp1.clone(),
+                        lower_exp(
+                            arg2,
+                            (
+                                tmp2.clone(),
+                                ssa::BlockBody::Operation {
+                                    op: ssa::Operation::Prim(
+                                        ssa::Prim::Add,
+                                        ssa::Immediate::Var(tmp1),
+                                        ssa::Immediate::Var(tmp2),
+                                    ),
+                                    dest,
+                                    next: Box::new(body),
+                                },
+                            ),
+                        ),
+                    ),
+                )
+            }
+            _ =&gt; todo!(),
+        },
+        _ =&gt; todo!(),
+    }
+}</code></pre></div></div></p><p>When we compile a variable or a number, we simply place that immediate
+in the destination variable and then execute the next code of the
+continuation.</p><p><p>When compiling a complex expression like <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">arg1 + arg2</code></span>, we want
+to do the following sequence of things:
+</p><ul><li><p>Compile <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">arg1</code></span>, storing its result in a temporary variable <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tmp1</code></span></p></li><li><p>Then compile <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">arg2</code></span>, storing its result in a temporary variable <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tmp2</code></span></p></li><li><p>Then add up <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tmp1</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">tmp2</code></span>, storing them in the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">dest</code></span> of the provided continuation</p></li><li><p>Finally, we execute the provided body of the continuation</p></li></ul><p>We see that the code above implements this by building up a large continuation to be passed to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">arg1</code></span>. In a sense, this continuation-passing style translation runs "backwards": we first</p></p><p>Finally, we return to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">lower_prog</code></span>, which should provide a
+continuation for the entry point expression. In this case we provide a
+continuation that immediately returns its input:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn lower(p: &amp;ast::Program) -&gt; ssa::Program {
+    // TODO: make sure this variable name is unique!
+    let dest = format!("result");
+    let body = ssa::BlockBody::Return(ssa::Immediate::Var(dest.clone()));
+    ssa::Program {
+        param: p.parameter.to_string(),
+        entry: lower_exp(&amp;p.body, (dest, body)),
+    }
+}</code></pre></div></div></p><p>As written, there is a flaw in the translation. When we compile
+an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Add</code></span> expression, we use the same temporary variable names
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"addArg1"</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">"addArg2"</code></span>. So this means the result of
+this translation on the input expression
+<div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  (x + 3) + (4 + x)</code></pre></div></div>
+is the incorrect basic block
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">entry(x):
+  addArg1 = x
+  addArg2 = 3
+  addArg1 = add addArg1 addArg2
+  addArg1 = 4
+  addArg2 = x
+  addArg2 = add addArg1 addArg2
+  result = add addArg1 addArg2
+  ret result</code></pre></div></div>
+What we need to do is ensure that every time we compile an add, we generate unique variable names by appending a unique identifier to the end of the name. This can be accomplished by assigning every generated variable a unique variable name so that we know there are no name clashes. In this case we would end up with something like</p><p><div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">entry(x%0):
+  addArg1%1 = x%0
+  addArg2%2 = 3
+  addArg1%3 = add addArg1%1 addArg2%2
+  addArg1%4 = 4
+  addArg2%5 = x
+  addArg2%6 = add addArg1%4 addArg2%5
+  result%7 = add addArg1%3 addArg2%6
+  ret result%7</code></pre></div></div></p><p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Modify the continuation-based translation to generate unique variable names</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend this continuation-based translation to the remaining types of expressions</p></blockquote></p><a name="(part._(gentag._1._lecturebasic-block))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._2._lecturebasic-block))"></a>1</span></span>We will later
+add other "terminating" statements that can end a basic block, but we
+only need return for the straightline code we are producing
+now.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._3._lecturebasic-block))"></a>2</span></span>when we extend to full SSA IR we will see that a
+variable can take on multiple values dynamically.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
