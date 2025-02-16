@@ -1,0 +1,316 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Assignment 3: Procedures</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="AssignmentNum">Assignment 3:</span> Procedures</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.The_.Cobra_.Language%29" class="tocviewlink" data-pltdoc="x">The Cobra Language</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Compiler_.Pipeline_.Overview%29" class="tocviewlink" data-pltdoc="x">Compiler Pipeline Overview</a></td></tr><tr><td align="right">3&nbsp;</td><td><a href="#%28part._.Implementation_.Advice%29" class="tocviewlink" data-pltdoc="x">Implementation Advice</a></td></tr><tr><td align="right">4&nbsp;</td><td><a href="#%28part._.Starter_.Code%29" class="tocviewlink" data-pltdoc="x">Starter Code</a></td></tr><tr><td align="right">5&nbsp;</td><td><a href="#%28part._.List_of_.Deliverables%29" class="tocviewlink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td align="right">6&nbsp;</td><td><a href="#%28part._.Grading_.Standards%29" class="tocviewlink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td align="right">7&nbsp;</td><td><a href="#%28part._.Submission%29" class="tocviewlink" data-pltdoc="x">Submission</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="AssignmentNum">Assignment 3:</span> Procedures</a></td></tr><tr><td><span class="tocsublinknumber">1<tt>&nbsp;</tt></span><a href="#%28part._.The_.Cobra_.Language%29" class="tocsubseclink" data-pltdoc="x">The Cobra Language</a></td></tr><tr><td><span class="tocsublinknumber">1.1<tt>&nbsp;</tt></span><a href="#%28part._.Concrete_syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<tt>&nbsp;</tt></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">2<tt>&nbsp;</tt></span><a href="#%28part._.Compiler_.Pipeline_.Overview%29" class="tocsubseclink" data-pltdoc="x">Compiler Pipeline Overview</a></td></tr><tr><td><span class="tocsublinknumber">2.1<tt>&nbsp;</tt></span><a href="#%28part._.Frontend%29" class="tocsubseclink" data-pltdoc="x">Frontend</a></td></tr><tr><td><span class="tocsublinknumber">2.2<tt>&nbsp;</tt></span><a href="#%28part._.Middle-end%29" class="tocsubseclink" data-pltdoc="x">Middle-<wbr></wbr>end</a></td></tr><tr><td><span class="tocsublinknumber">2.2.1<tt>&nbsp;</tt></span><a href="#%28part._.O.P.T.I.O.N.A.L__.Identifying_which_functions_should_be_lifted%29" class="tocsubseclink" data-pltdoc="x">OPTIONAL:<span class="mywbr"> &nbsp;</span> Identifying which functions should be lifted</a></td></tr><tr><td><span class="tocsublinknumber">2.2.2<tt>&nbsp;</tt></span><a href="#%28part._.Translating_.Cobra_.Function_.Definitions_to_.S.S.A%29" class="tocsubseclink" data-pltdoc="x">Translating Cobra Function Definitions to SSA</a></td></tr><tr><td><span class="tocsublinknumber">2.2.3<tt>&nbsp;</tt></span><a href="#%28part._.Translating_.Main_to_.S.S.A%29" class="tocsubseclink" data-pltdoc="x">Translating Main to SSA</a></td></tr><tr><td><span class="tocsublinknumber">2.2.4<tt>&nbsp;</tt></span><a href="#%28part._.Translating_.Cobra_.Calls_to_.S.S.A%29" class="tocsubseclink" data-pltdoc="x">Translating Cobra Calls to SSA</a></td></tr><tr><td><span class="tocsublinknumber">2.3<tt>&nbsp;</tt></span><a href="#%28part._.Backend%29" class="tocsubseclink" data-pltdoc="x">Backend</a></td></tr><tr><td><span class="tocsublinknumber">2.3.1<tt>&nbsp;</tt></span><a href="#%28part._.Top-level_function_blocks%29" class="tocsubseclink" data-pltdoc="x">Top-<wbr></wbr>level function blocks</a></td></tr><tr><td><span class="tocsublinknumber">2.3.2<tt>&nbsp;</tt></span><a href="#%28part._.Implementing_a_.System_.V_.A.M.D64_.Call%29" class="tocsubseclink" data-pltdoc="x">Implementing a System V AMD64 Call</a></td></tr><tr><td><span class="tocsublinknumber">3<tt>&nbsp;</tt></span><a href="#%28part._.Implementation_.Advice%29" class="tocsubseclink" data-pltdoc="x">Implementation Advice</a></td></tr><tr><td><span class="tocsublinknumber">4<tt>&nbsp;</tt></span><a href="#%28part._.Starter_.Code%29" class="tocsubseclink" data-pltdoc="x">Starter Code</a></td></tr><tr><td><span class="tocsublinknumber">5<tt>&nbsp;</tt></span><a href="#%28part._.List_of_.Deliverables%29" class="tocsubseclink" data-pltdoc="x">List of Deliverables</a></td></tr><tr><td><span class="tocsublinknumber">6<tt>&nbsp;</tt></span><a href="#%28part._.Grading_.Standards%29" class="tocsubseclink" data-pltdoc="x">Grading Standards</a></td></tr><tr><td><span class="tocsublinknumber">7<tt>&nbsp;</tt></span><a href="#%28part._.Submission%29" class="tocsubseclink" data-pltdoc="x">Submission</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.15</span></div><h2 class="heading"><a name="(part._)"></a><span class="AssignmentNum">Assignment 3:</span> Procedures<span class="button-group"><a href="#(part._)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><p><h4 class="due">Due: Fri 02/28 at 11:59pm</h4></p><p><p class="git-clone"><code><span class="kw">git clone </span><input onclick="this.select();" readonly="readonly" value="https://gitlab.eecs.umich.edu/483-wn25/procedures"/></code></p></p><p>In this assignment, we lift the restriction that functions can
+only be called via a tail call, instead allowing for calls in
+arbitrary position. We also add the ability to declare <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span>
+functions which are then implemented in Rust.
+We then extend our compiler to use a calling convention for these new
+calls, without losing the efficient implementation strategy we
+previously used for functions that were only tail called.</p><h3 class="heading">1<tt>&nbsp;</tt><a name="(part._.The_.Cobra_.Language)"></a>The Cobra Language<span class="button-group"><a href="#(part._.The_.Cobra_.Language)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><h4 class="heading">1.1<tt>&nbsp;</tt><a name="(part._.Concrete_syntax)"></a>Concrete syntax<span class="button-group"><a href="#(part._.Concrete_syntax)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>The only one changes to the concrete syntax in Cobra from Boa are the
+addition of <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> blocks, and the lifting of the restriction
+that calls only be in tail position.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(.Cobra._prog)))"></a><span class="bnf-rule">&#8249;prog&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._externs%29%29%29" data-pltdoc="x">&#8249;externs&#8250;</a></span> <span class="bnf-lit">def</span> <span class="bnf-lit">main</span> <span class="bnf-lit">(</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit">main</span> <span class="bnf-lit">(</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._extern)))"></a><span class="bnf-rule">&#8249;extern&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit">extern</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(.Cobra._externs)))"></a><span class="bnf-rule">&#8249;externs&#8250;</span><span class="bnf-meta">:</span> 
+                <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._extern%29%29%29" data-pltdoc="x">&#8249;extern&#8250;</a></span>
+                <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._extern%29%29%29" data-pltdoc="x">&#8249;extern&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._externs%29%29%29" data-pltdoc="x">&#8249;externs&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit">let</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">if</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">else:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._decls%29%29%29" data-pltdoc="x">&#8249;decls&#8250;</a></span> <span class="bnf-lit">in</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._binop-expr%29%29%29" data-pltdoc="x">&#8249;binop-expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._binop-expr)))"></a><span class="bnf-rule">&#8249;binop-expr&#8250;</span><span class="bnf-meta">:</span> 
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">true</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">false</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">!</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._binop-expr%29%29%29" data-pltdoc="x">&#8249;binop-expr&#8250;</a></span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._prim1%29%29%29" data-pltdoc="x">&#8249;prim1&#8250;</a></span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._prim2%29%29%29" data-pltdoc="x">&#8249;prim2&#8250;</a></span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class="bnf-lit">)</span>
+                      <span class="bnf-meta"> | </span><span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+<a name="(elem._(bnf-prod._(.Cobra._prim1)))"></a><span class="bnf-rule">&#8249;prim1&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class="bnf-lit">add1</span><span class="bnf-meta"> | </span><span class="bnf-lit">sub1</span>
+<a name="(elem._(bnf-prod._(.Cobra._prim2)))"></a><span class="bnf-rule">&#8249;prim2&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class="bnf-lit">+</span><span class="bnf-meta"> | </span><span class="bnf-lit">-</span><span class="bnf-meta"> | </span><span class="bnf-lit">*</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">&lt;</span><span class="bnf-meta"> | </span><span class="bnf-lit">&gt;</span><span class="bnf-meta"> | </span><span class="bnf-lit">&lt;=</span><span class="bnf-meta"> | </span><span class="bnf-lit">&gt;=</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">==</span>
+            <span class="bnf-meta"> | </span><span class="bnf-lit">&amp;&amp;</span><span class="bnf-meta"> | </span><span class="bnf-lit">||</span>
+<a name="(elem._(bnf-prod._(.Cobra._decls)))"></a><span class="bnf-rule">&#8249;decls&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._decls%29%29%29" data-pltdoc="x">&#8249;decls&#8250;</a></span> <span class="bnf-lit">and</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._decl%29%29%29" data-pltdoc="x">&#8249;decl&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._decl%29%29%29" data-pltdoc="x">&#8249;decl&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._decl)))"></a><span class="bnf-rule">&#8249;decl&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">def</span> <span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">(</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._ids)))"></a><span class="bnf-rule">&#8249;ids&#8250;</span><span class="bnf-meta">:</span> 
+        <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span>
+        <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._ids%29%29%29" data-pltdoc="x">&#8249;ids&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._exprs)))"></a><span class="bnf-rule">&#8249;exprs&#8250;</span><span class="bnf-meta">:</span> 
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+            <span class="bnf-meta"> | </span><span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._exprs%29%29%29" data-pltdoc="x">&#8249;exprs&#8250;</a></span>
+<a name="(elem._(bnf-prod._(.Cobra._bindings)))"></a><span class="bnf-rule">&#8249;bindings&#8250;</span><span class="bnf-meta">:</span> 
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+                  <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">IDENTIFIER</span> <span class="bnf-lit">=</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">,</span> <span class=""><a href="#%28elem._%28bnf-prod._%28.Cobra._bindings%29%29%29" data-pltdoc="x">&#8249;bindings&#8250;</a></span></p></blockquote><h4 class="heading">1.2<tt>&nbsp;</tt><a name="(part._.Semantics)"></a>Semantics<span class="button-group"><a href="#(part._.Semantics)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>The behavior of <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> functions is determined by their
+implementation in the <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span> file. Functions in Cobra, unlike
+Boa, can be called or tail-called. When a function is tail-called, no
+new stack frame is allocated. This means that programs that use
+tail-recursive functions to implement loops like</p><p><div class="sourceCodeWrapper"><span data-label="Cobra" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(n):
+  def fact_loop(n, acc):
+    if n == 0: acc else: fact_loop(n - 1, acc * n)
+  in
+  fact_loop(n, 1)</code></pre></div></div></p><p>Should execute in constant space, just as in our implementation of Boa.</p><h3 class="heading">2<tt>&nbsp;</tt><a name="(part._.Compiler_.Pipeline_.Overview)"></a>Compiler Pipeline Overview<span class="button-group"><a href="#(part._.Compiler_.Pipeline_.Overview)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>You will need to extend each of the three phases of your compiler to
+account for the new features in Boa. Most of the work is done in the
+middle-end in order to implement lambda lifting.</p><h4 class="heading">2.1<tt>&nbsp;</tt><a name="(part._.Frontend)"></a>Frontend<span class="button-group"><a href="#(part._.Frontend)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>There are three main changes to the frontend of the compiler:</p><ul><li><p>Non-tail calls are no longer compile-time errors</p></li><li><p>Extern functions are allowed to be declared and used.</p></li><li><p>The <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> function can now be called and/or tail-called within the body of the program.</p></li></ul><p>For scope checking, this means all extern function names as well as
+<span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> should be in scope functions in the body of the
+program. Shadowing of extern functions and <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> by local
+function definitions is allowed. The parser rejects programs that use
+extern functions called <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> or <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">entry</code></span>, so you do not
+need to worry about these corner cases in your code.</p><p>For name resolution, extern function names and <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> are
+treated differently from local function definitions. While local
+function definitions are resolved to have unique names by appending a
+unique identifier, extern functions and <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> have to use a
+particular label in the output assembly code in order to link
+correctly with <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span>. For this reason, the starter code
+changes the representation of function names defined in
+<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">src/identifiers.rs</code></span> as <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunName</code></span>. A <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunName</code></span> is an
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum</code></span> with two cases: a function name is either <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Mangled</code></span>,
+meaning it has been appended with a unique identifier to make it
+globally unique or <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Unmangled</code></span>, meaning it has a name that is
+significant in code generation.</p><p><p>The name resolution pass then needs to be updated as follows:
+</p><ul><li><p>Declarations and calls to internally defined functions (besides <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span>) should be resolved to use mangled names</p></li><li><p>Declarations and calls to <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> functions should use the original name, unmangled.</p></li><li><p>Calls to the top-level <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> function should be resolved to use the unmangled name <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">entry</code></span>, as this is the label we ultimately produce for the <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> function.<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._1._assignmentprocedures%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">While it would be simpler to use the label <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">main</code></span>, this is already used by the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span> function in <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span></span></span></p></li></ul></p><h4 class="heading">2.2<tt>&nbsp;</tt><a name="(part._.Middle-end)"></a>Middle-end<span class="button-group"><a href="#(part._.Middle-end)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p><p>The middle-end of the Cobra compiler needs to accomplish several new tasks:
+</p><ul><li><p>(OPTIONAL) Identify which Cobra function definitions need to be lifted to top-level functions and blocks in SSA</p></li><li><p>Identify when a Cobra call should be lowered to an SSA call or as an SSA branch</p></li><li><p>When calling or branching to a lifted function, appropriately adding any captured arguments</p></li></ul></p><p>Our SSA representation has changed in a few ways:</p><ul><li><p>An SSA program now consists of many mutually recursive function blocks and basic blocks. One of the function blocks should have unmangled <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunName</code></span> <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">entry</code></span>, corresponding to the <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> function of the source program.</p></li><li><p>SSA <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span>s now contain a new operation <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span>, which in code generation will be compiled to use the System V AMD64 Calling Convention</p></li><li><p>We introduce a distinction between <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunName</code></span>s, which are the names used for top-level SSA functions, and may be mangled or unmangled, and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockName</code></span>s (called <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Label</code></span> in the Boa starter code) which are the names of basic blocks, and are always mangled. Correspondingly a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Call</code></span> uses a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunName</code></span> whereas a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Branch</code></span> uses a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockName</code></span>.</p></li></ul><h5 class="heading">2.2.1<tt>&nbsp;</tt><a name="(part._.O.P.T.I.O.N.A.L__.Identifying_which_functions_should_be_lifted)"></a>OPTIONAL: Identifying which functions should be lifted<span class="button-group"><a href="#(part._.O.P.T.I.O.N.A.L__.Identifying_which_functions_should_be_lifted)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p>As an optional pass to produce better code, you can implement the
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">should_lift</code></span> function, identifying which functions in the source
+program must be lifted. If you choose not to implement this pass, you
+can leave <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">should_lift</code></span> unused and consider <span class="emph">all</span> functions
+to be in the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">should_lift</code></span> set. This produces sub-optimal code,
+but only by constant factors; the time/space complexity of the input
+program will still be preserved.</p><p><p>The specification for which local function definitions (i.e., all
+functions besides <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> functions <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span>) must be
+lifted is as follows. The set of functions that must be lifted is
+the least set containing
+</p><ul><li><p>Any local function that is the recipient of a non-tail call</p></li><li><p>Any local function that is called (tail or not) by a function that must be lifted</p></li></ul></p><p><p>We can calculate this set as follows:
+</p><ul><li><p>Calculate the <span class="emph">call graph</span> of the program: A graph whose nodes are the local function definitions and there is an edge from <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> to <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span> if <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> calls (tail or not) <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g</code></span>.</p></li><li><p>Calculate the set of local functions are the recipient of a non-tail call.</p></li><li><p>The set of functions that must be lifted is then the set of all functions which are the recipient of a non-tail call, plus any functions which are <span class="emph">reachable</span> from that set in the call graph.</p></li></ul></p><p>You can construct the call graph and non-tail called function sets in
+one pass over the AST. Then you can implement the graph reachability
+analysis using a worklist algorithm as described in lecture on
+February 12.</p><h5 class="heading">2.2.2<tt>&nbsp;</tt><a name="(part._.Translating_.Cobra_.Function_.Definitions_to_.S.S.A)"></a>Translating Cobra Function Definitions to SSA<span class="button-group"><a href="#(part._.Translating_.Cobra_.Function_.Definitions_to_.S.S.A)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p>There are two cases to consider for compiling a Cobra function
+definition to SSA. If the function is <span class="emph">not</span> in the
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">should_lift</code></span> set, then it is never the recipient of a non-tail
+call, and so can be compiled to a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SubBlock</code></span> exactly like a
+function definition in the Boa compiler.
+If the function is in the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">should_lift</code></span> set, then it should not
+be compiled to a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">SubBlock</code></span> form. Instead, it should produce both
+a top-level <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">FunBlock</code></span> and a top-level <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BasicBlock</code></span>, which
+both take the variables captured by the function as extra arguments.
+While it is not optimal, we recommend for this assignment to simply
+capture <span class="emph">all</span> variables that are currently in scope.</p><p>As an example, consider the following program</p><p><div class="sourceCodeWrapper"><span data-label="Cobra" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">def main(x):
+  let y = x + 1 in
+  def f(z): z * y in
+  let w = 2 in
+  f(w) * 3</code></pre></div></div></p><p>In this example, <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> must be lifted because it is the recipient
+of a non-tail call <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(w)</code></span>. At the definition site of <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>,
+there are two variables in scope: <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x,y</code></span>.
+Our recommended compilation for the function definition would be to produce a top-level SSA function block</p><p><div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fun f(x,y,z):
+  br f_tail(x,y,z)</code></pre></div></div>
+and a corresponding top-level SSA basic block
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">block f_tail(x,y,z):
+  r = z * y
+  ret r</code></pre></div></div></p><h5 class="heading">2.2.3<tt>&nbsp;</tt><a name="(part._.Translating_.Main_to_.S.S.A)"></a>Translating Main to SSA<span class="button-group"><a href="#(part._.Translating_.Main_to_.S.S.A)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p>The main function is compiled somewhat specially. <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span> doesn&rsquo;t
+need to be lifted in the same sense that internal functions do,
+because it is already a top-level function, and so never captures any
+arguments. Instead, we always compile main to a top-level function
+block called <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">entry</code></span> with a corresponding basic block.
+So we always generate a function block
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fun entry(x):
+  br main_tail(x)</code></pre></div></div>
+and we generate a corresponding basic block
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">block main_tail(x):
+  y = x + 1
+  w = 2
+  tmp = call f(w)
+  r = tmp * 3
+  ret r</code></pre></div></div>
+That contains the lowered code for the body of the main function.</p><h5 class="heading">2.2.4<tt>&nbsp;</tt><a name="(part._.Translating_.Cobra_.Calls_to_.S.S.A)"></a>Translating Cobra Calls to SSA<span class="button-group"><a href="#(part._.Translating_.Cobra_.Calls_to_.S.S.A)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p><p>A call to a function <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> in Cobra is compiled differently based on several factors:
+</p><ul><li><p>Is it an internal or external function?</p></li><li><p>Is it a tail call or a non-tail call?</p></li><li><p>If it is an internal function, is the function lifted or not?</p></li></ul></p><p>Let&rsquo;s consider how to lower a call <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(x,y,z)</code></span> to SSA based on
+these factors.</p><p>If <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is an <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> function, it should always be
+compiled to use the SSA <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call</code></span> operation. Even if it is a tail
+call. As an example the call <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(x,y,z)</code></span> with a continuation
+with <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">VarName</code></span> <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">r</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span> <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span> should be
+compiled to
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">r = call f(x,y,z)
+b</code></pre></div></div>
+whereas a tail call <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f(x,y,z)</code></span> should be compiled to
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">o = call f(x,y,z)
+ret o</code></pre></div></div>
+where <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">o</code></span> is a freshly generated variable name.</p><p>Otherwise, <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is an internal function (including <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span>). If <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is unlifted, then the call must be a tail call and can be translated directly to a branch with arguments:
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">br f(x,y,z)</code></pre></div></div></p><p>Otherwise, <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span> is a lifted function. To compile a call to a
+lifted function, we need to know what variables are captured at the
+definition site of <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>. We can keep track of this by maintaining
+a context mapping functions to an associated sequence of captured
+variables, updating it as we traverse the AST.</p><p>As an example, consider a function that captures two variables <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a,b</code></span>. Once we know what
+the captured variables are, we can implement the call. If it is a
+non-tail call, we are provided a continuation with <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">VarName</code></span>
+<span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">r</code></span> and <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">BlockBody</code></span> <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">b</code></span>. We implement this non-tail call
+using the <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call</code></span> operation, this time applying the function to the captured variables at the front:
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">r = call f(a,b,x,y,z)
+b</code></pre></div></div></p><p>A tail call is compiled similarly, except that it is a branch rather than a call and should branch directly to the basic block associated with <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">f</code></span>, rather than the function block:
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">br f_tail(a,b,x,y,z)</code></pre></div></div></p><h4 class="heading">2.3<tt>&nbsp;</tt><a name="(part._.Backend)"></a>Backend<span class="button-group"><a href="#(part._.Backend)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>The backend has to handle our new SSA features: extern declarations, top-level function
+and basic blocks, as well as SSA <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call</code></span>s.</p><p>Top-level basic blocks are compiled just as any other basic block: as
+a labeled block of assembly code where variables are stored at
+negative offsets to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>.
+Externed function declarations need to generate corresponding x86
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">extern</code></span> declarations.</p><h5 class="heading">2.3.1<tt>&nbsp;</tt><a name="(part._.Top-level_function_blocks)"></a>Top-level function blocks<span class="button-group"><a href="#(part._.Top-level_function_blocks)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p>A top-level function block in SSA consists of a single branch with
+arguments to a top-level basic block. The function block assumes its
+arguments are placed according to the System V AMD64 calling
+convention, whereas the basic block assumes its arguments are placed
+at consecutive negative offsets to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>. The generated code for
+the function block accordingly moves the arguments onto the stack and
+branches to the basic block.</p><p>The implementation of such a function block should be a labeled block
+of assembly code that moves the function arguments from the calling
+convention&rsquo;s designated location to the location expected by the basic
+block.</p><p>For example, a function block with 8 arguments:
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">fun f_call(x1,x2,x3,x4,x5,x6,x7,x8):
+  br f_tail(x1,x2,x3,x4,x5,x6,x7,x8)</code></pre></div></div></p><p>Can be compiled to
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">f_call:
+        mov QWORD [rsp + -8], rdi
+        mov QWORD [rsp + -16], rsi
+        mov QWORD [rsp + -24], rdx
+        mov QWORD [rsp + -32], rcx
+        mov QWORD [rsp + -40], r8
+        mov QWORD [rsp + -48], r9
+        mov rax, QWORD [rsp + 8]
+        mov QWORD [rsp + -56], rax
+        mov rax, QWORD [rsp + 16]
+        mov QWORD [rsp + -64], rax
+        mov rax, QWORD [rsp + 24]
+        mov QWORD [rsp + -72], rax
+        jmp f_tail</code></pre></div></div></p><h5 class="heading">2.3.2<tt>&nbsp;</tt><a name="(part._.Implementing_a_.System_.V_.A.M.D64_.Call)"></a>Implementing a System V AMD64 Call<span class="button-group"><a href="#(part._.Implementing_a_.System_.V_.A.M.D64_.Call)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h5><p><p>To compile an SSA <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call f(..)</code></span> operation, you should conform to
+the System V AMD64 calling convention. To implement this we need to
+calculate <span class="emph">where</span> we can safely allocate the callee&rsquo;s stack
+frame. For this we need to consider three things:
+</p><ul><li><p>How much space do our local variables take up on the stack?</p></li><li><p>How much space do stack-passed arguments take up on the stack?</p></li><li><p>Do we need to include an extra 8-bytes of padding to maintain the correct alignment for the call?</p></li></ul></p><p>In the general case, say we have <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">L</code></span> local variables at the
+call-site and <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">A</code></span> stack-passed arguments. To account for the space
+these locals and arguments take up, when we execute a <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>, we
+need <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> to be decremented by at least <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">(L + A) * 8</code></span>.</p><p>The calling convention says that when a function starts executing, the
+value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> modulo 16 must be 8. This means that when we make a
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>, we want the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> modulo 16 to be 0 (since a
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span> instruction pushes an 8-byte return address onto the
+stack). Therefore, since we can assume our initial value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>
+modulo 16 is 8, then we know that the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> when we make
+the call instruction must have a different parity, that is, the
+difference with the initial value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> must be an <span class="emph">odd</span>
+multiple of 8. Therefore we need an extra 8 bytes of padding when
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">L + A</code></span> is <span class="emph">even</span>. So define <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">P</code></span> to be 1 if <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">L + A</code></span>
+is even and 0 otherwise.</p><p>Then to implement the call, we proceed as follows.
+First, we move the register-passed arguments into the appropriate registers:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov rdi, arg 1
+mov rsi, arg 2
+mov rdx, arg 3
+mov rcx, arg 4
+mov r8,  arg 5
+mov r9,  arg 6</code></pre></div></div></p><p>Then we need to store the stack-passed arguments so that the stack conforms to the following structure:
+<p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="477.025390625" height="646.0"/></p>
+Which can be implemented as follows (assuming for simplicity that the arguments are immediates):
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov [rsp - (L + P + A - 0) * 8], arg 7
+mov [rsp - (L + P + A - 1) * 8], arg 8
+...
+mov [rsp - (L + P + A - (A - 1)) * 8], arg (7 + A - 1)</code></pre></div></div>
+Then to implement the call, we decrement the stack pointer so that it will place the return address appropriately:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub rsp, (L + P + A) * 8</code></pre></div></div>
+This moves the stack pointer:
+<p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_2.png" alt="image" width="477.025390625" height="646.0"/></p>
+And then we execute the call
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call f</code></pre></div></div>
+When the callee executes the stack then looks like
+<p class="center"><img style="vertical-align: -0.0px; margin: -3px -3px -3px -3px;" src="pict_3.png" alt="image" width="477.025390625" height="686.0"/></p></p><p>When the callee returns, the stack pointer will be returned to the
+location before the call, and so we execute
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add rsp, (L + P + A) * 8</code></pre></div></div>
+restoring it to its original location pointing at the caller&rsquo;s return address.</p><p>Altogether the code for the call is
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">;; store the register-passed arguments
+mov rdi, arg 1
+mov rsi, arg 2
+mov rdx, arg 3
+mov rcx, arg 4
+mov r8,  arg 5
+mov r9,  arg 6
+;; store the stack-passed arguments
+mov [rsp - (L + P + A - 0) * 8], arg 7
+mov [rsp - (L + P + A - 1) * 8], arg 8
+...
+mov [rsp - (L + P + A - (A - 1)) * 8], arg (7 + A - 1)
+;; move the stack pointer, make the call and then restore the stack pointer
+sub rsp, (L + P + A) * 8
+call f
+add rsp, (L + P + A) * 8</code></pre></div></div></p><p>As a concrete instance, consider the basic block
+<div class="sourceCodeWrapper"><span data-label="SSA" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">g(a,b):
+  c = a + b
+  d = c - 1
+  r = call f(1,2,3,4,5,6,7,8)
+  m = d + r
+  o = c + m
+  ret o</code></pre></div></div></p><p><p>To compile the <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call f(..)</code></span> to assembly we first identify:
+</p><ul><li><p>L is 4 as there are 4 local variables in the caller&rsquo;s stack frame: <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">a,b,c,d</code></span>.</p></li><li><p>A is 2 as there are 8 total arguments and the first 6 are passed in registers so there are only 2 passed on the stack.</p></li><li><p>P is 1 because A + L is even, so we need an extra 8 bytes of padding</p></li></ul><p>Then this call can be implemented by the following assembly code:</p></p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">;; store the register-passed arguments
+mov rdi, 1
+mov rsi, 2
+mov rdx, 3
+mov rcx, 4
+mov r8,  5
+mov r9,  6
+;; store the stack-passed arguments
+mov [rsp - 7 * 8], 7
+mov [rsp - 6 * 8], 8
+;; move the stack pointer, make the call and then restore the stack pointer
+sub rsp, 7 * 8
+call f
+add rsp, 7 * 8</code></pre></div></div></p><p>It is very easy to make off-by-one errors when implementing such a call,
+which may cause either arguments to be stored in the wrong place,
+locals to be overwritten, or the stack to be misaligned. We highly
+recommend using a debugger such as lldb to inspect your stack when
+debugging miscompiled function calls.</p><p>Alignment errors can be particularly difficult to find because they do
+not always result in a runtime error. To ensure you always produce
+aligned calls, in your compiler, before you emit the instruction
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub rsp, X * 8</code></span> immediately preceding the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">call</code></span>, panic if
+the number <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">X</code></span> is even.</p><h3 class="heading">3<tt>&nbsp;</tt><a name="(part._.Implementation_.Advice)"></a>Implementation Advice<span class="button-group"><a href="#(part._.Implementation_.Advice)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>This assignment is challenging and we recommend that you start early.
+We suggest you implement your solution <span class="emph">incrementally</span> as follows:</p><ul><li><p>First, adapt your Boa compiler to handle <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span>. In the middle-end you can just compile all calls to tail calls, as in Boa. You will only need to extend your compiler to implement the code generation for top-level function and basic blocks, leaving SSA <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call</code></span> unimplemented. This will get your Cobra compiler working on all existing Boa tests.</p></li><li><p>Second, extend your compiler to support <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> functions. In the front-end you will need to extend the scoping to account for <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> functions and the resolution to produce unmangled names for these functions. In the middle-end, you need to be able to identify which calls are to <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span> functions and lower these to SSA <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call</code></span>s appropriately. You will also need to extend the backend to handle SSA <span title="SSA" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">call</code></span> operations.</p></li><li><p>Lastly, extend your compiler to support local functions that are non-tail called, that is, to perform lambda lifting in the middle-end.</p></li></ul><p>At each point, you should test your solution with the provided test
+cases as well as tests of your own.
+This incremental approach will make it easier to debug your
+compiler. For instance, if you have implemented <span title="Cobra" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">extern</code></span>
+functions, you can already test that you implement calls according to
+the calling convention correctly.</p><p>In debugging your implementation of calls, you may want to use a
+debugger such as <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">lldb</code></span> or <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">gdb</code></span> so that you can inspect
+the state of the registers and the stack in your compiled program to
+see where your implementation is incorrect.</p><h3 class="heading">4<tt>&nbsp;</tt><a name="(part._.Starter_.Code)"></a>Starter Code<span class="button-group"><a href="#(part._.Starter_.Code)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>The starter code is similar to the previous assignments. We suggest
+you review the changes to <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">src/ast.rs</code></span>, <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">src/ssa.rs</code></span> and
+<span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">src/identifiers.rs</code></span>.</p><p>You are free to use your assignment 2 solution as a starting point for
+your assignment 3 solution, or you may also use the provided reference
+solution from
+<a href="https://gitlab.eecs.umich.edu/483-wn25/control-flow-code-solution">gitlab</a>.</p><h3 class="heading">5<tt>&nbsp;</tt><a name="(part._.List_of_.Deliverables)"></a>List of Deliverables<span class="button-group"><a href="#(part._.List_of_.Deliverables)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>For this assignment you will submit your updated versions of three
+files:</p><ul><li><p>src/frontend.rs</p></li><li><p>src/middle_end.rs</p></li><li><p>src/backend.rs</p></li></ul><p>These are the only files that you can change in your submission, your
+code will be linked with reference versions of the other files.</p><p>We&rsquo;ve included a script <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">mk_submission.sh</code></span> in the starter code
+repo that should make zip file with just those three files and your
+testing files that you should upload to gradescope. The testing files
+are included for us to get some idea of how students are testing their
+code, they are not graded.</p><h3 class="heading">6<tt>&nbsp;</tt><a name="(part._.Grading_.Standards)"></a>Grading Standards<span class="button-group"><a href="#(part._.Grading_.Standards)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>For this assignment, you will be autograded on whether your code
+implements the specification (functional correctness). Performance is
+not measured directly, except that there are reasonable timeouts for
+tests (in case your compiler or generated code has an infinite loop)
+and there are tests that will result in a stack overflow if tail calls
+are not handled properly.</p><p>We encourage you to test but your test coverage is not graded.</p><h3 class="heading">7<tt>&nbsp;</tt><a name="(part._.Submission)"></a>Submission<span class="button-group"><a href="#(part._.Submission)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>Please submit your homework on gradescope by the above deadline.</p><a name="(part._(gentag._0._assignmentprocedures))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._1._assignmentprocedures))"></a>1</span></span>While it would be simpler to use the label <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">main</code></span>, this is already used by the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">main</code></span> function in <span title="Shell" class="sourceCode"><code data-lang="text/x-sh" class="sourceCode">stub.rs</code></span></p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
