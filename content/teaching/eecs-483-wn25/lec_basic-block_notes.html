@@ -152,7 +152,7 @@ and is the industry standard, used for example by the
 <a href="https://llvm.org/">LLVM compiler framework</a>.</p><p>We&rsquo;ll only use a fragment of the full SSA IR for now: we will compile
 our source programs to a single <span class="emph">basic block</span>. The version of
 basic blocks we use now is a sequence of simple "operations" applied
-to immediate values, ending in a return statement<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._3._lecturebasic-block%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">We will later
+to immediate values, ending in a return statement<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._5._lecturebasic-block%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">We will later
 add other "terminating" statements that can end a basic block, but we
 only need return for the straightline code we are producing
 now.</span></span>. This has the benefit of being quite straightforward to compile
@@ -166,7 +166,7 @@ imperative code, like our source language, the variable bindings in
 SSA IR are <span class="emph">immutable</span>, meaning that a variable cannot be updated
 once it is defined. This is the origin of the name "Static Single
 Assignment", every variable is only assigned to at one static program
-position<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._4._lecturebasic-block%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">when we extend to full SSA IR we will see that a
+position<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._6._lecturebasic-block%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">when we extend to full SSA IR we will see that a
 variable can take on multiple values dynamically.</span></span>.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub struct Program {
     pub param: VarName,
     pub entry: BlockBody,
@@ -373,8 +373,8 @@ What we need to do is ensure that every time we compile an add, we generate uniq
   addArg2%5 = x
   addArg2%6 = add addArg1%4 addArg2%5
   result%7 = add addArg1%3 addArg2%6
-  ret result%7</code></pre></div></div></p><p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Modify the continuation-based translation to generate unique variable names</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend this continuation-based translation to the remaining types of expressions</p></blockquote></p><a name="(part._(gentag._2._lecturebasic-block))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._3._lecturebasic-block))"></a>1</span></span>We will later
+  ret result%7</code></pre></div></div></p><p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Modify the continuation-based translation to generate unique variable names</p></blockquote><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Extend this continuation-based translation to the remaining types of expressions</p></blockquote></p><a name="(part._(gentag._4._lecturebasic-block))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._5._lecturebasic-block))"></a>1</span></span>We will later
 add other "terminating" statements that can end a basic block, but we
 only need return for the straightline code we are producing
-now.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._4._lecturebasic-block))"></a>2</span></span>when we extend to full SSA IR we will see that a
+now.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._6._lecturebasic-block))"></a>2</span></span>when we extend to full SSA IR we will see that a
 variable can take on multiple values dynamically.</p></p></p></div></div><div id="contextindicator">&nbsp;</div></body></html>
