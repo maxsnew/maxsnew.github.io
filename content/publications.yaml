@@ -9,9 +9,10 @@
 - title: Intrinsic Verification of Parsers and Formal Grammar Theory in Dependent Lambek Calculus
   id: lambek
   authors: Steven Schaefer, Nathan Varner, Pedro H. Azevedo de Amorim and Max S. New
-  preprint: true
+  venue: PLDI 2025
   links:
-    draft: docs/lambek.pdf
+    extended version: https://arxiv.org/abs/2504.03995
+    repository: https://github.com/maxsnew/grammars-and-semantic-actions
 
 - title: Notions of Stack-manipulating Computation and Relative Monads
   id: relative-monads
@@ -19,6 +20,7 @@
   venue: OOPSLA 2025
   links:
     extended version: https://arxiv.org/abs/2502.15031
+    repository: https://github.com/zydeco-lang/zydeco
 
 - title: Denotational Semantics of Gradual Typing using Synthetic Guarded Domain Theory
   id: sgdt-gtt
