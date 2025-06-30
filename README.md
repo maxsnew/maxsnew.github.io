@@ -14,9 +14,9 @@ pulp build --to ../../content/js/hubway.js
 
 To build
 ```sh
-stack setup
-stack build
-stack exec maxsnew-exe build
+cabal update
+cabal build
+cabal run maxsnew-exe build
 ```
 
 To deploy
