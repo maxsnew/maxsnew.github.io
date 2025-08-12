@@ -89,6 +89,7 @@ site = do
 
     match "teaching/eecs-598-w22/index.md" $ textPost classTemplate
     match "teaching/eecs-598-w23/index.md" $ textPost classTemplate
+    match "teaching/eecs-598-fa25/index.md" $ textPost classTemplate
 
     -- match "ps/src/Main.purs" $ do
     --   route   $ constRoute "js/hubway.js"
