@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Category Theory</title>
+    
+    <link rel="icon" type="image/png" href="../../img/umich-icon.png">
+    <link rel="stylesheet" type="text/css" href="../../css/class.css" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  </head>
+  <body>
+    <!-- <div id="header"> -->
+    <!--   <div id="logo"> -->
+    <!--     <a href="/">Category Theory</a> -->
+    <!--   </div> -->
+    <!--   <\!-- <div id="navigation"> -\-> -->
+    <!--   <\!--   <a href="/teaching.html">Teaching</a> -\-> -->
+    <!--   <\!--   <a href="/docs/maxsnew-cv.pdf">CV</a> -\-> -->
+    <!--   <\!--   <a href="/publications.html">Publications</a> -\-> -->
+    <!--   <\!--   <a href="/blog.html">Blog</a> -\-> -->
+    <!--   <\!--   <a href="/misc.html">Misc</a> -\-> -->
+    <!--   <\!-- </div> -\-> -->
+    <!-- </div> -->
+    <div id="content">
+      <h1 id="eecs-598-005-category-theory-for-computer-scientists">EECS 598 005: Category Theory for Computer Scientists</h1>
+<ul>
+<li>Lecture: Monday &amp; Wednesday, 2:30-4:30pm, Beyster 1620</li>
+<li>Instructor: <a href="http://maxsnew.com">Max S. New</a></li>
+<li>Office: Beyster 4628</li>
+<li>uniqname: maxsnew</li>
+<li>Office Hours: Tuesdays and Thursdays 3:30-5pm or by appointment</li>
+<li><a href="https://umich.instructure.com/courses/784407">Canvas</a></li>
+</ul>
+<p>Category theory is an area of abstract algebra that studies structures
+along with their transformations. Categorical structures and universal
+mapping properties are ubiquitious in mathematics and category theory
+provides a common language and toolkit that greatly helps to organize
+mathematical theories.</p>
+<p>This course provides an introduction to category theory, focusing on
+applications relevant to computer science. Specifically we will be
+focusing on the subfield of <em>categorical logic</em> which applies category
+theory to the design and analysis of formal logics and programming
+languages.</p>
+<p>There are no formal prerequisites for the course, but it would be
+helpful to have familiarity with basic notions of programming language
+theory such as abstract syntax, type systems and formal semantics
+(operational, axiomatic or denotational). We will cover the relevant
+notions in an accelerated fashion in the course. Students with
+mathematical maturity but minimal programming language background are
+welcome to enroll but should understand the focus of the class will be
+on these computer science applications.</p>
+<h2 id="learning-objectives">Learning Objectives</h2>
+<p>After completing this course, students should be able to</p>
+<ul>
+<li>give axiomatic and denotational semantics to different kinds of
+logics and programming languages</li>
+<li>carry out proofs in order theory and category theory</li>
+<li>learn and explore further applications of order theory and category
+theory on their own, especially in programming language research
+papers</li>
+</ul>
+<h2 id="degree-requirements">Degree Requirements</h2>
+<p>To see what degree requirements this course satisfies, see the
+spreadsheet on <a href="https://cse.engin.umich.edu/academics/course-information/special-topics-courses/">this page</a>.</p>
+<h2 id="evaluation">Evaluation</h2>
+<p>There are four components of your grade:</p>
+<ol type="1">
+<li>Problem Sets (60%)</li>
+<li>Final Project (20%)</li>
+<li>In-class presentation of solutions (10%): we will set aside class
+time to review the solutions to problem sets</li>
+<li>Scribing (5%): students will contribute notes written in LaTeX of
+the in-class lectures to share with the entire class.</li>
+<li>Participation (5%): attendance and participation in lecture.</li>
+</ol>
+<h3 id="problem-sets">Problem Sets</h3>
+<p>Problem sets provide challenge problems to ensure mastery of the
+topics of lecture and the readings. Problem Sets will be posted below
+in the schedule with their LaTeX source in the <a href="https://github.com/um-catlab/eecs-598-fa2025">github
+repo</a>. You can complete them in groups of 2 or 3. You will
+submit them on Canvas as a pdf. You may include hand-drawn diagrams,
+but text and equations should be typeset in LaTeX.</p>
+<p>Problem sets will be always be due at 11:59pm on the listed due
+date. Late work will not be accepted. It is always better to submit
+incomplete or incorrect work than nothing at all.</p>
+<p>Students will present solutions to problem sets at the end of certain
+lecture periods. Signup for a presentation slot on the <a href="https://github.com/um-catlab/eecs-598-fa2025">github</a>.</p>
+<h3 id="final-projects">Final Projects</h3>
+<p>To complement the material from lecture, students will undertake an
+independent research project related to category theory. Examples
+include a survey of an area of category theory not covered in class,
+implementation of category theory in a proof assistant, or a novel
+categorical analysis of some area of your own choosing. Students are
+encouraged to explore an area related to their own research interests.</p>
+<h3 id="scribing">Scribing</h3>
+<p>Each lecture will have an assigned scribe who will take notes on the
+lecture and post a LaTeX copy in the <a href="https://github.com/um-catlab/eecs-598-fa2025">git repo</a>.</p>
+<h3 id="attendance-and-participation">Attendance and Participation</h3>
+<p>In-person attendance in this course is required. If you have a strong
+interest in taking the course but cannot attend in person, you may
+discuss your special circumstances with the professor. Lectures will
+be recorded for reference but this is not a substitute for
+attendance. Each class will have a sign-in sheet.</p>
+<h2 id="course-schedule-and-readings">Course Schedule and Readings</h2>
+<p>The following schedule of topics and homeworks is <em>tentative</em> and will
+be updated throughout the semester.</p>
+<p>Readings are chosen to complement the lecture. All readings will be
+from freely available online sources. I recommend reading before
+attending class. There is no textbook we will directly follow, but the
+two we will reference the most are [Roy Crole’s <em>Categories for
+Types</em>][https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707]
+and [Emily Riehl’s <em>Category Theory in
+Context</em>][https://math.jhu.edu/~eriehl/context.pdf].</p>
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 26%" />
+<col style="width: 52%" />
+<col style="width: 11%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">Meeting Date</th>
+<th style="text-align: center;">Topic</th>
+<th style="text-align: center;">Readings</th>
+<th>HW</th>
+<th>Scribe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Mon, Aug 25</td>
+<td style="text-align: center;">Course overview, Intuitionistic Propositional Logic</td>
+<td style="text-align: center;"><a href="http://www.cs.cmu.edu/~fp/courses/15317-f17/lectures/02-natded.pdf">Frank Pfenning notes on natural deduction</a> <a href="https://mikeshulman.github.io/catlog/catlog.pdf">Shulman Chapter 0 primer on categorical logic</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Aug 27</td>
+<td style="text-align: center;">Concrete and Abstract Models of IPL</td>
+<td style="text-align: center;"><a href="https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707">Crole Ch 1.1-1.4</a></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Aug 28</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>PS1 Released</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Sep 01</td>
+<td style="text-align: center;">NO CLASS - Labor Day</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Sep 03</td>
+<td style="text-align: center;">Soundness, Completeness, Initiality of Heyting Algebra Semantics</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Sep 08</td>
+<td style="text-align: center;">Simple Type Theory: Syntax and Equational Theory</td>
+<td style="text-align: center;"><!-- [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Sep 10</td>
+<td style="text-align: center;">Signatures for STT, Set-theoretic Semantics</td>
+<td style="text-align: center;"><!-- [Crole Ch 3][Crole] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Sep 11</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><!-- [Crole Ch 3][Crole] --></td>
+<td>PS1 Due, PS2 Released</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Sep 15</td>
+<td style="text-align: center;">Set-theoretic Semantics, Categories</td>
+<td style="text-align: center;"><!-- [Crole Ch 2.1-2.2][Crole] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Sep 17</td>
+<td style="text-align: center;">Categories</td>
+<td style="text-align: center;"><!-- [Riehl Ch 1.1-1.2][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Sep 22</td>
+<td style="text-align: center;">Functors</td>
+<td style="text-align: center;"><!-- [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Sep 24</td>
+<td style="text-align: center;">Natural Transformations, Universal Properties I (Products)</td>
+<td style="text-align: center;"><!-- [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Sep 25</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>PS2 Due, PS3 Released</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Sep 29</td>
+<td style="text-align: center;">Universal Properties II, Exponentials and Presheaves</td>
+<td style="text-align: center;"><!-- [Riehl Ch. 2.1][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Oct 01</td>
+<td style="text-align: center;">Universal Properties III, Representability and Yoneda’s Lemma</td>
+<td style="text-align: center;"><!-- [Riehl Ch. 2.2-2.3][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Oct 06</td>
+<td style="text-align: center;">Simple Categories with Families I</td>
+<td style="text-align: center;"><!-- [Riehl Ch. 2.3-2.4][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Oct 08</td>
+<td style="text-align: center;">SCwF II</td>
+<td style="text-align: center;"><!-- [Crole Ch. 4.5-4.9][Crole] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Oct 09</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>PS3 Due, PS4 Released</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Oct 13</td>
+<td style="text-align: center;">NO CLASS - Fall Study Break</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Oct 15</td>
+<td style="text-align: center;">SCwF III, Soundness and Completeness</td>
+<td style="text-align: center;"><!-- [Crole Ch. 4.5-4.9][Crole] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Oct 16</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Final Project Proposals Due</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Oct 20</td>
+<td style="text-align: center;">Logical Relations</td>
+<td style="text-align: center;"><!-- [Crole Ch. 4.10][Crole] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Oct 22</td>
+<td style="text-align: center;">More LR/Natural Numbers Objects</td>
+<td style="text-align: center;"><!-- [Hutton JFP '99][Hutton99] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Oct 23</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>PS4 Due, PS5 Released</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Oct 27</td>
+<td style="text-align: center;">Inductive Definitions, Structural Recursion</td>
+<td style="text-align: center;"><!-- [McBride POPL '08][McBride08] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Oct 29</td>
+<td style="text-align: center;">Equivalence of Categories</td>
+<td style="text-align: center;"><!-- [Riehl Ch 1.5][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Nov 03</td>
+<td style="text-align: center;">Adjoint Functors</td>
+<td style="text-align: center;"><!-- [Riehl Ch 4.1-4.3][Riehl] --></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Nov 05</td>
+<td style="text-align: center;">More Adjoint Functors</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Nov 06</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>PS5 Due, PS6 Released</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Nov 10</td>
+<td style="text-align: center;">Evaluation Order and Computational Effects</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Nov 12</td>
+<td style="text-align: center;">Monads, Kleisli Categories</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Nov 17</td>
+<td style="text-align: center;">Call-by-value</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Nov 19</td>
+<td style="text-align: center;">Step-indexed models of unbounded Recursion</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Nov 20</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>PS6 Due</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Nov 24</td>
+<td style="text-align: center;">first-order and higher-order logic, toposes</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Dec 01</td>
+<td style="text-align: center;">dependent type theory</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Wed, Dec 03</td>
+<td style="text-align: center;">Final Project Presentations</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Mon, Dec 08</td>
+<td style="text-align: center;">Wrap up, Final Project Presentations</td>
+<td style="text-align: center;"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: center;">Thu, Dec 11</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td>Final Project Writeups Due</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+    </div>
+  </body>
+</html>
