@@ -3,32 +3,33 @@ title: Category Theory
 ---
 
 # EECS 598 005: Category Theory for Computer Scientists
-- Lecture: Monday & Wednesday, 2:30-4:30pm, EECS 3427
+- Lecture: Monday & Wednesday, 2:30-4:30pm, Beyster 1620
 - Instructor: [Max S. New][maxsnew]
 - Office: Beyster 4628
 - uniqname: maxsnew
-- Office Hours: Tuesdays 2-5pm or by appointment
+- Office Hours: Tuesdays and Thursdays 3:30-5pm or by appointment
 - [Canvas][canvas]
-- [Piazza][piazza]
-- [Lecture Capture][leccap]
 
-Category theory is a mathematical theory of structures and
-transformations. While originally developed for applications to pure
-mathematics, category theory has become a useful tool for studying
-logic and programming languages.
+Category theory is an area of abstract algebra that studies structures
+along with their transformations. Categorical structures and universal
+mapping properties are ubiquitious in mathematics and category theory
+provides a common language and toolkit that greatly helps to organize
+mathematical theories. 
 
-The breadth of applications and high level of abstraction can make
-category theory difficult to approach for those without an extensive
-mathematical background. This course aims to introduce and motivate
-category theory by focusing on applications in computer science, in
-particular to logic and programming languages.
+This course provides an introduction to category theory, focusing on
+applications relevant to computer science. Specifically we will be
+focusing on the subfield of _categorical logic_ which applies category
+theory to the design and analysis of formal logics and programming
+languages.
 
-Students are expected to have familiarity with basic notions of
-programming language theory such as abstract syntax, type systems and
-some form of formal semantics (operational, axiomatic or
-denotational). Students with a strong math background but minimal
-programming language background are also welcome to enroll but the
-focus of the class will be on these computer science applications.
+There are no formal prerequisites for the course, but it would be
+helpful to have familiarity with basic notions of programming language
+theory such as abstract syntax, type systems and formal semantics
+(operational, axiomatic or denotational). We will cover the relevant
+notions in an accelerated fashion in the course. Students with
+mathematical maturity but minimal programming language background are
+welcome to enroll but should understand the focus of the class will be
+on these computer science applications.
 
 ## Learning Objectives
 
@@ -36,7 +37,7 @@ After completing this course, students should be able to
 
 - give axiomatic and denotational semantics to different kinds of
   logics and programming languages
-- carry out basic proofs in order theory and category theory
+- carry out proofs in order theory and category theory
 - learn and explore further applications of order theory and category
   theory on their own, especially in programming language research
   papers
@@ -58,83 +59,102 @@ There are four components of your grade:
    the in-class lectures to share with the entire class.
 4. Participation (5%): attendance and participation in lecture.
 
-## Problem Sets
+### Problem Sets
 
-Problem Sets will be posted below in the schedule with their LaTeX
-source in the [gitlab repo][signups]. You can complete them in groups
-of 2 or 3. You will submit them on Canvas as a pdf. You may include
-hand-drawn diagrams, but text and equations should be typeset in
-LaTeX.
+Problem sets provide challenge problems to ensure mastery of the
+topics of lecture and the readings. Problem Sets will be posted below
+in the schedule with their LaTeX source in the [github
+repo][signups]. You can complete them in groups of 2 or 3. You will
+submit them on Canvas as a pdf. You may include hand-drawn diagrams,
+but text and equations should be typeset in LaTeX.
 
 Problem sets will be always be due at 11:59pm on the listed due
-date. Late work will not be accepted.
+date. Late work will not be accepted. It is always better to submit
+incomplete or incorrect work than nothing at all.
 
 Students will present solutions to problem sets at the end of certain
-lecture periods. Signup for this on the [gitlab repo][signups].
+lecture periods. Signup for a presentation slot on the [github][signups].
 
-## Scribing
+### Final Projects
 
-This semester will use a new curriculum without following a single
-textbook. To help everyone in the class, each lecture will have an
-assigned scribe who will take notes on the lecture and post a LaTeX
-copy in the [gitlab repo][signups].
+To complement the material from lecture, students will undertake an
+independent research project related to category theory. Examples
+include a survey of an area of category theory not covered in class,
+implementation of category theory in a proof assistant, or a novel
+categorical analysis of some area of your own choosing. Students are
+encouraged to explore an area related to their own research interests. 
 
-## Attendance
+### Scribing
 
-Participating in this course means attending lecture in
-person. Lectures will be recorded but this is not a substitute for
+Each lecture will have an assigned scribe who will take notes on the
+lecture and post a LaTeX copy in the [git repo][signups].
+
+### Attendance and Participation
+
+In-person attendance in this course is required. If you have a strong
+interest in taking the course but cannot attend in person, you may
+discuss your special circumstances with the professor. Lectures will
+be recorded for reference but this is not a substitute for
 attendance. Each class will have a sign-in sheet.
 
-## Course Schedule
+## Course Schedule and Readings
 
 The following schedule of topics and homeworks is *tentative* and will
 be updated throughout the semester. 
 
 Readings are chosen to complement the lecture. All readings will be
 from freely available online sources. I recommend reading before
-attending class.
+attending class. There is no textbook we will directly follow, but the
+two we will reference the most are [Roy Crole's _Categories for
+Types_][https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707]
+and [Emily Riehl's _Category Theory in
+Context_][https://math.jhu.edu/~eriehl/context.pdf].
 
-| Meeting Date | Topic                                                            | Readings                                             | HW                           | Scribe                  |
-|:------------:|:----------------------------------------------------------------:|:----------------------------------------------------:|------------------------------|-------------------------|
-| Mon, Aug 25  | Course overview, Propositional Logic                             | [Frank Pfenning notes][pfenning-prop-log]            |                              | [Max S. New][notes0104] |
-| Wed, Aug 27  | Concrete and Abstract Models of Propositional Logic              | [Crole Ch 1.1-1.4][Crole]                            | [PS1 Released][ps1]          |                         |
-| Mon, Sep 01  | NO CLASS - Labor Day                                             |                                                      |                              |                         |
-| Wed, Sep 03  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                      |                              |                         |
-| Mon, Sep 08  | Simple Type Theory: Syntax and Axiomatic Semantics               | [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT]     | PS1 Due, [PS2 Released][ps2] |                         |
-| Wed, Sep 10  | Signatures for STT, Set-theoretic Semantics                      | [Crole Ch 3][Crole]                                  |                              |                         |
-| Mon, Sep 15  | Set-theoretic Semantics, Categories                              | [Crole Ch 2.1-2.2][Crole]                            |                              |                         |
-| Wed, Sep 17  | Categories                                                       | [Riehl Ch 1.1-1.2][Riehl]                            |                              |                         |
-| Fri, Feb 03  |                                                                  |                                                      | PS2 Due, [PS3 Released][ps3] |                         |
-| Mon, Sep 22  | Functors                                                         | [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl]         |                              |                         |
-| Wed, Sep 24  | Natural Transformations, Universal Properties I (Products)       | [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] |                              |                         |
-| Mon, Sep 29  | Universal Properties II, Exponentials and Predicators            | [Riehl Ch. 2.1][Riehl]                               | PS3 Due, [PS4 Released][ps4] |                         |
-| Wed, Oct 01  | Universal Properties III, Representability and Yoneda's Lemma    | [Riehl Ch. 2.2-2.3][Riehl]                           |                              |                         |
-| Mon, Oct 06  | C-T Structures I                                                 | [Riehl Ch. 2.3-2.4][Riehl]                           |                              |                         |
-| Wed, Oct 08  | C-T Structures II                                                | [Crole Ch. 4.5-4.9][Crole]                           |                              |                         |
-| Fri, Feb 05  |                                                                  |                                                      | PS4 Due                      |                         |
-| Mon, Oct 13  | NO CLASS - Fall Study Break                                      |                                                      |                              |                         |
-| Wed, Oct 15  | C-T Structures III, Soundness and Completeness                   | [Crole Ch. 4.5-4.9][Crole]                           | [PS5 Released][ps5]          |                         |
-| Mon, Oct 20  | Logical Relations                                                | [Crole Ch. 4.10][Crole]                              |                              |                         |
-| Wed, Oct 22  | More LR/Natural Numbers Objects                                  | [Hutton JFP '99][Hutton99]                           |                              |                         |
-| Mon, Oct 27  | Inductive Datatypes                                              | [McBride POPL '08][McBride08]                        |                              |                         |
-| Wed, Oct 29  | Evaluation Order and Computational Effects                       | [Levy Chapter 1][Levy]                               | PS5 Due, [PS6 Released][ps6] |                         |
-| Mon, Nov 03  | Equivalence of Categories                                        | [Riehl Ch 1.5][Riehl]                                |                              |                         |
-| Wed, Nov 05  | Adjoint Functors                                                 | [Riehl Ch 4.1-4.3][Riehl]                            |                              |                         |
-| Mon, Nov 10  | More Adjoint Functors                                            | [Levy Chapter 2][Levy]                               |                              |                         |
-| Fri, Mar 31  |                                                                  |                                                      | PS6 Due, [PS7 Released][ps7] |                         |
-| Wed, Nov 12  | Call-by-push-value                                               |                                                      |                              |                         |
-| Mon, Nov 17  | Call-by-push-value II                                            |                                                      |                              |                         |
-| Wed, Nov 19  | Effects in CBPV                                                  |                                                      | PS7 Due, [PS8 Released][ps8] |                         |
-| Mon, Nov 24  | Models of CBPV                                                   |                                                      |                              |                         |
-| Mon, Dec 01  | Final Project Presentations                                      |                                                      |                              |                         |
-| Wed, Dec 03  | Final Project Presentations                                      |                                                      |                              |                         |
-| Mon, Dec 08  | Final Project Presentations                                      |                                                      |                              |                         |
-| Fri, Apr 21  |                                                                  |                                                      | PS8 Due                      |                         |
+| Meeting Date | Topic                                                            | Readings                                                                                                                        | HW                          | Scribe |
+|:------------:|:----------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|-----------------------------|--------|
+| Mon, Aug 25  | Course overview, Intuitionistic Propositional Logic              | [Frank Pfenning notes on natural deduction][pfenning-prop-log]  [Shulman Chapter 0 primer on categorical logic][shulman-catlog] |                             |        |
+| Wed, Aug 27  | Concrete and Abstract Models of IPL                              | [Crole Ch 1.1-1.4][Crole]                                                                                                       |                             |        |
+| Thu, Aug 28  |                                                                  |                                                                                                                                 | PS1 Released                |        |
+| Mon, Sep 01  | NO CLASS - Labor Day                                             |                                                                                                                                 |                             |        |
+| Wed, Sep 03  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                                                                                                 |                             |        |
+| Mon, Sep 08  | Simple Type Theory: Syntax and Equational Theory                 | <!-- [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT] -->                                                                       |                             |        |
+| Wed, Sep 10  | Signatures for STT, Set-theoretic Semantics                      | <!-- [Crole Ch 3][Crole] -->                                                                                                    |                             |        |
+| Thu, Sep 11  |                                                                  | <!-- [Crole Ch 3][Crole] -->                                                                                                    | PS1 Due, PS2 Released       |        |
+| Mon, Sep 15  | Set-theoretic Semantics, Categories                              | <!-- [Crole Ch 2.1-2.2][Crole] -->                                                                                              |                             |        |
+| Wed, Sep 17  | Categories                                                       | <!-- [Riehl Ch 1.1-1.2][Riehl] -->                                                                                              |                             |        |
+| Mon, Sep 22  | Functors                                                         | <!-- [Crole Ch 2.3][Crole], [Riehl Ch 1.3][Riehl] -->                                                                           |                             |        |
+| Wed, Sep 24  | Natural Transformations, Universal Properties I (Products)       | <!-- [Crole Ch 2.4,2.6,2.8][Crole], [Riehl Ch 1.4][Riehl] -->                                                                   |                             |        |
+| Thu, Sep 25  |                                                                  |                                                                                                                                 | PS2 Due, PS3 Released       |        |
+| Mon, Sep 29  | Universal Properties II, Exponentials and Presheaves             | <!-- [Riehl Ch. 2.1][Riehl] -->                                                                                                 |                             |        |
+| Wed, Oct 01  | Universal Properties III, Representability and Yoneda's Lemma    | <!-- [Riehl Ch. 2.2-2.3][Riehl] -->                                                                                             |                             |        |
+| Mon, Oct 06  | Simple Categories with Families I                                | <!-- [Riehl Ch. 2.3-2.4][Riehl] -->                                                                                             |                             |        |
+| Wed, Oct 08  | SCwF II                                                          | <!-- [Crole Ch. 4.5-4.9][Crole] -->                                                                                             |                             |        |
+| Thu, Oct 09  |                                                                  |                                                                                                                                 | PS3 Due, PS4 Released       |        |
+| Mon, Oct 13  | NO CLASS - Fall Study Break                                      |                                                                                                                                 |                             |        |
+| Wed, Oct 15  | SCwF III, Soundness and Completeness                             | <!-- [Crole Ch. 4.5-4.9][Crole] -->                                                                                             |                             |        |
+| Thu, Oct 16  |                                                                  |                                                                                                                                 | Final Project Proposals Due |        |
+| Mon, Oct 20  | Logical Relations                                                | <!-- [Crole Ch. 4.10][Crole] -->                                                                                                |                             |        |
+| Wed, Oct 22  | More LR/Natural Numbers Objects                                  | <!-- [Hutton JFP '99][Hutton99] -->                                                                                             |                             |        |
+| Thu, Oct 23  |                                                                  |                                                                                                                                 | PS4 Due, PS5 Released       |        |
+| Mon, Oct 27  | Inductive Definitions, Structural Recursion                      | <!-- [McBride POPL '08][McBride08] -->                                                                                          |                             |        |
+| Wed, Oct 29  | Equivalence of Categories                                        | <!-- [Riehl Ch 1.5][Riehl] -->                                                                                                  |                             |        |
+| Mon, Nov 03  | Adjoint Functors                                                 | <!-- [Riehl Ch 4.1-4.3][Riehl] -->                                                                                              |                             |        |
+| Wed, Nov 05  | More Adjoint Functors                                            |                                                                                                                                 |                             |        |
+| Thu, Nov 06  |                                                                  |                                                                                                                                 | PS5 Due, PS6 Released       |        |
+| Mon, Nov 10  | Evaluation Order and Computational Effects                       |                                                                                                                                 |                             |        |
+| Wed, Nov 12  | Monads, Kleisli Categories                                       |                                                                                                                                 |                             |        |
+| Mon, Nov 17  | Call-by-value                                                    |                                                                                                                                 |                             |        |
+| Wed, Nov 19  | Step-indexed models of unbounded Recursion                       |                                                                                                                                 |                             |        |
+| Wed, Nov 20  |                                                                  |                                                                                                                                 | PS6 Due                     |        |
+| Mon, Nov 24  | first-order and higher-order logic, toposes                      |                                                                                                                                 |                             |        |
+| Mon, Dec 01  | dependent type theory                                            |                                                                                                                                 |                             |        |
+| Wed, Dec 03  | Final Project Presentations                                      |                                                                                                                                 |                             |        |
+| Mon, Dec 08  | Wrap up, Final Project Presentations                             |                                                                                                                                 |                             |        |
+| Thu, Dec 11  |                                                                  |                                                                                                                                 | Final Project Writeups Due  |        |
 
 [maxsnew]: http://maxsnew.com
-[canvas]: https://umich.instructure.com/courses/574129
-[piazza]: https://piazza.com/class/lcgj8zh7crs1ba/
-[signups]: https://gitlab.eecs.umich.edu/598-wi23/scribed-notes
+[canvas]: https://umich.instructure.com/courses/784407
+[signups]: https://github.com/um-catlab/eecs-598-fa2025
 [leccap]: https://leccap.engin.umich.edu/leccap/site/z02eb2esrpaddy7cnwz
 
 [pfenning-prop-log]: http://www.cs.cmu.edu/~fp/courses/15317-f17/lectures/02-natded.pdf
@@ -143,3 +163,4 @@ attending class.
 [Hutton99]: https://www.cs.nott.ac.uk/~pszgmh/fold.pdf
 [McBride08]: https://dl.acm.org/doi/pdf/10.1145/1328897.1328474
 [Levy]: https://link-springer-com.proxy.lib.umich.edu/book/10.1007/978-94-007-0954-6
+[shulman-catlog]: https://mikeshulman.github.io/catlog/catlog.pdf
