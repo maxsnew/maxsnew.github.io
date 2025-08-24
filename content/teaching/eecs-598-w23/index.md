@@ -142,7 +142,7 @@ from freely available online sources.
 
 [pfenning-prop-log]: http://www.cs.cmu.edu/~fp/courses/15317-f17/lectures/02-natded.pdf
 [Crole]: https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707
-[Riehl]: https://math.jhu.edu/~eriehl/context.pdf
+[Riehl]: https://emilyriehl.github.io/files/context.pdf
 [Hutton99]: https://www.cs.nott.ac.uk/~pszgmh/fold.pdf
 [McBride08]: https://dl.acm.org/doi/pdf/10.1145/1328897.1328474
 [Levy]: https://link-springer-com.proxy.lib.umich.edu/book/10.1007/978-94-007-0954-6

@@ -109,7 +109,7 @@ assigned readings *prior to* lecture.
 
 
 [q]: https://oh.eecs.umich.edu/courses/eecs598
-[ctc]: https://math.jhu.edu/~eriehl/context.pdf
+[ctc]: https://emilyriehl.github.io/files/context.pdf
 [clcpov]: https://mikeshulman.github.io/catlog/catlog.pdf
 [canvas]: https://umich.instructure.com/courses/493039
 [piazza]: https://piazza.com/umich/winter2022/eecs598006 

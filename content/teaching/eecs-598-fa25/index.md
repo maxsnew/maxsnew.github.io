@@ -9,6 +9,7 @@ title: Category Theory
 - uniqname: maxsnew
 - Office Hours: Tuesdays and Thursdays 3:30-5pm or by appointment
 - [Canvas][canvas]
+- [Lecture capture][leccap]
 
 Category theory is an area of abstract algebra that studies structures
 along with their transformations. Categorical structures and universal
@@ -106,9 +107,9 @@ Readings are chosen to complement the lecture. All readings will be
 from freely available online sources. I recommend reading before
 attending class. There is no textbook we will directly follow, but the
 two we will reference the most are [Roy Crole's _Categories for
-Types_][https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707]
+Types_][Crole]
 and [Emily Riehl's _Category Theory in
-Context_][https://math.jhu.edu/~eriehl/context.pdf].
+Context_][Riehl].
 
 | Meeting Date | Topic                                                            | Readings                                                                                                                        | HW                          | Scribe |
 |:------------:|:----------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|-----------------------------|--------|
@@ -155,11 +156,11 @@ Context_][https://math.jhu.edu/~eriehl/context.pdf].
 [maxsnew]: http://maxsnew.com
 [canvas]: https://umich.instructure.com/courses/784407
 [signups]: https://github.com/um-catlab/eecs-598-fa2025
-[leccap]: https://leccap.engin.umich.edu/leccap/site/z02eb2esrpaddy7cnwz
+[leccap]: https://leccap.engin.umich.edu/leccap/site/fx6em90i7nhkh6ajtl5
 
 [pfenning-prop-log]: http://www.cs.cmu.edu/~fp/courses/15317-f17/lectures/02-natded.pdf
 [Crole]: https://doi-org.proxy.lib.umich.edu/10.1017/CBO9781139172707
-[Riehl]: https://math.jhu.edu/~eriehl/context.pdf
+[Riehl]: https://emilyriehl.github.io/files/context.pdf
 [Hutton99]: https://www.cs.nott.ac.uk/~pszgmh/fold.pdf
 [McBride08]: https://dl.acm.org/doi/pdf/10.1145/1328897.1328474
 [Levy]: https://link-springer-com.proxy.lib.umich.edu/book/10.1007/978-94-007-0954-6
