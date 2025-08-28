@@ -115,7 +115,7 @@ Context_][Riehl].
 |:------------:|:----------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------:|-----------------------------|-----------------------|
 | Mon, Aug 25  | Course overview, Intuitionistic Propositional Logic              | [Frank Pfenning notes on natural deduction][pfenning-prop-log]  [Shulman Chapter 0 primer on categorical logic][shulman-catlog] |                             | [Max S. New][lec0825] |
 | Wed, Aug 27  | Concrete and Abstract Models of IPL                              | [Crole Ch 1.1-1.4][Crole]                                                                                                       |                             |                       |
-| Thu, Aug 28  |                                                                  |                                                                                                                                 | PS1 Released                |                       |
+| Thu, Aug 28  |                                                                  |                                                                                                                                 | [PS1 Released][ps1]         |                       |
 | Mon, Sep 01  | NO CLASS - Labor Day                                             |                                                                                                                                 |                             |                       |
 | Wed, Sep 03  | Soundness, Completeness, Initiality of Heyting Algebra Semantics |                                                                                                                                 |                             |                       |
 | Mon, Sep 08  | Simple Type Theory: Syntax and Equational Theory                 | <!-- [Crole Ch 4.1-4.3][Crole], [STT Full Rules][STT] -->                                                                       |                             |                       |
@@ -167,3 +167,5 @@ Context_][Riehl].
 [shulman-catlog]: https://mikeshulman.github.io/catlog/catlog.pdf
 
 [lec0825]: /teaching/eecs-598-fa25/docs/08-25-notes.pdf
+
+[ps1]: /teaching/eecs-598-fa25/docs/ps1.pdf
