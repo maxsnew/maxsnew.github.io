@@ -167,5 +167,6 @@ Context_][Riehl].
 [shulman-catlog]: https://mikeshulman.github.io/catlog/catlog.pdf
 
 [lec0825]: /teaching/eecs-598-fa25/docs/08-25-notes.pdf
+[lec0827]: /teaching/eecs-598-fa25/docs/08-27-notes.pdf
 
 [ps1]: /teaching/eecs-598-fa25/docs/ps1.pdf
