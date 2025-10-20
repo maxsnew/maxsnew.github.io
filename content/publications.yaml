@@ -31,6 +31,7 @@
     doi: https://doi.org/10.1145/3720434
     extended version: https://arxiv.org/abs/2502.15031
     repository: https://github.com/zydeco-lang/zydeco
+    slides: docs/oopsla-2025-slides.pdf
 
 - title: Denotational Semantics of Gradual Typing using Synthetic Guarded Domain Theory
   id: sgdt-gtt
