@@ -134,10 +134,10 @@ Context_][Riehl].
 | Mon, Oct 13  | NO CLASS - Fall Study Break                                       |                                                                                                                                 |                              |                                 |
 | Wed, Oct 15  | Steven Schaefer Guest Lecture: Initiality of STLC II              | <!-- [Crole Ch. 4.5-4.9][Crole] -->                                                                                             |                              |                                 |
 | Thu, Oct 16  |                                                                   |                                                                                                                                 | Final Project Proposals Due  |                                 |
-| Mon, Oct 20  | PS3 Review, Canonicity of STLC                                    | [Hutton JFP '99][Hutton99]                                                                                                      |                              |                                 |
+| Mon, Oct 20  | PS3 Review, Canonicity of STLC                                    |                                                                                                                                 |                              |                                 |
 | Wed, Oct 22  | Canonicity II                                                     | <!--  -->                                                                                                                       |                              |                                 |
-| Mon, Oct 27  | PS4 Review, Natural Numbers Objects                               | <!-- [McBride POPL '08][McBride08] -->                                                                                          |                              |                                 |
-| Wed, Oct 29  | Inductive Definitions II                                          | <!-- [Riehl Ch 1.5][Riehl] -->                                                                                                  |                              |                                 |
+| Mon, Oct 27  | PS4 Review, Natural Numbers Objects, Inductive Types              | [Hutton JFP '99][Hutton99] <!-- [McBride POPL '08][McBride08] -->                                                               |                              |                                 |
+| Wed, Oct 29  | Initial Algebras and Terminal Coalgebras                          | [Adamek-Milius-Moss Ch 1-2][initialfinal]                                                                                       |                              |                                 |
 | Thu, Oct 30  |                                                                   |                                                                                                                                 | PS4 Due, [PS5 Released][ps5] |                                 |
 | Mon, Nov 03  | Evaluation Order and Computational Effects                        | <!-- [Riehl Ch 4.1-4.3][Riehl] -->                                                                                              |                              |                                 |
 | Wed, Nov 05  | Monads, Algebra and Adjunctions                                   |                                                                                                                                 |                              |                                 |
@@ -165,6 +165,7 @@ Context_][Riehl].
 [McBride08]: https://dl.acm.org/doi/pdf/10.1145/1328897.1328474
 [Levy]: https://link-springer-com.proxy.lib.umich.edu/book/10.1007/978-94-007-0954-6
 [shulman-catlog]: https://mikeshulman.github.io/catlog/catlog.pdf
+[initialfinal]: https://search.lib.umich.edu/catalog/record/99188851155406381
 
 [lec0825]: /teaching/eecs-598-fa25/docs/08-25-notes.pdf
 [lec0827]: /teaching/eecs-598-fa25/docs/08-27-notes.pdf
