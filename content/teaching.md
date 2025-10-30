@@ -1,4 +1,4 @@
-- [EECS 598 Category Theory - Fall 2025](/teaching/eecs-598-fa25)
+- [CSE 598 Category Theory - Fall 2025](/teaching/eecs-598-fa25)
 - [EECS 483 Compiler Construction - Winter 2025](/teaching/eecs-483-wn25/index.html)
 - [EECS 483 Compiler Construction - Winter 2024](/teaching/eecs-483-wn24/index.html)
 - [EECS 483 Compiler Construction - Fall 2023](/teaching/eecs-483-fa23)
