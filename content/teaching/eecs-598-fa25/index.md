@@ -2,7 +2,7 @@
 title: Category Theory
 ---
 
-# EECS 598 005: Category Theory for Computer Scientists
+# CSE 598 005: Category Theory for Computer Scientists
 - Lecture: Monday & Wednesday, 2:30-4:30pm, Beyster 1620
 - Instructor: [Max S. New][maxsnew]
 - Office: Beyster 4628
