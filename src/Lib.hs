@@ -71,21 +71,11 @@ site = do
           , "teaching/eecs-483-fa22/*"
           , "teaching/eecs-483-fa23/*"
           , "teaching/eecs-483-wn24/**" 
-          , "teaching/eecs-483-wn25/*" ] $ \p ->
+          , "teaching/eecs-483-wn25/*"
+          , "teaching/eecs-483-wn26/*" ] $ \p ->
       match p $ do
         route idRoute
         compile copyFileCompiler
-    -- match "teaching/eecs-483-fa22/*" $ do
-    --   route idRoute
-    --   compile copyFileCompiler
-    -- match "teaching/eecs-483-fa23/*" $ do
-    --   route idRoute
-    --   compile copyFileCompiler
-
-    -- Add this for winter...
-    -- match "teaching/eecs-483-wi23/*" $ do
-    --   route idRoute
-    --   compile copyFileCompiler
 
     match "teaching/eecs-598-w22/index.md" $ textPost classTemplate
     match "teaching/eecs-598-w23/index.md" $ textPost classTemplate
@@ -101,7 +91,6 @@ defaultTemplate = "templates/default.html"
 pubsTemplate = "templates/publications.html"
 classTemplate = "templates/class.html"
 
-        
 -- Configuration
 conf :: Configuration
 conf = defaultConfiguration {
