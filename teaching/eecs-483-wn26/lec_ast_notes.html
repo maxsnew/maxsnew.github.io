@@ -1,0 +1,304 @@
+<!doctype HTML>
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta name="viewport" content="width=device-width, initial-scale=0.8"/><title>Lecture 3: Abstract Syntax Trees and Interpreters</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"/><link rel="stylesheet" type="text/css" href="footnote.css" title="default"/><link rel="stylesheet" type="text/css" href="screen.css" title="default"/><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"/><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="manual-racket.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script>$.noConflict();</script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+    displayMath: [ ["$$","$$"],
+                   ["\\[","\\]"],
+                   ["\\begin{equation}","\\end{equation}"],
+                   ["\\begin{equation*}","\\end{equation*}"] ],
+    processEscapes: true
+  },
+  "HTML-CSS": {
+    availableFonts: ["Asana-Math", "STIX", "TeX"],
+    webFont: "Asana-Math",
+    preferredFont: "Asana-Math",
+    imageFont: null,
+    mtexFontInherit: true
+  }
+});</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="codemirror.js"></script><script src="runmode.js"></script><script src="scheme.js"></script><script src="mllike.js"></script><script src="rust.js"></script><script src="haskell.js"></script><script src="clike.js"></script><script src="javascript.js"></script><script src="asm86.js"></script><script src="asm64.js"></script><script src="shell.js"></script><script src="python.js"></script><script src="makefile-mode.js"></script><script src="setup-cm.js"></script></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x"><span class="LectureNum">Lecture 3:</span> Abstract Syntax Trees and Interpreters</a></td></tr></table></div><div class="tocviewsublistonly" style="display: none;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right">1&nbsp;</td><td><a href="#%28part._.Growing_our_.Language__.Basic_.Computation%29" class="tocviewlink" data-pltdoc="x">Growing our Language:<span class="mywbr"> &nbsp;</span> Basic Computation</a></td></tr><tr><td align="right">2&nbsp;</td><td><a href="#%28part._.Extending_the_language__.Dynamically_determined_.Input%29" class="tocviewlink" data-pltdoc="x">Extending the language:<span class="mywbr"> &nbsp;</span> Dynamically determined Input</a></td></tr></table></div></div></div><div class="tocsub"><table class="tocsublist" cellspacing="0"><tr><td><span class="tocsublinknumber"></span><a href="#%28part._%29" class="tocsubseclink" data-pltdoc="x"><span class="LectureNum">Lecture 3:</span> Abstract Syntax Trees and Interpreters</a></td></tr><tr><td><span class="tocsublinknumber">1<span class="stt">&nbsp;</span></span><a href="#%28part._.Growing_our_.Language__.Basic_.Computation%29" class="tocsubseclink" data-pltdoc="x">Growing our Language:<span class="mywbr"> &nbsp;</span> Basic Computation</a></td></tr><tr><td><span class="tocsublinknumber">1.1<span class="stt">&nbsp;</span></span><a href="#%28part._.Concrete_.Syntax%29" class="tocsubseclink" data-pltdoc="x">Concrete Syntax</a></td></tr><tr><td><span class="tocsublinknumber">1.2<span class="stt">&nbsp;</span></span><a href="#%28part._.Abstract_.Syntax_and_.Parsing%29" class="tocsubseclink" data-pltdoc="x">Abstract Syntax and Parsing</a></td></tr><tr><td><span class="tocsublinknumber">1.3<span class="stt">&nbsp;</span></span><a href="#%28part._.Semantics%29" class="tocsubseclink" data-pltdoc="x">Semantics</a></td></tr><tr><td><span class="tocsublinknumber">1.4<span class="stt">&nbsp;</span></span><a href="#%28part._.Compilation%29" class="tocsubseclink" data-pltdoc="x">Compilation</a></td></tr><tr><td><span class="tocsublinknumber">1.4.1<span class="stt">&nbsp;</span></span><a href="#%28part._x86_.Basics%29" class="tocsubseclink" data-pltdoc="x">x86 Basics</a></td></tr><tr><td><span class="tocsublinknumber">1.4.2<span class="stt">&nbsp;</span></span><a href="#%28part._.Compiling_to_x86%29" class="tocsubseclink" data-pltdoc="x">Compiling to x86</a></td></tr><tr><td><span class="tocsublinknumber">1.4.3<span class="stt">&nbsp;</span></span><a href="#%28part._.Optimization%29" class="tocsubseclink" data-pltdoc="x">Optimization</a></td></tr><tr><td><span class="tocsublinknumber">2<span class="stt">&nbsp;</span></span><a href="#%28part._.Extending_the_language__.Dynamically_determined_.Input%29" class="tocsubseclink" data-pltdoc="x">Extending the language:<span class="mywbr"> &nbsp;</span> Dynamically determined Input</a></td></tr></table></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="versionNoNav">8.18</span></div><section class="SsectionLevel1" id="section 0"><h1 class="heading"><a name="(part._)"></a><span class="LectureNum">Lecture 3:</span> Abstract Syntax Trees and Interpreters<span class="button-group"><a href="#(part._)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h1><section class="SsectionLevel2" id="section 1"><h2 class="heading">1<span class="stt">&nbsp;</span><a name="(part._.Growing_our_.Language__.Basic_.Computation)"></a>Growing our Language: Basic Computation<span class="button-group"><a href="#(part._.Growing_our_.Language__.Basic_.Computation)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><p>Last time, we considered the following miniscule language:</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(tiny-lang._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit bnf-unknown">NUMBER</span></p></blockquote><p>Our Rust representation of this program was simply an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">n: i64</code></span>
+and our compiler simply placed that integer in the appropriate place in the
+assembly:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">section .text
+global start_here
+start_here:
+  mov rax, n
+  ret</code></pre></div></div></p><p>Let&rsquo;s extend our language so that it does some actual computation,
+adding increment and decrement operations. Say, that we have access
+to some kind of functions <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span>.  Here are a
+few examples of programs that we might write in this language, and
+what answer we expect them to evaluate to:</p><p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Concrete Syntax</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Answer</p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">42</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>42</code></p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1(42)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>43</code></p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(42)</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>41</code></p></td></tr><tr><td><p><span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(add1(add1(42)))</code></span></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><code>43</code></p></td></tr></table></p><p>Now how can we go about implementing this language? The first step is
+to take in our program as an input string and (1) check that it is a
+well-formed program and (2) rewrite it into a more convenient
+representation to use.</p><section class="SsectionLevel3" id="section 1.1"><h3 class="heading">1.1<span class="stt">&nbsp;</span><a name="(part._.Concrete_.Syntax)"></a>Concrete Syntax<span class="button-group"><a href="#(part._.Concrete_.Syntax)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>How programs are written as strings is called the <span class="emph">concrete
+syntax</span> of the programming language. We can describe the syntax for
+our Snake language using a <span class="emph">grammar</span> like the following:</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(add1._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">add1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28add1._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">sub1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28add1._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span></p></blockquote><p>A grammar like this describes the concrete syntax of a language by
+specifying how you could generate the terms in the language. In this
+case we have one form called <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">expr</code></span> and to create an
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">expr</code></span> we either pick a number, or we call an <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> or
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span> function on another expr, with the argument wrapped in
+parentheses. By convention, we ignore whitespace in this
+description. We&rsquo;ll keep this all a bit informal for now and make it
+completely rigorous in the last month of the course.</p><p>Even for a simple language like this, writing a program that checks if
+a given string conforms to this grammar is fairly tedious. Thankfully
+there are widely available programs called <span class="emph">parser generators</span>
+that will <span class="emph">generate</span> code for a parser from fairly simple
+descriptions like this. In this course we use one called
+<a href="https://lalrpop.github.io/lalrpop/">LALRPOP</a> (pronounced
+kind of like "lollipop"). A LALRPOP implementation of the grammar for this language is given
+by:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub Expr = {
+    &lt;Num&gt;,
+    "add1" "(" &lt;Expr&gt; ")",
+    "sub1" "(" &lt;Expr&gt; ")",
+}
+
+Num = {
+  &lt;r"[+-]?[0-9]+"&gt;
+}</code></pre></div></div></p><p>Which is almost exactly what we&rsquo;ve written above, except that it&rsquo;s
+more precise in defining a description of the syntax for numbers.
+Running the <code>lalrpop</code> tool<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._8._lectureast%29%29" data-pltdoc="x">1</a></span></span><span class="FootnoteContent">You can install it yourself with
+<code>cargo install lalrpop</code></span></span> on this code produces 500 lines of
+fairly inscrutable Rust code we are happy not to have to write by
+hand.</p></section><section class="SsectionLevel3" id="section 1.2"><h3 class="heading">1.2<span class="stt">&nbsp;</span><a name="(part._.Abstract_.Syntax_and_.Parsing)"></a>Abstract Syntax and Parsing<span class="button-group"><a href="#(part._.Abstract_.Syntax_and_.Parsing)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>The lalrpop program above doesn&rsquo;t really define a <span class="emph">parser</span>, but
+instead a <span class="emph">recognizer</span>, i.e., a function that takes in an input
+string and tell us whether or not the input string matches our
+language&rsquo;s grammar. A recognizer alone is not very useful for a
+programming language implementation. After we have identified the
+input string is in the language, we are still left with just a string,
+which is not a very convenient input type to writing an interpreter or
+a compiler. When we write the remainder of the implementation, we
+would prefer to use a representation where we can very easily answer
+some basic questions:</p><ul><li><p>Is the expression a number or an operation?</p></li><li><p>If it&rsquo;s a number, what is that number represented as an <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">i64</code></span>?</p></li><li><p>If it&rsquo;s an operation, is it an <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> or a <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span> and what is the sub-expression?</p></li></ul><p>We could answer these questions using just a string as our
+representation, but it would be tedious and involve scanning the
+string, which is what the recognizer just did anyway! For more complex
+languages, this becomes completely infeasible.</p><p>Instead what we&rsquo;ll do is represent our programs as special kinds of
+<span class="emph">trees</span> called <span class="emph">abstract syntax trees</span>. For this language, a
+tree is either a leaf, which should have a number, or a node which
+should be labeled as <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> or <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span> and have one
+child. One of the main reasons we use Rust in this course is that Rust
+has very good support for defining such tree types:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum Expression {
+    Number(i64),
+    Add1(Box&lt;Expression&gt;),
+    Sub1(Box&lt;Expression&gt;),
+}</code></pre></div></div></p><p>This is a Rust <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum</code></span> type, so-called because it is a type
+defined by <span class="emph">enumerating</span> the possible values. You can read more
+about <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum</code></span> types in
+<a href="https://rust-book.cs.brown.edu/ch06-00-enums.html">Rust
+book chapter 6</a>. This definitions matches our abstract description of
+the grammar: either the input is a number, or an <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span>
+operation performed on another expression, or a <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span> operation
+performed on another.</p><p><p>Here are a couple of examples of programs and how to construct their corresponding abstract syntax trees:
+</p><table cellspacing="0" cellpadding="0" class="centered" style="border-collapse: collapse;"><tr><td style="border-bottom: 1px solid black;"><p>Concrete Syntax</p></td><td style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td style="border-bottom: 1px solid black;"><p>Abstract Syntax</p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">5</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Number(5)</code></pre></div></div></p></td></tr><tr><td><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1(add1(sub1(17)))</code></pre></div></div></p></td><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Sub1(Box::new(Add1(Box::new(Sub1(Box::new(Number(5)))))))</code></pre></div></div></p></td></tr></table></p><p>But notice how we&rsquo;ve abstracted away the details from the concrete
+syntax. This same abstract syntax could apply to many different
+concrete syntaxes. For example, we could use an imperative syntax</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">17;
+sub1;
+add1;
+sub1</code></pre></div></div></p><p>or a lisp-style syntax</p><p><div class="sourceCodeWrapper"><span data-label="Adder" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-snake" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">(sub1 (add1 (sub1 17)))</code></pre></div></div></p><p>but almost<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._9._lectureast%29%29" data-pltdoc="x">2</a></span></span><span class="FootnoteContent">the one thing that compilers do often keep around is source-location information, for providing better error messages.</span></span> none of those details are relevant to the rest of compilation.</p><p>To extract an abstract syntax tree from our input string, we update our lalrpop file to generate an output expression in addition to specifying the grammar:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub Expr: Expression = {
+    &lt;n: Num&gt; =&gt; Expression::Number(n),
+    "add1" "(" &lt;e: Expr&gt; ")" =&gt; Expression::Add1(Box::new(e)),
+    "sub1" "(" &lt;e: Expr&gt; ")" =&gt; Expression::Sub1(Box::new(e)),
+}
+
+Num: i64 = {
+  &lt;s:r"[+-]?[0-9]+"&gt; =&gt; s.parse().unwrap()
+}</code></pre></div></div></p><p>For this language, our type of abstract syntax trees is very simple,
+but this approach scales up to very complicated languages. The
+analogous <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">enum</code></span> in the Rust compiler (which is written in Rust)
+contains
+<a href="https://github.com/rust-lang/rust/blob/3ff1b6410e87a237559ab76ecd50f180afbe861f/compiler/rustc_ast/src/ast.rs#L1459">about
+40 different cases</a>!</p></section><section class="SsectionLevel3" id="section 1.3"><h3 class="heading">1.3<span class="stt">&nbsp;</span><a name="(part._.Semantics)"></a>Semantics<span class="button-group"><a href="#(part._.Semantics)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>Before we define a compiler for our new language, we should first
+specify its <span class="emph">semantics</span>, i.e., how programs should be evaluated.
+A simple method for doing this is to define a corresponding
+<span class="emph">interpreter</span>. Like our previous language, the programs here
+should output a single integer number, but now <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> and
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span> should perform those mathematical operations.</p><p>We can implement this functionality by using Rust&rsquo;s
+<span class="emph">pattern-matching</span> feature, which allows us to perform a
+case-analysis of which constructor was used, and get access to the
+data contained within.
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn interpret(e: &amp;Expression) -&gt; i64 {
+    match e {
+        Expression::Number(n) =&gt; *n,
+        Expression::Add1(arg) =&gt; interpret(arg) + 1,
+        Expression::Sub1(arg) =&gt; interpret(arg) - 1,
+    }
+}</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>Why is the input to this interpreter a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">&amp;Expression</code></span> rather than a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Expression</code></span>? What difference does this decision make?</p></blockquote><p>This pattern of programming is very common when we work with abstract
+syntax trees: we define a function by matching on the tree, and then
+recursively call the function on the sub-tree(s).</p></section><section class="SsectionLevel3" id="section 1.4"><h3 class="heading">1.4<span class="stt">&nbsp;</span><a name="(part._.Compilation)"></a>Compilation<span class="button-group"><a href="#(part._.Compilation)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h3><p>Next, let&rsquo;s instead write a compiler, where the additions and
+subtractions actually happen in assembly code rather than in our Rust
+implementation.</p><section class="SsectionLevel4" id="section 1.4.1"><h4 class="heading">1.4.1<span class="stt">&nbsp;</span><a name="(part._x86_.Basics)"></a>x86 Basics<span class="button-group"><a href="#(part._x86_.Basics)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>Recall that we want to compile our program to a
+<span class="emph">function</span> in assembly code that takes no inputs and returns a
+64-bit integer. The calling convention we use (System V AMD64)
+dictates that the result of such a function is stored in a register
+called <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>. Registers like <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> are a part of the abstract
+machine we program against in x86. Each of the general purpose
+registers <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rcx</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdx</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rbx</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span>,
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsi</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rbp</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r8</code></span>-<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">r15</code></span> stores a 64-bit
+value and can be manipulated using a large variety of assembly code
+instructions. These registers are mostly indistinguishable except by
+conventions<span class="Footnote"><span class="FootnoteRef"><span style="vertical-align: super; font-size: 80%"><a href="#%28counter-%28%29._%28gentag._10._lectureast%29%29" data-pltdoc="x">3</a></span></span><span class="FootnoteContent">A notable exception is that <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> is treated as
+a stack pointer by many instructions.</span></span>.</p><p>The only instructions we&rsquo;ll need today are <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span>/<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span> and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span>.
+First, the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> instruction
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov dest, src</code></pre></div></div>
+copies the value from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">src</code></span> to a <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">dest</code></span>. <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> is a
+surprisingly complex operation in x86, encompassing loads, stores,
+register-to-register copies, constants, and some memory offset
+calculations. In its full generality it is even
+<a href="https://github.com/xoreaxeaxeax/movfuscator">Turing
+complete</a>. For today let&rsquo;s use it in a very simple form: <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">dest</code></span>
+can be a register and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">src</code></span> can be a constant or another register,
+in which case it stores the value of the constant or the current value
+of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">src</code></span> into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">dest</code></span>.</p><p>Next, the two arithmetic instructions
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add dest, arg
+sub dest, arg</code></pre></div></div>
+continue the pattern with <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> in that the first argument is updated by the instruction. The semantics of these instructions is to <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> (or <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span>) the value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">arg</code></span> from the current value of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">dest</code></span>, and update <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">dest</code></span> with the result. I.e., you can think of <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add</code></span> like a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">+=</code></span> operation and <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">sub</code></span> as a <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">-=</code></span> operation:
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">add dest, arg ;;; dest += arg
+sub dest, arg ;;; dest -= arg</code></pre></div></div></p><p>Finally, we have
+<div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></pre></div></div>
+Which, if the stack is set up accordingly, will return to the
+caller. We can be sure that <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span> will work properly to implement
+a function return as long as we make sure when it is executed that we
+have not updated <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span>, and the value we want to return is in
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>.</p></section><section class="SsectionLevel4" id="section 1.4.2"><h4 class="heading">1.4.2<span class="stt">&nbsp;</span><a name="(part._.Compiling_to_x86)"></a>Compiling to x86<span class="button-group"><a href="#(part._.Compiling_to_x86)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>We already know how to compile a number to a function that returns
+it. We simply <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span> the number in <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> and then execute the
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span>. We can generalize this to an Adder expression like
+<span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1(sub1(add1(7)))</code></span> by using the <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> register as a place to store our intermediate results:</p><p><div class="sourceCodeWrapper"><span data-label="X64 Assembly" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-asm64" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">~hl:1:s~mov rax, 7~hl:1:e~ ;; rax holds 7
+~hl:2:s~add rax, 1~hl:2:e~ ;; rax holds add1(7)
+~hl:3:s~sub rax, 1~hl:3:e~ ;; rax holds sub1(add1(7))
+~hl:4:s~add rax, 1~hl:4:e~ ;; rax holds add1(sub1(add1(7)))
+~hl:4:s~ret~hl:4:e~        ;; return to the caller with rax holding the correct output</code></pre></div></div></p><p>We have commented the above assembly code with the correspondence with
+the source program, and we see that in a way the assembly code is
+"reversed" from the original concrete syntax.  Now how do we turn this
+implementation strategy into a compiler for abitrary expressions? Just
+like the interpreter, we can implement the compiler by recursive
+descent on the input expression. If we look at the comments above, we
+see a recursive pattern: after each line is executed, <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span> holds
+the result of a larger and larger sub-expression. Then we can develop
+a recursive strategy for implementation: compile the source program to
+a sequence of x86 instructions that places the result into
+<span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>. For constants this is simply a <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">mov</code></span>, and for the
+recursive cases of <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">add1</code></span> and <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">sub1</code></span>, we can append a
+corresponding assembly operation. Finally, we append a <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">ret</code></span>
+instruction at the end.</p><p>Here&rsquo;s an implementation that emits the assembly instructions directly to stdout:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile(e: &amp;Expression) {
+    fn compile_rec(e: &amp;Expression) {
+        match e {
+            Expression::Number(n) =&gt; println!("mov rax, {}", n),
+            Expression::Add1(arg) =&gt; {
+                compile_rec(arg);
+                println!("add rax, 1");
+            }
+            Expression::Sub1(arg) =&gt; {
+                compile_rec(arg);
+                println!("sub rax, 1");
+            }
+        }
+    }
+    println!(
+        "        section .text
+        global start_here
+start_here:"
+    );
+    compile_rec(e);
+    println!("ret");
+}</code></pre></div></div></p><p>Notice here that it would be counter-productive to directly use
+<span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile</code></span> itself on the recursive sub-trees. Instead we define a
+helper function <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">compile_rec</code></span> that has a more useful behavior to
+just produce the instructions that move the value into <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rax</code></span>.</p><p>Having a compiler and an interpreter is also helpful for testing. We
+can write automated tests that check that our compiler and interpreter
+have the same behavior on all of our examples..</p></section><section class="SsectionLevel4" id="section 1.4.3"><h4 class="heading">1.4.3<span class="stt">&nbsp;</span><a name="(part._.Optimization)"></a>Optimization<span class="button-group"><a href="#(part._.Optimization)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h4><p>For this simple language there is an obvious way to produce an
+<span class="emph">optimized</span> assembly code program, one that uses as few
+instructions as possible. We can simply run the interpreter and
+compile to a program that returns the number that is output by the
+interpreter.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn optimized_compile(e: &amp;Expression) {
+    println!(
+        "        section .text
+        global start_here
+start_here:
+mov rax, {}
+ret",
+        interpret(&amp;e)
+    );
+}</code></pre></div></div></p><p>Here we have improved the efficiency of the compiled program by doing
+more work at compile-time. Usually this is a good tradeoff, as
+programs are run many more times than they are compiled.</p></section></section></section><section class="SsectionLevel2" id="section 2"><h2 class="heading">2<span class="stt">&nbsp;</span><a name="(part._.Extending_the_language__.Dynamically_determined_.Input)"></a>Extending the language: Dynamically determined Input<span class="button-group"><a href="#(part._.Extending_the_language__.Dynamically_determined_.Input)" class="heading-anchor" title="Link to here">🔗</a><span style="visibility: hidden"> </span></span></h2><p>Our programs were very easy to optimize because all the information we
+needed to determine the result was available at
+compile-time. Obviously this isn&rsquo;t typical: useful programs interact
+with the external world, e.g., by making network requests, inspecting
+files or reading command-line arguments. Let&rsquo;s extend our language to
+take an input from the command line.</p><blockquote class="SCodeFlow" style="white-space: pre;"><p><a name="(elem._(bnf-prod._(add2._prog)))"></a><span class="bnf-rule">&#8249;prog&#8250;</span><span class="bnf-meta">:</span> <span class="bnf-lit">def</span> <span class="bnf-lit">main</span> <span class="bnf-lit">(</span> <span class="bnf-lit">x</span> <span class="bnf-lit">)</span> <span class="bnf-lit">:</span> <span class=""><a href="#%28elem._%28bnf-prod._%28add2._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span>
+<a name="(elem._(bnf-prod._(add2._expr)))"></a><span class="bnf-rule">&#8249;expr&#8250;</span><span class="bnf-meta">:</span> 
+          <span class="bnf-meta"> | </span><span class="bnf-lit bnf-unknown">NUMBER</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">x</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">add1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28add2._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span>
+          <span class="bnf-meta"> | </span><span class="bnf-lit">sub1</span> <span class="bnf-lit">(</span> <span class=""><a href="#%28elem._%28bnf-prod._%28add2._expr%29%29%29" data-pltdoc="x">&#8249;expr&#8250;</a></span> <span class="bnf-lit">)</span></p></blockquote><p>Now our program consists not of a single expression, but a <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">main</code></span>
+"function" that takes in an argument named <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>. For today, let&rsquo;s
+say that the parameter is always called <span title="Adder" class="sourceCode"><code data-lang="text/x-snake" class="sourceCode">x</code></span>, we&rsquo;ll talk about a
+more robust treatment of variables next time.</p><p>What is the impact on our abstract syntax? We just need to add a new
+kind of leaf node to our abstract syntax trees that for when the
+program uses the input variable.</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">pub enum Expression {
+    Variable(),
+    Number(i64),
+    Add1(Box&lt;Expression&gt;),
+    Sub1(Box&lt;Expression&gt;),
+}</code></pre></div></div></p><p>And now our interpreter takes an additional argument, which
+corresponds to the input:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn interpret(e: &amp;Expression, x: i64) -&gt; i64 {
+    match e {
+        Expression::Variable() =&gt; x,
+        Expression::Number(n) =&gt; *n,
+        Expression::Add1(arg) =&gt; interpret(arg, x) + 1,
+        Expression::Sub1(arg) =&gt; interpret(arg, x) - 1,
+    }
+}</code></pre></div></div></p><p>We correspondingly need to change our Rust <code>stub.rs</code> wrapper to
+provide an input argument:
+<div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">#[link(name = "compiled_code", kind = "static")]
+extern "sysv64" {
+    #[link_name = "\x01entry"]
+    fn entry(param: i64) -&gt; i64;
+}
+
+fn main() {
+    let args = std::env::args();
+    if args.len() != 1 {
+        eprintln!("usage: {} number");
+    }
+    let arg = args[1]
+        .parse::&lt;i64&gt;()
+        .expect("input must be a 64-bit integer");
+    let output = unsafe { entry(arg) };
+    println!("{}", output);
+}</code></pre></div></div></p><p>Now the external function <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">entry</code></span> is defined to take an integer
+in as an argument. If we consult the System V AMD64 calling
+convention, we find that the first input argument is placed in the
+register <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span>. Then we can compile the <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Variable</code></span> case quite
+similarly to <span title="Rust" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">Number</code></span>, but moving from <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rdi</code></span> rather than a
+constant:</p><p><div class="sourceCodeWrapper"><span data-label="Rust" class="sourceLangLabel"></span><div class="sourceCode"><pre data-lang="text/x-rustsrc" class="sourceCode"><code data-lang="text/x-rustsrc" class="sourceCode">fn compile(e: &amp;Expression) {
+    fn compile_rec(e: &amp;Expression) {
+        match e {
+            Expression::Variable() =&gt; println!("mov rax, rdi"),
+            Expression::Number(n) =&gt; println!("mov rax, {}", n),
+            Expression::Add1(arg) =&gt; {
+                compile_rec(arg);
+                println!("add rax, 1");
+            }
+            Expression::Sub1(arg) =&gt; {
+                compile_rec(arg);
+                println!("sub rax, 1");
+            }
+        }
+    }
+    println!(
+        "        section .text
+            global start_here
+    start_here:"
+    );
+    compile_rec(e);
+    println!("ret");
+}</code></pre></div></div></p><blockquote class="ExerciseBody"><p class="Exercise">Exercise</p><p>How would you write an optimized version of this compiler,
+such that the output program always uses of at most 3
+instructions?</p></blockquote></section><section class="SsectionLevel2" id="section 0"><a name="(part._(gentag._7._lectureast))"></a><p class="FootnoteBlock"><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._8._lectureast))"></a>1</span></span>You can install it yourself with
+<code>cargo install lalrpop</code></p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._9._lectureast))"></a>2</span></span>the one thing that compilers do often keep around is source-location information, for providing better error messages.</p></p><p class="FootnoteBlockContent"><p class="FootnoteBlockContent"><span class="FootnoteTarget"><span style="vertical-align: super; font-size: 80%"><a name="(counter-()._(gentag._10._lectureast))"></a>3</span></span>A notable exception is that <span title="X64 Assembly" class="sourceCode"><code data-lang="text/x-asm64" class="sourceCode">rsp</code></span> is treated as
+a stack pointer by many instructions.</p></p></p></section></section></div></div><div id="contextindicator">&nbsp;</div></body></html>
