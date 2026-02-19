@@ -1,14 +1,229 @@
-body {
-    margin: 10em;
-    max-width: 75em;
-    font-family: "Helvetica", "Arial", sans-serif;
-}
-  
-table, th, td {
-  border: 1px solid black;
+/* ─── Custom properties ───────────────────────────────────── */
+:root {
+  --blue:        #1a3a5c;
+  --blue-light:  #2c5f85;
+  --blue-bright: #3b6fa0;
+  --maize:       #d4a843;
+  --maize-pale:  #f5f0e4;
+  --sand:        #f0ebe2;
+  --warm-gray:   #eae5dc;
+  --text:        #3a3a38;
+  --text-light:  #6b6962;
+  --white:       #f7f5f0;
+  --shadow-sm:   0 1px 3px rgba(30,30,30,0.06);
+  --shadow-md:   0 4px 14px rgba(30,30,30,0.08);
+  --radius:      0.5rem;
 }
 
+/* ─── Reset & Base ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 72rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 1.05rem;
+  line-height: 1.7;
+  padding: 2.5rem 3rem 4rem;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--warm-gray) 0%, var(--white) 350px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Typography ──────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  color: var(--blue);
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: 1.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 3px solid var(--maize);
+  display: inline-block;
+}
+
+h2::after {
+  content: "";
+  display: block;
+}
+
+h3 {
+  font-size: 1.15rem;
+  color: var(--blue-light);
+}
+
+p {
+  margin-bottom: 1.2rem;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* ─── Links ───────────────────────────────────────────────── */
+a {
+  color: var(--blue-bright);
+  text-decoration: underline;
+  text-decoration-color: rgba(59,111,160,0.35);
+  text-underline-offset: 2px;
+  transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+a:hover {
+  color: var(--blue);
+  text-decoration-color: var(--maize);
+}
+
+/* ─── Lists ───────────────────────────────────────────────── */
+ul, ol {
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.35rem;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+li::marker {
+  color: var(--maize);
+}
+
+/* ─── Tables ──────────────────────────────────────────────── */
 table {
-    width: 100%;
-    margin: 2em auto;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem auto;
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+thead {
+  background: var(--blue);
+  color: var(--white);
+}
+
+thead th {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+th {
+  text-align: left;
+  font-weight: 600;
+  color: inherit;
+}
+
+td, th {
+  border: 1px solid #ddd8cf;
+  padding: 0.65rem 0.9rem;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--maize-pale);
+}
+
+tbody tr:hover {
+  background-color: #ece5d5;
+}
+
+/* ─── Code ────────────────────────────────────────────────── */
+code {
+  font-family: "JetBrains Mono", "Fira Code", "Menlo", monospace;
+  font-size: 0.88em;
+  background-color: #e8e4dc;
+  padding: 0.15em 0.45em;
+  border-radius: 0.25rem;
+  color: var(--blue-light);
+}
+
+pre {
+  background: var(--blue);
+  color: #ddd8cf;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  border-left: 4px solid var(--maize);
+  box-shadow: var(--shadow-sm);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* ─── Blockquotes ─────────────────────────────────────────── */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  border-left: 4px solid var(--maize);
+  background-color: var(--maize-pale);
+  color: var(--text-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── Horizontal rules ────────────────────────────────────── */
+hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, var(--maize), var(--blue), var(--maize));
+  margin: 2.5rem 0;
+  border-radius: 1px;
+}
+
+/* ─── Content area ────────────────────────────────────────── */
+div#content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  body {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+
+  td, th {
+    padding: 0.4rem 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
 }
