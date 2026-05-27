@@ -27,9 +27,14 @@ interested in interoperability between languages, especially in the
 guises of Gradual Typing and compiler intermediate languages
 supporting multiple source languages.
 
-Prior to my current position, I completed a postdoc at Wesleyan
-University with [Dan Licata][dan]. I completed my PhD at Northeastern
-University in Fall 2020 advised by [Amal Ahmed][amal].
+My research has been supported by grants from the AFOSR and NSF,
+including the NSF CAREER Award.
+
+### Previous Positions
+
+I was a postdoc at Wesleyan University with [Dan Licata][dan] from 2020-2021.
+I received a PhD in computer science from Northeastern University advised by [Amal Ahmed][amal] in 2020.
+I received a M.S. from Northwestern University advised by [Robby Findler][robby] in 2014.
 
 ## Students
 
