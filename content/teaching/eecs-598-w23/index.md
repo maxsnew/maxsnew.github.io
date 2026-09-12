@@ -1,6 +1,7 @@
----
-title: Category Theory
----
++++
+title = "Category Theory"
+template = "class.html"
++++
 
 # EECS 598 005: Category Theory for Computer Scientists
 - Lecture: Monday & Wednesday, 2:30-4:30pm, EECS 3427

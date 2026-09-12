@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-cabal build \
-    && cabal run maxsnew-exe clean \
-    && cabal run maxsnew-exe build \
+zola build \
     && git checkout master \
-    && cp -a _site/. . \
+    && cp -a public/. . \
     && git add -A \
     && git commit -m "Site updated: $(date)" \
     && git push origin master \

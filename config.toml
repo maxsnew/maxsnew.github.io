@@ -1,0 +1,19 @@
+# Zola configuration. Replaces the Hakyll `conf` in src/Lib.hs.
+base_url = "https://maxsnew.com"
+title = "Max S. New"
+
+# Everything under static/ is hard-linked rather than copied: the 260MB of
+# course PDFs then costs nothing to "copy" on every build.
+hard_link_static = true
+
+compile_sass = false
+build_search_index = false
+generate_feeds = false
+
+# Pandoc's markdown reader enables `smart` by default, so match it to keep the
+# rendered output comparable with the Hakyll site.
+[markdown]
+smart_punctuation = true
+# Zola 0.23 adds rel="external" to outbound links by default; the Hakyll
+# site did not, so turn it off to keep the rendered HTML comparable.
+external_links_external = false

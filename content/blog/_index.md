@@ -1,15 +1,13 @@
++++
+title = "Blog"
+sort_by = "date"
+page_template = "blog-post.html"
+aliases = ["/blog.html"]
++++
+
 I have some blogs <a href="http://prl.ccs.neu.edu/blog/tags/Author-Max-New.html">from
 my PhD days at Northeastern here</a>.</br>
 I also had a guest post on the <a href="https://golem.ph.utexas.edu/category/2018/02/gradual_typing.html">n-Category
 Cafe</a> on category-theoretic semantics of the graduality property of
 gradual typing.</br>
 In lieu of blogging I mostly post on mastodon as <a href="https://types.pl/@maxsnew">@maxsnew@types.pl</a>.
-
-<!-- <ul> -->
-<!--   $for(posts)$ -->
-<!--   <li> -->
-<!--     <a href = "$url$">$title$</a> - $date$ -->
-<!--   </li> -->
-<!--   $endfor$ -->
-<!-- </ul> -->
-

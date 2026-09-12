@@ -1,0 +1,24 @@
+{# Renders one publication group. Replaces the Tera v1 macro (macros are gone
+   in Tera v2) and the Haskell pubsContext/groupedPubsContext in Lib.hs. #}
+{% component pubgroup(pubs, name) %}
+{%- if pubs | length > 0 %}
+<h1 id="papers">{{ name }}</h1>
+<ul>
+  {%- for p in pubs %}
+  <li id="{{ p.id }}"><p>
+      <strong>{{ p.title }}</strong><br />
+      {{ p.authors }}<br />
+      {%- if p.venue %}
+          {{ p.venue }}<br />
+      {%- endif %}
+      {%- for text, url in p.links %}
+	<a href="{{ url }}">{{ text }}</a>
+      {%- endfor %}
+      {%- if p.note %}
+        <br /><em>{{ p.note }}</em>
+      {%- endif %}
+  </p></li>
+  {%- endfor %}
+</ul>
+{%- endif %}
+{% endcomponent pubgroup %}

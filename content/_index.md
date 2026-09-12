@@ -1,8 +1,9 @@
----
-title: Max S. New
----
++++
+title = "Max S. New"
+template = "index.html"
++++
 
-<div><img src="/img/max_new3.jpg" id="selfportrait"></img></div>
+<div><img src="/img/max_new3.jpg" id="selfportrait" /></div>
 <div><a rel="me" id="mastodon" href="https://types.pl/@maxsnew">Mastodon</a></div>
 
 ## Address

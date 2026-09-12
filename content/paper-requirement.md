@@ -1,6 +1,7 @@
----
-title: Paper Requirement
----
++++
+title = "Paper Requirement"
+aliases = ["/paper-requirement.html"]
++++
 
 # Secure Compilation via Mediated Universal Embedding
 

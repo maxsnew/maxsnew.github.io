@@ -1,3 +1,8 @@
++++
+title = "Misc"
+aliases = ["/misc.html"]
++++
+
 # Quotes I like
 
 > A value is, a computation does.

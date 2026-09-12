@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title | default(value=config.title) }}{% endblock title %}
+{% block content %}
+<article>
+    <section class="header">
+        Posted on {{ page.date | date(format="%B %e, %Y") }}
+        {%- if page.extra.author %} by {{ page.extra.author }}{% endif %}
+    </section>
+    <section>
+        {{ page.content | safe }}
+    </section>
+</article>
+{% endblock content %}
