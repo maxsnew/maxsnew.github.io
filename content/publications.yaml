@@ -1,3 +1,12 @@
+- title: A Call-by-push-value Scheme
+  id: scheme2026
+  venue: Scheme Workshop 2026
+  authors: Max S. New
+  abstract: True
+  links:
+    slides: docs/scheme-workshop-2026-slides.pdf
+    repository: https://github.com/zydeco-lang/fiddle
+
 - title: Intrinsic Verification of Parsers in Dependent Lambek Calculus
   id: wg282025
   venue: Talk, IFIP Working Group 2.8 - Functional Programming
