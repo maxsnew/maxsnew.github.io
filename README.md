@@ -5,7 +5,7 @@ there is no other toolchain to set up.
 
 To build
 ```sh
-zola build          # -> public/
+zola build -o _site   # or ./deploy.sh
 ```
 
 To preview locally with live reload

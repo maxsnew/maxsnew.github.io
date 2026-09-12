@@ -1,5 +1,6 @@
+_site
 public/
 *~
-/content/ps/tmp.js
+/ps/tmp.js
 node_modules
 /package-lock.json
