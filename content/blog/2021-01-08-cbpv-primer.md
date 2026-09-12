@@ -1,7 +1,8 @@
 +++
 title = "Primer on Call-by-push-value: A Lambda Calculus for Effectful Functional Programming"
 date = 2021-01-08
-aliases = ["/blog/2021-01-08-cbpv-primer.html"]
+# Unpublished: not built, and the old .html alias is gone with it.
+draft = true
 +++
 
 <div>
