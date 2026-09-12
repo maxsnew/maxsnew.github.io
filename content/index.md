@@ -46,6 +46,18 @@ PhD students
 - [Yuchen Jiang][lighght] (2023-)
 - Jesse Slater (2024-) (co-advised with [Xinyu Wang][xinyu])
 
+## Funding
+
+My research is supported by:
+
+- **NSF CAREER**: [Foundations and Verification of Parsers and Type Checkers][career]
+  (#2540652, 2026-2031)
+- **AFOSR**: [Mechanized Denotational Semantics using Synthetic Category Theory][afosr]
+  (FA9550-23-1-0760, 2023-2028)
+
+[career]: https://www.nsf.gov/awardsearch/showAward?AWD_ID=2540652
+[afosr]: https://www.usaspending.gov/award/ASST_NON_FA95502310760_097
+
 [ericg]: http://www-personal.umich.edu/~ericgio/index.html
 [ericb]: https://externalhom.com/
 [stschaef]: https://stevenschaefer.net/
