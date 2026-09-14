@@ -13,10 +13,20 @@ To preview locally with live reload
 zola serve
 ```
 
-To deploy to gh pages
-```sh
-./deploy.sh
-```
+To deploy
+
+Pushing to `main` (or `src`) runs `.github/workflows/deploy.yml`, which builds
+and publishes straight to GitHub Pages. This needs a one-time setting:
+**Settings > Pages > Source = "GitHub Actions"**.
+
+`deploy.sh` is the old path and still works while Pages is served from the
+`master` branch. Delete it, and the `master` branch, once the workflow is live.
+Prefer the workflow: deploy.sh copies files over `master` and runs `git add -A`
+without ever removing anything, so it accumulates every file that has ever
+passed through the working tree - including untracked ones it sweeps up by
+accident. The workflow publishes a fresh artifact each run.
+
+`static/CNAME` keeps the maxsnew.com custom domain attached to the output.
 
 ## Layout
 

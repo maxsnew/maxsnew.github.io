@@ -1,0 +1,63 @@
+# Builds the site and publishes it straight to GitHub Pages.
+#
+# This replaces deploy.sh, which copied the build over the `master` branch and
+# ran `git add -A`. That never removed anything, so every file that ever passed
+# through the working tree stayed published - including untracked scratch files
+# it swept up by accident. Each run here publishes a fresh artifact, so stale
+# files are structurally impossible.
+#
+# Requires, one time: Settings > Pages > Source = "GitHub Actions".
+name: Deploy site
+
+on:
+  push:
+    branches: [main, src]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; queue instead.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The repo carries ~210MB of history; only the tip is needed.
+          fetch-depth: 1
+
+      # Pinned deliberately. Zola 0.23 moved to Tera v2 and removed macros and
+      # the `filter` filter, so an unpinned version is a breaking change waiting
+      # to happen. The templates here require >= 0.23.
+      - name: Install Zola
+        env:
+          ZOLA_VERSION: "0.23.5"
+        run: |
+          curl -sSfL "https://github.com/getzola/zola/releases/download/v${ZOLA_VERSION}/zola-v${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz
+          sudo mv zola /usr/local/bin/
+          zola --version
+
+      - name: Build
+        run: zola build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
