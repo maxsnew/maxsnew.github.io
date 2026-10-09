@@ -1,6 +1,7 @@
----
-title: Thesis Proposal
----
++++
+title = "Thesis Proposal"
+aliases = ["/thesis-proposal.html"]
++++
 
 # Thesis Proposal: A Semantic Foundation for Sound Gradual Typing
 

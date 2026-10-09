@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-cabal build \
-    && cabal run maxsnew-exe clean \
-    && cabal run maxsnew-exe build \
+# Build into _site rather than Zola's default public/: the master branch's
+# .gitignore already ignores _site, and the `git add -A` below would otherwise
+# commit the whole build output into the deploy branch.
+zola build -o _site \
     && git checkout master \
     && cp -a _site/. . \
     && git add -A \

@@ -1,0 +1,279 @@
+# Generated from the old publications.yaml by yaml2toml.py.
+# Entries are pre-split into one array per group, replacing the
+# sequential List.partition in the old Haskell Lib.hs. Tera v2 removed
+# the `filter` filter, so the template just reads the four arrays.
+# Order within each array matches the original file.
+
+preprint = []
+
+[[abstract]]
+title = "A Call-by-push-value Scheme"
+id = "scheme2026"
+authors = "Max S. New"
+venue = "Scheme Workshop 2026"
+note = ""
+
+[abstract.links]
+"repository" = "https://github.com/zydeco-lang/fiddle"
+"slides" = "/docs/scheme-workshop-2026-slides.pdf"
+
+[[abstract]]
+title = "Intrinsic Verification of Parsers in Dependent Lambek Calculus"
+id = "wg282025"
+authors = "Max S. New"
+venue = "Talk, IFIP Working Group 2.8 - Functional Programming"
+note = ""
+
+[abstract.links]
+"slides" = "/docs/wg2.8-2025.pdf"
+
+[[abstract]]
+title = "Compiling with Call-by-push-value"
+id = "mfps2023"
+authors = "Max S. New"
+venue = "Invited talk, MFPS 2023"
+note = ""
+
+[abstract.links]
+"slides" = "/docs/mfps2023-slides.pdf"
+
+[[paper]]
+title = "Intrinsic Verification of Parsers and Formal Grammar Theory in Dependent Lambek Calculus"
+id = "lambek"
+authors = "Steven Schaefer, Nathan Varner, Pedro H. Azevedo de Amorim and Max S. New"
+venue = "PLDI 2025"
+note = ""
+
+[paper.links]
+"doi" = "https://doi.org/10.1145/3729281"
+"extended version" = "https://arxiv.org/abs/2504.03995"
+"repository" = "https://github.com/maxsnew/grammars-and-semantic-actions"
+
+[[paper]]
+title = "Notions of Stack-manipulating Computation and Relative Monads"
+id = "relative-monads"
+authors = "Yuchen Jiang, Runze Xue and Max S. New"
+venue = "OOPSLA 2025"
+note = ""
+
+[paper.links]
+"doi" = "https://doi.org/10.1145/3720434"
+"extended version" = "https://arxiv.org/abs/2502.15031"
+"repository" = "https://github.com/zydeco-lang/zydeco"
+"slides" = "/docs/oopsla-2025-slides.pdf"
+
+[[paper]]
+title = "Denotational Semantics of Gradual Typing using Synthetic Guarded Domain Theory"
+id = "sgdt-gtt"
+authors = "Eric Giovannini, Tingting Ding and Max S. New"
+venue = "POPL 2025"
+note = ""
+
+[paper.links]
+"doi" = "https://doi.org/10.1145/3704863"
+"extended version" = "https://arxiv.org/abs/2411.12822"
+
+[[paper]]
+title = "Gradual Typing for Effect Handlers"
+id = "greff"
+authors = "Max S. New and Eric Giovannini and Daniel R. Licata"
+venue = "OOPSLA 2023"
+note = ""
+
+[paper.links]
+"Extended Version" = "/docs/greff-extended.pdf"
+
+[[paper]]
+title = "A formal type theory for formal category theory"
+id = "virtual-equipments"
+authors = "Max S. New and Daniel R. Licata"
+venue = "FoSSaCS 2023"
+note = ""
+
+[paper.links]
+"official-link" = "https://link.springer.com/chapter/10.1007/978-3-031-30829-1_6"
+"repo" = "https://github.com/maxsnew/virtual-equipments"
+
+[[paper]]
+title = "Gradual Type Theory"
+id = "gtt-journal"
+authors = "Max S. New and Daniel R. Licata and Amal Ahmed"
+venue = "JFP Vol 31, 2021"
+note = ""
+
+[paper.links]
+"doi" = "https://doi.org/10.1017/S0956796821000125"
+
+[[manuscript]]
+title = "A Semantic Foundation for Sound Gradual Typing"
+id = "thesis"
+authors = "Max S. New"
+venue = "PhD Thesis, Northeastern University, 2020"
+note = ""
+
+[manuscript.links]
+"dissertation" = "/docs/dissertation.pdf"
+
+[[paper]]
+title = "Call-by-name Gradual Type Theory"
+id = "lmcs22"
+authors = "Max S. New, Daniel R. Licata"
+venue = "Logical Methods in Computer Science, Volume 16, Issue 1"
+note = "subsumes earlier conference paper of the same name published at FSCD"
+
+[paper.links]
+"Arxiv backup" = "https://arxiv.org/abs/1802.00061"
+"LMCS Link" = "https://lmcs.episciences.org/6063"
+
+[[paper]]
+title = "Graduality and Parametricity: Together Again for the First Time"
+id = "popl20"
+authors = "Max S. New, Dustin Jamner, Amal Ahmed"
+venue = "POPL 2020"
+note = ""
+
+[paper.links]
+"Official Link" = "https://dl.acm.org/doi/10.1145/3371114"
+"Preprint" = "/docs/graduality-parametricity.pdf"
+"Technical Appendix" = "http://www.ccs.neu.edu/home/amal/papers/gradparam-tr.pdf"
+
+[[paper]]
+title = "How to evaluate the performance of gradual type systems"
+id = "jfp19"
+authors = "Ben Greenman, Asumu Takikawa, Max S. New, Daniel Feltey, Robert Bruce Findler, Jan Vitek, Matthias Felleisen"
+venue = "Journal of Functional Programming, Volume 29, 2019"
+note = ""
+
+[paper.links]
+"Official Link" = "https://www.cambridge.org/core/journals/journal-of-functional-programming/article/how-to-evaluate-the-performance-of-gradual-type-systems/DC765724C52A3A462F16C7FB3AD18697/share/a77b5d3395e8eb40f0312080e5bdc1c654632650"
+"Preprint" = "http://janvitek.org/pubs/jfp18.pdf"
+
+[[abstract]]
+title = "Relative Monads in Call-by-push-value as an Abstraction of Stack-Based Effects"
+id = "hope22"
+authors = "Max S. New"
+venue = "HOPE 2022"
+note = ""
+
+[abstract.links]
+"Extended Abstract" = "/docs/cbpv-relative-monads.pdf"
+"Talk" = "https://www.youtube.com/watch?v=ooj1vJRixEU&list=PLyrlk8Xaylp5hkSMipssQf3QKnj6Nrjg_"
+"slides" = "/docs/HOPE-2022-cbpv-relative-monads-slides.pdf"
+
+[[abstract]]
+title = "From Call-by-push-value to Stack-based TAL?"
+id = "lola19"
+authors = "Max S. New"
+venue = "LOLA 2019"
+note = ""
+
+[abstract.links]
+"Extended Abstract" = "/docs/cbpv-stal-lola-2019.pdf"
+
+[[paper]]
+title = "Gradual Type Theory"
+id = "popl19"
+authors = "Max S. New, Daniel R. Licata, Amal Ahmed"
+venue = "POPL 2019"
+note = ""
+
+[paper.links]
+"Extended Version" = "https://arxiv.org/abs/1811.02440"
+"Official Link" = "https://dl.acm.org/citation.cfm?id=3290328"
+
+[[paper]]
+title = "Graduality from Embedding-Projection Pairs"
+id = "icfp18"
+authors = "Max S. New, Amal Ahmed"
+venue = "ICFP 2018"
+note = ""
+
+[paper.links]
+"Conference Talk" = "https://www.youtube.com/watch?v=0GmILGJ1yvA"
+"Extended Version" = "https://arxiv.org/abs/1807.02786"
+"Official Link" = "https://dl.acm.org/citation.cfm?id=3236768"
+
+[[paper]]
+title = "Call-by-name Gradual Type Theory"
+id = "fscd18"
+authors = "Max S. New, Daniel R. Licata"
+venue = "FSCD 2018"
+note = "subsumed by journal article of the same name published in LMCS"
+
+[paper.links]
+"Official Link" = "http://drops.dagstuhl.de/opus/volltexte/2018/9194/"
+
+[[paper]]
+title = "FabULous Interoperability for ML and a Linear Language"
+id = "fossacs18"
+authors = "Gabriel Scherer, Max S. New, Nick Rioux and Amal Ahmed"
+venue = "FoSSaCS 2018"
+note = ""
+
+[paper.links]
+"Preprint" = "/docs/fabul.pdf"
+"Supplementary material" = "/docs/fabul-supp.pdf"
+
+[[paper]]
+title = "Fair enumeration combinators"
+id = "jfp17"
+authors = "Max S. New, Burke Fetscher, Robert Bruce Findler, Jay McCarthy"
+venue = "Journal of Functional Programming, Volume 27, 2017"
+note = ""
+
+[paper.links]
+"Official Link" = "https://www.cambridge.org/core/journals/journal-of-functional-programming/article/fair-enumeration-combinators/CCEC7CBA286B2F792B073586EFCD6F3A"
+
+[[paper]]
+title = "Fully Abstract Compilation via Universal Embedding"
+id = "icfp16"
+authors = "Max S. New, William J. Bowman, Amal Ahmed"
+venue = "ICFP 2016"
+note = ""
+
+[paper.links]
+"Conference talk" = "https://www.youtube.com/watch?v=Hylji4ezQHE"
+"Extended Technical Report" = "/docs/fabcc-tech-report.pdf"
+"Official Link" = "http://dl.acm.org/citation.cfm?id=2951941"
+"Preprint" = "/docs/fabcc-paper.pdf"
+
+[[paper]]
+title = "Oh Lord, Please Don't Let Contracts be Misunderstood (Functional Pearl)"
+id = "icfp16"
+authors = "Christos Dimoulas, Max S. New, Robert Bruce Findler, Matthias Felleisen"
+venue = "ICFP 2016"
+note = ""
+
+[paper.links]
+"Official Link" = "http://dl.acm.org/citation.cfm?id=2951930"
+
+[[paper]]
+title = "A Coq Library For Internal Verification of Running-Times"
+id = "flops16"
+authors = "Jay McCarthy, Burke Fetscher, Max New, Daniel Feltey, Robert Bruce Findler"
+venue = "FLOPS 2016"
+note = ""
+
+[paper.links]
+"Repository" = "https://github.com/rfindler/395-2013"
+
+[[paper]]
+title = "Is Sound Gradual Typing Dead?"
+id = "popl16"
+authors = "Asumu Takikawa, Daniel Feltey, Ben Greenman, Max S. New, Jan Vitek, Matthias Felleisen"
+venue = "POPL 2016"
+note = ""
+
+[paper.links]
+"Official Link" = "http://dl.acm.org/citation.cfm?id=2837630"
+
+[[abstract]]
+title = "Gradual Type Precision as Retraction"
+id = "poplsrc17"
+authors = "Max S. New"
+venue = "POPL 2017 Student Research Competition"
+note = ""
+
+[abstract.links]
+"Extended Abstract" = "/docs/precision-as-retraction.pdf"
+"Poster" = "/docs/popl-17-src-poster.pdf"

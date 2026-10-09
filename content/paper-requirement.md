@@ -1,10 +1,11 @@
----
-title: Paper Requirement
----
++++
+title = "Paper Requirement"
+aliases = ["/paper-requirement.html"]
++++
 
 # Secure Compilation via Mediated Universal Embedding
 
-[Fully Abstract Compilation via Universal Embedding, ICFP 2016](fabcc-paper.pdf)
+[Fully Abstract Compilation via Universal Embedding, ICFP 2016](/docs/fabcc-paper.pdf)
 
 Max S. New, William J. Bowman, and Amal Ahmed
 

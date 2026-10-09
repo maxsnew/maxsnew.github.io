@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }}{% endblock title %}
+{% block content %}
+{%- set data = load_data(path="publications.toml") -%}
+{{<pubgroup pubs={data.manuscript} name="Manuscripts" />}}
+{{<pubgroup pubs={data.paper} name="Peer-Reviewed Papers" />}}
+{{<pubgroup pubs={data.preprint} name="Drafts" />}}
+{{<pubgroup pubs={data.abstract} name="Talks and Abstracts" />}}
+{% endblock content %}

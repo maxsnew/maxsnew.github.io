@@ -1,3 +1,8 @@
++++
+title = "Misc"
+aliases = ["/misc.html"]
++++
+
 # Quotes I like
 
 > A value is, a computation does.
@@ -44,15 +49,8 @@ of the International Center for Mathematics, June 2008, ([link][lawvere-intervie
 
 # Extra Pages
 
-A [hubway availability page][hubway] only relevant to me, but the code
-might be a simple example [Purescript][purescript] program.
+This site is hosted on github, built with [Zola][zola].
 
-This site is hosted on github, build with [Hakyll][Hakyll], which I've
-enjoyed, especially now that I can use [stack][stack] to build it reliably.
-
+[zola]: https://www.getzola.org/
 [species]: http://mathoverflow.net/questions/22462/what-are-some-examples-of-interesting-uses-of-the-theory-of-combinatorial-specie
 [lawvere-interview]: http://www.mat.uc.pt/~picado/lawvere/interview.pdf
-[hubway]: hubway.html
-[purescript]: http://www.purescript.org
-[Hakyll]: https://jaspervdj.be/hakyll/
-[stack]: https://docs.haskellstack.org/en/stable/README/
